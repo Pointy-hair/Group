@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using RevolutionaryStuff.Core.Diagnostics;
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,10 +30,10 @@ namespace RevolutionaryStuff.Core.ApplicationParts
 
         private void BuildConfiguration()
         {
-            var appEnvironment = PlatformServices.Default.Application;
+            var env = PlatformServices.Default.Application;
 
             var builder = new ConfigurationBuilder()
-                .SetBasePath(appEnvironment.ApplicationBasePath)
+                .SetBasePath(env.ApplicationBasePath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 
             OnBuildConfiguration(builder);
@@ -54,15 +53,15 @@ namespace RevolutionaryStuff.Core.ApplicationParts
             OnPostProcessCommandLineArgs();
         }
 
-        protected virtual void OnBuildServices(IServiceCollection services)
+        protected virtual void OnConfigureServices(IServiceCollection services)
         { }
 
-        private void BuildServices()
+        private void ConfigureServices()
         {
             var services = new ServiceCollection();
             services.Add(new ServiceDescriptor(typeof(IConfiguration), Configuration));
             services.AddOptions();
-            OnBuildServices(services);
+            OnConfigureServices(services);
             ServiceProvider = services.BuildServiceProvider();
         }
 
@@ -75,52 +74,42 @@ namespace RevolutionaryStuff.Core.ApplicationParts
             Trace.WriteLine(usage);
         }
 
-        public static void Main(Type t, string appConfigFilename, string[] args)
+        public static void Main<TCommandLineProgram>(string[] args) where TCommandLineProgram : CommandLineProgram
         {
-            Requires.NonNull(t, nameof(t));
-            Requires.IsType(t, typeof(CommandLineProgram));
-            var configuration = ConfigurationHelpers.CreateConfigurationFromFilename(appConfigFilename);
-
-            RevolutionaryStuffCoreOptions.Initialize(configuration);
-
-//            Trace.Listeners.Add(new ConsoleTraceListener(true));
-            using (var tracing = new Tracer())
+            CommandLineProgram p = null;
+            bool programInOperation = false;
+            try
             {
-                CommandLineProgram p = null;
-                bool programInOperation = false;
-                try
+                var ci = typeof(TCommandLineProgram).GetTypeInfo().GetConstructor(Empty.TypeArray);
+                p = (CommandLineProgram)ci.Invoke(Empty.ObjectArray);
+                programInOperation = true;
+                p.BuildConfiguration();
+                p.ProcessCommandLineArgs(args);
+                p.ConfigureServices();
+                p.Go();
+            }
+            catch (Exception ex)
+            {
+                if (ex.InnerException != null && ex.InnerException is CommmandLineInfoException)
                 {
-                    var ci = t.GetTypeInfo().GetConstructor(Empty.TypeArray);
-                    p = (CommandLineProgram)ci.Invoke(Empty.ObjectArray);
-                    programInOperation = true;
-                    p.BuildConfiguration();
-                    p.ProcessCommandLineArgs(args);
-                    p.BuildServices();
-                    p.Go();
+                    Trace.WriteLine(ex.InnerException.Message);
                 }
-                catch (Exception ex)
+                else if (ex is CommmandLineInfoException)
                 {
-                    if (ex.InnerException != null && ex.InnerException is CommmandLineInfoException)
-                    {
-                        Trace.WriteLine(ex.InnerException.Message);
-                    }
-                    else if (ex is CommmandLineInfoException)
-                    {
-                        Trace.WriteLine(ex.Message);
-                    }
-                    else
-                    {
-                        Trace.WriteLine(ex);
-                    }
-                    if (!programInOperation)
-                    {
-                        PrintUsage(t);
-                    }
+                    Trace.WriteLine(ex.Message);
                 }
-                finally
+                else
                 {
-                    Stuff.Dispose(p);
+                    Trace.WriteLine(ex);
                 }
+                if (!programInOperation)
+                {
+                    PrintUsage(typeof(TCommandLineProgram));
+                }
+            }
+            finally
+            {
+                Stuff.Dispose(p);
             }
         }
     }

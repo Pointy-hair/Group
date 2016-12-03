@@ -14,7 +14,7 @@ namespace Traffk.Bal.ApplicationParts
 {
     public static class JobRunnerProgram
     {
-        public static void Main<TProgram>(string[] args) where TProgram : new() => CommandLineProgram.Main(typeof(TProgram), "appsettings.json", args);
+        public static void Main<TProgram>(string[] args) where TProgram : CommandLineProgram => CommandLineProgram.Main<TProgram>(args);
     }
 
     public abstract class JobRunnerProgram<TJobRunner> : CommandLineProgram where TJobRunner : JobRunner
@@ -94,9 +94,9 @@ namespace Traffk.Bal.ApplicationParts
             }
         }
 
-        protected override void OnBuildServices(IServiceCollection services)
+        protected override void OnConfigureServices(IServiceCollection services)
         {
-            base.OnBuildServices(services);
+            base.OnConfigureServices(services);
 
             services.Configure<BlobStorageServices.BlobStorageServicesOptions>(Configuration.GetSection(nameof(BlobStorageServices.BlobStorageServicesOptions)));
             services.Configure<CrmDdbContext.CrmDdbOptions>(Configuration.GetSection(nameof(CrmDdbContext.CrmDdbOptions)));

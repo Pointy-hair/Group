@@ -9,7 +9,6 @@
     "WindowsAzure.Storage": "7.2.1",
     "Microsoft.ApplicationInsights.AspNetCore": "1.0.2",
     "Serilog.Sinks.Trace": "2.1.0",
-    "Serilog.Sinks.AzureTableStorage": "3.0.0-dev-00055",
     "BundlerMinifier.Core": "2.2.306",
     "Microsoft.AspNetCore.Authentication.Cookies": "1.1.0",
     "Microsoft.AspNetCore.Authorization": "1.1.0",
@@ -41,9 +40,10 @@
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.1.0",
     "Microsoft.VisualStudio.Web.CodeGeneration.Tools": "1.1.0-preview4-final",
     "Microsoft.VisualStudio.Web.CodeGenerators.Mvc": "1.1.0-preview4-final",
-    "Serilog": "2.4.0-dev-00750",
     "Serilog.Extensions.Logging": "1.4.0-dev-10136",
-    "System.Runtime.Serialization.Json": "4.3.0"
+    "System.Runtime.Serialization.Json": "4.3.0",
+    "Serilog.Sinks.AzureTableStorage": "3.0.0",
+    "Serilog": "2.4.0-dev-00767"
   },
   "tools": {
     "BundlerMinifier.Core": "2.2.306",

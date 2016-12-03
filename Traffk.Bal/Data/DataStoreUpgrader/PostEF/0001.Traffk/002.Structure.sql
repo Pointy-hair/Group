@@ -15,23 +15,34 @@ exec db.TablePropertySet  'Tenants', '1', @propertyName='AddToDbContext'
 exec db.TablePropertySet  'Tenants', '1', @propertyName='GeneratePoco'
 exec db.ColumnPropertySet 'Tenants', 'TenantSettings', 'Bal.Settings.TenantSettings', @propertyName='JsonSettingsClass'
 exec db.ColumnPropertySet 'Tenants', 'CreatedAtUtc', 'Datetime when this entity was created.'
+exec db.ColumnPropertySet 'Tenants', 'TenantStatus', '1', @propertyName='SupportsDeletePurgeSemantics', @tableSchema='dbo'
 
 GO
 
-CREATE TRIGGER [TenantsNonDeletable]
-ON Tenants 
-for delete
+CREATE TRIGGER [dbo].TenantsInsteadOfDelete
+       ON [dbo].tenants
+INSTEAD OF DELETE
 AS
+BEGIN
 
-	ROLLBACK TRAN
-	raiserror('Tenants prevents items from being deleted', 16, 1)
+	SET NOCOUNT ON;
+
+	update u
+	set
+		tenantstatus='Deleted'
+	from
+		dbo.tenants u
+			inner join
+		deleted d
+			on d.Tenantid=u.Tenantid
+	where
+		d.tenantstatus not in ('Purged', 'Deleted')
+ 
+END
 
 GO
 
 ALTER TABLE [db].[SchemaUpgraderLog] ENABLE TRIGGER SchemaUpgraderNonDeletable
-GO
-
-
 GO
 
 create table Contacts
@@ -82,13 +93,36 @@ GO
 
 
 alter table aspnetusers add TenantId int not null references Tenants(TenantId);
-
-GO
-
+alter table aspnetusers add UserStatus dbo.developername not null default 'Normal'
+exec db.ColumnPropertySet 'aspnetusers', 'UserStatus', '1', @propertyName='SupportsDeletePurgeSemantics', @tableSchema='dbo'
+create index UX_UserName on dbo.AspNetUsers (TenantId, NormalizedUserName) where UserStatus <> 'Purged' and UserStatus <> 'Deleted'
 alter table aspnetusers add UserSettings nvarchar(max) null;
 alter table aspnetusers add CreatedAtUtc datetime not null default(getutcdate());
 exec db.TablePropertySet  'aspnetusers', 'ITraffkTenanted', @propertyName='Implements'
 exec db.ColumnPropertySet 'aspnetusers', 'CreatedAtUtc', 'Datetime when this entity was created.'
+
+GO
+
+CREATE TRIGGER [dbo].AspnetusersInsteadOfDelete
+       ON [dbo].aspnetusers
+INSTEAD OF DELETE
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+	update u
+	set
+		userstatus='Deleted'
+	from
+		dbo.aspnetusers u
+			inner join
+		deleted d
+			on d.id=u.id
+	where
+		d.userstatus not in ('Purged', 'Deleted')
+ 
+END
 
 GO
 
@@ -101,7 +135,7 @@ create table Jobs
 (
 	JobId int not null identity primary key,
 	JobType dbo.developername not null,
-	TenantId int null references Tenants(TenantId) on delete cascade,
+	TenantId int null references Tenants(TenantId),
 	CreatedAtUtc datetime not null default (getutcdate()),
 	DontRunBeforeUtc datetime null,
 	JobStatus dbo.developername not null,	
@@ -119,6 +153,30 @@ exec db.TablePropertySet  'Jobs', '1', @propertyName='AddToDbContext'
 exec db.TablePropertySet  'Jobs', '1', @propertyName='GeneratePoco'
 exec db.ColumnPropertySet 'Jobs', 'CreatedAtUtc', 'Datetime when this entity was created.'
 exec db.ColumnPropertySet 'Jobs', 'JobResult', 'Traffk.Bal.JobResult', @propertyName='JsonSettingsClass'
+exec db.ColumnPropertySet 'Jobs', 'JobStatus', '1', @propertyName='SupportsDeletePurgeSemantics', @tableSchema='dbo'
+
+GO
+
+CREATE TRIGGER [dbo].JobsInsteadOfDelete
+       ON [dbo].jobs
+INSTEAD OF DELETE
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+	update u
+	set
+		JobStatus='Deleted'
+	from
+		dbo.jobs u
+			inner join
+		deleted d
+			on d.JobId=u.JobId
+	where
+		d.JobStatus not in ('Purged', 'Deleted')
+ 
+END
 
 GO
 

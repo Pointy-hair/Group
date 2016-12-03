@@ -1,5 +1,4 @@
-﻿using static RevolutionaryStuff.Core.Diagnostics.DebugHelpers;
-using System;
+﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 
@@ -105,7 +104,6 @@ namespace RevolutionaryStuff.Core
                 services.Remove(oldServiceDescriptor);
                 var newServiceDescriptor = new ServiceDescriptor(oldServiceDescriptor.ServiceType, typeof(TImp), newServiceLifetime.GetValueOrDefault(oldServiceDescriptor.Lifetime));
                 services.Add(newServiceDescriptor);
-                TraceStructured("DI Substition", oldServiceDescriptor.ServiceType, oldServiceDescriptor.ImplementationType, newServiceDescriptor.ImplementationType);
             }
         }
 

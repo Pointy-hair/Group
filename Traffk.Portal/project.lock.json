@@ -2838,7 +2838,7 @@
           }
         }
       },
-      "Serilog/2.4.0-dev-00750": {
+      "Serilog/2.4.0-dev-00767": {
         "type": "package",
         "dependencies": {
           "Microsoft.CSharp": "4.0.1",
@@ -2875,7 +2875,7 @@
           "lib/netstandard1.3/Serilog.Extensions.Logging.dll": {}
         }
       },
-      "Serilog.Sinks.AzureTableStorage/3.0.0-dev-00055": {
+      "Serilog.Sinks.AzureTableStorage/3.0.0": {
         "type": "package",
         "dependencies": {
           "Serilog": "2.0.0",
@@ -5213,6 +5213,8 @@
           "Microsoft.Extensions.PlatformAbstractions": "1.1.0",
           "Microsoft.NETCore.App": "1.1.0",
           "Newtonsoft.Json": "9.0.2-beta1",
+          "Serilog": "2.4.0-dev-00767",
+          "Serilog.Extensions.Logging": "1.4.0-dev-10136",
           "System.ComponentModel.Annotations": "4.3.0",
           "System.Data.Common": "4.3.0",
           "System.Data.SqlClient": "4.3.0",
@@ -7848,10 +7850,10 @@
         "runtimes/win7-x86/native/sni.dll"
       ]
     },
-    "Serilog/2.4.0-dev-00750": {
-      "sha512": "Y36FedBoAI1luyKFu8ajZEciN4N8jkw05bIID2RmKmp1UcY1ezGZMs5BFxyTEfmYltQlpboqaTqp8lxf11dLCw==",
+    "Serilog/2.4.0-dev-00767": {
+      "sha512": "m2Q024SWZ+M1cn9YDmjCtIliOK8JgtOR+xLOKuqbsXysNbSfwqur7+Gbs/HkSaME3hmoP4OgZ5EQ6sBLNJ2Ljw==",
       "type": "package",
-      "path": "Serilog/2.4.0-dev-00750",
+      "path": "Serilog/2.4.0-dev-00767",
       "files": [
         "lib/net45/Serilog.dll",
         "lib/net45/Serilog.xml",
@@ -7861,7 +7863,7 @@
         "lib/netstandard1.0/Serilog.xml",
         "lib/netstandard1.3/Serilog.dll",
         "lib/netstandard1.3/Serilog.xml",
-        "serilog.2.4.0-dev-00750.nupkg.sha512",
+        "serilog.2.4.0-dev-00767.nupkg.sha512",
         "serilog.nuspec"
       ]
     },
@@ -7880,15 +7882,15 @@
         "serilog.extensions.logging.nuspec"
       ]
     },
-    "Serilog.Sinks.AzureTableStorage/3.0.0-dev-00055": {
-      "sha512": "Xim5aeisZUU+p25XFR/wXBNlFUz5hF+2vCSladV9CqM9Z7QDxtCTP0RLfa1WpCdXDzKnhssGwoUfKd9uoUcskA==",
+    "Serilog.Sinks.AzureTableStorage/3.0.0": {
+      "sha512": "2b1nrl/nWsCtbiA9CFL4hQ+/zzVnQn+zemm6Bgzh6zBP3vG0t/OpXpZ2FBSBLUkORJd6jwIPYBm+HKMoHxM/Mw==",
       "type": "package",
-      "path": "Serilog.Sinks.AzureTableStorage/3.0.0-dev-00055",
+      "path": "Serilog.Sinks.AzureTableStorage/3.0.0",
       "files": [
-        "Serilog.Sinks.AzureTableStorage.3.0.0-dev-00055.nupkg.sha512",
-        "Serilog.Sinks.AzureTableStorage.nuspec",
         "lib/net45/Serilog.Sinks.AzureTableStorage.dll",
-        "lib/netstandard1.3/Serilog.Sinks.AzureTableStorage.dll"
+        "lib/netstandard1.3/Serilog.Sinks.AzureTableStorage.dll",
+        "serilog.sinks.azuretablestorage.3.0.0.nupkg.sha512",
+        "serilog.sinks.azuretablestorage.nuspec"
       ]
     },
     "Serilog.Sinks.PeriodicBatching/2.0.0": {
@@ -13106,9 +13108,9 @@
       "Microsoft.VisualStudio.Web.CodeGenerators.Mvc >= 1.1.0-preview4-final",
       "RevolutionaryStuff.Core >= 1.0.0-*",
       "RevolutionaryStuff.PowerBiToys >= 1.0.0-*",
-      "Serilog >= 2.4.0-dev-00750",
+      "Serilog >= 2.4.0-dev-00767",
       "Serilog.Extensions.Logging >= 1.4.0-dev-10136",
-      "Serilog.Sinks.AzureTableStorage >= 3.0.0-dev-00055",
+      "Serilog.Sinks.AzureTableStorage >= 3.0.0",
       "Serilog.Sinks.Trace >= 2.1.0",
       "System.Runtime.Serialization.Json >= 4.3.0",
       "Traffk.Bal >= 1.0.0-*",

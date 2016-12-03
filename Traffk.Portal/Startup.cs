@@ -53,7 +53,6 @@ namespace TraffkPortal
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
 
-            RevolutionaryStuffCoreOptions.Initialize(Configuration);
             RequireHttps = Parse.ParseBool(Configuration["RequireHttps"], true);
             IdleLogout = Parse.ParseTimeSpan(Configuration["IdleLogout"], TimeSpan.FromMinutes(15));
             TraffkHttpHeadersFilter.IdleLogout = IdleLogout;

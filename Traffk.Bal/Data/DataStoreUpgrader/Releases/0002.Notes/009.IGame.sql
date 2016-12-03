@@ -22,6 +22,8 @@ from
 	select 'new' ChangeType, 'Auto-log out of web aplication after N minutes, popup warning give to those still logged in' Title union all
 	select 'new' ChangeType, 'Password policy can now be configured on a per tenant basis' Title union all
 	select 'new' ChangeType, 'Row level database security to enforce isolation with different database users per tenant' Title union all
+	select 'new' ChangeType, 'Row level database security to allow for database level soft deletes via instead of triggers' Title union all
+	select 'new' ChangeType, 'Conversion of source control to GIT' Title union all
 	select 'new' ChangeType, 'Date dimension incorportated into health records' 
 ) a,
 (

@@ -11,9 +11,9 @@ namespace TraffkCommunicationBlastRunner
     {
         protected override string JobType => Job.JobTypes.CommunicationBlast;
 
-        protected override void OnBuildServices(IServiceCollection services)
+        protected override void OnConfigureServices(IServiceCollection services)
         {
-            base.OnBuildServices(services);
+            base.OnConfigureServices(services);
             services.AddScoped<IOptions<SmtpOptions>, SmtpSettingsAdaptor>();
             services.AddScoped<IEmailer, TrackingEmailer>();
         }

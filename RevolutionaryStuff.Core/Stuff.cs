@@ -20,13 +20,8 @@ namespace RevolutionaryStuff.Core
             ThisAssembly = typeof(Stuff).GetTypeInfo().Assembly;
             var a = Assembly.GetEntryAssembly();
             var info = a?.GetInfo();
-            ApplicationName = StringHelpers.Coalesce(RevolutionaryStuffCoreOptions.Instance.ApplicationName, info?.Title, a?.GetName().Name, "Unnamed");
-            ApplicationFamily = StringHelpers.Coalesce(RevolutionaryStuffCoreOptions.Instance.ApplicationName, info?.Product, info?.Company, ApplicationName);
-
-//            var s = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-//            LocalApplicationDataFolder = Path.Combine(s, ApplicationName);
-
-            LocalApplicationDataFolder = Path.Combine(@"C:\Users\jason\AppData\Local\", ApplicationName);
+            ApplicationName = StringHelpers.Coalesce(info?.Title, a?.GetName().Name, "Unnamed");
+            ApplicationFamily = StringHelpers.Coalesce(info?.Product, info?.Company, ApplicationName);
         }
 
         public const string BaseRsllcUrn = "urn:www.revolutionarystuff.com";
@@ -38,8 +33,6 @@ namespace RevolutionaryStuff.Core
         public static readonly string ApplicationFamily;
 
         public static readonly Guid ApplicationInstanceId = Guid.NewGuid();
-
-        public static readonly string LocalApplicationDataFolder;
 
         /// <summary>
         /// Random number generator with a fixed seed.  Useful for testing.

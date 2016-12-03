@@ -6,7 +6,7 @@ create login traffk_tenant_1_reporting with password='jfkldsaj#$R%3fvdjoiog43j-9
 create login traffk_tenant_1_portal with password='vfiodVOPghj3irjgv0324fickCJEIWabhv'
 */
 
-
+create role i_see_dead_people
 create role portal_role
 grant execute on dbo.GetFieldCounts to portal_role
 create role tenant_all_reader
@@ -19,6 +19,19 @@ exec sp_addrolemember 'db_datawriter', 'tenant_all_writer'
 exec sp_addrolemember 'tenant_all_reader', 'tenant_all_writer'
 exec sp_addrolemember 'tenant_all_writer', 'tenant_all_portal'
 exec sp_addrolemember 'tenant_all_reader', 'tenant_all_reporting'
+
+GO
+
+create FUNCTION security.RowStatusPredicate(@status varchar(80))
+	RETURNS TABLE
+	WITH SCHEMABINDING
+AS
+	RETURN SELECT 1 AS accessResult
+	where
+		@status not in ('Deleted', 'Purged') or
+		1=is_rolemember('i_see_dead_people') or
+		1=is_rolemember('db_owner') or
+		current_user='dbo'
 
 GO
 
@@ -35,68 +48,140 @@ AS
 
 GO
 
+create FUNCTION security.TenantAndStatusPredicate(@tenantId int, @status varchar(80))
+	RETURNS TABLE
+	WITH SCHEMABINDING
+AS
+	RETURN SELECT 1 AS accessResult
+	where
+		1=is_rolemember('db_owner') or
+		current_user='dbo' or
+		(
+			(
+				@status not in ('Deleted', 'Purged') or
+				1=is_rolemember('i_see_dead_people')			
+			) and
+			(
+				1=is_rolemember('tenant_'+cast(@tenantId as varchar(10))+'_reader') or
+				1=is_rolemember('tenant_all_reader')
+			)		
+		)
+
+GO
+
+
+
+
 /*
-select frag
-from
+
+;with
+Frags (SchemaName, TableName, Frag) as
 (
-	select 'ADD FILTER PREDICATE Security.TenantPredicate(TenantId) ON '+table_schema+'.'+table_name+',' frag, table_schema, table_name
-	from information_schema.columns where column_name='tenantid' 
+	select 
+		t.table_schema SchemaName, 
+		t.table_name TableName,
+		--TenantRule.TenantIdColumnName,
+		--StatusRule.StatusColumnName,
+		case
+			when TenantIdColumnName is not null and StatusColumnName is not null
+			then 'security.TenantAndStatusPredicate('+TenantIdColumnName+', '+StatusColumnName+')'
+			when TenantIdColumnName is not null
+			then 'security.TenantPredicate('+TenantIdColumnName+')'
+			when StatusColumnName is not null
+			then 'security.RowStatusPredicate('+StatusColumnName+')'
+			else null
+			end
+		Frag
+	from
+		information_schema.tables t
+			outer apply
+		(
+			select 'TenantId' TenantIdColumnName
+			from information_schema.columns c
+			where 
+				c.column_name='TenantId' and
+				c.table_schema=t.table_schema and
+				c.table_name=t.table_name
+		) TenantRule
+			outer apply
+		(
+			select ColumnName StatusColumnName
+			from db.ColumnProperties c
+			where 
+				PropertyName='SupportsDeletePurgeSemantics' and 
+				PropertyValue='1' and
+				c.SchemaName=t.table_schema and
+				c.TableName=t.table_name	
+		) StatusRule
+),
+NonNullFrags(SchemaTable, Frag) as
+(
+	select SchemaName+'.'+TableName, Frag from frags where frag is not null
+)
+select Pred +',' Pred
+from 
+(
+	select 'add filter predicate '+frag+' on '+SchemaTable Pred, SchemaTable
+	from NonNullFrags
 	union all
-	select 'ADD BLOCK PREDICATE Security.TenantPredicate(TenantId) ON '+table_schema+'.'+table_name+',' frag, table_schema, table_name
-	from information_schema.columns where column_name='tenantid' 
-) a
-order by table_schema, table_name
+	select 'add block predicate '+frag+' on '+SchemaTable Pred, SchemaTable
+	from NonNullFrags
+) z
+order by SchemaTable, Pred
+
 */
 
-create SECURITY POLICY Security.tenantAccessPolicy
-	ADD FILTER PREDICATE Security.TenantPredicate(TenantId) ON dbo.Applications,
-	ADD BLOCK PREDICATE Security.TenantPredicate(TenantId) ON dbo.Applications,
-	ADD BLOCK PREDICATE Security.TenantPredicate(TenantId) ON dbo.AspNetRoles,
-	ADD FILTER PREDICATE Security.TenantPredicate(TenantId) ON dbo.AspNetRoles,
-	ADD FILTER PREDICATE Security.TenantPredicate(TenantId) ON dbo.AspNetUsers,
-	ADD BLOCK PREDICATE Security.TenantPredicate(TenantId) ON dbo.AspNetUsers,
-	ADD BLOCK PREDICATE Security.TenantPredicate(TenantId) ON dbo.CommunicationBlasts,
-	ADD FILTER PREDICATE Security.TenantPredicate(TenantId) ON dbo.CommunicationBlasts,
-	ADD FILTER PREDICATE Security.TenantPredicate(TenantId) ON dbo.Contacts,
-	ADD BLOCK PREDICATE Security.TenantPredicate(TenantId) ON dbo.Contacts,
-	ADD BLOCK PREDICATE Security.TenantPredicate(TenantId) ON dbo.DateDimensions,
-	ADD FILTER PREDICATE Security.TenantPredicate(TenantId) ON dbo.DateDimensions,
-	ADD FILTER PREDICATE Security.TenantPredicate(TenantId) ON dbo.Jobs,
-	ADD BLOCK PREDICATE Security.TenantPredicate(TenantId) ON dbo.Jobs,
-	ADD FILTER PREDICATE Security.TenantPredicate(TenantId) ON dbo.MessageTemplates,
-	ADD BLOCK PREDICATE Security.TenantPredicate(TenantId) ON dbo.MessageTemplates,
-	ADD BLOCK PREDICATE Security.TenantPredicate(TenantId) ON dbo.SystemCommunications,
-	ADD FILTER PREDICATE Security.TenantPredicate(TenantId) ON dbo.SystemCommunications,
-	ADD FILTER PREDICATE Security.TenantPredicate(TenantId) ON dbo.Templates,
-	ADD BLOCK PREDICATE Security.TenantPredicate(TenantId) ON dbo.Templates,
-	ADD BLOCK PREDICATE Security.TenantPredicate(TenantId) ON dbo.Tenants,
-	ADD FILTER PREDICATE Security.TenantPredicate(TenantId) ON dbo.Tenants,
-	ADD FILTER PREDICATE Security.TenantPredicate(TenantId) ON dbo.UserActivities,
-	ADD BLOCK PREDICATE Security.TenantPredicate(TenantId) ON dbo.UserActivities,
-	ADD FILTER PREDICATE Security.TenantPredicate(TenantId) ON deerwalk.CareAlerts,
-	ADD BLOCK PREDICATE Security.TenantPredicate(TenantId) ON deerwalk.CareAlerts,
-	ADD BLOCK PREDICATE Security.TenantPredicate(TenantId) ON deerwalk.Demographics,
-	ADD FILTER PREDICATE Security.TenantPredicate(TenantId) ON deerwalk.Demographics,
-	ADD FILTER PREDICATE Security.TenantPredicate(TenantId) ON deerwalk.Eligibility,
-	ADD BLOCK PREDICATE Security.TenantPredicate(TenantId) ON deerwalk.Eligibility,
-	ADD FILTER PREDICATE Security.TenantPredicate(TenantId) ON deerwalk.HighCostDiagnosis,
-	ADD BLOCK PREDICATE Security.TenantPredicate(TenantId) ON deerwalk.HighCostDiagnosis,
-	ADD FILTER PREDICATE Security.TenantPredicate(TenantId) ON deerwalk.HistoricalScores,
-	ADD BLOCK PREDICATE Security.TenantPredicate(TenantId) ON deerwalk.HistoricalScores,
-	ADD BLOCK PREDICATE Security.TenantPredicate(TenantId) ON deerwalk.MedicalClaims,
-	ADD FILTER PREDICATE Security.TenantPredicate(TenantId) ON deerwalk.MedicalClaims,
-	ADD FILTER PREDICATE Security.TenantPredicate(TenantId) ON deerwalk.MemberPCP,
-	ADD BLOCK PREDICATE Security.TenantPredicate(TenantId) ON deerwalk.MemberPCP,
-	ADD FILTER PREDICATE Security.TenantPredicate(TenantId) ON deerwalk.Participation,
-	ADD BLOCK PREDICATE Security.TenantPredicate(TenantId) ON deerwalk.Participation,
-	ADD FILTER PREDICATE Security.TenantPredicate(TenantId) ON deerwalk.Pharmacy,
-	ADD BLOCK PREDICATE Security.TenantPredicate(TenantId) ON deerwalk.Pharmacy,
-	ADD FILTER PREDICATE Security.TenantPredicate(TenantId) ON deerwalk.QualityMetrics,
-	ADD BLOCK PREDICATE Security.TenantPredicate(TenantId) ON deerwalk.QualityMetrics,
-	ADD FILTER PREDICATE Security.TenantPredicate(TenantId) ON deerwalk.Scores,
-	ADD BLOCK PREDICATE Security.TenantPredicate(TenantId) ON deerwalk.Scores,
-	ADD BLOCK PREDICATE Security.TenantPredicate(TenantId) ON deerwalk.Visits,
-	ADD FILTER PREDICATE Security.TenantPredicate(TenantId) ON deerwalk.Visits
+--drop SECURITY POLICY Security.dataAccessPolicy
+
+create SECURITY POLICY Security.dataAccessPolicy
+	add block predicate security.TenantPredicate(TenantId) on dbo.Applications,
+	add filter predicate security.TenantPredicate(TenantId) on dbo.Applications,
+	add block predicate security.TenantPredicate(TenantId) on dbo.AspNetRoles,
+	add filter predicate security.TenantPredicate(TenantId) on dbo.AspNetRoles,
+	add block predicate security.TenantAndStatusPredicate(TenantId, UserStatus) on dbo.AspNetUsers,
+	add filter predicate security.TenantAndStatusPredicate(TenantId, UserStatus) on dbo.AspNetUsers,
+	add block predicate security.TenantPredicate(TenantId) on dbo.CommunicationBlasts,
+	add filter predicate security.TenantPredicate(TenantId) on dbo.CommunicationBlasts,
+	add block predicate security.TenantPredicate(TenantId) on dbo.Contacts,
+	add filter predicate security.TenantPredicate(TenantId) on dbo.Contacts,
+	add block predicate security.TenantPredicate(TenantId) on dbo.DateDimensions,
+	add filter predicate security.TenantPredicate(TenantId) on dbo.DateDimensions,
+	add block predicate security.TenantAndStatusPredicate(TenantId, JobStatus) on dbo.Jobs,
+	add filter predicate security.TenantAndStatusPredicate(TenantId, JobStatus) on dbo.Jobs,
+	add block predicate security.TenantPredicate(TenantId) on dbo.MessageTemplates,
+	add filter predicate security.TenantPredicate(TenantId) on dbo.MessageTemplates,
+	add block predicate security.TenantPredicate(TenantId) on dbo.SystemCommunications,
+	add filter predicate security.TenantPredicate(TenantId) on dbo.SystemCommunications,
+	add block predicate security.TenantPredicate(TenantId) on dbo.Templates,
+	add filter predicate security.TenantPredicate(TenantId) on dbo.Templates,
+	add block predicate security.TenantAndStatusPredicate(TenantId, TenantStatus) on dbo.Tenants,
+	add filter predicate security.TenantAndStatusPredicate(TenantId, TenantStatus) on dbo.Tenants,
+	add block predicate security.TenantPredicate(TenantId) on dbo.UserActivities,
+	add filter predicate security.TenantPredicate(TenantId) on dbo.UserActivities,
+	add block predicate security.TenantPredicate(TenantId) on deerwalk.CareAlerts,
+	add filter predicate security.TenantPredicate(TenantId) on deerwalk.CareAlerts,
+	add block predicate security.TenantPredicate(TenantId) on deerwalk.Demographics,
+	add filter predicate security.TenantPredicate(TenantId) on deerwalk.Demographics,
+	add block predicate security.TenantPredicate(TenantId) on deerwalk.Eligibility,
+	add filter predicate security.TenantPredicate(TenantId) on deerwalk.Eligibility,
+	add block predicate security.TenantPredicate(TenantId) on deerwalk.HighCostDiagnosis,
+	add filter predicate security.TenantPredicate(TenantId) on deerwalk.HighCostDiagnosis,
+	add block predicate security.TenantPredicate(TenantId) on deerwalk.HistoricalScores,
+	add filter predicate security.TenantPredicate(TenantId) on deerwalk.HistoricalScores,
+	add block predicate security.TenantPredicate(TenantId) on deerwalk.MedicalClaims,
+	add filter predicate security.TenantPredicate(TenantId) on deerwalk.MedicalClaims,
+	add block predicate security.TenantPredicate(TenantId) on deerwalk.MemberPCP,
+	add filter predicate security.TenantPredicate(TenantId) on deerwalk.MemberPCP,
+	add block predicate security.TenantPredicate(TenantId) on deerwalk.Participation,
+	add filter predicate security.TenantPredicate(TenantId) on deerwalk.Participation,
+	add block predicate security.TenantPredicate(TenantId) on deerwalk.Pharmacy,
+	add filter predicate security.TenantPredicate(TenantId) on deerwalk.Pharmacy,
+	add block predicate security.TenantPredicate(TenantId) on deerwalk.QualityMetrics,
+	add filter predicate security.TenantPredicate(TenantId) on deerwalk.QualityMetrics,
+	add block predicate security.TenantPredicate(TenantId) on deerwalk.Scores,
+	add filter predicate security.TenantPredicate(TenantId) on deerwalk.Scores,
+	add block predicate security.TenantPredicate(TenantId) on deerwalk.Visits,
+	add filter predicate security.TenantPredicate(TenantId) on deerwalk.Visits
 
 GO
 
