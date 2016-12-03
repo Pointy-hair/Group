@@ -1,0 +1,32 @@
+﻿@using static TraffkPortal.Controllers.TenantsController
+@{
+
+    Layout = "~/Views/Shared/_LayoutHeroEntity.cshtml";
+    var pageKey = (PageKeys)ViewData[ViewDataKeys.PageKey];
+    var entityId = (int)ViewData[ViewDataKeys.EntityId];
+}
+@section navItems {
+    <li><a asp-action="Edit" asp-route-id="@entityId" class="@(pageKey==PageKeys.Basics?"current-section":"")">Main</a></li>
+    @if (entityId == TenantFinder.TenantId)
+    {
+        <li><a asp-action="Index" asp-controller="Application">Applications</a></li>
+        <li><a asp-action="@ActionNames.DeerwalkSettings" asp-route-tenantId="@entityId" class="@(pageKey==PageKeys.DeerwalkSettings? "current-section" : "")">Deerwalk Settings</a></li>
+        <li><a asp-action="@ActionNames.PasswordSettings" asp-route-tenantId="@entityId" class="@(pageKey==PageKeys.PasswordSettings? "current-section" : "")">Password Settings</a></li>
+        <li><a asp-action="@ActionNames.ReusableValuesList" asp-route-tenantId="@entityId" class="@(pageKey==PageKeys.ReusableValues? "current-section" : "")">Reusable Values</a></li>
+        <li><a asp-action="@ActionNames.SmtpSettings" asp-route-tenantId="@entityId" class="@(pageKey==PageKeys.SmtpSettings? "current-section" : "")">Smtp Settings</a></li>
+    }
+    @RenderSection("navItems", required: false)
+}
+@section pageAlerts {
+    @RenderSection("pageAlerts", required: false)
+}
+@section pageActionButtons {
+    <button type="button" class="btn btn-default" asp-action="Index">Tenants List</button>
+    @RenderSection("pageActionButtons", required: false)
+}
+@section Scripts {
+    @RenderSection("scripts", required: false)
+}
+@RenderBody()
+
+

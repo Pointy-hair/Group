@@ -1,0 +1,42 @@
+@model IEnumerable<ApplicationRole>
+@{
+    Layout = "~/Views/Shared/_LayoutListing.cshtml";
+    ViewData.SetTitleAndHeading("Roles");
+}
+@section listingActionButtons
+{
+    <button type="button" class="btn btn-default" asp-action="Create">Create</button>
+}
+@section listingTable
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.SortableHeaderFor(model => model.Name)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </a>
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @{ await Html.RenderPartialAsync("_PaginationPartial"); }
+
+}

@@ -1,0 +1,63 @@
+﻿@using static TraffkPortal.Controllers.CrmController
+@model IEnumerable<QualityMetric>
+@{
+    Layout = "_LayoutContactListingContent.cshtml";
+}
+@section listingTable
+    {
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.SortableHeaderFor(z => z.measureName)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.startDate)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.EndDate)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.PositiveNegative)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.numerator)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.denomenator)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.measureName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.startDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EndDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PositiveNegative)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.numerator)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.denomenator)
+                    </td>
+                    <td>
+                        <a asp-action="@ActionNames.Health.QualityMetric" asp-route-id="@ViewContext.GetRouteValue()" asp-route-recordId="@item.dw_record_id">Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @{ await Html.RenderPartialAsync("_PaginationPartial"); }
+}

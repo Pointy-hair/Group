@@ -1,0 +1,321 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+    background-color: white;
+}
+
+/* Wrapping element */
+/* Set some basic padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Set widths on the form inputs since otherwise they're 100% wide */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+/* Carousel */
+.carousel-caption p {
+    font-size: 20px;
+    line-height: 1.4;
+}
+
+/* buttons and links extension to use brackets: [ click me ] */
+.btn-bracketed::before {
+    display: inline-block;
+    content: "[";
+    padding-right: 0.5em;
+}
+
+.btn-bracketed::after {
+    display: inline-block;
+    content: "]";
+    padding-left: 0.5em;
+}
+
+/* Make .svg files in the carousel display properly in older browsers */
+.carousel-inner .item img[src$=".svg"] {
+    width: 100%;
+}
+
+/* Hide/rearrange for smaller screens */
+@media screen and (max-width: 767px) {
+    /* Hide captions */
+    .carousel-caption {
+        display: none;
+    }
+}
+
+/* Custom Styles */
+.filterSection {
+    background-color: lightsteelblue;
+    border: 1px solid blue;
+}
+
+.listingSection {
+    background-color: ghostwhite;
+}
+
+/*--------------------------------------------------------*/
+
+.navbar .container {
+    width: auto;
+}
+
+.contact-body {
+}
+
+.current-section {
+    background-color: #eeeeee;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.navbar-brand {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.navbar-nav {
+    float: none;
+}
+
+.navbar {
+    box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+.account-nav {
+    line-height: 50px;
+    float: right !important;
+}
+
+    .account-nav a {
+        color: #9d9d9d;
+    }
+
+.menu-heading {
+    text-transform: uppercase;
+    background: #bbb;
+    color: #555;
+    padding: 8px 15px;
+    display: none !important;
+}
+
+.caret-up {
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 4px dashed;
+    display: inline-block;
+    height: 0;
+    margin-left: 2px;
+    vertical-align: middle;
+    width: 0;
+}
+
+.caret, .caret-down {
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px dashed;
+    display: inline-block;
+    height: 0;
+    margin-left: 2px;
+    vertical-align: middle;
+    width: 0;
+}
+
+li.open ul.dropdown-menu {
+    display: block;
+}
+
+@media (max-width: 767px) {
+    .account-nav {
+        line-height: 50px;
+        float: none !important;
+    }
+
+    .nav.navbar-nav li a {
+        padding-left: 15px;
+    }
+
+    .navbar-nav .open .dropdown-menu {
+        position: relative !important;
+    }
+
+    .navbar-fixed-bottom .navbar-collapse, .navbar-fixed-top .navbar-collapse {
+        max-height: none !important;
+    }
+
+    .menu-heading {
+        display: block !important;
+    }
+}
+
+.open .caret {
+    border-top: none;
+    border-bottom: 4px dashed;
+}
+
+.container-full-width {
+    width: 100%;
+}
+.no-side-padding {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.filterSection {
+  border: none;
+  float: left;
+  width: 250px;
+}
+.filterSection h3 {
+  padding-left: 15px;
+}
+.listingSection {
+}
+.listingSectionWithFilters {
+  margin-left: 275px;
+}
+.panel {
+  margin-bottom: 0;
+  border-radius: 0;
+}
+input[type="checkbox"], input[type="radio"] {
+  margin: 0;
+  position: relative;
+  top: 1px;
+}
+
+
+@media (max-width: 767px) {
+  .filterSection {
+    width: 100%;
+    float: none;
+    margin-bottom: 25px;
+  }
+  .filterSection h3 {
+    padding-top: 10px;
+  }
+  .listingSection {
+    margin-left: 0;
+  }
+  .container-fluid {
+    padding: 0 !important;
+  }
+}
+
+
+
+
+
+
+
+
+.hero-heading-container {
+  background: #ddd;
+  padding-bottom: 5px;
+}
+.subheading {
+  padding-left: 25px;
+  font-weight: bold;
+  color: #666;
+}
+.page-header.hero-header, .page-header.hero-header h1 {
+  margin-top: 0;
+}
+.page-header.hero-header h1 {
+  padding: 15px 25px;
+}
+.form-horizontal .form-group {
+    margin-left: 0;
+    margin-right: 0;
+}
+.hero-header {
+  padding-bottom: 0;
+}
+.no-side-padding {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+.current-Section {
+  background: #eee;
+}
+/*re-fix the no side padding to align with logo*/
+.body-content .nav li:first-child a, .no-side-padding footer p {
+  padding-left: 25px;
+}
+.body-content .nav li a {
+  color: #444;
+  border-right: 1px solid #eee;
+}
+.body-content .nav li:last-child a {
+  border-right: none;
+}
+.btn-group-container {
+  text-align: center !important; 
+  margin-bottom: 25px;
+}
+ 
+@media (max-width: 767px) {
+  .body-content .nav {
+    margin: 0 !important;
+  }
+  .body-content .nav li a, .subheading, .hero-heading-container h1 {
+    padding-left: 15px !important;
+  }
+}
+
+/****************
+ GENERAL CSS
+****************/
+.filterSection h3 {
+  margin: 0;
+  padding: 12px 0 12px 15px;
+}
+input[type="radio"], input[type="checkbox"] {
+  width: auto !important;
+}
+.btn:hover {
+  opacity: .8;
+  transition: all 0.15s ease-in-out;
+}
+.btn-group .btn {
+  border-right: 1px solid #fff;
+  margin-right: 1px;
+}
+.btn-group .btn:last-child {
+  border-right: none;
+}
+.filterSection .form-group {
+  margin-bottom: 0;
+}
+
+.form-control {
+  height: auto;
+}
+.form-control.color-picker {
+  height: 34px;
+}
+input.color-picker {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+.dropdown-menu li a {
+  cursor: pointer;
+}
+
+.inline-block {
+    display: inline-block;
+}
+
+.current-pagenum {
+    background-color: #eeeeee !important;
+}

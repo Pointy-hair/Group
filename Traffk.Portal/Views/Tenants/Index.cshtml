@@ -1,0 +1,57 @@
+@using static TraffkPortal.Controllers.TenantsController
+@model IEnumerable<Tenant>
+@{
+    Layout = "~/Views/Shared/_LayoutListing.cshtml";
+    ViewData.SetTitleAndHeading("Tenants");
+}
+@section listingTable
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.TenantId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TenantName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LoginDomain)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                var parents = new Stack<Tenant>();
+            }
+            @foreach (var item in Model)
+            {
+                while (parents.Count > 0 && parents.Peek().TenantId != item.ParentTenantId) { parents.Pop(); }
+                int depth = parents.Count;
+                parents.Push(item);
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TenantId)
+                    </td>
+                    <td>
+                        <span style="padding-left:@(.5*depth)cm"></span>
+                        <a asp-action="@ActionNames.TenantEdit" asp-route-tenantId="@item.TenantId">@Html.DisplayFor(modelItem => item.TenantName)</a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LoginDomain)
+                    </td>
+                    <td>
+                        <a asp-action="@ActionNames.TenantCreate" asp-route-parentTenantId="@item.TenantId">Create Child</a>
+                        @if (item.TenantId == this.TenantFinder.TenantId)
+                        {
+                            <text>|
+                            <a asp-action="@ActionNames.TenantDelete" asp-route-tenantId="@item.TenantId">Delete</a>
+                            </text>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

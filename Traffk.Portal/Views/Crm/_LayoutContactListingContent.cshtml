@@ -1,0 +1,38 @@
+﻿@using static TraffkPortal.Controllers.CrmController
+@{
+    Layout = "_LayoutContact.cshtml";
+    var filters = ViewBag.ListingFilters as ListingFilters;
+    var hasFilters = filters != null;
+}
+@section navItems {
+    @RenderSection("navItems", required: false)
+}
+@section pageAlerts {
+    @RenderSection("pageAlerts", required: false)
+}
+@section pageActionButtons {
+    @RenderSection("pageActionButtons", required: false)
+}
+@section pageDialogs {
+    @RenderSection("pageDialogs", required: false)
+}
+@section Scripts {
+    @RenderSection("scripts", required: false)
+}
+<div class="clearfix">
+    @if (hasFilters)
+    {
+        <div class="filterSection">
+            <h3>Filters</h3>
+            @await Html.PartialAsync("_ListingFiltersPartial", filters)
+        </div>
+    }
+    <div class="listingSection @(hasFilters?"listingSectionWithFilters":"")">
+        <div class="btn-group" role="group">
+            @RenderSection("listingActionButtons", required: false)
+        </div>
+        <div class="table-responsive">
+            @RenderSection("listingTable", required: true)
+        </div>
+    </div>
+</div>

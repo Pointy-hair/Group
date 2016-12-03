@@ -1,0 +1,4 @@
+﻿-SchemaAssemblyPath:C:\src\rs\Main\all\RevolutionaryStuff.DataFoundations\bin\Debug\netstandard1.6\RevolutionaryStuff.DataFoundations.dll -Roots:Foundations.SqlAzure
+-SchemaAssemblyPath:C:\src\rs\Main\all\RevolutionaryStuff.DataFoundations\bin\Debug\netstandard1.6\RevolutionaryStuff.DataFoundations.dll -Roots:AspNet.V0
+-SchemaAssemblyPath:C:\src\rs\Main\all\TraffkBal\bin\Debug\netstandard1.6\TraffkBal.dll -Roots:Data.DataStoreUpgrader.PostEF
+-SchemaAssemblyPath:C:\src\rs\Main\all\TraffkBal\bin\Debug\netstandard1.6\TraffkBal.dll -Roots:Data.DataStoreUpgrader.Releases

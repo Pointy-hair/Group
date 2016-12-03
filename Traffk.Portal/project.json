@@ -1,0 +1,102 @@
+{
+  "userSecretsId": "as  -TraffkPortal-577e2973-1095-4cc2-acd6-1f3fe3f47073",
+  "dependencies": {
+    "RevolutionaryStuff.Core": "1.0.0-*",
+    "Traffk.Bal": "1.0.0-*",
+    "RevolutionaryStuff.PowerBiToys": "1.0.0-*",
+    "Microsoft.Extensions.SecretManager": "1.0.0-rc1-final",
+    //    "BundlerMinifier.Core": "2.1.258",
+    "WindowsAzure.Storage": "7.2.1",
+    "Microsoft.ApplicationInsights.AspNetCore": "1.0.2",
+    "Serilog.Sinks.Trace": "2.1.0",
+    "Serilog.Sinks.AzureTableStorage": "3.0.0-dev-00055",
+    "BundlerMinifier.Core": "2.2.306",
+    "Microsoft.AspNetCore.Authentication.Cookies": "1.1.0",
+    "Microsoft.AspNetCore.Authorization": "1.1.0",
+    "Microsoft.AspNetCore.CookiePolicy": "1.1.0",
+    "Microsoft.AspNetCore.Diagnostics": "1.1.0",
+    "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": "1.1.0",
+    "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "1.1.0",
+    "Microsoft.AspNetCore.Mvc": "1.1.0",
+    "Microsoft.AspNetCore.Razor.Tools": {
+      "version": "1.1.0-preview4-final",
+      "type": "build"
+    },
+    "Microsoft.AspNetCore.Server.IISIntegration": "1.1.0",
+    "Microsoft.AspNetCore.Server.Kestrel": "1.1.0",
+    "Microsoft.AspNetCore.StaticFiles": "1.1.0",
+    "Microsoft.EntityFrameworkCore.SqlServer": "1.1.0",
+    "Microsoft.EntityFrameworkCore.SqlServer.Design": "1.1.0",
+    "Microsoft.EntityFrameworkCore.Tools": {
+      "version": "1.1.0-preview4-final",
+      "type": "build"
+    },
+    "Microsoft.Extensions.Configuration.EnvironmentVariables": "1.1.0",
+    "Microsoft.Extensions.Configuration.Json": "1.1.0",
+    "Microsoft.Extensions.Configuration.UserSecrets": "1.1.0",
+    "Microsoft.Extensions.Logging": "1.1.0",
+    "Microsoft.Extensions.Logging.Console": "1.1.0",
+    "Microsoft.Extensions.Logging.Debug": "1.1.0",
+    "Microsoft.Extensions.Options.ConfigurationExtensions": "1.1.0",
+    "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.1.0",
+    "Microsoft.VisualStudio.Web.CodeGeneration.Tools": "1.1.0-preview4-final",
+    "Microsoft.VisualStudio.Web.CodeGenerators.Mvc": "1.1.0-preview4-final",
+    "Serilog": "2.4.0-dev-00750",
+    "Serilog.Extensions.Logging": "1.4.0-dev-10136",
+    "System.Runtime.Serialization.Json": "4.3.0"
+  },
+  "tools": {
+    "BundlerMinifier.Core": "2.2.306",
+    "Microsoft.AspNetCore.Razor.Tools": "1.1.0-preview4-final",
+    "Microsoft.AspNetCore.Server.IISIntegration.Tools": "1.1.0-preview4-final",
+    "Microsoft.EntityFrameworkCore.Tools": "1.1.0-preview4-final",
+    "Microsoft.Extensions.SecretManager.Tools": "1.1.0-preview4-final"
+  },
+  "buildOptions": {
+    "emitEntryPoint": true,
+    "preserveCompilationContext": true,
+    "debugType": "portable"
+  },
+  "runtimeOptions": {
+    "configProperties": {
+      "System.GC.Server": true
+    }
+  },
+  "publishOptions": {
+    "include": [
+      "wwwroot",
+      "Views",
+      "Areas/**/Views",
+      "appsettings.json",
+      "appsettings.Development.json",
+      "appsettings.Production.json",
+      "web.config"
+    ]
+  },
+  "scripts": {
+    "prepublish": [
+      "bower install",
+      "dotnet bundle"
+    ],
+    "postpublish": [
+      "dotnet publish-iis --publish-folder %publish:OutputPath% --framework %publish:FullTargetFramework%"
+    ]
+  },
+  "frameworks": {
+    "netcoreapp1.1": {
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.1.0"
+        }
+      },
+      "imports": [
+        "dotnet5.6"
+        /*        "portable-net45+win8",*/,
+        /*see note about azure corefx compat https://github.com/Azure/azure-storage-net*/
+        "dnxcore50",
+        "portable-net451+win8"
+      ]
+    }
+  }
+}

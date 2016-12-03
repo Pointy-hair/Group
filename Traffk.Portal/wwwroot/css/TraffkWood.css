@@ -1,0 +1,116 @@
+/* entire page */
+body {
+  background-image: url(http://i.imgur.com/ivTibmk.jpg);
+}
+
+/* nav */
+.navbar-fixed-top {
+  background: #FFF;
+  border-bottom: 4px solid #000;
+  color: #777;
+}
+.navbar-fixed-top li, .navbar-fixed-top li:hover a, .navbar-fixed-top a, .navbar-fixed-top a:hover {
+  color: #555 !important;
+}
+.navbar-fixed-top li.open {
+  background: #000;
+}
+.navbar-fixed-top li.open a {
+  color: #FFF !important;
+}
+.navbar-fixed-top li.open ul li a {
+  color: #555 !important;
+} 
+.nav li {
+  border-right: 1px solid #ddd;
+}
+.nav li:first-child {
+  border-left: 1px solid #ddd !important;
+}
+.nav li:last-child {
+  border-right: none;
+}
+.nav li ul li a, .nav li ul li:first-child {
+  border: none !important;
+}
+
+/* body-content */
+.page-header {
+  color: #000;
+  text-align: center;
+  padding: 0;
+  border-bottom: none;
+}
+.page-header h1 {
+  font-family: 'Roboto';
+  font-size: 70px;
+  font-weight:900;
+  text-shadow: 1px 1.5px 0px rgba(255, 255, 255, 0.5);
+}
+.table {
+  color: #777;
+}
+.table a {
+  color: #000;
+  text-decoration: underline;
+}
+.body-content .nav {
+  background: #ededed;
+}
+.contact-body {
+  max-width: 95%;
+  margin: 0 auto;
+  background: #FFF;
+  color: #555;
+  padding: 25px 0;
+  box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
+}
+.hero-heading-container {
+  border-bottom: 1px solid #ccc;
+}
+.btn:hover {
+  opacity: .8;
+  transition: all 0.15s ease-in-out;
+}
+.btn-group .btn {
+  border-right: 1px solid #fff;
+  margin-right: 1px;
+}
+.btn-group .btn:last-child {
+  border-right: none;
+}
+.nav li a {
+  border-right: none !important;
+  transition: all 0.15s ease-in-out;
+}
+.nav li a:hover {
+  background: #ccc;
+}
+.listingSection, .filterSection  {
+  box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+
+/****************
+ PRIMARY COLOR
+****************/
+/* set text to primary (dark) color */
+h1, .body-content a {
+  color: #E6500D;
+}
+/* set backgrounds to primary (dark) color */
+.filterSection h3, .btn, .btn:hover {
+  background: #E6500D;
+  border-color: #E6500D;
+  color: #FFF;
+}
+/****************
+ SECONDARY COLOR
+****************/
+.listingSection, .panel-default .panel-heading, .hero-heading-container, .current-section, .table tr:nth-child(even) {
+  background-color: #F6F6F6;
+}
+.table tr:nth-child(even) {
+  box-shadow: inset -1px 2px #f3f3f3;
+}
+

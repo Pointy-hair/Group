@@ -1,0 +1,3 @@
+﻿requires,RevolutionaryStuff.DataFoundations.Foundations.SqlAzure,/0007/
+requires,RevolutionaryStuff.DataFoundations.AspNet.V0,/0001/
+#requiresEFMigration,00000000000000_CreateIdentitySchema

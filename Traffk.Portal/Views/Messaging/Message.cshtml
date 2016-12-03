@@ -1,0 +1,42 @@
+@using TraffkPortal.Models.MessagingModels
+@model MessageTemplate
+@{
+    if (Model.MessageTemplateId <= 0)
+    {
+        ViewData.SetTitleAndHeading("Create Message");
+    }
+    else
+    {
+        ViewData.SetTitleAndHeading("Edit Message", $"{Model.MessageTemplateTitle} ({Model.MessageTemplateId})");
+    }
+}
+
+<form asp-action="Message">
+    <div class="form-horizontal">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="MessageTemplateId" />
+        <div class="form-group">
+            <label asp-for="MessageTemplateTitle" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="MessageTemplateTitle" class="form-control" />
+                <span asp-validation-for="MessageTemplateTitle" class="text-danger" />
+            </div>
+        </div>
+        @await Html.PartialAsync("_EditTemplatePartial", new TemplateModel(Model.SubjectTemplate, TemplateModel.TemplateModelEditors.SingleLineText, "Subject"), m => m.SubjectTemplate)
+        @await Html.PartialAsync("_EditTemplatePartial", new TemplateModel(Model.HtmlBodyTemplate, TemplateModel.TemplateModelEditors.Html, "HTML Body"), m => m.HtmlBodyTemplate)
+        @await Html.PartialAsync("_EditTemplatePartial", new TemplateModel(Model.TextBodyTemplate, TemplateModel.TemplateModelEditors.MultiLineText, "Plain Text Body"), m => m.TextBodyTemplate)
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <button type="button" class="btn btn-default" asp-action="Index">Back to List</button>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

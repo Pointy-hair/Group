@@ -1,0 +1,51 @@
+@using static TraffkPortal.Controllers.TenantsController
+@model TraffkPortal.Models.TenantModels.DeerwalkSettingsModel
+@{
+    Layout = "_LayoutTenant.cshtml";
+}
+
+<form asp-action="@ActionNames.DeerwalkSettingsSubmission">
+    <div class="form-horizontal">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="FtpHost" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="FtpHost" class="form-control" />
+                <span asp-validation-for="FtpHost" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="FtpFolder" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="FtpFolder" class="form-control" />
+                <span asp-validation-for="FtpFolder" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="FtpUser" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="FtpUser" class="form-control" />
+                <span asp-validation-for="FtpUser" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="FtpPassword" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                @Html.ReplayablePasswordFor(m => m.FtpPassword, m=>m.ConfirmFtpPassword, new { @class = "form-control" })
+                <span asp-validation-for="FtpPassword" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="ConfirmFtpPassword" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                @Html.ReplayablePasswordFor(m => m.ConfirmFtpPassword, m => m.FtpPassword, new { @class = "form-control" })
+                <span asp-validation-for="ConfirmFtpPassword" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,13 @@
+@using static TraffkPortal.Controllers.TenantsController
+@model Tenant
+@{
+    ViewData.SetTitleAndHeading("View Tenant", Model.TenantName);
+}
+
+<div>
+    @await Html.PartialAsync("_DetailsPartial", Model)
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.TenantId">Edit</a> |
+    <button type="button" class="btn btn-default" asp-action="Index">Back to List</button>
+</div>

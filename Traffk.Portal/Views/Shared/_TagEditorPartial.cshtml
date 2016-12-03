@@ -1,0 +1,46 @@
+﻿@model IEnumerable<string>
+<script type="text/javascript">
+    function removeTag(el)
+    {
+        el.parentElement.parentElement.removeChild(el.parentElement);
+    }
+    function newTagKeyDown(el, event)
+    {
+        var s = $(el).val().trim();
+        if (event==null || event.which == 13 || event == null)
+        {
+            if (s.length > 0)
+            {
+                var html = '<span class="btn"> ' + s + ' <span class="glyphicon glyphicon-remove-circle" aria-hidden="true" onclick="removeTag(this)"></span><input name="Contact.Tags" type="hidden" value="' + s + '" /></span>';
+                $(el.parentElement).before(html);
+                $(el).val("");
+            }
+            if (event != null)
+            {
+                event.preventDefault();
+            }
+        }
+    }
+    function addTag(el)
+    {
+        newTagKeyDown(el.parentElement.children[0], null);
+    }
+</script>
+<span id="">
+    @if (Model != null)
+    {
+        foreach (var s in Model)
+        {
+        <span class="btn">
+            @s
+            <span class="glyphicon glyphicon-remove-circle" aria-hidden="true" onclick="removeTag(this)"></span>
+            <input name="Contact.Tags" type="hidden" value="@s" />
+        </span>
+        }
+    }
+    <span class="btn">
+        <input type="text" onkeydown="newTagKeyDown(this, event)" />
+        <span class="glyphicon glyphicon-plus" aria-hidden="true" onclick="addTag(this)" ></span>
+    </span>
+</span>
+ 

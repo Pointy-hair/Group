@@ -1,0 +1,44 @@
+@using TraffkPortal.Models.MessagingModels
+@model BlastModel
+@{
+    Layout = "_LayoutBlast.cshtml";
+}
+<form asp-action="Blast">
+    <div class="form-horizontal">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="Blast.CommunicationBlastId" />
+        <div class="form-group">
+            <label asp-for="Blast.CommunicationBlastTitle" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Blast.CommunicationBlastTitle" class="form-control" />
+                <span asp-validation-for="Blast.CommunicationBlastTitle" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Blast.CampaignName" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Blast.CampaignName" class="form-control" />
+                <span asp-validation-for="Blast.CampaignName" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Blast.TopicName" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Blast.TopicName" class="form-control" />
+                <span asp-validation-for="Blast.TopicName" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Blast.CommunicationMedium" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Blast.CommunicationMedium" class="form-control" />
+                <span asp-validation-for="Blast.CommunicationMedium" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>

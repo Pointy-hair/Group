@@ -1,0 +1,63 @@
+﻿@using static TraffkPortal.Controllers.CrmController
+@model IEnumerable<Participation>
+@{
+    Layout = "_LayoutContactListingContent.cshtml";
+}
+@section listingTable
+    {
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.SortableHeaderFor(z => z.program_type)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.program_code)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.program_name)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.program_status)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.program_start_date)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.program_end_date)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.program_type)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.program_code)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.program_name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.program_status)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.program_start_date)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.program_end_date)
+                    </td>
+                    <td>
+                        <a asp-action="@ActionNames.Health.Participation" asp-route-id="@ViewContext.GetRouteValue()" asp-route-recordId="@item.dw_record_id">Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @{ await Html.RenderPartialAsync("_PaginationPartial"); }
+}

@@ -1,0 +1,50 @@
+﻿@model IEnumerable<Application>
+@{
+    Layout = "~/Views/Shared/_LayoutListing.cshtml";
+    ViewData.SetTitleAndHeading("Applications");
+}
+@section listingActionButtons
+{
+    <button type="button" class="btn btn-default" asp-action="Create">Create</button>
+}
+@section listingTable
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.ApplicationId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ApplicationType)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ApplicationName)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ApplicationId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ApplicationType)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ApplicationName)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.ApplicationId">Edit</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @{ await Html.RenderPartialAsync("_PaginationPartial"); }
+
+}

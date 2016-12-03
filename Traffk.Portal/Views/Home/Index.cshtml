@@ -1,0 +1,24 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    ViewData["BodyContainerClass"] = "container-full-width no-side-padding";
+}
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var w = window.innerWidth;
+            var h = window.innerHeight;
+            //alert("w:" + w + " h:" + h);
+            $(".panel-body").css("height", h - 300).css("width", w - 100);
+            loadPowerBiReport('frame1', 'https://app.powerbi.com/reportEmbed?reportId=16a084de-70d7-46f2-85c0-5f5cdbe27974');
+        });
+    </script>
+}
+
+<center>
+    <div>
+        <text>@R.HomeMessage</text>
+
+        @{ await Html.RenderPartialAsync("_PowerBiIFramePartial"); }
+
+    </div>
+</center>

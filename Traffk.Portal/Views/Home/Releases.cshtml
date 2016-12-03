@@ -1,0 +1,55 @@
+﻿@model IEnumerable<Release>
+@{
+    Layout = "~/Views/Shared/_LayoutListing.cshtml";
+    ViewData.SetTitleAndHeading("Releases");
+}
+@section listingTable
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.SortableHeaderFor(z => z.ReleaseDate)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.ReleaseName)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.ApplicationType)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.ReleaseNotes)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ReleaseDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ReleaseName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ApplicationType)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ReleaseNotes)
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="border:0">
+                        <ul>
+                            @foreach (var change in item.ReleaseReleaseChanges)
+                            {
+                                <li>@change.Title</li>
+                            }
+                        </ul>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

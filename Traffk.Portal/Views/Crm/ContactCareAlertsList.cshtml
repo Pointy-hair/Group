@@ -1,0 +1,45 @@
+﻿@using static TraffkPortal.Controllers.CrmController
+@model IEnumerable<CareAlert>
+@{
+    Layout = "_LayoutContactListingContent.cshtml";
+}
+@section listingTable
+    {
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.SortableHeaderFor(z => z.metric_Type)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.metric_name)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.care_alert_startDate)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.metric_Type)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.metric_name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.care_alert_startDate)
+                    </td>
+                    <td>
+                        <a asp-action="@ActionNames.Health.CareAlert" asp-route-id="@ViewContext.GetRouteValue()" asp-route-recordId="@item.dw_record_id">Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @{ await Html.RenderPartialAsync("_PaginationPartial"); }
+}

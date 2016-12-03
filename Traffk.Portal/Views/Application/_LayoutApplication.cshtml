@@ -1,0 +1,30 @@
+﻿@using static TraffkPortal.Controllers.ApplicationController
+@{
+    Layout = "~/Views/Shared/_LayoutHeroEntity.cshtml";
+    var pageKey = (PageKeys)ViewData[ViewDataKeys.PageKey];
+    var entityId = (int)ViewData[ViewDataKeys.EntityId];
+    var entityType = (string)ViewData[ViewDataKeys.EntityType];
+}
+@section navItems {
+    <li><a asp-action="Edit" asp-route-id="@entityId" class="@(pageKey==PageKeys.Basics?"current-section":"")">Main</a></li>
+    <li><a asp-action="Communications" asp-route-id="@entityId" class="@(pageKey==PageKeys.CommunicationSettings?"current-section":"")">Communication Settings</a></li>
+    @if (entityType == Application.ApplicationTypes.Portal)
+    {
+        <li><a asp-action="PortalSettings" asp-route-id="@entityId" class="@(pageKey==PageKeys.PortalSettings?"current-section":"")">Portal Settings</a></li>
+    }
+    <li><a asp-action="RegistrationSettings" asp-route-id="@entityId" class="@(pageKey==PageKeys.RegistrationSettings?"current-section":"")">Registration Settings</a></li>
+    @RenderSection("navItems", required: false)
+}
+@section pageAlerts {
+    @RenderSection("pageAlerts", required: false)
+}
+@section pageActionButtons {
+    <button type="button" class="btn btn-default" asp-action="Index">Applications List</button>
+    @RenderSection("pageActionButtons", required: false)
+}
+@section Scripts {
+    @RenderSection("scripts", required: false)
+}
+@RenderBody()
+
+

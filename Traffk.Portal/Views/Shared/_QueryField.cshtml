@@ -1,0 +1,38 @@
+﻿@model ContactQueryModel.QueryField
+
+<div class="query-field">
+    <label>@Model.Title</label>    
+    @switch (Model.QueryFieldType)
+    {
+        case ContactQueryModel.QueryFieldTypes.Boolean:
+            <select asp-for="Operator" asp-items="ViewBag.QueryFieldTypeBooleanOperators"></select>
+            break;
+        case ContactQueryModel.QueryFieldTypes.Date:
+            <select asp-for="Operator" asp-items="ViewBag.QueryFieldTypeDateOperators"></select>
+            <input asp-for="DateVal" type="date" />
+            break;
+        case ContactQueryModel.QueryFieldTypes.Numeric:
+            <select asp-for="Operator" asp-items="ViewBag.QueryFieldTypeNumericOperators"></select>
+            <input asp-for="NumericVal" type="number" />
+            break;
+        case ContactQueryModel.QueryFieldTypes.Text:
+            @if (Model.ValuesList != null && Model.ValuesList.Count > 0)
+            {
+                <select asp-for="Operator" asp-items="ViewBag.OneOfOperators"></select>
+                @foreach (var val in Model.ValuesList)
+                {
+                    var id = Guid.NewGuid();
+                    <input type="checkbox" value="@val.Value" id="@id">
+                    <label for="@id">@val.Text</label>
+                }
+            }
+            else
+            {
+                <select asp-for="Operator" asp-items="ViewBag.QueryFieldTypeTextOperators"></select>
+                <input asp-for="TextVal" />
+            }
+            break;
+        default:
+            throw new UnexpectedSwitchValueException(Model.QueryFieldType);
+    }
+</div>

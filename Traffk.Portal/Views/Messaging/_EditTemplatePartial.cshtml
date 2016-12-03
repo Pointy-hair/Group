@@ -1,0 +1,34 @@
+﻿@using TraffkPortal.Models.MessagingModels
+@model TemplateModel
+<div class="form-group">
+    <label class="col-md-2 control-label">@Model.TemplatePartName</label>
+    <input type="hidden" asp-for="TemplateId" />
+    <div class="col-md-10">
+        <div class="row">
+            <label asp-for="ModelType" class="control-label"></label>
+        </div>
+        <div class="row">
+            <select asp-for="ModelType" asp-items="ViewBag.ModelListItems"></select>
+        </div>
+        <div class="row">
+            <label asp-for="Code" class="control-label"></label>
+        </div>
+        <div class="row">
+            @switch (Model.Editor)
+            {
+                case TemplateModel.TemplateModelEditors.SingleLineText:
+                    <input asp-for="Code" class="form-control"/>
+                    break;
+                case TemplateModel.TemplateModelEditors.MultiLineText:
+                    <textarea asp-for="Code" class="form-control"></textarea>
+                    break;
+                case TemplateModel.TemplateModelEditors.Html:
+                    <textarea asp-for="Code" class="form-control htmleditor"></textarea>
+                    break;
+                default:
+                    throw new UnexpectedSwitchValueException(Model.Editor);
+            }
+            <span asp-validation-for="Code" class="text-danger" />
+        </div>
+    </div>
+</div>

@@ -1,0 +1,71 @@
+﻿@using static TraffkPortal.Controllers.TenantsController
+@using Traffk.Bal.Settings;
+@model IEnumerable<ReusableValue>
+@{
+    Layout = "_LayoutTenant.cshtml";
+}
+@section pageActionButtons {
+<div class="dropdown">
+    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        Create
+        <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+        <li><a asp-action="CreateReusableValue" asp-route-tenantId="@ViewContext.GetRouteValue("tenantId")" asp-route-type='@ReusableValueTypes.Color'>Color</a></li>
+        <li><a asp-action="CreateReusableValue" asp-route-tenantId="@ViewContext.GetRouteValue("tenantId")" asp-route-type='@ReusableValueTypes.EmailAddress'>Email Address</a></li>
+        <li><a asp-action="CreateReusableValue" asp-route-tenantId="@ViewContext.GetRouteValue("tenantId")" asp-route-type='@ReusableValueTypes.Url'>Url</a></li>
+        <li><a asp-action="CreateReusableValue" asp-route-tenantId="@ViewContext.GetRouteValue("tenantId")" asp-route-type='@ReusableValueTypes.Text'>Text</a></li>
+        <li><a asp-action="CreateReusableValue" asp-route-tenantId="@ViewContext.GetRouteValue("tenantId")" asp-route-type='@ReusableValueTypes.Html'>Html</a></li>
+    </ul>
+</div>
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.SortableHeaderFor(model => model.ResourceType)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(model => model.Key)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(model => model.Value)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ResourceType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Key)
+                </td>
+                <td>
+                    @switch (item.ResourceType)
+                    { 
+                        case ReusableValueTypes.Html:
+                            @(new Microsoft.AspNetCore.Html.HtmlString(item.Value))
+                            break;
+                        case ReusableValueTypes.Color:
+                            <text>
+                                <div style="border: 1px solid black; background-color: @item.Value; width:20px; height:20px; display: inline-block"></div>
+                                @item.Value;
+                            </text>
+                            break;
+                        default:
+                            @Html.DisplayFor(modelItem => item.Value)
+                            break;
+                    }
+                </td>
+                <td>
+                    <a asp-action="@ActionNames.ReusableValueEdit" asp-route-tenantId="@ViewContext.GetRouteValue("tenantId")" asp-route-key="@item.Key">Edit</a> |
+                    <a asp-action="@ActionNames.ReusableValueDelete" asp-route-tenantId="@ViewContext.GetRouteValue("tenantId")" asp-route-key="@item.Key" class="confirm-on-click" confirmHeading="Delete this resource?" confirmMessage="Are you sure you want to delete the [@item.Key] resource?">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

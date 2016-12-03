@@ -1,0 +1,38 @@
+@model TraffkPortal.Models.RoleModels.RoleDetailViewModel
+@{
+    ViewData.SetTitleAndHeading("Edit Role", Model.RoleName);
+}
+
+<form asp-action="Edit">
+    <div class="form-horizontal">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="InitialPermissionList" />
+        <div class="form-group">
+            <label asp-for="RoleName" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="RoleName" class="form-control" />
+                <span asp-validation-for="RoleName" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="SelectedPermissions" class="col-md-2 control-label">Permissions</label>
+            <div class="col-md-10">
+                <select asp-items="Model.InitialPermissionList" multiple="multiple" asp-for="SelectedPermissions"></select>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <button type="button" class="btn btn-default" asp-action="Index">Back to List</button>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

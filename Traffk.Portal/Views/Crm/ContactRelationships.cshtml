@@ -1,0 +1,42 @@
+﻿@using TraffkPortal.Models.CrmModels
+@model IEnumerable<RelatedContactModel>
+@{
+    Layout = "_LayoutContactListingContent.cshtml";
+}
+@section listingTable
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.SortableHeaderFor(z => z.RelatedContactType)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.RelatedContactFullName)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.Related.RelationType)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RelatedContactType)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RelatedContactFullName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Related.RelationType)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @{ await Html.RenderPartialAsync("_PaginationPartial"); }
+
+}

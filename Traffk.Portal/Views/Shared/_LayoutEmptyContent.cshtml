@@ -1,0 +1,206 @@
+﻿@using static TraffkPortal.AspHelpers;
+@inject SignInManager<ApplicationUser> SignInManager
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TraffkPortal for @Current.Tenant.TenantName</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:900" rel="stylesheet" />
+     
+    <environment names="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/css/site.css" />
+    </environment>
+    <environment names="Staging,Production">
+        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+    </environment>
+    @if (R.HasBasicColors)
+    {
+        <style>
+h1, .body-content a {
+  color: @R.PrimaryColor;
+}
+.filterSection h3, .btn, .btn:hover {
+  background: @R.PrimaryColor;
+  border-color: @R.PrimaryColor;
+}
+.listingSection, .panel-default .panel-heading, .hero-heading-container, .current-section {
+  background-color: @R.SecondaryColor;
+}
+        </style>
+    }
+    @if (R.CssLink != null)
+    {
+        <link rel="stylesheet" href="@R.CssLink" />
+    }
+    @Html.ApplicationInsightsJavaScript(TelemetryConfiguration)
+</head>
+<body>
+    <div class="modal fade" tabindex="-1" role="dialog" id="inactivityWarningModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Inactivity Warning</h4>
+                </div>
+                <div class="modal-body">
+                    <p>You have been inactive too long.  If you don't reactivate, you will be logged out in <span id="secondsTillLogout"></span> seconds.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="idleReactivate()">Reactivate</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        @{ 
+            var mainNavPageKey = ViewData[ViewDataKeys.MainNavPageKey] is MainNavigationPageKeys ? (MainNavigationPageKeys) ViewData[ViewDataKeys.MainNavPageKey] : MainNavigationPageKeys.NotSpecified;
+        }
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">
+                    @if (R.LogoLink == null)
+                    {
+                        <text>TraffkPortal for @Current.Tenant.TenantName</text>
+                    }
+                    else
+                    {
+                        <img src="@R.LogoLink" alt="@Current.Tenant.TenantName logo" height="50" />
+                    }
+                </a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav" id="primary-site-nav">
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                    @*<li role="presentation" class="menu-heading">BLAAAAHHHHHH</li>*@
+                    var manageTenants = await User.HasPermission(AuthorizationService, PermissionNames.ManageTenants);
+                    var manageRoles = await User.HasPermission(AuthorizationService, PermissionNames.ManageRoles);
+                    var manageUsers = await User.HasPermission(AuthorizationService, PermissionNames.ManageUsers);
+                    var manageProtectedHealthInformation = await User.HasPermission(AuthorizationService, PermissionNames.ProtectedHealthInformation);
+                    var canAccessPhi = await User.GetCanAccessProtectedHealthInformationAsync(AuthorizationService);
+                    <li class="dropdown @(mainNavPageKey==MainNavigationPageKeys.Main?"current-section":"")" role="presentation">
+                        <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle" href="#">
+                            Main
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                            <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
+                            <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                            @if (await User.HasPermission(AuthorizationService, PermissionNames.ReleaseLog))
+                            {
+                                <li><a asp-controller="Home" asp-action="Releases">Releases</a></li>
+                            }
+                        </ul>
+                    </li>
+                        @if (await User.HasPermission(AuthorizationService, PermissionNames.Messaging))
+                        {
+                            <li class="dropdown @(mainNavPageKey==MainNavigationPageKeys.Messaging?"current-section":"")" role="presentation">
+                                <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                    Messaging
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a asp-controller="Messaging" asp-action="Blasts">Blasts</a></li>
+                                    <li><a asp-controller="Messaging" asp-action="Messages">Messages</a></li>
+                                    <li><a asp-controller="Messaging" asp-action="Templates">Templates</a></li>
+                                </ul>
+                            </li>
+                        }
+                        @if (await User.HasPermission(AuthorizationService, PermissionNames.BasicReporting))
+                        {
+                            <li><a asp-controller="Reporting" asp-action="Index" class="@(mainNavPageKey==MainNavigationPageKeys.Reporting?"current-section":"")">Reporting</a></li>
+                        }
+                        @if (await User.HasPermission(AuthorizationService, PermissionNames.CustomerRelationshipData))
+                        {
+                            <li><a asp-controller="Crm" asp-action="Index" class="@(mainNavPageKey==MainNavigationPageKeys.CRM?"current-section":"")">CRM</a></li>
+                        }
+                        @if (manageTenants || manageRoles || manageUsers || manageProtectedHealthInformation || canAccessPhi)
+                        {
+                            <li class="dropdown @(mainNavPageKey==MainNavigationPageKeys.Setup?"current-section":"")" role="presentation">
+                                <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                    Setup
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    @if (manageTenants)
+                                    {
+                                        <li><a asp-controller="Application" asp-action="Index">Applications</a></li>
+                                        <li><a asp-controller="Tenants" asp-action="Index">Tenants</a></li>
+                                    }
+                                    @if (manageRoles)
+                                    {
+                                        <li><a asp-controller="Roles" asp-action="Index">Roles</a></li>
+                                    }
+                                    @if (manageUsers)
+                                    {
+                                        <li><a asp-controller="Users" asp-action="Index">Users</a></li>
+                                    }
+                                    <li class="divider" role="separator"></li>
+                                    @if (manageProtectedHealthInformation)
+                                    {
+                                        <li><a>PHI permission</a></li>
+                                    }
+                                    @if (canAccessPhi)
+                                    {
+                                        <li><a>PHI policy</a></li>
+                                    }
+                                </ul>
+                            </li>
+                        }
+                    }
+                    @await Html.PartialAsync("_LoginPartial")
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container body-content @(ViewData["BodyContainerClass"] as string)">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>@R.CopyrightMessage</p>
+            <p id="idleTicker" style="display:none"></p>
+        </footer>
+    </div>
+
+    <environment names="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/lib/store-js/json.js"></script>
+        <script src="~/lib/store-js/store.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery">
+        </script>
+        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/bootstrap.min.js"
+                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
+        </script>
+        <script src="~/lib/store-js/store+json2.min.js"></script>
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+    </environment>
+    <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+    <script>tinymce.init({ selector: '.htmleditor', plugins: "code" });</script>
+    @RenderSection("scripts", required: false)
+    @if (R.JavascriptLink != null)
+    {
+        <script src="@R.JavascriptLink"></script>
+    }
+    @Html.RenderPartialViewScripts();
+</body>
+</html>

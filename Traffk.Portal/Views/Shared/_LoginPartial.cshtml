@@ -1,0 +1,28 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using TraffkPortal.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@if (SignInManager.IsSignedIn(User))
+{
+    <li role="presentation" class="menu-heading">Your Account</li>
+    <li class="dropdown account-nav" role="presentation">
+        <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle" href="#">
+            @UserManager.GetUserName(User)
+            <span class="caret"></span>
+        </a>
+        <form asp-area="" asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm">
+            <ul class="dropdown-menu">
+                <li><a asp-area="" asp-controller="Manage" asp-action="Index">Manage</a></li>
+                <li>
+                    <button type="submit" style="display:none" id="LogoffButton">Log off</button>
+                    <a onclick="$('#LogoffButton').click()">Log Off</a>
+                </li>
+            </ul>
+        </form>
+    </li>
+}
+else
+{
+    <li class="account-nav"><a asp-area="" asp-controller="Account" asp-action="Register">Register</a></li>
+    <li class="account-nav"><a asp-area="" asp-controller="Account" asp-action="Login">Log in</a></li>
+}

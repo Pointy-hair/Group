@@ -1,0 +1,9 @@
+@using RevolutionaryStuff.PowerBiToys.Objects
+@using RevolutionaryStuff.Core.Collections
+@using RevolutionaryStuff.Core.ApplicationParts
+@model TreeNode<PowerBiResource>
+@{
+    ViewData.SetTitleAndHeading("Reporting");
+}
+@{ await Html.RenderPartialAsync("_PowerBiResourceTreeNodePartial", Model.Children); }
+

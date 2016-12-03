@@ -1,0 +1,13 @@
+﻿@model ContactQueryModel
+@{
+    Layout = "_LayoutBlast.cshtml";
+}
+<form asp-action="BlastQuery">
+    <div class="form-horizontal">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        @foreach (var s in Model.Sections)
+        {
+            @await Html.PartialAsync("_QuerySection", s);
+        }
+    </div>
+</form>

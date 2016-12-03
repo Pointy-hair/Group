@@ -1,0 +1,76 @@
+@model IEnumerable<Contact>
+@{
+    Layout = "~/Views/Shared/_LayoutListing.cshtml";
+    ViewData.SetTitleAndHeading("Contacts");
+    var canAccessPhi = await User.GetCanAccessProtectedHealthInformationAsync(AuthorizationService);
+}
+@section listingActionButtons
+{
+    <div class="dropdown">
+        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            Create
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li><a asp-action="Create" asp-all-route-data='@new Dictionary<string, string>{{"contactTypeTemplate", "Person"}}'>Person</a></li>
+            <li><a asp-action="Create" asp-all-route-data='@new Dictionary<string, string>{{"contactTypeTemplate", "Organization"}}'>Organization</a></li>
+        </ul>
+    </div>
+}
+@section listingTable
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="hidden">
+                    @Html.SortableHeaderFor(z => z.ContactId)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.ContactType)
+                </th>
+                @if (canAccessPhi)
+                {
+                    <th>
+                        @Html.SortableHeaderFor(z => z.MemberId)
+                    </th>
+                }
+                <th>
+                    @Html.SortableHeaderFor(z => z.FullName)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="hidden">
+                        @Html.DisplayFor(modelItem => item.ContactId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ContactType)
+                    </td>
+                    @if (canAccessPhi)
+                    {
+                        <td>
+                            @Html.DisplayFor(modelItem => item.MemberId)
+                        </td>
+                    }
+                    <td>
+                        <a asp-action="ContactBackground" asp-route-id="@item.ContactId">@Html.DisplayFor(modelItem => item.FullName)</a>
+                    </td>
+                    <td>
+                        @*
+    <a asp-action="ContactBackground" asp-route-id="@item.Id">Edit</a> |
+    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        *@
+                        <a asp-action="Delete" asp-route-id="@item.ContactId">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+  @{ await Html.RenderPartialAsync("_PaginationPartial"); }
+
+}

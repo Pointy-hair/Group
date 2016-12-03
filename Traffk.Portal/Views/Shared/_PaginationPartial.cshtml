@@ -1,0 +1,52 @@
+﻿@using System.Text.RegularExpressions
+@if (ViewBag.PaginationSupported == true)
+{
+    var q = this.Context.Request.QueryString.ToString() ?? "";
+    var r = new Regex(@"\W(page=\d+&?)", RegexOptions.IgnoreCase);
+    var m = r.Match(q);
+    if (m.Success)
+    {
+        var g = m.Groups[1];
+        q = q.Left(g.Index) + q.Substring(g.Length + g.Index);
+    }
+    if (q.Length == 0) { q = "?"; }
+    if (q.Length > 1) { q = q + "&"; }
+    q = q + "page";
+    var p = (int)ViewBag.PageNum;
+    var pFirst = Stuff.Max(1, p - 4);
+
+    <div class="text-center">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                @if (p > 1)
+                {
+                    <li>
+                        <a href="@q=@(p - 1)" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                }
+                @if (pFirst > 1)
+                {
+                    <li><a href="@q=1">1</a></li>
+                }
+                @if (pFirst > 2)
+                {
+                    <li><span>&hellip;</span></li>
+                }
+                @for (int z = pFirst; z < p; ++z)
+                {
+                    <li><a href="@q=@z">@z</a></li>
+                }
+                <li><span class="current-pagenum">@p</span></li>
+                <li>
+                    <a href="@q=@(p + 1)" aria-label="Next">
+                        <span aria-hidden="true">
+                            &raquo;
+                        </span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+}

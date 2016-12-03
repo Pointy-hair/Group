@@ -1,0 +1,75 @@
+﻿@using static TraffkPortal.Controllers.TenantsController
+@using Traffk.Bal.Settings;
+@model ReusableValue
+@{
+    Layout = "_LayoutTenant.cshtml";
+    if (Model.Key == null)
+    {
+        ViewData.SetTitleAndHeading($"Create {Model.ResourceType} Resource");
+    }
+    else
+    {
+        ViewData.SetTitleAndHeading(Model.Key);
+    }
+    var isNew = Model.Key == null || Model.Key == NewReusableValueKey;
+}
+
+<form asp-action="@ActionNames.ReusableValueEditSubmission" asp-route-tenantId="@ViewContext.GetRouteValue("tenantId")" asp-route-key="@(Model.Key??NewReusableValueKey)">
+    <div class="form-horizontal">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="Key" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                @if (isNew)
+                {
+                    <input asp-for="Key" class="form-control" />
+                }
+                else
+                {
+                    <input asp-for="Key" class="form-control" readonly="readonly" />
+                }
+                <span asp-validation-for="Key" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <input type="hidden" asp-for="ResourceType" />
+            <label asp-for="Value" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                @switch (Model.ResourceType)
+                {
+                    case ReusableValueTypes.Color:
+                        <input asp-for="Value" type="color" class="form-control" />
+                        break;
+                    case ReusableValueTypes.EmailAddress:
+                        <input asp-for="Value" type="email" class="form-control" />
+                        break;
+                    case ReusableValueTypes.Url:
+                        <input asp-for="Value" type="url" class="form-control" />
+                        break;
+                    case ReusableValueTypes.Text:
+                        <textarea asp-for="Value" class="form-control"></textarea>
+                        break;
+                    case ReusableValueTypes.Html:
+                        <textarea asp-for="Value" class="form-control htmleditor"></textarea>
+                        break;
+                    default:
+                        throw new UnexpectedSwitchValueException(Model.ResourceType);
+                }
+                <span asp-validation-for="Value" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <button type="button" class="btn btn-default" asp-action="@ActionNames.ReusableValuesList">Back to List</button>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

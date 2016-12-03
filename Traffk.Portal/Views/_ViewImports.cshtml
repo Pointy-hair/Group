@@ -1,0 +1,20 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+@using RevolutionaryStuff.Core
+@using System
+@using Traffk.Bal.Data.Rdb;
+@using Traffk.Bal.Permissions
+@using TraffkPortal
+@using TraffkPortal.Models
+@using TraffkPortal.Models.AccountViewModels
+@using TraffkPortal.Models.ManageViewModels
+@using TraffkPortal.Permissions
+@using Traffk.Bal.Data.Ddb.Crm
+@using static TraffkPortal.AspHelpers
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, Traffk.Portal
+@inject Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration TelemetryConfiguration
+@inject IAuthorizationService AuthorizationService
+@inject TraffkPortal.Services.TenantServices.TenantFinderService TenantFinder
+@inject TraffkPortal.Resources.PortalResourceService R
+@inject TraffkPortal.Services.CurrentContextServices Current

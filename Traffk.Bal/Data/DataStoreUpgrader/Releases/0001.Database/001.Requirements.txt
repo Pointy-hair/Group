@@ -1,0 +1,1 @@
+﻿requires,RevolutionaryStuff.DataFoundations.Foundations.SqlAzure,/0007/

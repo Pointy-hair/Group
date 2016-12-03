@@ -1,0 +1,51 @@
+﻿@using static TraffkPortal.Controllers.TenantsController
+@model TraffkPortal.Models.TenantModels.SmtpSettingsModel
+@{
+    Layout = "_LayoutTenant.cshtml";
+}
+
+<form asp-action="@ActionNames.SmtpSettingsSubmission">
+    <div class="form-horizontal">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="SmtpHost" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="SmtpHost" class="form-control" />
+                <span asp-validation-for="SmtpHost" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="SmtpPort" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="SmtpPort" class="form-control" />
+                <span asp-validation-for="SmtpPort" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="SmtpUser" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="SmtpUser" class="form-control" />
+                <span asp-validation-for="SmtpUser" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="SmtpPassword" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                @Html.ReplayablePasswordFor(m => m.SmtpPassword, m => m.ConfirmSmtpPassword, new { @class = "form-control" })
+                <span asp-validation-for="SmtpPassword" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="ConfirmSmtpPassword" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                @Html.ReplayablePasswordFor(m => m.ConfirmSmtpPassword, m => m.SmtpPassword, new { @class = "form-control" })
+                <span asp-validation-for="ConfirmSmtpPassword" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>

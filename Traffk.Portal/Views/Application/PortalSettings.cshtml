@@ -1,0 +1,117 @@
+@model TraffkPortal.Models.ApplicationModels.PortalOptionsModel
+@{
+    Layout = "_LayoutApplication.cshtml";
+    ViewData.SetTitleAndHeading("Portal Settings");
+}
+@section pageAlerts {
+    <div class="alert alert-success" role="alert" id="AssetRemovedAlert" style="display:none">The asset was removed.</div>
+}
+<form asp-action="PortalSettings" enctype="multipart/form-data">
+    <div class="form-horizontal">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="RegisterMessage" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <textarea asp-for="RegisterMessage" class="form-control htmleditor"></textarea>
+                <span asp-validation-for="RegisterMessage" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="LoginMessage" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <textarea asp-for="LoginMessage" class="form-control htmleditor"></textarea>
+                <span asp-validation-for="LoginMessage" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="HomeMessage" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <textarea asp-for="HomeMessage" class="form-control htmleditor"></textarea>
+                <span asp-validation-for="HomeMessage" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="CopyrightMessage" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="CopyrightMessage" class="form-control" />
+                <span asp-validation-for="CopyrightMessage" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="AboutMessage" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <textarea asp-for="AboutMessage" class="form-control htmleditor"></textarea>
+                <span asp-validation-for="AboutMessage" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="LogoFile" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                @await Html.PartialAsync("_AssetPreviewPartial", new AssetPreviewModel(Model.LogoLink, AssetPreviewModel.AssetTypes.Image, nameof(Model.LogoLink), "removeUploadedAsset"))
+                <input asp-for="LogoFile" class="form-control" />
+                <span asp-validation-for="LogoFile" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="CssFile" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                @await Html.PartialAsync("_AssetPreviewPartial", new AssetPreviewModel(Model.CssLink, AssetPreviewModel.AssetTypes.Css, nameof(Model.CssLink), "removeUploadedAsset"))
+                <input asp-for="CssFile" class="form-control" />
+                <span asp-validation-for="CssFile" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="JavascriptFile" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                @await Html.PartialAsync("_AssetPreviewPartial", new AssetPreviewModel(Model.JavascriptLink, AssetPreviewModel.AssetTypes.Javascript, nameof(Model.JavascriptLink), "removeUploadedAsset"))
+                <input asp-for="JavascriptFile" class="form-control" />
+                <span asp-validation-for="JavascriptFile" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="PrimaryColor" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="PrimaryColor" class="form-control color-picker" type="color" />
+                <span asp-validation-for="PrimaryColor" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="SecondaryColor" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="SecondaryColor" class="form-control color-picker" type="color" />
+                <span asp-validation-for="SecondaryColor" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript">
+        function removeUploadedAsset(el, assetKey) {
+            var url = "/Applications/@ViewContext.GetRouteValue()/RemovePortalAsset/" + assetKey;
+            $.ajax({
+                url: url,
+                dataType: "json",
+                type: "DELETE",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify({ assetKey: assetKey }),
+                async: true,
+                processData: false,
+                cache: false,
+                success: function (data) {
+                    $("#AssetRemovedAlert").show();
+                    $(el).parent().remove();
+                },
+                error: function (xhr) {
+                    alert("error:\n" + JSON.stringify(xhr));
+                }
+            });
+        }
+    </script>
+}

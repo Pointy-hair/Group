@@ -1,0 +1,22 @@
+﻿@model ContactQueryModel.QuerySection
+
+<div class="panel panel-default query-section">
+    <div class="panel-heading">@Model.Title</div>
+    <div class="panel-body">
+        <div class="form">
+            <div class="form-group">
+                @foreach (var qb in Model.Children)
+                {
+                    if (qb is ContactQueryModel.QueryField)
+                    {
+                        @await Html.PartialAsync("_QueryField", (ContactQueryModel.QueryField)qb);
+                    }
+                    else
+                    {
+                        @await Html.PartialAsync("_QuerySection", (ContactQueryModel.QuerySection)qb);
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+﻿@using Traffk.Bal.Data.Ddb
+@model IEnumerable<Note>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.SortableHeaderFor(z => z.CreatedAt)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.Content)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Content)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@{ await Html.RenderPartialAsync("_PaginationPartial"); }

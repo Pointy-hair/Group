@@ -1,0 +1,58 @@
+﻿@using static TraffkPortal.Controllers.CrmController
+@model IEnumerable<Visit>
+@{
+    Layout = "_LayoutContactListingContent.cshtml";
+}
+@section listingTable
+    {
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.SortableHeaderFor(z => z.mbr_visit_type)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.mbr_start_date)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.mbr_end_date)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.admission_type)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.ip_days)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.mbr_visit_type)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.mbr_start_date)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.mbr_end_date)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.admission_type)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ip_days)
+                    </td>
+                    <td>
+                        <a asp-action="@ActionNames.Health.Visit" asp-route-id="@ViewContext.GetRouteValue()" asp-route-recordId="@item.dw_record_id">Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @{ await Html.RenderPartialAsync("_PaginationPartial"); }
+
+}

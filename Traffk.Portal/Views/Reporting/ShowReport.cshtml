@@ -1,0 +1,30 @@
+﻿@using RevolutionaryStuff.PowerBiToys.Objects
+@using RevolutionaryStuff.Core.Collections
+@using RevolutionaryStuff.Core.ApplicationParts
+@model PowerBiResource
+@{
+    ViewData.SetTitleAndHeading(NameHelpers.GetName(Model));
+    ViewData["BodyContainerClass"] = "container-full-width no-side-padding";
+    var e = Model as PowerBiEmbeddableResource;
+}
+
+@{ await Html.RenderPartialAsync("_PowerBiIFramePartial"); }
+@section Scripts {
+    <script type="text/javascript">
+    $(document).ready(function () {
+        @if (e is PowerBiReport)
+        {
+    <text>
+        loadPowerBiReport('frame1', '@e.EmbedUrl');
+        </text>
+        }
+        else if (e is PowerBiTile)
+        {
+    <text>
+        alert("world");
+        loadPowerBiTile('frame1', '@e.EmbedUrl');
+        </text>
+    }
+    });
+    </script>
+}

@@ -1,0 +1,36 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutEmptyContent.cshtml";
+    ViewData["BodyContainerClass"] = "container-full-width no-side-padding";
+    ViewData.SetIfMissing("Heading", ViewData["EntityTitle"] as string);
+    var entityId = ViewData[ViewDataKeys.EntityId].ToString();
+}
+<div class="page-header hero-header">
+    <div class="hero-heading-container">
+        <h1>@ViewData[ViewDataKeys.Heading]</h1>
+        <p class="subheading">@ViewData[ViewDataKeys.SubHeading]</p>
+    </div>
+    <ul class="nav navbar-nav">
+        @RenderSection("navItems", required: false)
+    </ul>
+</div>
+
+<div class="page-Alerts contact-alerts" id="contact-alerts">
+    @RenderSection("pageAlerts", required: false)
+</div>
+
+<div class="btn-group-container">
+    <div class="btn-group" role="group">
+        @RenderSection("pageActionButtons", required: false)
+    </div>
+</div>
+
+@RenderSection("pageDialogs", required: false)
+
+<div class="contact-body">
+    @RenderBody()
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @RenderSection("scripts", required: false)
+}

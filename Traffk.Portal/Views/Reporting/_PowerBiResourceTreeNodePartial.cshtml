@@ -1,0 +1,34 @@
+﻿@using RevolutionaryStuff.PowerBiToys.Objects
+@using RevolutionaryStuff.Core.Collections
+@using RevolutionaryStuff.Core.ApplicationParts
+@using static TraffkPortal.Controllers.ReportingController
+@model IEnumerable<TreeNode<PowerBiResource>>
+<ul>
+    @foreach (var tn in Model)
+    {
+        <li role="presentation">
+            @{
+                var pbi = tn.Data;
+                var name = $"{NameHelpers.GetName(pbi)}";
+                var e = pbi as PowerBiEmbeddableResource;
+                var urlName = CreateAnchorName(e);
+                if (pbi is PowerBiReport)
+                {
+                    <a style="cursor:pointer" asp-route-anchorName="@urlName" asp-action="@ActionNames.ShowReport">@name</a>
+                }
+                else if (pbi is PowerBiTile)
+                {
+                    <a style="cursor:pointer" asp-route-anchorName="@urlName" asp-action="@ActionNames.ShowReport">@name</a>
+                }
+                else
+                {
+                    <text>@name</text>
+                }
+                if (tn.HasChildren)
+                {
+                    await Html.RenderPartialAsync("_PowerBiResourceTreeNodePartial", tn.Children);
+                }
+            }
+        </li>
+    }
+</ul>

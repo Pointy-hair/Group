@@ -1,0 +1,9 @@
+@using TraffkPortal.Models.CrmModels
+@model ContactModel
+@{
+    Layout = "_LayoutContactListingContent.cshtml";
+}
+@section listingTable
+{
+    @await Html.PartialAsync("_NotesPartial", Model.Contact.Notes, z => z.Contact.Notes)
+}
