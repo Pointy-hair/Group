@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{AB94B67B-7239-4505-834B-8ED8D7B01E94}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RevolutionaryStuff.SqlSchemaFoundations</RootNamespace>
+    <AssemblyName>RevolutionaryStuff.SqlSchemaFoundations</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Foundations\V0\0001.ChangeLog\001.Schema.sql" />
+    <EmbeddedResource Include="Foundations\V0\0001.ChangeLog\002.ChangeLogTable.sql" />
+    <EmbeddedResource Include="Foundations\V0\0001.ChangeLog\003.ChangeLogSchemaTrigger.sql" />
+    <EmbeddedResource Include="Foundations\V0\0001.ChangeLog\004.ChangeLogInsertOnlyTrigger.sql" />
+    <EmbeddedResource Include="Foundations\V0\0003.Descriptive\001.PrintNow.sql" />
+    <EmbeddedResource Include="Foundations\V0\0003.Descriptive\002.ColumnPropertySet.sql" />
+    <EmbeddedResource Include="Foundations\V0\0003.Descriptive\003.TablePropertySet.sql" />
+    <EmbeddedResource Include="Foundations\V0\0003.Descriptive\004.ColumnProperties.sql" />
+    <EmbeddedResource Include="Foundations\V0\0003.Descriptive\005.TableProperties.sql" />
+    <EmbeddedResource Include="Foundations\V0\0004.Asserts\001.AssertNull.sql" />
+    <EmbeddedResource Include="Foundations\V0\0004.Asserts\002.AssertNotNull.sql" />
+    <EmbeddedResource Include="Foundations\V0\0004.Asserts\003.AssertZero.sql" />
+    <EmbeddedResource Include="Foundations\V0\0004.Asserts\004.AssertZeroOrOne.sql" />
+    <EmbeddedResource Include="Foundations\V0\0004.Asserts\005.AssertEquals.sql" />
+    <EmbeddedResource Include="Foundations\V0\0005.ExecuteIf\001.ExecuteSqlIfObjectNotExists.sql" />
+    <EmbeddedResource Include="Foundations\V0\0005.ExecuteIf\002.ExecuteSqlIfObjectExists.sql" />
+    <EmbeddedResource Include="Foundations\V0\0005.ExecuteIf\003.ExecuteSqlIfColumnNotExists.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RevolutionaryStuff.SqlServerObjects\RevolutionaryStuff.SqlServerAddIn.csproj">
+      <Project>{dc0d6179-d80a-4fff-8770-0179f706643c}</Project>
+      <Name>RevolutionaryStuff.SqlServerAddIn</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Foundations\V0\0006.RevolutionaryStuffAddIn0\001.Install.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Foundations\V0\0005.ExecuteIf\004.RoutineReplace.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TenantedSystem\V0\0002.Structure\t2.sql" />
+    <EmbeddedResource Include="TenantedSystem\V0\0002.Structure\002.BatchDelete.sql" />
+    <EmbeddedResource Include="TenantedSystem\V0\0002.Structure\001.Tables.sql" />
+    <EmbeddedResource Include="TenantedSystem\V0\0001.Prerequisites\001.RequiresOtherSchemas.txt" />
+    <EmbeddedResource Include="Foundations\V0\0001.ChangeLog\005.SchemaUpgraderLog.sql" />
+    <EmbeddedResource Include="Foundations\V0\0001.ChangeLog\006.SchemaUpgradeLogNonDeletableTrigger.sql" />
+    <EmbeddedResource Include="TenantedSystem\V0\0002.Structure\003.CommunicationPermissions.sql" />
+    <EmbeddedResource Include="Foundations\V0\0003.Descriptive\006.SchemaMeta.sql" />
+    <EmbeddedResource Include="Foundations\V0\0008.Diagnostic\002.FindX.sql">
+      <SubType>Component</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Foundations\V0\0007.Types\002.TableTypes.sql" />
+    <Content Include="ReferenceData\V0\0000.ISO3166\ISO3166-1\source.txt" />
+    <Content Include="ReferenceData\V0\0000.ISO3166\ISO3166-2\LICENSE.TXT" />
+    <Content Include="ReferenceData\V0\0000.ISO3166\ISO3166-2\source.txt" />
+    <EmbeddedResource Include="Foundations\V0\0008.Diagnostic\001.SchemaTablesPreview.sql" />
+    <EmbeddedResource Include="ReferenceData\V0\0000.ISO3166\003.FetchStates.txt" />
+    <EmbeddedResource Include="ReferenceData\V0\0000.ISO3166\002.FetchCountriesFromWikipedia.txt" />
+    <EmbeddedResource Include="ReferenceData\V0\0000.ISO3166\001.WorkArea.sql" />
+    <EmbeddedResource Include="CRM\V0\0002.Structure\001.Tables.sql" />
+    <EmbeddedResource Include="CRM\V0\0001.Prerequisites\001.RequiresOtherSchemas.txt" />
+    <EmbeddedResource Include="Foundations\V0\0007.Types\001.PrimativeTypes.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ReferenceData\V0\0000.ISO3166\ISO3166-1\WIKIPEDIA-ISO3166-1.csv" />
+    <EmbeddedResource Include="ReferenceData\V0\0000.ISO3166\ISO3166-2\IP2LOCATION-ISO3166-2.CSV" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

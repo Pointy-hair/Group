@@ -1,0 +1,1 @@
+﻿assembly,RevolutionaryStuffAddIn0,RevolutionaryStuff.SqlServerAddIn.dll,Register.sql,RevolutionaryStuffAddIn_VER

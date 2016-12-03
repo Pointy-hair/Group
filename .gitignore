@@ -5,3 +5,11 @@
 /RevolutionaryStuff.Core/obj
 /RevolutionaryStuff.Core/bin
 /.vs
+/RevolutionaryStuff.Azure/obj
+/RevolutionaryStuff.Azure/bin
+/RevolutionaryStuff.DataFoundations/obj
+/RevolutionaryStuff.DataFoundations/bin
+/RevolutionaryStuff.PowerBiToys/obj
+/RevolutionaryStuff.PowerBiToys/bin
+/RevolutionaryStuff.SqlSchemaFoundations/obj
+RevolutionaryStuff.SqlSchemaFoundations/bin

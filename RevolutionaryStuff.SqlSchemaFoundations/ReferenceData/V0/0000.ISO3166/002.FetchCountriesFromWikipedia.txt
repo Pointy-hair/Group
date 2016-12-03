@@ -1,0 +1,1 @@
+﻿importWebTable,https://en.wikipedia.org/wiki/ISO_3166-1 ,0,Iso3166Workspace,Countries,true,true
