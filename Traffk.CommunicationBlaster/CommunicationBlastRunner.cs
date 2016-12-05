@@ -59,20 +59,19 @@ namespace TraffkCommunicationBlastRunner
                 streamByCloubBlob[blob] = new StreamMuxer(st);
             }
 
-            var alreadySentRecipientContactIds = new HashSet<string>();
+            var alreadySentRecipientContactIds = new HashSet<int>();
             foreach (var sent in
                 from z in Crm.CommunicationLogs
                 where z.TenantId == job.TenantId.Value && z.JobId == job.JobId
                 select z)
             {
-                alreadySentRecipientContactIds.Add(sent.RecipientContactId);
+                alreadySentRecipientContactIds.Add(int.Parse(sent.RecipientContactId));
             }
             result.AlreadySentRecipientContactIdCount = alreadySentRecipientContactIds.Count;
 
             var ands = new List<TestExpression>()
             {
                 new TestExpression(CollectionNames.Contacts, nameof(Contact.ContactType), Operators.Equals, Contact.ContactTypes.Person),
-                new TestExpression(CollectionNames.Contacts, "Person.Gender", Operators.Equals, Person.CommonGenders.Male),
                 new TestExpression(CollectionNames.Eligibility, nameof(Eligibility.mbr_relationship_desc), Operators.Equals, "Employee"),
             };
 
@@ -94,7 +93,7 @@ namespace TraffkCommunicationBlastRunner
 
             var wq = new WorkQueue(1);
 
-            Parallel.ForEach(contactIds, new ParallelOptions { MaxDegreeOfParallelism = 1 }, delegate (string contactId) 
+            Parallel.ForEach(contactIds, new ParallelOptions { MaxDegreeOfParallelism = 1 }, delegate (int contactId) 
             {
                 if (alreadySentRecipientContactIds.Contains(contactId))
                 {
@@ -103,7 +102,7 @@ namespace TraffkCommunicationBlastRunner
                 }
                 try
                 {
-                    var c = Crm.Contacts.FirstOrDefault(z => z.TenantId == job.TenantId.Value && z.Id == contactId);
+                    var c = Rdb.Contacts.FirstOrDefault(z => z.TenantId == job.TenantId.Value && z.ContactId == contactId);
                     if (c == null)
                     {
                         result.IncrementMissingContactCount();
@@ -114,7 +113,7 @@ if (e!=null)                    throw new NotImplementedException();
                     var model = Template.ModelTypes.CreateContactSummaryPhiModel(e);
                     var m = new MimeMessage();
                     m.From.Add(new MailboxAddress(tenant.TenantSettings.EmailSenderName, tenant.TenantSettings.EmailSenderAddress));
-                    m.Headers.Add(MailHelpers.ContactIdHeader, contactId);
+                    m.Headers.Add(MailHelpers.ContactIdHeader, contactId.ToString());
                     m.Headers.Add(MailHelpers.TopicHeader, blast.TopicName);
                     m.Headers.Add(MailHelpers.CampaignHeader, blast.CampaignName);
                     m.Headers.Add(MailHelpers.JobId, blast.JobId?.ToString());

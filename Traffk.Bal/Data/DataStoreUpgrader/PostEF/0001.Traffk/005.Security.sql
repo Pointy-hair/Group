@@ -22,19 +22,6 @@ exec sp_addrolemember 'tenant_all_reader', 'tenant_all_reporting'
 
 GO
 
-create FUNCTION security.RowStatusPredicate(@status varchar(80))
-	RETURNS TABLE
-	WITH SCHEMABINDING
-AS
-	RETURN SELECT 1 AS accessResult
-	where
-		@status not in ('Deleted', 'Purged') or
-		1=is_rolemember('i_see_dead_people') or
-		1=is_rolemember('db_owner') or
-		current_user='dbo'
-
-GO
-
 create FUNCTION security.TenantPredicate(@tenantId int)
 	RETURNS TABLE
 	WITH SCHEMABINDING
@@ -48,7 +35,20 @@ AS
 
 GO
 
-create FUNCTION security.TenantAndStatusPredicate(@tenantId int, @status varchar(80))
+create FUNCTION security.RowStatusPredicate(@rowStatus char(1))
+	RETURNS TABLE
+	WITH SCHEMABINDING
+AS
+	RETURN SELECT 1 AS accessResult
+	where
+		@rowStatus not in ('d', 'p') or
+		1=is_rolemember('i_see_dead_people') or
+		1=is_rolemember('db_owner') or
+		current_user='dbo'
+
+GO
+
+create FUNCTION security.TenantAndStatusPredicate(@tenantId int, @rowStatus char(1))
 	RETURNS TABLE
 	WITH SCHEMABINDING
 AS
@@ -58,7 +58,7 @@ AS
 		current_user='dbo' or
 		(
 			(
-				@status not in ('Deleted', 'Purged') or
+				@rowStatus not in ('d', 'p') or
 				1=is_rolemember('i_see_dead_people')			
 			) and
 			(
@@ -108,7 +108,7 @@ Frags (SchemaName, TableName, Frag) as
 			select ColumnName StatusColumnName
 			from db.ColumnProperties c
 			where 
-				PropertyName='SupportsDeletePurgeSemantics' and 
+				PropertyName='ImplementsRowStatusSemantics' and 
 				PropertyValue='1' and
 				c.SchemaName=t.table_schema and
 				c.TableName=t.table_name	
@@ -138,24 +138,26 @@ create SECURITY POLICY Security.dataAccessPolicy
 	add filter predicate security.TenantPredicate(TenantId) on dbo.Applications,
 	add block predicate security.TenantPredicate(TenantId) on dbo.AspNetRoles,
 	add filter predicate security.TenantPredicate(TenantId) on dbo.AspNetRoles,
-	add block predicate security.TenantAndStatusPredicate(TenantId, UserStatus) on dbo.AspNetUsers,
-	add filter predicate security.TenantAndStatusPredicate(TenantId, UserStatus) on dbo.AspNetUsers,
-	add block predicate security.TenantPredicate(TenantId) on dbo.CommunicationBlasts,
-	add filter predicate security.TenantPredicate(TenantId) on dbo.CommunicationBlasts,
+	add block predicate security.TenantAndStatusPredicate(TenantId, UserRowStatus) on dbo.AspNetUsers,
+	add filter predicate security.TenantAndStatusPredicate(TenantId, UserRowStatus) on dbo.AspNetUsers,
+	add block predicate security.TenantAndStatusPredicate(TenantId, CommunicationBlastLinkRowStatus) on dbo.CommunicationBlastLinks,
+	add filter predicate security.TenantAndStatusPredicate(TenantId, CommunicationBlastLinkRowStatus) on dbo.CommunicationBlastLinks,
+	add block predicate security.TenantAndStatusPredicate(TenantId, CommunicationBlastRowStatus) on dbo.CommunicationBlasts,
+	add filter predicate security.TenantAndStatusPredicate(TenantId, CommunicationBlastRowStatus) on dbo.CommunicationBlasts,
 	add block predicate security.TenantPredicate(TenantId) on dbo.Contacts,
 	add filter predicate security.TenantPredicate(TenantId) on dbo.Contacts,
 	add block predicate security.TenantPredicate(TenantId) on dbo.DateDimensions,
 	add filter predicate security.TenantPredicate(TenantId) on dbo.DateDimensions,
-	add block predicate security.TenantAndStatusPredicate(TenantId, JobStatus) on dbo.Jobs,
-	add filter predicate security.TenantAndStatusPredicate(TenantId, JobStatus) on dbo.Jobs,
+	add block predicate security.TenantAndStatusPredicate(TenantId, JobRowStatus) on dbo.Jobs,
+	add filter predicate security.TenantAndStatusPredicate(TenantId, JobRowStatus) on dbo.Jobs,
 	add block predicate security.TenantPredicate(TenantId) on dbo.MessageTemplates,
 	add filter predicate security.TenantPredicate(TenantId) on dbo.MessageTemplates,
 	add block predicate security.TenantPredicate(TenantId) on dbo.SystemCommunications,
 	add filter predicate security.TenantPredicate(TenantId) on dbo.SystemCommunications,
 	add block predicate security.TenantPredicate(TenantId) on dbo.Templates,
 	add filter predicate security.TenantPredicate(TenantId) on dbo.Templates,
-	add block predicate security.TenantAndStatusPredicate(TenantId, TenantStatus) on dbo.Tenants,
-	add filter predicate security.TenantAndStatusPredicate(TenantId, TenantStatus) on dbo.Tenants,
+	add block predicate security.TenantAndStatusPredicate(TenantId, TenantRowStatus) on dbo.Tenants,
+	add filter predicate security.TenantAndStatusPredicate(TenantId, TenantRowStatus) on dbo.Tenants,
 	add block predicate security.TenantPredicate(TenantId) on dbo.UserActivities,
 	add filter predicate security.TenantPredicate(TenantId) on dbo.UserActivities,
 	add block predicate security.TenantPredicate(TenantId) on deerwalk.CareAlerts,
@@ -242,3 +244,55 @@ begin
 end
 
 GO
+
+
+/*
+select 
+	a.*,
+	'CREATE TRIGGER '+SchemaName+'.'+TableName+'InsteadOfDelete
+       ON '+SchemaName+'.'+TableName+'
+INSTEAD OF DELETE
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+	update u
+	set
+		'+RowStatusColumnName+'=''d''
+	from
+		'+SchemaName+'.'+TableName+' u
+			inner join
+		deleted d
+			on d.'+PrimaryKeyColumnName+'=u.'+PrimaryKeyColumnName+'
+	where
+		u.'+RowStatusColumnName+' not in (''p'', ''d'')
+ 
+END' InsteadOfDeleteTriggerDdl
+from
+(	 
+	select 
+		c.SchemaName, c.TableName, 
+		ccu.column_name PrimaryKeyColumnName, 
+		c.ColumnName RowStatusColumnName
+	from 
+		db.ColumnProperties c with (nolock)
+			inner join
+		INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc with (nolock)
+			on tc.table_schema=c.schemaname
+			and tc.table_name=c.TableName
+			inner join
+		INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu with (nolock)
+			on tc.constraint_name=ccu.constraint_name 
+			and tc.table_schema=ccu.table_schema 
+			and tc.table_name=ccu.table_name
+	where
+		c.PropertyName='ImplementsRowStatusSemantics' and 
+		c.PropertyValue='1' and 
+		tc.[CONSTRAINT_TYPE]='PRIMARY KEY' 
+) a
+order by 1,2
+
+*/
+
+

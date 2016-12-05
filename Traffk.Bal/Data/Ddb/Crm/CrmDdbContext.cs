@@ -20,7 +20,7 @@ namespace Traffk.Bal.Data.Ddb.Crm
 
         public readonly ITraffkTenantFinder TenantFinder;
 
-        public ContactsDbSet Contacts { get; set; }
+//        public ContactsDbSet Contacts { get; set; }
 
         public CommunicationOptingsDbSet CommunicationOptings { get; set; }
 

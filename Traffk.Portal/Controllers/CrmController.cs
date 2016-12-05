@@ -189,7 +189,7 @@ namespace TraffkPortal.Controllers
                 case Contact.ContactTypes.Person:
                 case null:
                 case "":
-                    contact = new PersonZ();
+                    contact = new Person();
                     break;
                 case Contact.ContactTypes.Organization:
                     contact = new Organization();
@@ -329,13 +329,13 @@ namespace TraffkPortal.Controllers
             nameof(ContactModel.Contact)+"."+nameof(Contact.ContactType),
             nameof(ContactModel.Contact)+"."+nameof(Contact.ContactDetails),
             nameof(ContactModel.Contact)+"."+nameof(Contact.ContactDetails)+"."+nameof(Contact.ContactDetails_.Tags),
-            nameof(ContactModel.Contact)+"."+nameof(PersonZ.DateOfBirth),
-            nameof(ContactModel.Contact)+"."+nameof(PersonZ.Gender),
-            nameof(ContactModel.Contact)+"."+nameof(PersonZ.Prefix),
-            nameof(ContactModel.Contact)+"."+nameof(PersonZ.FirstName),
-            nameof(ContactModel.Contact)+"."+nameof(PersonZ.MiddleName),
-            nameof(ContactModel.Contact)+"."+nameof(PersonZ.LastName),
-            nameof(ContactModel.Contact)+"."+nameof(PersonZ.Suffix),
+            nameof(ContactModel.Contact)+"."+nameof(Person.DateOfBirth),
+            nameof(ContactModel.Contact)+"."+nameof(Person.Gender),
+            nameof(ContactModel.Contact)+"."+nameof(Person.Prefix),
+            nameof(ContactModel.Contact)+"."+nameof(Person.FirstName),
+            nameof(ContactModel.Contact)+"."+nameof(Person.MiddleName),
+            nameof(ContactModel.Contact)+"."+nameof(Person.LastName),
+            nameof(ContactModel.Contact)+"."+nameof(Person.Suffix),
             nameof(ContactModel.CommunicationLogs),
             nameof(ContactModel.Optings)
             )]

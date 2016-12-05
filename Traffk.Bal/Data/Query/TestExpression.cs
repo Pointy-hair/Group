@@ -29,7 +29,7 @@ namespace Traffk.Bal.Data.Query
             Operand = operand;
         }
 
-        public static ICollection<string> MatchingContactIds(CrmDdbContext crm, IEnumerable<TestExpression> ands)
+        public static ICollection<int> MatchingContactIds(CrmDdbContext crm, IEnumerable<TestExpression> ands)
         {
             var m = ands.ToMultipleValueDictionary(a => a.Collection);
             var idLists = new List<ICollection<string>>();
@@ -41,7 +41,7 @@ namespace Traffk.Bal.Data.Query
                 {
                     case CollectionNames.Contacts:
                         contactIdFieldName = "id";
-                        collectionType = typeof(Ddb.Crm.Zontact);
+                        collectionType = typeof(Contact);
                         break;
                     case CollectionNames.Eligibility:
                         contactIdFieldName = "contactId";
@@ -137,7 +137,9 @@ namespace Traffk.Bal.Data.Query
                     ids.Remove(id);
                 }
             }
-            return ids;
+            throw new NotImplementedException();
+//            return ids;
+            return Empty.IntArray;
         }
     }
 }

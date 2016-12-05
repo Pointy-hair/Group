@@ -1,4 +1,5 @@
-﻿namespace Traffk.Bal.Data.Ddb.Crm
+﻿#if false
+namespace Traffk.Bal.Data.Ddb.Crm
 {
     public class ContactsDbSet : CrmDbSet<Zontact>
     {
@@ -7,3 +8,4 @@
         { }
     }
 }
+#endif

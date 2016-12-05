@@ -1,16 +1,6 @@
-﻿insert into Releases values ('urn:traffk.com/portal', '2016-11-11', 'I Game', null)
+﻿insert into Releases values ('urn:traffk.com/portal', '2016-12-05', 'Ikari Warriors', null)
 
 GO
-
-/*
-load 9 other data sources
-powerbi paid account
-pass parameter into powerbi
-
-
-powerbi multi-tenanted accounts and creation
-install background agents
-*/
 
 insert into ReleaseChanges
 (ReleaseId, ChangeType, Title)

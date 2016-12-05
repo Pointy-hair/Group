@@ -16,7 +16,7 @@ namespace Traffk.Bal.Email
         public const string CampaignHeader = "x-Traffk-Campaign";
         public const string JobId = "x-Traffk-JobId";
 
-        public static void Fill(this MimeMessage message, TemplateManager tm, MessageTemplate mt, ApplicationUser u, Data.Ddb.Crm.Zontact c, object model)
+        public static void Fill(this MimeMessage message, TemplateManager tm, MessageTemplate mt, ApplicationUser u, Contact c, object model)
         {
             Requires.NonNull(message, nameof(message));
             Requires.NonNull(tm, nameof(tm));

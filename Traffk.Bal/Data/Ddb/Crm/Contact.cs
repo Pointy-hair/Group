@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿#if false
+using Newtonsoft.Json;
 using RevolutionaryStuff.Azure.DocumentDb;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.ApplicationParts;
@@ -274,3 +275,4 @@ namespace Traffk.Bal.Data.Ddb.Crm
         public string RelationType { get; set; }
     }
 }
+#endif

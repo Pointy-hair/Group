@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Traffk.Bal.Data.Ddb.Crm;
 
 namespace Traffk.Bal.Data.Rdb
 {
@@ -36,7 +38,7 @@ namespace Traffk.Bal.Data.Rdb
                 case ContactTypes.Organization:
                     return new Organization();
                 case ContactTypes.Person:
-                    return new PersonZ();
+                    return new Person();
                 default:
                     throw new UnexpectedSwitchValueException(contactType);
             }
@@ -44,7 +46,7 @@ namespace Traffk.Bal.Data.Rdb
 
         [NotMapped]
         [JsonIgnore]
-        public bool IsPerson => this is PersonZ;
+        public bool IsPerson => this is Person;
 
         [NotMapped]
         [JsonIgnore]
@@ -52,7 +54,7 @@ namespace Traffk.Bal.Data.Rdb
 
         [NotMapped]
         [JsonIgnore]
-        public PersonZ AsPerson => this as PersonZ;
+        public Person AsPerson => this as Person;
 
         [NotMapped]
         [JsonIgnore]
@@ -87,12 +89,9 @@ namespace Traffk.Bal.Data.Rdb
             public ContactDetails_()
             {
                 Notes = Notes ?? new List<Ddb.Note>();
-                Addresses = Addresses ?? new List<Ddb.Crm.Zontact.ContactAddress>();
-                PhoneNumbers = PhoneNumbers ?? new List<Ddb.Crm.Zontact.ContactPhone>();
+                Addresses = Addresses ?? new List<ContactAddress>();
+                PhoneNumbers = PhoneNumbers ?? new List<ContactPhone>();
             }
-
-  //          [JsonProperty("relations")]
-//            public List<Related> Relations { get; set; }
 
             [JsonProperty("tags")]
             [ConstrainedData]
@@ -103,10 +102,69 @@ namespace Traffk.Bal.Data.Rdb
             public List<Ddb.Note> Notes { get; set; }
 
             [JsonProperty("addresses")]
-            public List<Ddb.Crm.Zontact.ContactAddress> Addresses { get; set; }
+            public List<ContactAddress> Addresses { get; set; }
 
             [JsonProperty("phoneNumbers")]
-            public List<Ddb.Crm.Zontact.ContactPhone> PhoneNumbers { get; set; }
+            public List<ContactPhone> PhoneNumbers { get; set; }
         }
     }
+
+    public class ContactPhone
+    {
+        [JsonProperty("phoneType")]
+        [ConstrainedData]
+        public string PhoneType { get; set; }
+
+        [JsonProperty("notes")]
+        [FreeFormData]
+        public string Notes { get; set; }
+
+        [Phone]
+        [FreeFormData]
+        [JsonProperty("phoneNumber")]
+        public string PhoneNumber { get; set; }
+
+        public ContactPhone() { }
+
+        public ContactPhone(string phoneNumber, string phoneType = null, string notes = null)
+        {
+            PhoneNumber = phoneNumber;
+            PhoneType = phoneType;
+            Notes = notes;
+        }
+
+        public ContactPhone(ContactPhone other)
+        {
+            PhoneType = other.PhoneType;
+            Notes = other.Notes;
+            PhoneNumber = other.PhoneNumber;
+        }
+        public override string ToString() => $"{this.GetType().Name} number={PhoneNumber} type={PhoneType} note={Notes}";
+    }
+
+    public class ContactAddress : Address
+    {
+        [JsonProperty("addressType")]
+        [ConstrainedData]
+        public string AddressType { get; set; }
+
+        [JsonProperty("notes")]
+        [FreeFormData]
+        public string Notes { get; set; }
+
+        public ContactAddress() { }
+
+        public ContactAddress(ContactAddress other)
+            : base(other)
+        {
+            AddressType = other.AddressType;
+            Notes = other.Notes;
+        }
+        public ContactAddress(Address other)
+            : base(other)
+        { }
+
+        public override string ToString() => $"{base.ToString()} type={AddressType} note={Notes}";
+    }
+
 }

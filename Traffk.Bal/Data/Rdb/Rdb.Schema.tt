@@ -311,6 +311,8 @@ if (superclass==null) foreach (var ip in z.XPathSelectElements("Collections/Coll
 }
 foreach (var f in z.XPathSelectElements("Columns/Column"))
 {
+	var accessModifier = GetPropertyValue(f, "AccessModifier") ?? "public";
+	if (accessModifier=="missing") continue;
 	if (inheritance)
 	{
 		if (GetPropertyValue(f, "IsInheritanceDiscriminatorField")=="1")
@@ -443,6 +445,7 @@ foreach (var f in z.XPathSelectElements("Columns/Column"))
 	{
 		validators.Add("Requires.NonNull("+propertyName+", nameof("+propertyName+"));");
 #>		[NotNull]
+		[Required]
 <#
 	}
 	if (isPrimaryKey)
@@ -479,7 +482,7 @@ foreach (var f in z.XPathSelectElements("Columns/Column"))
 	}
 #>
 		[Column("<#=GetAttrVal(f, "name")#>")]
-		public <#=dataType#> <#=propertyName#> { get; set; }
+		<#=accessModifier#> <#=dataType#> <#=propertyName#> { get; set; }
 
 <#
 	if (GetAttrVal(f, "refTable")!=null)
@@ -488,7 +491,7 @@ foreach (var f in z.XPathSelectElements("Columns/Column"))
 		[ForeignKey("<#=GetAttrVal(f, "name")#>")]
 		[JsonIgnore]
         [IgnoreDataMember]
-		public <#=GetClassName(doc, GetAttrVal(f, "refSchema"), GetAttrVal(f, "refTable"))#> <#=GetPropertyNameFromColumnName(propertyName)#> { get; set; }
+		<#=accessModifier#> <#=GetClassName(doc, GetAttrVal(f, "refSchema"), GetAttrVal(f, "refTable"))#> <#=GetPropertyNameFromColumnName(propertyName)#> { get; set; }
 
 <#	
 	}
@@ -498,7 +501,7 @@ foreach (var f in z.XPathSelectElements("Columns/Column"))
 		[NotMapped]
 		[JsonIgnore]
         [IgnoreDataMember]
-		public <#=dataType#> <#=RemoveFinalNCharacters(propertyName,3)#> => <#=propertyName#><#=isNullable?"?":""#>.ToLocalTime();
+		<#=accessModifier#> <#=dataType#> <#=RemoveFinalNCharacters(propertyName,3)#> => <#=propertyName#><#=isNullable?"?":""#>.ToLocalTime();
 
 <#	
 	}

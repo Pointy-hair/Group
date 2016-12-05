@@ -1,9 +1,17 @@
-﻿create table Tenants
+﻿/*
+drop index UX_UserName on dbo.AspNetUsers
+*/
+
+create type RowStatus from char(1) not null
+
+GO
+
+create table Tenants
 (
 	TenantId int not null identity primary key,
 	ParentTenantId int null references Tenants(TenantId),
 	CreatedAtUtc datetime not null default (getutcdate()), --given CDC and sys.fn_cdc_map_lsn_to_time, do we need created at?
-	TenantStatus dbo.DeveloperName not null default 'Normal',
+	TenantRowStatus dbo.RowStatus not null default '1',
 	TenantName dbo.Title not null,
 	LoginDomain dbo.DeveloperName null,
 	TenantSettings nvarchar(max)
@@ -15,30 +23,8 @@ exec db.TablePropertySet  'Tenants', '1', @propertyName='AddToDbContext'
 exec db.TablePropertySet  'Tenants', '1', @propertyName='GeneratePoco'
 exec db.ColumnPropertySet 'Tenants', 'TenantSettings', 'Bal.Settings.TenantSettings', @propertyName='JsonSettingsClass'
 exec db.ColumnPropertySet 'Tenants', 'CreatedAtUtc', 'Datetime when this entity was created.'
-exec db.ColumnPropertySet 'Tenants', 'TenantStatus', '1', @propertyName='SupportsDeletePurgeSemantics', @tableSchema='dbo'
-
-GO
-
-CREATE TRIGGER [dbo].TenantsInsteadOfDelete
-       ON [dbo].tenants
-INSTEAD OF DELETE
-AS
-BEGIN
-
-	SET NOCOUNT ON;
-
-	update u
-	set
-		tenantstatus='Deleted'
-	from
-		dbo.tenants u
-			inner join
-		deleted d
-			on d.Tenantid=u.Tenantid
-	where
-		d.tenantstatus not in ('Purged', 'Deleted')
- 
-END
+exec db.ColumnPropertySet 'Tenants', 'TenantRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
+exec db.ColumnPropertySet 'Tenants', 'TenantRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
 
 GO
 
@@ -78,7 +64,7 @@ exec db.ColumnPropertySet 'Contacts', 'CreatedAtUtc', 'Datetime when this entity
 exec db.ColumnPropertySet 'Contacts', 'PrimaryEmail', 'EmailAddress', @propertyName='DataAnnotation'
 
 exec db.TablePropertySet  'Contacts', 'Organization', @propertyName='InheritanceClass:Organization,Organizations'
-exec db.TablePropertySet  'Contacts', 'Person', @propertyName='InheritanceClass:PersonZ,People'
+exec db.TablePropertySet  'Contacts', 'Person', @propertyName='InheritanceClass:Person,People'
 exec db.ColumnPropertySet 'Contacts', 'ContactType', '1', @propertyName='IsInheritanceDiscriminatorField'
 exec db.ColumnPropertySet 'Contacts', 'DateOfBirth', '1', @propertyName='InheritanceField:Person'
 exec db.ColumnPropertySet 'Contacts', 'Gender', '1', @propertyName='InheritanceField:Person'
@@ -93,36 +79,15 @@ GO
 
 
 alter table aspnetusers add TenantId int not null references Tenants(TenantId);
-alter table aspnetusers add UserStatus dbo.developername not null default 'Normal'
-exec db.ColumnPropertySet 'aspnetusers', 'UserStatus', '1', @propertyName='SupportsDeletePurgeSemantics', @tableSchema='dbo'
-create index UX_UserName on dbo.AspNetUsers (TenantId, NormalizedUserName) where UserStatus <> 'Purged' and UserStatus <> 'Deleted'
+alter table aspnetusers add UserRowStatus dbo.RowStatus not null default '1'
+exec db.ColumnPropertySet 'aspnetusers', 'UserRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
+exec db.ColumnPropertySet 'aspnetusers', 'UserRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
+create unique index UX_UserName on dbo.AspNetUsers (TenantId, NormalizedUserName) where UserRowStatus <> 'p' and UserRowStatus <> 'd'
 alter table aspnetusers add UserSettings nvarchar(max) null;
 alter table aspnetusers add CreatedAtUtc datetime not null default(getutcdate());
 exec db.TablePropertySet  'aspnetusers', 'ITraffkTenanted', @propertyName='Implements'
 exec db.ColumnPropertySet 'aspnetusers', 'CreatedAtUtc', 'Datetime when this entity was created.'
 
-GO
-
-CREATE TRIGGER [dbo].AspnetusersInsteadOfDelete
-       ON [dbo].aspnetusers
-INSTEAD OF DELETE
-AS
-BEGIN
-
-	SET NOCOUNT ON;
-
-	update u
-	set
-		userstatus='Deleted'
-	from
-		dbo.aspnetusers u
-			inner join
-		deleted d
-			on d.id=u.id
-	where
-		d.userstatus not in ('Purged', 'Deleted')
- 
-END
 
 GO
 
@@ -138,6 +103,7 @@ create table Jobs
 	TenantId int null references Tenants(TenantId),
 	CreatedAtUtc datetime not null default (getutcdate()),
 	DontRunBeforeUtc datetime null,
+	JobRowStatus dbo.RowStatus not null default '1',
 	JobStatus dbo.developername not null,	
 	DequeuedAtUtc datetime null,
 	CompletedAtUtc datetime null,
@@ -153,30 +119,8 @@ exec db.TablePropertySet  'Jobs', '1', @propertyName='AddToDbContext'
 exec db.TablePropertySet  'Jobs', '1', @propertyName='GeneratePoco'
 exec db.ColumnPropertySet 'Jobs', 'CreatedAtUtc', 'Datetime when this entity was created.'
 exec db.ColumnPropertySet 'Jobs', 'JobResult', 'Traffk.Bal.JobResult', @propertyName='JsonSettingsClass'
-exec db.ColumnPropertySet 'Jobs', 'JobStatus', '1', @propertyName='SupportsDeletePurgeSemantics', @tableSchema='dbo'
-
-GO
-
-CREATE TRIGGER [dbo].JobsInsteadOfDelete
-       ON [dbo].jobs
-INSTEAD OF DELETE
-AS
-BEGIN
-
-	SET NOCOUNT ON;
-
-	update u
-	set
-		JobStatus='Deleted'
-	from
-		dbo.jobs u
-			inner join
-		deleted d
-			on d.JobId=u.JobId
-	where
-		d.JobStatus not in ('Purged', 'Deleted')
- 
-END
+exec db.ColumnPropertySet 'Jobs', 'JobRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
+exec db.ColumnPropertySet 'Jobs', 'JobRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
 
 GO
 
@@ -285,7 +229,8 @@ create table CommunicationBlasts
 (
 	CommunicationBlastId int not null identity primary key,
 	ParentCommunicationBlastId int references CommunicationBlasts(CommunicationBlastId),
-	TenantId int not null references Tenants(TenantId) on delete cascade,
+	TenantId int not null references Tenants(TenantId),
+	CommunicationBlastRowStatus dbo.RowStatus not null default '1',
 	CreatedAtUtc datetime not null default (getutcdate()),
 	JobId int references Jobs(JobId),
 	CommunicationBlastTitle dbo.Title not null,
@@ -304,6 +249,66 @@ exec db.TablePropertySet  'CommunicationBlasts', '1', @propertyName='GeneratePoc
 exec db.TablePropertySet  'CommunicationBlasts', 'ITraffkTenanted', @propertyName='Implements'
 exec db.ColumnPropertySet 'CommunicationBlasts', 'CreatedAtUtc', 'Datetime when this entity was created.'
 exec db.ColumnPropertySet 'CommunicationBlasts', 'CommunicationBlastSettings', 'Bal.Settings.CommunicationBlastSettings', @propertyName='JsonSettingsClass'
+exec db.ColumnPropertySet 'CommunicationBlasts', 'CommunicationBlastRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
+exec db.ColumnPropertySet 'CommunicationBlasts', 'CommunicationBlastRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
+
+GO
+
+create table CommunicationBlastLinks
+(
+	CommunicationBlastLinkId int not null identity primary key,
+	CommunicationBlastId int not null references CommunicationBlasts(CommunicationBlastId),
+	TenantId int not null references Tenants(TenantId),
+	CommunicationBlastLinkRowStatus dbo.RowStatus not null default '1',
+	LinkType dbo.DeveloperName not null,
+	MungedPathAndQuery nvarchar(255) not null,
+	RedirectUrl dbo.Url not null,
+	CommunicationFormat dbo.DeveloperName,
+	Position int not null
+)
+
+GO
+
+exec db.TablePropertySet  'CommunicationBlastLinks', '1', @propertyName='AddToDbContext'
+exec db.TablePropertySet  'CommunicationBlastLinks', '1', @propertyName='GeneratePoco'
+exec db.TablePropertySet  'CommunicationBlastLinks', 'ITraffkTenanted', @propertyName='Implements'
+exec db.ColumnPropertySet 'CommunicationBlastLinks', 'CommunicationBlastLinkRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
+exec db.ColumnPropertySet 'CommunicationBlastLinks', 'CommunicationBlastLinkRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
+
+GO
+
+create table CommunicationBlastMessages
+(
+	CommunicationBlastMessageId bigint not null identity primary key,
+	CommunicationBlastId int not null references CommunicationBlasts(CommunicationBlasts),
+	TenantId int not null references Tenants(TenantId),
+	CreatedAtUtc datetime not null default (getutcdate())
+)
+
+
+
+GO
+
+exec db.TablePropertySet  'CommunicationBlastMessages', '1', @propertyName='AddToDbContext'
+exec db.TablePropertySet  'CommunicationBlastMessages', '1', @propertyName='GeneratePoco'
+exec db.TablePropertySet  'CommunicationBlastMessages', 'ITraffkTenanted', @propertyName='Implements'
+
+GO
+
+create table CommunicationBlastLinkVisits
+(
+	CommunicationBlastLinkVisitId bigint not null identity primary key,
+	CommunicationBlastLinkId int not null references CommunicationBlastLinks(CommunicationBlastLinkId),
+	TenantId int not null references Tenants(TenantId),
+	ContactId int not null references Contacts(ContactId),
+	CreatedAtUtc datetime not null default (getutcdate())
+)
+
+GO
+
+exec db.TablePropertySet  'CommunicationBlastLinks', '1', @propertyName='AddToDbContext'
+exec db.TablePropertySet  'CommunicationBlastLinks', '1', @propertyName='GeneratePoco'
+exec db.TablePropertySet  'CommunicationBlastLinks', 'ITraffkTenanted', @propertyName='Implements'
 
 GO
 
