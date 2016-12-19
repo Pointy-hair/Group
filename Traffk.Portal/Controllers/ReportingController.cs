@@ -18,6 +18,8 @@ namespace TraffkPortal.Controllers
     [PermissionAuthorize(PermissionNames.BasicReporting)]
     public class ReportingController : BasePageController
     {
+        public const string Name = "Reporting";
+
         public static string CreateAnchorName(PowerBiEmbeddableResource er) => NameHelpers.GetName(er)?.Trim()?.ToUpperCamelCase() ?? "";
 
         public static class ActionNames

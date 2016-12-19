@@ -17,7 +17,7 @@ namespace TraffkPortal.Controllers
     [Authorize]
     public class AccountController : BasePageController
     {
-        public static readonly string ControllerName = "Account";
+        public static readonly string Name = "Account";
 
         private readonly UserManager<ApplicationUser> UserManager;
         private readonly SignInManager<ApplicationUser> SignInManager;
@@ -162,7 +162,7 @@ namespace TraffkPortal.Controllers
                     if (Current.Tenant.TenantSettings.RequiresEmailAccountValidation)
                     {
                         var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
-                        var callbackUrl = Url.Action(nameof(ConfirmEmail), ControllerName, new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+                        var callbackUrl = Url.Action(nameof(ConfirmEmail), Name, new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
                         await EmailSender.SendEmailCommunicationAsync(
                             SystemCommunication.Definitions.General.AccountVerification.CommunicationPurpose,
                             Template.ModelTypes.CreateCallbackUrlModel(callbackUrl),
@@ -211,7 +211,7 @@ namespace TraffkPortal.Controllers
         public IActionResult ExternalLogin(string provider, string returnUrl = null)
         {
             // Request a redirect to the external login provider.
-            var redirectUrl = Url.Action(nameof(ExternalLoginCallback), ControllerName, new { ReturnUrl = returnUrl });
+            var redirectUrl = Url.Action(nameof(ExternalLoginCallback), Name, new { ReturnUrl = returnUrl });
             var properties = SignInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
             return Challenge(properties, provider);
         }
@@ -338,7 +338,7 @@ namespace TraffkPortal.Controllers
                 // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                 // Send an email with this link
                 var code = await UserManager.GeneratePasswordResetTokenAsync(user);
-                var callbackUrl = Url.Action(nameof(ResetPassword), ControllerName, new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+                var callbackUrl = Url.Action(nameof(ResetPassword), Name, new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
                 await EmailSender.SendEmailCommunicationAsync(
                     SystemCommunication.Definitions.General.PasswordReset.CommunicationPurpose,
                     Template.ModelTypes.CreateCallbackUrlModel(callbackUrl),
@@ -424,12 +424,12 @@ namespace TraffkPortal.Controllers
             if (user == null)
             {
                 // Don't reveal that the user does not exist
-                return RedirectToAction(nameof(ResetPasswordConfirmation), ControllerName);
+                return RedirectToAction(nameof(ResetPasswordConfirmation), Name);
             }
             var result = await UserManager.ResetPasswordAsync(user, model.Code, model.Password);
             if (result.Succeeded)
             {
-                return RedirectToAction(nameof(ResetPasswordConfirmation), ControllerName);
+                return RedirectToAction(nameof(ResetPasswordConfirmation), Name);
             }
             AddErrors(result);
             return View();

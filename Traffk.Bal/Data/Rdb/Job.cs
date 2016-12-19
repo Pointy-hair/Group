@@ -1,4 +1,7 @@
-﻿namespace Traffk.Bal.Data.Rdb
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Traffk.Bal.Data.Rdb
 {
     public partial class Job
     {
@@ -17,6 +20,12 @@
             public const string CompletedSuccess = "CompletedSuccess";
             public const string CompletedError = "CompletedError";
             public const string Cancelled = "Cancelled";
+            public const string Cancelling = "Cancelling";
+
+            public static readonly ICollection<string> CancellableStatusNames = new List<string>(new[] { NonYetQueued, Queued, Dequeued, Running }).AsReadOnly();
         }
+
+        [NotMapped]
+        public bool CanBeCancelled => StatusNames.CancellableStatusNames.Contains(this.JobStatus);
     }
 }

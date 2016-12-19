@@ -3,6 +3,7 @@ drop index UX_UserName on dbo.AspNetUsers
 */
 
 create type RowStatus from char(1) not null
+create type JsonObject from nvarchar(max) null
 
 GO
 
@@ -14,7 +15,7 @@ create table Tenants
 	TenantRowStatus dbo.RowStatus not null default '1',
 	TenantName dbo.Title not null,
 	LoginDomain dbo.DeveloperName null,
-	TenantSettings nvarchar(max)
+	TenantSettings dbo.JsonObject
 );
 
 GO
@@ -35,6 +36,7 @@ create table Contacts
 (
 	ContactId bigint not null identity primary key,
 	TenantId int not null references Tenants(TenantId),
+	ContactRowStatus dbo.RowStatus not null default '1',
 	ContactType dbo.developerName not null,
 	CreatedAtUtc datetime not null default (getutcdate()), 
 	FullName dbo.Title null,
@@ -55,12 +57,15 @@ create table Contacts
 
 GO
 
-create unique index UX_MemberId on Contacts(TenantId, MemberId) where MemberId is not null
-create unique index UX_DeerwalkMemberId on Contacts(TenantId, DeerwalkMemberId) where DeerwalkMemberId is not null
+create unique index UX_MemberId on Contacts(TenantId, MemberId) where MemberId is not null and ContactRowStatus <> 'p' and ContactRowStatus <> 'd'
+create unique index UX_DeerwalkMemberId on Contacts(TenantId, DeerwalkMemberId) where DeerwalkMemberId is not null and ContactRowStatus <> 'p' and ContactRowStatus <> 'd'
 exec db.TablePropertySet  'Contacts', '1', @propertyName='AddToDbContext'
 exec db.TablePropertySet  'Contacts', '1', @propertyName='GeneratePoco'
 exec db.ColumnPropertySet 'Contacts', 'ContactDetails', 'Traffk.Bal.Data.Rdb.ContactDetails', @propertyName='JsonSettingsClass'
 exec db.ColumnPropertySet 'Contacts', 'CreatedAtUtc', 'Datetime when this entity was created.'
+exec db.ColumnPropertySet 'Contacts', 'ContactRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
+exec db.ColumnPropertySet 'Contacts', 'ContactRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
+
 exec db.ColumnPropertySet 'Contacts', 'PrimaryEmail', 'EmailAddress', @propertyName='DataAnnotation'
 
 exec db.TablePropertySet  'Contacts', 'Organization', @propertyName='InheritanceClass:Organization,Organizations'
@@ -83,7 +88,7 @@ alter table aspnetusers add UserRowStatus dbo.RowStatus not null default '1'
 exec db.ColumnPropertySet 'aspnetusers', 'UserRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
 exec db.ColumnPropertySet 'aspnetusers', 'UserRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
 create unique index UX_UserName on dbo.AspNetUsers (TenantId, NormalizedUserName) where UserRowStatus <> 'p' and UserRowStatus <> 'd'
-alter table aspnetusers add UserSettings nvarchar(max) null;
+alter table aspnetusers add UserSettings dbo.JsonObject null;
 alter table aspnetusers add CreatedAtUtc datetime not null default(getutcdate());
 exec db.TablePropertySet  'aspnetusers', 'ITraffkTenanted', @propertyName='Implements'
 exec db.ColumnPropertySet 'aspnetusers', 'CreatedAtUtc', 'Datetime when this entity was created.'
@@ -130,7 +135,7 @@ create table Applications
 	TenantId int not null references Tenants(TenantId) on delete cascade,
 	ApplicationType dbo.DeveloperName not null,
 	ApplicationName dbo.Title not null,
-	ApplicationSettings nvarchar(max)
+	ApplicationSettings dbo.JsonObject
 )
 
 GO
@@ -238,7 +243,7 @@ create table CommunicationBlasts
 	TopicName dbo.Title,
 	CampaignName dbo.Title,
 	MessageTemplateId int not null references MessageTemplates(MessageTemplateId),
-	CommunicationBlastSettings nvarchar(max)
+	CommunicationBlastSettings dbo.JsonObject
 --	Audience...
 )
 
@@ -248,67 +253,9 @@ exec db.TablePropertySet  'CommunicationBlasts', '1', @propertyName='AddToDbCont
 exec db.TablePropertySet  'CommunicationBlasts', '1', @propertyName='GeneratePoco'
 exec db.TablePropertySet  'CommunicationBlasts', 'ITraffkTenanted', @propertyName='Implements'
 exec db.ColumnPropertySet 'CommunicationBlasts', 'CreatedAtUtc', 'Datetime when this entity was created.'
-exec db.ColumnPropertySet 'CommunicationBlasts', 'CommunicationBlastSettings', 'Bal.Settings.CommunicationBlastSettings', @propertyName='JsonSettingsClass'
+exec db.ColumnPropertySet 'CommunicationBlasts', 'CommunicationBlastSettings', 'Bal.Settings.CommunicationSettings', @propertyName='JsonSettingsClass'
 exec db.ColumnPropertySet 'CommunicationBlasts', 'CommunicationBlastRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
 exec db.ColumnPropertySet 'CommunicationBlasts', 'CommunicationBlastRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
-
-GO
-
-create table CommunicationBlastLinks
-(
-	CommunicationBlastLinkId int not null identity primary key,
-	CommunicationBlastId int not null references CommunicationBlasts(CommunicationBlastId),
-	TenantId int not null references Tenants(TenantId),
-	CommunicationBlastLinkRowStatus dbo.RowStatus not null default '1',
-	LinkType dbo.DeveloperName not null,
-	MungedPathAndQuery nvarchar(255) not null,
-	RedirectUrl dbo.Url not null,
-	CommunicationFormat dbo.DeveloperName,
-	Position int not null
-)
-
-GO
-
-exec db.TablePropertySet  'CommunicationBlastLinks', '1', @propertyName='AddToDbContext'
-exec db.TablePropertySet  'CommunicationBlastLinks', '1', @propertyName='GeneratePoco'
-exec db.TablePropertySet  'CommunicationBlastLinks', 'ITraffkTenanted', @propertyName='Implements'
-exec db.ColumnPropertySet 'CommunicationBlastLinks', 'CommunicationBlastLinkRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
-exec db.ColumnPropertySet 'CommunicationBlastLinks', 'CommunicationBlastLinkRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
-
-GO
-
-create table CommunicationBlastMessages
-(
-	CommunicationBlastMessageId bigint not null identity primary key,
-	CommunicationBlastId int not null references CommunicationBlasts(CommunicationBlasts),
-	TenantId int not null references Tenants(TenantId),
-	CreatedAtUtc datetime not null default (getutcdate())
-)
-
-
-
-GO
-
-exec db.TablePropertySet  'CommunicationBlastMessages', '1', @propertyName='AddToDbContext'
-exec db.TablePropertySet  'CommunicationBlastMessages', '1', @propertyName='GeneratePoco'
-exec db.TablePropertySet  'CommunicationBlastMessages', 'ITraffkTenanted', @propertyName='Implements'
-
-GO
-
-create table CommunicationBlastLinkVisits
-(
-	CommunicationBlastLinkVisitId bigint not null identity primary key,
-	CommunicationBlastLinkId int not null references CommunicationBlastLinks(CommunicationBlastLinkId),
-	TenantId int not null references Tenants(TenantId),
-	ContactId int not null references Contacts(ContactId),
-	CreatedAtUtc datetime not null default (getutcdate())
-)
-
-GO
-
-exec db.TablePropertySet  'CommunicationBlastLinks', '1', @propertyName='AddToDbContext'
-exec db.TablePropertySet  'CommunicationBlastLinks', '1', @propertyName='GeneratePoco'
-exec db.TablePropertySet  'CommunicationBlastLinks', 'ITraffkTenanted', @propertyName='Implements'
 
 GO
 
@@ -580,9 +527,9 @@ create table DateDimensions
 	FiscalYear smallint not null,
 	FiscalQuarter tinyint not null,
 	FiscalMonth tinyint not null,
-	FiscalDay tinyint not null,
-	FiscalYearName varchar(16) not null,
-	FiscalQuarterName varchar(16) not null
+	FiscalDay smallint not null,
+	FiscalYearName nvarchar(50) not null,
+	FiscalQuarterName nvarchar(50) not null
 )
 
 GO
@@ -592,3 +539,156 @@ exec db.TablePropertySet  'DateDimensions', '1', @propertyName='AddToDbContext'
 exec db.TablePropertySet  'DateDimensions', '1', @propertyName='GeneratePoco'
 
 GO
+
+
+
+
+
+
+------------------------------------------------------------
+
+
+--SystemCommunications go into TenantSettings
+
+create table Creatives
+(
+	CreativeId int not null identity primary key,
+	TenantId int not null references Tenants(TenantId),
+	CreativesRowStatus dbo.RowStatus not null default '1',
+	CreatedAtUtc datetime not null default (getutcdate()),
+	CreativeTitle dbo.title null,
+	ModelType dbo.DeveloperName NULL,
+	TemplateEngineType dbo.developername not null,
+	CreativeSettings dbo.JsonObject null
+--	_IsLayout bit not null,
+--	_IsFlat bit not null
+)
+
+GO
+
+exec db.TablePropertySet  'Creatives', 'Assets that are used in a communication piece'
+exec db.TablePropertySet  'Creatives', '1', @propertyName='AddToDbContext'
+exec db.TablePropertySet  'Creatives', '1', @propertyName='GeneratePoco'
+exec db.TablePropertySet  'Creatives', 'ITraffkTenanted', @propertyName='Implements'
+exec db.ColumnPropertySet 'Creatives', 'CreatedAtUtc', 'Datetime when this entity was created.'
+exec db.ColumnPropertySet 'Creatives', 'CreativeTitle', 'Identifyable title for this asset.'
+exec db.ColumnPropertySet 'Creatives', 'CreativesRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
+exec db.ColumnPropertySet 'Creatives', 'CreativesRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'Creatives', 'CreativeSettings', 'Bal.Settings.CreativeSettings', @propertyName='JsonSettingsClass'
+
+
+GO
+
+create table Communications
+(
+	CommunicationId int not null primary key,
+	TenantId int not null references Tenants(TenantId),
+	CommunicationRowStatus dbo.RowStatus not null default '1',
+	CreatedAtUtc datetime not null default (getutcdate()),
+	CommunicationTitle dbo.title null,
+	TopicName dbo.Title,
+	CampaignName dbo.Title,
+	CreativeId int null references Creatives(CreativeId),
+	CommunicationSettings dbo.JsonObject
+)
+
+GO
+
+exec db.TablePropertySet  'Communications', 'A communication outreach piece.'
+exec db.TablePropertySet  'Communications', '1', @propertyName='AddToDbContext'
+exec db.TablePropertySet  'Communications', '1', @propertyName='GeneratePoco'
+exec db.TablePropertySet  'Communications', 'ITraffkTenanted', @propertyName='Implements'
+exec db.ColumnPropertySet 'Communications', 'CommunicationRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
+exec db.ColumnPropertySet 'Communications', 'CommunicationRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'Communications', 'CommunicationSettings', 'Traffk.Bal.Settings.CommunicationSettings', @propertyName='JsonSettingsClass'
+
+
+GO
+
+create table CommunicationBlasts
+(
+	CommunicationBlastId int not null identity primary key,
+	TenantId int not null references Tenants(TenantId),
+	CommunicationBlastRowStatus dbo.RowStatus not null default '1',	
+	CommunicationId int not null references Communications(CommunicationId),
+	CreativeId int null references Creatives(CreativeId),
+	JobId int null references Jobs(JobId)
+)
+
+GO
+
+exec db.TablePropertySet  'CommunicationBlasts', 'An instance of a communication.'
+exec db.TablePropertySet  'CommunicationBlasts', '1', @propertyName='AddToDbContext'
+exec db.TablePropertySet  'CommunicationBlasts', '1', @propertyName='GeneratePoco'
+exec db.TablePropertySet  'CommunicationBlasts', 'ITraffkTenanted', @propertyName='Implements'
+exec db.ColumnPropertySet 'CommunicationBlasts', 'CommunicationBlastRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
+exec db.ColumnPropertySet 'CommunicationBlasts', 'CommunicationBlastRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
+
+GO
+
+create table CreativeBlastTrackers
+(
+	CreativeBlastTrackerId int not null identity primary key,
+	TenantId int not null references Tenants(TenantId),
+	CreativeBlastCreativeTrackerRowStatus dbo.RowStatus not null default '1',
+	CommunicationBlastId int not null references CommunicationBlasts(CommunicationBlastId),
+	LinkType dbo.DeveloperName not null,
+	TrackerUid uniqueidentifier not null,
+	RedirectUrl dbo.Url not null,
+	Position int not null
+)
+
+GO
+
+create unique index UX_CreativeBlastTrackersUids on CreativeBlastTrackers(TrackerUid)
+exec db.TablePropertySet  'CreativeBlastTrackers', 'Assets referenced by a creative whose hyperlinks have been munged to support tracking'
+exec db.TablePropertySet  'CreativeBlastTrackers', '1', @propertyName='AddToDbContext'
+exec db.TablePropertySet  'CreativeBlastTrackers', '1', @propertyName='GeneratePoco'
+exec db.TablePropertySet  'CreativeBlastTrackers', 'ITraffkTenanted', @propertyName='Implements'
+exec db.ColumnPropertySet 'CreativeBlastTrackers', 'CreativeBlastCreativeTrackerRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
+exec db.ColumnPropertySet 'CreativeBlastTrackers', 'CreativeBlastCreativeTrackerRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'CreativeBlastTrackers', 'TrackerUid', 'Non-guessable guid for this item'
+
+GO
+
+create table CommunicationPieces
+(
+	CommunicationPieceId bigint not null identity primary key,
+	TenantId int not null references Tenants(TenantId),
+	CreatedAtUtc datetime not null default (getutcdate()),
+	CommunicationPieceUid uniqueidentifier not null,
+	CommunicationBlastId int not null references CommunicationBlasts(CommunicationBlastId),
+	ContactId bigint null references Contacts(ContactId),
+	UserId dbo.AspNetId null references AspNetUsers(Id)
+)
+
+GO
+
+create unique index UX_CommunicationPiecesUids on CommunicationPieces(CommunicationPieceUid)
+exec db.TablePropertySet  'CommunicationPieces', 'Instance of a communication piece that has been queued for delivery'
+exec db.TablePropertySet  'CommunicationPieces', '1', @propertyName='AddToDbContext'
+exec db.TablePropertySet  'CommunicationPieces', '1', @propertyName='GeneratePoco'
+exec db.TablePropertySet  'CommunicationPieces', 'ITraffkTenanted', @propertyName='Implements'
+exec db.ColumnPropertySet 'CommunicationPieces', 'CommunicationPieceUid', 'Non-guessable guid for this item'
+
+GO
+
+create table CommunicationPieceVisits
+(
+	CommunicationPieceVisitId bigint not null identity primary key,
+	TenantId int not null references Tenants(TenantId),
+	CreatedAtUtc datetime not null default (getutcdate()),
+	CommunicationPieceId bigint not null references CommunicationPieces(CommunicationPieceId),
+	CreativeBlastTrackerId int not null references CreativeBlastTrackers(CreativeBlastTrackerId)
+)
+
+GO
+
+exec db.TablePropertySet  'CommunicationPieceVisits', 'Record that a creator tracker has been seen relative to communication piece'
+exec db.TablePropertySet  'CommunicationPieceVisits', '1', @propertyName='AddToDbContext'
+exec db.TablePropertySet  'CommunicationPieceVisits', '1', @propertyName='GeneratePoco'
+exec db.TablePropertySet  'CommunicationPieceVisits', 'ITraffkTenanted', @propertyName='Implements'
+
+GO
+
+--07803

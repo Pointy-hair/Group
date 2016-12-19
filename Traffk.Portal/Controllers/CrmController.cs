@@ -25,6 +25,8 @@ namespace TraffkPortal.Controllers
     [Route("Crm")]
     public class CrmController : BasePageController
     {
+        public const string Name = "Crm";
+
         public enum PageKeys
         {
             Background,

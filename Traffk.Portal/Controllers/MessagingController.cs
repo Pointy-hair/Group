@@ -28,6 +28,8 @@ namespace TraffkPortal.Controllers
     [Route("Messaging")]
     public class MessagingController : BasePageController
     {
+        public const string Name = "Messaging";
+
         public static class ActionNames
         {
             public const string BlastMessageInstances = "BlastMessageInstances";
@@ -299,7 +301,7 @@ namespace TraffkPortal.Controllers
         }
 
 
-        private void SetHeroLayoutViewData(CommunicationBlast blast, BlastPageKeys pageKey)
+        private void SetHeroLayoutViewData(ZCommunicationBlast blast, BlastPageKeys pageKey)
         {
             ViewData["JobStatus"] = blast.Job?.JobStatus;
             ViewData[AspHelpers.ViewDataKeys.ParentEntityId] = blast.ParentCommunicationBlastId;
@@ -310,24 +312,24 @@ namespace TraffkPortal.Controllers
         [ActionName(ActionNames.BlastMessageInstances)]
         public Task<IActionResult> BlastMessageInstances(int id, string sortCol, string sortDir, int? page, int? pageSize)
         {
-            var blasts = Rdb.CommunicationBlasts.Include(z => z.Job).Where(z => z.ParentCommunicationBlastId == id).AsQueryable();
+            var blasts = Rdb.ZCommunicationBlasts.Include(z => z.Job).Where(z => z.ParentCommunicationBlastId == id).AsQueryable();
             blasts = ApplyBrowse(
                 blasts, 
-                sortCol ?? nameof(CommunicationBlast.CreatedAtUtc), sortDir, 
+                sortCol ?? nameof(ZCommunicationBlast.CreatedAtUtc), sortDir, 
                 page, pageSize,
-                new Dictionary<string, string> { { nameof(CommunicationBlast.CreatedAt), nameof(CommunicationBlast.CreatedAtUtc) } });
+                new Dictionary<string, string> { { nameof(ZCommunicationBlast.CreatedAt), nameof(ZCommunicationBlast.CreatedAtUtc) } });
             return BlastEntityPage(id, BlastPageKeys.Instances, ViewNames.BlastInstancesList,z=>blasts);
         }
 
         [Route("Blasts")]
         public IActionResult Blasts(string sortCol, string sortDir, int? startAt, int? page, int? pageSize)
         {
-            var blasts = Rdb.CommunicationBlasts.Include(z => z.Job).Where(z=>z.ParentCommunicationBlast==null).AsQueryable();
+            var blasts = Rdb.ZCommunicationBlasts.Include(z => z.Job).Where(z=>z.ParentCommunicationBlast==null).AsQueryable();
             blasts = ApplyBrowse(
                 blasts, 
-                sortCol ?? nameof(CommunicationBlast.CreatedAtUtc), sortDir, 
+                sortCol ?? nameof(ZCommunicationBlast.CreatedAtUtc), sortDir, 
                 page, pageSize,
-                new Dictionary<string, string> { { nameof(CommunicationBlast.CreatedAt), nameof(CommunicationBlast.CreatedAtUtc) } });
+                new Dictionary<string, string> { { nameof(ZCommunicationBlast.CreatedAt), nameof(ZCommunicationBlast.CreatedAtUtc) } });
             return View(ViewNames.BlastList, blasts);
         }
 
@@ -434,7 +436,7 @@ namespace TraffkPortal.Controllers
             return await BlastEntityPage(id, BlastPageKeys.Query, ViewNames.BlastQuery, b => model);
         }
 
-        private async Task<IActionResult> BlastEntityPage(int id, BlastPageKeys pageKey, string viewName, Func<CommunicationBlast, object> createModel=null)
+        private async Task<IActionResult> BlastEntityPage(int id, BlastPageKeys pageKey, string viewName, Func<ZCommunicationBlast, object> createModel=null)
         {
             var blast = await FindBlastByIdAsync(id);
             if (blast == null) return NotFound();
@@ -451,11 +453,11 @@ namespace TraffkPortal.Controllers
             int id,
             [Bind(
             nameof(BlastModel.Blast),
-            nameof(BlastModel.Blast)+"."+nameof(CommunicationBlast.CommunicationBlastId),
-            nameof(BlastModel.Blast)+"."+nameof(CommunicationBlast.CampaignName),
-            nameof(BlastModel.Blast)+"."+nameof(CommunicationBlast.CommunicationBlastTitle),
-            nameof(BlastModel.Blast)+"."+nameof(CommunicationBlast.CommunicationMedium),
-            nameof(BlastModel.Blast)+"."+nameof(CommunicationBlast.TopicName),
+            nameof(BlastModel.Blast)+"."+nameof(ZCommunicationBlast.CommunicationBlastId),
+            nameof(BlastModel.Blast)+"."+nameof(ZCommunicationBlast.CampaignName),
+            nameof(BlastModel.Blast)+"."+nameof(ZCommunicationBlast.CommunicationBlastTitle),
+            nameof(BlastModel.Blast)+"."+nameof(ZCommunicationBlast.CommunicationMedium),
+            nameof(BlastModel.Blast)+"."+nameof(ZCommunicationBlast.TopicName),
             nameof(BlastModel.TextBodyCode)
             )]
             BlastModel model)
@@ -467,7 +469,7 @@ namespace TraffkPortal.Controllers
             SetHeroLayoutViewData(model.Blast, BlastPageKeys.Background);
             if (ModelState.IsValid)
             {
-                CommunicationBlast blast;
+                ZCommunicationBlast blast;
                 if (id > 0)
                 {
                     blast = await FindBlastByIdAsync(id);
@@ -475,14 +477,14 @@ namespace TraffkPortal.Controllers
                 }
                 else
                 {
-                    blast = new CommunicationBlast
+                    blast = new ZCommunicationBlast
                     {
                         MessageTemplate = new MessageTemplate
                         {
                             MessageTemplateTitle = ""
                         }
                     };
-                    Rdb.CommunicationBlasts.Add(blast);
+                    Rdb.ZCommunicationBlasts.Add(blast);
                 }
                 blast.CampaignName = model.Blast.CampaignName;
                 blast.CommunicationBlastTitle = model.Blast.CommunicationBlastTitle;
@@ -568,11 +570,11 @@ namespace TraffkPortal.Controllers
         }
         */
 
-        private async Task<CommunicationBlast> FindBlastByIdAsync(int? id)
+        private async Task<ZCommunicationBlast> FindBlastByIdAsync(int? id)
         {
             if (id == null) return null;
             return await
-                (from z in Rdb.CommunicationBlasts
+                (from z in Rdb.ZCommunicationBlasts
                     .Include(z => z.MessageTemplate)
                     .Include(z => z.Job)
                     .Include(z => z.MessageTemplate.SubjectTemplate)

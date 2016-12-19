@@ -195,6 +195,7 @@
         <Collection schema="dbo" table="AspNetUserClaims" column="UserId" />
         <Collection schema="dbo" table="AspNetUserLogins" column="UserId" />
         <Collection schema="dbo" table="AspNetUserRoles" column="UserId" />
+        <Collection schema="dbo" table="CommunicationPieces" column="UserId" />
       </Collections>
     </Table>
     <Table schema="dbo" name="AspNetUserTokens">
@@ -208,65 +209,99 @@
         <Column name="Value" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
       </Columns>
     </Table>
-    <Table schema="dbo" name="CommunicationBlastLinks">
-      <Properties>
-        <Property name="AddToDbContext" value="1" />
-        <Property name="GeneratePoco" value="1" />
-        <Property name="Implements" value="ITraffkTenanted" />
-      </Properties>
-      <Columns>
-        <Column name="CommunicationBlastLinkId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
-        <Column name="CommunicationBlastId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="CommunicationBlasts" />
-        <Column name="TenantId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Tenants" />
-        <Column name="CommunicationBlastLinkRowStatus" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')">
-          <Properties>
-            <Property name="AccessModifier" value="missing" />
-            <Property name="ImplementsRowStatusSemantics" value="1" />
-          </Properties>
-        </Column>
-        <Column name="LinkType" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80" />
-        <Column name="MungedPathAndQuery" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="255" />
-        <Column name="RedirectUrl" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1024" />
-        <Column name="CommunicationFormat" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80" />
-        <Column name="Position" position="9" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
-      </Columns>
-    </Table>
     <Table schema="dbo" name="CommunicationBlasts">
       <Properties>
         <Property name="AddToDbContext" value="1" />
+        <Property name="Comment" value="An instance of a communication." />
         <Property name="GeneratePoco" value="1" />
         <Property name="Implements" value="ITraffkTenanted" />
       </Properties>
       <Columns>
         <Column name="CommunicationBlastId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
-        <Column name="ParentCommunicationBlastId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="CommunicationBlasts" />
-        <Column name="TenantId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Tenants" />
-        <Column name="CreatedAtUtc" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())">
-          <Properties>
-            <Property name="MS_Description" value="Datetime when this entity was created." />
-          </Properties>
-        </Column>
-        <Column name="JobId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="Jobs" />
-        <Column name="CommunicationBlastTitle" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="255" />
-        <Column name="CommunicationMedium" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80" />
-        <Column name="TopicName" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" />
-        <Column name="CampaignName" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" />
-        <Column name="MessageTemplateId" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="MessageTemplates" />
-        <Column name="CommunicationBlastSettings" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1">
-          <Properties>
-            <Property name="JsonSettingsClass" value="Bal.Settings.CommunicationBlastSettings" />
-          </Properties>
-        </Column>
-        <Column name="CommunicationBlastRowStatus" position="12" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')">
+        <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Tenants" />
+        <Column name="CommunicationBlastRowStatus" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')">
           <Properties>
             <Property name="AccessModifier" value="missing" />
             <Property name="ImplementsRowStatusSemantics" value="1" />
           </Properties>
         </Column>
+        <Column name="CommunicationId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Communications" />
+        <Column name="CreativeId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="Creatives" />
+        <Column name="JobId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="Jobs" />
       </Columns>
       <Collections>
-        <Collection schema="dbo" table="CommunicationBlasts" column="ParentCommunicationBlastId" />
-        <Collection schema="dbo" table="CommunicationBlastLinks" column="CommunicationBlastId" />
+        <Collection schema="dbo" table="CreativeBlastTrackers" column="CommunicationBlastId" />
+        <Collection schema="dbo" table="CommunicationPieces" column="CommunicationBlastId" />
+      </Collections>
+    </Table>
+    <Table schema="dbo" name="CommunicationPieces">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="Comment" value="Instance of a communication piece that has been queued for delivery" />
+        <Property name="GeneratePoco" value="1" />
+        <Property name="Implements" value="ITraffkTenanted" />
+      </Properties>
+      <Columns>
+        <Column name="CommunicationPieceId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="bigint" />
+        <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Tenants" />
+        <Column name="CreatedAtUtc" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())" />
+        <Column name="CommunicationPieceUid" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="uniqueidentifier">
+          <Properties>
+            <Property name="MS_Description" value="Non-guessable guid for this item" />
+          </Properties>
+        </Column>
+        <Column name="CommunicationBlastId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="CommunicationBlasts" />
+        <Column name="ContactId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" refSchema="dbo" refTable="Contacts" />
+        <Column name="UserId" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="450" refSchema="dbo" refTable="AspNetUsers" />
+      </Columns>
+      <Collections>
+        <Collection schema="dbo" table="CommunicationPieceVisits" column="CommunicationPieceId" />
+      </Collections>
+    </Table>
+    <Table schema="dbo" name="CommunicationPieceVisits">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="Comment" value="Record that a creator tracker has been seen relative to communication piece" />
+        <Property name="GeneratePoco" value="1" />
+        <Property name="Implements" value="ITraffkTenanted" />
+      </Properties>
+      <Columns>
+        <Column name="CommunicationPieceVisitId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="bigint" />
+        <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Tenants" />
+        <Column name="CreatedAtUtc" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())" />
+        <Column name="CommunicationPieceId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bigint" refSchema="dbo" refTable="CommunicationPieces" />
+        <Column name="CreativeBlastTrackerId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="CreativeBlastTrackers" />
+      </Columns>
+    </Table>
+    <Table schema="dbo" name="Communications">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="Comment" value="A communication outreach piece." />
+        <Property name="GeneratePoco" value="1" />
+        <Property name="Implements" value="ITraffkTenanted" />
+      </Properties>
+      <Columns>
+        <Column name="CommunicationId" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Tenants" />
+        <Column name="CommunicationRowStatus" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')">
+          <Properties>
+            <Property name="AccessModifier" value="missing" />
+            <Property name="ImplementsRowStatusSemantics" value="1" />
+          </Properties>
+        </Column>
+        <Column name="CreatedAtUtc" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())" />
+        <Column name="CommunicationTitle" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" />
+        <Column name="TopicName" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" />
+        <Column name="CampaignName" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" />
+        <Column name="CreativeId" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="Creatives" />
+        <Column name="CommunicationSettings" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1">
+          <Properties>
+            <Property name="JsonSettingsClass" value="Traffk.Bal.Settings.CommunicationSettings" />
+          </Properties>
+        </Column>
+      </Columns>
+      <Collections>
+        <Collection schema="dbo" table="CommunicationBlasts" column="CommunicationId" />
       </Collections>
     </Table>
     <Table schema="dbo" name="Contacts">
@@ -337,6 +372,12 @@
             <Property name="InheritanceField:Person" value="1" />
           </Properties>
         </Column>
+        <Column name="ContactRowStatus" position="17" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')">
+          <Properties>
+            <Property name="AccessModifier" value="missing" />
+            <Property name="ImplementsRowStatusSemantics" value="1" />
+          </Properties>
+        </Column>
       </Columns>
       <Collections>
         <Collection schema="deerwalk" table="Eligibility" column="ContactId" />
@@ -351,6 +392,76 @@
         <Collection schema="deerwalk" table="QualityMetrics" column="ContactId" />
         <Collection schema="deerwalk" table="HighCostDiagnosis" column="ContactId" />
         <Collection schema="deerwalk" table="CareAlerts" column="ContactId" />
+        <Collection schema="dbo" table="CommunicationPieces" column="ContactId" />
+      </Collections>
+    </Table>
+    <Table schema="dbo" name="CreativeBlastTrackers">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="Comment" value="Assets referenced by a creative whose hyperlinks have been munged to support tracking" />
+        <Property name="GeneratePoco" value="1" />
+        <Property name="Implements" value="ITraffkTenanted" />
+      </Properties>
+      <Columns>
+        <Column name="CreativeBlastTrackerId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Tenants" />
+        <Column name="CreativeBlastCreativeTrackerRowStatus" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')">
+          <Properties>
+            <Property name="AccessModifier" value="missing" />
+            <Property name="ImplementsRowStatusSemantics" value="1" />
+          </Properties>
+        </Column>
+        <Column name="CommunicationBlastId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="CommunicationBlasts" />
+        <Column name="LinkType" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80" />
+        <Column name="TrackerUid" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="uniqueidentifier">
+          <Properties>
+            <Property name="MS_Description" value="Non-guessable guid for this item" />
+          </Properties>
+        </Column>
+        <Column name="RedirectUrl" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1024" />
+        <Column name="Position" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+      </Columns>
+      <Collections>
+        <Collection schema="dbo" table="CommunicationPieceVisits" column="CreativeBlastTrackerId" />
+      </Collections>
+    </Table>
+    <Table schema="dbo" name="Creatives">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="Comment" value="Assets that are used in a communication piece" />
+        <Property name="GeneratePoco" value="1" />
+        <Property name="Implements" value="ITraffkTenanted" />
+      </Properties>
+      <Columns>
+        <Column name="CreativeId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Tenants" />
+        <Column name="CreativesRowStatus" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')">
+          <Properties>
+            <Property name="AccessModifier" value="missing" />
+            <Property name="ImplementsRowStatusSemantics" value="1" />
+          </Properties>
+        </Column>
+        <Column name="CreatedAtUtc" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())">
+          <Properties>
+            <Property name="MS_Description" value="Datetime when this entity was created." />
+          </Properties>
+        </Column>
+        <Column name="CreativeTitle" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255">
+          <Properties>
+            <Property name="MS_Description" value="Identifyable title for this asset." />
+          </Properties>
+        </Column>
+        <Column name="ModelType" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="80" />
+        <Column name="TemplateEngineType" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80" />
+        <Column name="CreativeSettings" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1">
+          <Properties>
+            <Property name="JsonSettingsClass" value="Bal.Settings.CreativeSettings" />
+          </Properties>
+        </Column>
+      </Columns>
+      <Collections>
+        <Collection schema="dbo" table="Communications" column="CreativeId" />
+        <Collection schema="dbo" table="CommunicationBlasts" column="CreativeId" />
       </Collections>
     </Table>
     <Table schema="dbo" name="DateDimensions">
@@ -456,6 +567,7 @@
         </Column>
       </Columns>
       <Collections>
+        <Collection schema="dbo" table="ZCommunicationBlasts" column="JobId" />
         <Collection schema="dbo" table="CommunicationBlasts" column="JobId" />
       </Collections>
     </Table>
@@ -480,7 +592,7 @@
       </Columns>
       <Collections>
         <Collection schema="dbo" table="SystemCommunications" column="MessageTemplateId" />
-        <Collection schema="dbo" table="CommunicationBlasts" column="MessageTemplateId" />
+        <Collection schema="dbo" table="ZCommunicationBlasts" column="MessageTemplateId" />
       </Collections>
     </Table>
     <Table schema="dbo" name="ReleaseChanges">
@@ -591,15 +703,20 @@
         <Collection schema="deerwalk" table="MemberPCP" column="TenantId" />
         <Collection schema="deerwalk" table="Scores" column="TenantId" />
         <Collection schema="deerwalk" table="HistoricalScores" column="TenantId" />
+        <Collection schema="dbo" table="Creatives" column="TenantId" />
         <Collection schema="deerwalk" table="Participation" column="TenantId" />
         <Collection schema="dbo" table="Contacts" column="TenantId" />
         <Collection schema="deerwalk" table="QualityMetrics" column="TenantId" />
+        <Collection schema="dbo" table="Communications" column="TenantId" />
         <Collection schema="deerwalk" table="HighCostDiagnosis" column="TenantId" />
         <Collection schema="dbo" table="Jobs" column="TenantId" />
         <Collection schema="deerwalk" table="CareAlerts" column="TenantId" />
-        <Collection schema="dbo" table="CommunicationBlastLinks" column="TenantId" />
         <Collection schema="dbo" table="CommunicationBlasts" column="TenantId" />
+        <Collection schema="dbo" table="CreativeBlastTrackers" column="TenantId" />
+        <Collection schema="dbo" table="CommunicationPieces" column="TenantId" />
+        <Collection schema="dbo" table="ZCommunicationBlasts" column="TenantId" />
         <Collection schema="dbo" table="Tenants" column="ParentTenantId" />
+        <Collection schema="dbo" table="CommunicationPieceVisits" column="TenantId" />
         <Collection schema="dbo" table="AspNetUsers" column="TenantId" />
         <Collection schema="dbo" table="AspNetRoles" column="TenantId" />
         <Collection schema="dbo" table="Applications" column="TenantId" />
@@ -626,6 +743,43 @@
         <Column name="ActivityType" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80" />
         <Column name="ActivityResult" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="80" />
       </Columns>
+    </Table>
+    <Table schema="dbo" name="ZCommunicationBlasts">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+        <Property name="Implements" value="ITraffkTenanted" />
+      </Properties>
+      <Columns>
+        <Column name="CommunicationBlastId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="ParentCommunicationBlastId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="ZCommunicationBlasts" />
+        <Column name="TenantId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Tenants" />
+        <Column name="CreatedAtUtc" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())">
+          <Properties>
+            <Property name="MS_Description" value="Datetime when this entity was created." />
+          </Properties>
+        </Column>
+        <Column name="JobId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="Jobs" />
+        <Column name="CommunicationBlastTitle" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="255" />
+        <Column name="CommunicationMedium" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80" />
+        <Column name="TopicName" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" />
+        <Column name="CampaignName" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" />
+        <Column name="MessageTemplateId" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="MessageTemplates" />
+        <Column name="CommunicationBlastSettings" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1">
+          <Properties>
+            <Property name="JsonSettingsClass" value="Bal.Settings.CommunicationSettings" />
+          </Properties>
+        </Column>
+        <Column name="CommunicationBlastRowStatus" position="12" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')">
+          <Properties>
+            <Property name="AccessModifier" value="missing" />
+            <Property name="ImplementsRowStatusSemantics" value="1" />
+          </Properties>
+        </Column>
+      </Columns>
+      <Collections>
+        <Collection schema="dbo" table="ZCommunicationBlasts" column="ParentCommunicationBlastId" />
+      </Collections>
     </Table>
     <Table schema="deerwalk" name="CareAlerts">
       <Properties>

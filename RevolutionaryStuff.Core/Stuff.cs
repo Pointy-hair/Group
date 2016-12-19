@@ -124,19 +124,6 @@ namespace RevolutionaryStuff.Core
         }
 
         /// <summary>
-        /// Does a an enum that is marked with the FlagsAttribute have a particular flag set?
-        /// </summary>
-        /// <param name="Flags">The flags enum</param>
-        /// <param name="Val">The value we are testing against</param>
-        /// <returns>True if the value is set, else false</returns>
-        public static bool FlagAny(Enum Flags, Enum Val)
-        {
-            var flags = (long)Convert.ChangeType(Flags, typeof(long), null);
-            var val = (long)Convert.ChangeType(Val, typeof(long), null);
-            return (flags & val) != 0;
-        }
-
-        /// <summary>
         /// Is the enum that is marked with the FlagsAttribute equal to the passed in value
         /// </summary>
         /// <param name="Flags">The flags enum</param>

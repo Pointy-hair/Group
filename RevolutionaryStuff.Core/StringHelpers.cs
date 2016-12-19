@@ -16,6 +16,42 @@ namespace RevolutionaryStuff.Core
             return s;
         }
 
+        public static string ToTitleFriendlyString(this string s)
+        {
+            var sb = new StringBuilder();
+            bool lastWasUpper = false;
+            bool lastWasUnderscore = false;
+            for (int x = 0; x < s.Length; ++x)
+            {
+                var ch = s[x];
+                if (char.IsUpper(ch))
+                {
+                    if (!lastWasUpper && x>0)
+                    {
+                        sb.Append(' ');
+                    }
+                    lastWasUpper = true;
+                    lastWasUnderscore = false;
+                }
+                else if (ch == '_')
+                {
+                    ch = ' ';
+                    lastWasUnderscore = true;
+                }
+                else
+                {
+                    if (lastWasUnderscore || x==0)
+                    {
+                        ch = char.ToUpper(ch);
+                    }
+                    lastWasUpper = false;
+                    lastWasUnderscore = false;
+                }
+                sb.Append(ch);
+            }
+            return sb.ToString();
+        }
+
         public static string ToUpperCamelCase(this string s)
         {
             if (string.IsNullOrEmpty(s)) return "";

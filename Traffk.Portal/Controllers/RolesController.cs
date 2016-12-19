@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
 using Microsoft.Extensions.Logging;
 using TraffkPortal.Models.RoleModels;
 using RevolutionaryStuff.Core;
@@ -19,6 +18,8 @@ namespace TraffkPortal.Controllers
     [PermissionAuthorize(PermissionNames.ManageRoles)]
     public class RolesController : BasePageController
     {
+        public const string Name = "Roles";
+
         public RolesController(
             TraffkRdbContext db,
             CurrentContextServices current,

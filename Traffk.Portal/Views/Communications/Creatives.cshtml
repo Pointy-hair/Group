@@ -1,0 +1,67 @@
+﻿@model IEnumerable<Creative>
+@using static TraffkPortal.Controllers.CommunicationsController
+@{
+    Layout = "~/Views/Shared/_LayoutListing.cshtml";
+    ViewData.SetTitleAndHeading("Creatives");
+}
+@section listingActionButtons
+{
+    <button type="button" class="btn btn-default" asp-action="@ActionNames.CreativeCreate">Create</button>
+}
+@section listingTable
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.SortableHeaderFor(model => model.CreativeId)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(model => model.CreatedAt)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(model => model.CreativeTitle)
+                </th>
+                <th>Email HTML</th>
+                <th>Email Text</th>
+                <th>Text Message</th>
+                <th>
+                    @Html.SortableHeaderFor(model => model.ModelType)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreativeId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreatedAt)
+                    </td>
+                    <td>
+                        <a asp-action="@ActionNames.CreativeDetails" asp-route-id="@item.CreativeId">
+                            @Html.DisplayFor(modelItem => item.CreativeTitle)
+                        </a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreativeSettings.SupportsEmailHtml)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreativeSettings.SupportsEmailText)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreativeSettings.SupportsTextMessage)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ModelType)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @{ await Html.RenderPartialAsync("_PaginationPartial"); }
+
+}

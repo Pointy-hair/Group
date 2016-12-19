@@ -14,6 +14,8 @@ namespace TraffkPortal.Controllers
     [Authorize]
     public class HomeController : BasePageController
     {
+        public const string Name = "Home";
+
         public HomeController(
             TraffkRdbContext db,
             CurrentContextServices current,

@@ -22,6 +22,8 @@ namespace TraffkPortal.Controllers
     [Route("Tenants")]
     public class TenantsController : BasePageController
     {
+        public const string Name = "Tenants";
+
         public static class ViewNames
         {
             public const string TenantCreate = "Create";

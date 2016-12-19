@@ -80,7 +80,7 @@ namespace Traffk.Bal.Data.Rdb
 
         public async Task<bool> AddNextScheduledBlasts(int? specificBlastId=null, bool allTenants=false, bool deleteUpcomingNonConformantBlasts=true)
         {
-            var parentBlasts = CommunicationBlasts.AsQueryable();
+            var parentBlasts = ZCommunicationBlasts.AsQueryable();
             if (specificBlastId != null)
             {
                 parentBlasts = parentBlasts.Where(b => b.CommunicationBlastId == specificBlastId.Value);
@@ -96,11 +96,11 @@ namespace Traffk.Bal.Data.Rdb
             {
                 var nextOccurrence = b.CommunicationBlastSettings?.Recurrence?.NextOccurrence;
                 if (nextOccurrence == null) continue;
-                var kids = await CommunicationBlasts.Where(z => z.ParentCommunicationBlastId == b.CommunicationBlastId && z.Job != null).Include(z => z.Job).ToListAsync();
+                var kids = await ZCommunicationBlasts.Where(z => z.ParentCommunicationBlastId == b.CommunicationBlastId && z.Job != null).Include(z => z.Job).ToListAsync();
                 var nextScheduled = kids.Where(z=>z.Job.JobStatus!=Job.StatusNames.Cancelled).OrderByDescending(z => z.Job.DontRunBeforeUtc).FirstOrDefault();
                 if (nextScheduled == null)
                 {
-                    var newBlast = new CommunicationBlast()
+                    var newBlast = new ZCommunicationBlast()
                     {
                         CommunicationBlastTitle = b.CommunicationBlastTitle,
                         CommunicationMedium = b.CommunicationMedium,
@@ -122,11 +122,11 @@ namespace Traffk.Bal.Data.Rdb
                         var toRemove = kids.Where(z => z.Job.JobStatus == Job.StatusNames.Queued).ToList();
                         if (toRemove.Count > 0)
                         {
-                            CommunicationBlasts.RemoveRange(toRemove);
+                            ZCommunicationBlasts.RemoveRange(toRemove);
                             Jobs.RemoveRange(toRemove.ConvertAll(z => z.Job));
                         }
                     }
-                    CommunicationBlasts.Add(newBlast);
+                    ZCommunicationBlasts.Add(newBlast);
                 }
             }
             return saveRequired;

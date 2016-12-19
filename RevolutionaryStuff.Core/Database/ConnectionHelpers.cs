@@ -235,7 +235,7 @@ namespace RevolutionaryStuff.Core.Database
                 {
                     var pi = mi as PropertyInfo;
                     if (pi == null) continue;
-                    if (Stuff.FlagAny(pi.Attributes, PropertyAttributes.SpecialName | PropertyAttributes.RTSpecialName)) continue;
+                    if (pi.Attributes.HasFlag(PropertyAttributes.SpecialName | PropertyAttributes.RTSpecialName)) continue;
                     var colAttr = mi.GetCustomAttribute<ColumnAttribute>();
                     d[colAttr?.Name??mi.Name] = mi;
                 }
@@ -327,7 +327,7 @@ namespace RevolutionaryStuff.Core.Database
 
                 foreach (SqlParameter p in Parameters)
                 {
-                    if (Stuff.FlagAny(p.Direction, ParameterDirection.Output))
+                    if (p.Direction.HasFlag(ParameterDirection.Output))
                     {
                         return (T)p.Value;
                     }
@@ -340,7 +340,7 @@ namespace RevolutionaryStuff.Core.Database
 
                 foreach (SqlParameter p in Parameters)
                 {
-                    if (0 == string.Compare(p.ParameterName, name, true) && Stuff.FlagAny(p.Direction, ParameterDirection.Output))
+                    if (0 == string.Compare(p.ParameterName, name, true) && p.Direction.HasFlag(ParameterDirection.Output))
                     {
                         return (T)p.Value;
                     }
@@ -351,7 +351,7 @@ namespace RevolutionaryStuff.Core.Database
             public T GetOutputParameterVal<T>(int position)
             {
                 var p = Parameters[position];
-                if (Stuff.FlagAny(p.Direction, ParameterDirection.Output))
+                if (p.Direction.HasFlag(ParameterDirection.Output))
                 {
                     return (T)p.Value;
                 }

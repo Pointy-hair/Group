@@ -22,6 +22,8 @@ namespace TraffkPortal.Controllers
     [Route("Applications")]
     public class ApplicationController : BasePageController
     {
+        public const string Name = "Application";
+
         public class ActionNames
         {
             public const string ApplicationBasics = "Edit";

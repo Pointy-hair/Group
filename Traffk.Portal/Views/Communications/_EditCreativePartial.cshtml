@@ -1,0 +1,20 @@
+﻿@model Creative
+<div class="form-group">
+    <label class="col-md-2 control-label">zzz</label>
+    <input type="hidden" asp-for="CreativeId" />
+    <div class="col-md-10">
+        <div class="row">
+            <label asp-for="ModelType" class="control-label"></label>
+        </div>
+        <div class="row">
+            <select asp-for="ModelType" asp-items="ViewBag.ModelListItems"></select>
+        </div>
+        <div class="row">
+            <input asp-for="CreativeSettings.EmailSubject" class="form-control" />
+            <textarea asp-for="CreativeSettings.EmailHtmlBody" class="form-control htmleditor"></textarea>
+            <span asp-validation-for="CreativeSettings.EmailHtmlBody" class="text-danger" />
+            <textarea asp-for="CreativeSettings.EmailTextBody" class="form-control"></textarea>
+            <textarea asp-for="CreativeSettings.TextMessageBody" class="form-control"></textarea>
+        </div>
+    </div>
+</div>

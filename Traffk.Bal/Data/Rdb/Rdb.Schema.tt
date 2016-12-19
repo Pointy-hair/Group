@@ -9,6 +9,8 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Xml.Linq" #>
 <#@ import namespace="System.Xml.XPath" #>
+<#@ import namespace="System.Text" #>
+
 <#
 const string databaseContextClassName = "TraffkRdbContext";
 const string schemaMetaFile = "Rdb.Meta.xml";
@@ -121,46 +123,10 @@ foreach (var z in doc.XPathSelectElements("/SchemaMeta/Sprocs/Sproc[Properties/P
 foreach (var a in z.XPathSelectElements("Args/Arg"))
 {
 	bool nullable = true;
-	string dataType;
-	switch (GetAttrVal(a, "sqlType"))
+	string dataType = SqlTypeToClrType(GetAttrVal(a, "sqlType"));
+	if (dataType=="string")
 	{
-		case "smallint":
-			dataType = "int";//should be a ushort, but EF doesn't like that type with SQL Server
-			break;
-		case "tinyint":
-			dataType = "byte";
-			break;
-		case "money":
-		case "numeric":
-			dataType = "decimal";
-			break;
-		case "float":
-			dataType = "double";
-			break;
-		case "int":
-			dataType = "int";
-			break;
-		case "bigint":
-			dataType = "long";
-			break;
-		case "char":
-			dataType = "char";
-			break;
-		case "bit":
-			dataType = "bool";
-			break;
-		case "datetime":
-		case "date":
-			dataType = "DateTime";
-			break;
-		case "nvarchar":
-		case "varchar":
-			dataType = "string";
-			nullable = false;
-			break;
-		default:
-			dataType = "object";
-			break;
+		nullable = false;	
 	}
 	var memberName = GetAttrVal(a, "name").Substring(1);
 	#><#=argNum==0?"":", "#><#=dataType#><#=nullable?"?":""#> <#=memberName#> = null<#
@@ -336,21 +302,24 @@ foreach (var f in z.XPathSelectElements("Columns/Column"))
 		if (!isInheritedField && superclass!=null) continue;
 	}
 
+	string propertyName = GetAttrVal(f, "name");
 	comment = GetPropertyValue(f, "MS_Description");
 	var dataAnnotation = GetPropertyValue(f, "DataAnnotation");
 	var customAttributeNames = GetPropertyValue(f, "CustomAttribute");
-	var displayName = GetPropertyValue(f, "DisplayName") ?? comment;
+	var displayName = GetPropertyValue(f, "DisplayName") ?? ToTitleFriendlyString(propertyName);
 	var sampleData = GetPropertyValue(f, "SampleData");
 	string maxLen = null;
 	bool canUseMaxLen = false;
 	bool isNullable = GetAttrValAsBool(f, "isNullable");
 	bool isPrimaryKey = GetAttrValAsBool(f, "isPrimaryKey");
-	string propertyName = GetAttrVal(f, "name");
 	copyConstructorFieldNames.Add(propertyName);
 	string jsonSettingsClass = null;
 	string dataType;
 	switch (GetAttrVal(f, "sqlType"))
 	{
+		case "uniqueidentifier":
+			dataType = "byte[]";
+			break;
 		case "smallint":
 			dataType = "int" + (isNullable ? "?" : "");//should be a ushort, but EF doesn't like that type with SQL Server
 			break;
@@ -497,11 +466,13 @@ foreach (var f in z.XPathSelectElements("Columns/Column"))
 	}
 	if (propertyName.EndsWith("Utc", System.StringComparison.CurrentCultureIgnoreCase) && dataType.StartsWith("DateTime", System.StringComparison.CurrentCultureIgnoreCase))
 	{
+		var localTimePropertyName = RemoveFinalNCharacters(propertyName,3);
 #>
+		[DisplayName("<#=ToTitleFriendlyString(localTimePropertyName)#>")]
 		[NotMapped]
 		[JsonIgnore]
         [IgnoreDataMember]
-		<#=accessModifier#> <#=dataType#> <#=RemoveFinalNCharacters(propertyName,3)#> => <#=propertyName#><#=isNullable?"?":""#>.ToLocalTime();
+		<#=accessModifier#> <#=dataType#> <#=localTimePropertyName#> => <#=propertyName#><#=isNullable?"?":""#>.ToLocalTime();
 
 <#	
 	}
@@ -682,5 +653,73 @@ public string LeftOf(string s, string pivot)
 	var x = s.IndexOf(pivot);
 	if (x<0) return s;
 	return s.Substring(0, x);
+}
+public string SqlTypeToClrType(string sqlType)
+{
+	switch (sqlType)
+	{
+		case "uniqueidentifier":
+			return "byte[]";
+		case "smallint":
+			return "int";//should be a ushort, but EF doesn't like that type with SQL Server
+		case "tinyint":
+			return "byte";
+		case "money":
+		case "numeric":
+			return "decimal";
+		case "float":
+			return "double";
+		case "int":
+			return "int";
+		case "bigint":
+			return "long";
+		case "char":
+			return "char";
+		case "bit":
+			return "bool";
+		case "datetime":
+		case "date":
+			return "DateTime";
+		case "nvarchar":
+		case "varchar":
+			return "string";
+		default:
+			return "object";
+	}	
+}
+public static string ToTitleFriendlyString(string s)
+{
+    var sb = new StringBuilder();
+    bool lastWasUpper = false;
+    bool lastWasUnderscore = false;
+    for (int x = 0; x < s.Length; ++x)
+    {
+        var ch = s[x];
+        if (char.IsUpper(ch))
+        {
+            if (!lastWasUpper && x>0)
+            {
+                sb.Append(' ');
+            }
+            lastWasUpper = true;
+            lastWasUnderscore = false;
+        }
+        else if (ch == '_')
+        {
+            ch = ' ';
+            lastWasUnderscore = true;
+        }
+        else
+        {
+            if (lastWasUnderscore || x==0)
+            {
+                ch = char.ToUpper(ch);
+            }
+            lastWasUpper = false;
+            lastWasUnderscore = false;
+        }
+        sb.Append(ch);
+    }
+    return sb.ToString();
 }
 #>

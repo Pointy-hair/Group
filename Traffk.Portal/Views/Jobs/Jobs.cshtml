@@ -1,0 +1,109 @@
+@using static TraffkPortal.Controllers.JobsController;
+@model IEnumerable<Job>
+@{
+    Layout = "~/Views/Shared/_LayoutListing.cshtml";
+    ViewData.SetTitleAndHeading("Jobs");
+}
+@section listingActionButtons
+{
+    @*
+        <button type="button" class="btn btn-default" asp-action="Create">Create</button>
+    *@
+}
+@section listingTable
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.SortableHeaderFor(model => model.JobId)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(model => model.CreatedAt)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(model => model.DontRunBefore)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(model => model.JobStatus)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(model => model.JobType)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(model => model.JobResult)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr jobId="@item.JobId">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.JobId)
+                        @*
+    <a asp-action="Edit" asp-route-id="@item.JobId">
+        @Html.DisplayFor(modelItem => item.JobId)
+    </a>
+                        *@
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreatedAt)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DontRunBefore)
+                    </td>
+                    <td class="job-status">
+                        @Html.DisplayFor(modelItem => item.JobStatus)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.JobType)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.JobResult)
+                    </td>
+                    <td>
+                        @if (item.CanBeCancelled)
+                        {
+                            <a asp-action="@ActionNames.JobCancel" asp-route-id="@item.JobId" onclick="cancelJob(this, @item.JobId)" class="confirm-on-click" confirmHeading="Are you sure?" confirmMessage="Are you sure you want to cancel job @item.JobId?">Cancel</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @{ await Html.RenderPartialAsync("_PaginationPartial"); }
+
+}
+
+@section Scripts {
+    <script type="text/javascript">
+        function cancelJob(el, jobId) {
+            var url = $(el).attr("href");
+            var sel = "tr[jobId='"+jobId+"'] td.job-status";
+            //alert(url+"; "+sel);
+            $.ajax({
+                url: url,
+                dataType: "json",
+                type: "DELETE",
+                contentType: 'application/json; charset=utf-8',
+                //data: JSON.stringify({ assetKey: assetKey }),
+                async: true,
+                processData: false,
+                cache: false,
+                success: function (data) {
+                    $(sel).html("Cancelling...");
+                },
+                error: function (xhr) {
+                    $(sel).html("Error...");
+                    alert("error:\n" + JSON.stringify(xhr));
+                }
+            });
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            return false;
+        }
+    </script>
+}

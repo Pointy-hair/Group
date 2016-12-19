@@ -2,6 +2,7 @@
 {
     public enum PermissionNames
     {
+        ManageJobs,
         ManageTenants,
         ManageRoles,
         ManageUsers,

@@ -298,15 +298,15 @@ namespace RevolutionaryStuff.Core.ApplicationParts
                         {
                             val = string.IsNullOrEmpty(s) ? true : Parse.ParseBool(s);
                         }
-                        if (Stuff.FlagAny(a.Translator, CommandLineSwitchAttributeTranslators.Csv))
+                        if (a.Translator.HasFlag(CommandLineSwitchAttributeTranslators.Csv))
                         {
                             val = CSV.ParseLine(s);
                         }
-                        else if (Stuff.FlagAny(a.Translator, CommandLineSwitchAttributeTranslators.Csints))
+                        else if (a.Translator.HasFlag(CommandLineSwitchAttributeTranslators.Csints))
                         {
                             val = CSV.ParseIntegerRow(s);
                         }
-                        else if (Stuff.FlagAny(a.Translator, CommandLineSwitchAttributeTranslators.NameValuePairs))
+                        else if (a.Translator.HasFlag(CommandLineSwitchAttributeTranslators.NameValuePairs))
                         {
                             var parts = CSV.ParseLine(s);
                             var d = new Dictionary<string, string>();
@@ -318,7 +318,7 @@ namespace RevolutionaryStuff.Core.ApplicationParts
                             }
                             val = d;
                         }
-                        else if (Stuff.FlagAny(a.Translator, CommandLineSwitchAttributeTranslators.FilePath))
+                        else if (a.Translator.HasFlag(CommandLineSwitchAttributeTranslators.FilePath))
                         {
                             val = s.Contains("%") ? Environment.ExpandEnvironmentVariables(s) : s;
                             val = Path.GetFullPath(val as string);

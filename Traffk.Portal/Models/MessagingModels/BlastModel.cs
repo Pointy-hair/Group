@@ -5,7 +5,7 @@ namespace TraffkPortal.Models.MessagingModels
 {
     public class BlastModel
     {
-        public CommunicationBlast Blast { get; set; }
+        public ZCommunicationBlast Blast { get; set; }
 
         public string ModelType { get; set; }
 
@@ -20,9 +20,9 @@ namespace TraffkPortal.Models.MessagingModels
             : this(null)
         { }
 
-        public BlastModel(CommunicationBlast blast)
+        public BlastModel(ZCommunicationBlast blast)
         {
-            Blast = blast ?? new CommunicationBlast();
+            Blast = blast ?? new ZCommunicationBlast();
             ModelType = Blast.MessageTemplate?.SubjectTemplate?.ModelType;
             SubjectCode = Blast.MessageTemplate?.SubjectTemplate?.Code;
             HtmlBodyCode = Blast.MessageTemplate?.HtmlBodyTemplate?.Code;

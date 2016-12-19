@@ -1,4 +1,5 @@
 ﻿@using static TraffkPortal.AspHelpers;
+@using TraffkPortal.Controllers;
 @inject SignInManager<ApplicationUser> SignInManager
 <!DOCTYPE html>
 <html>
@@ -85,6 +86,7 @@ h1, .body-content a {
                     @if (SignInManager.IsSignedIn(User))
                     {
                     @*<li role="presentation" class="menu-heading">BLAAAAHHHHHH</li>*@
+                    var manageJobs = await User.HasPermission(AuthorizationService, PermissionNames.ManageJobs);
                     var manageTenants = await User.HasPermission(AuthorizationService, PermissionNames.ManageTenants);
                     var manageRoles = await User.HasPermission(AuthorizationService, PermissionNames.ManageRoles);
                     var manageUsers = await User.HasPermission(AuthorizationService, PermissionNames.ManageUsers);
@@ -96,9 +98,9 @@ h1, .body-content a {
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                            <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                            <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                            <li><a asp-area="" asp-controller="@HomeController.Name" asp-action="Index">Home</a></li>
+                            <li><a asp-area="" asp-controller="@HomeController.Name" asp-action="About">About</a></li>
+                            <li><a asp-area="" asp-controller="@HomeController.Name" asp-action="Contact">Contact</a></li>
                             @if (await User.HasPermission(AuthorizationService, PermissionNames.ReleaseLog))
                             {
                                 <li><a asp-controller="Home" asp-action="Releases">Releases</a></li>
@@ -113,40 +115,55 @@ h1, .body-content a {
                                     <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a asp-controller="Messaging" asp-action="Blasts">Blasts</a></li>
-                                    <li><a asp-controller="Messaging" asp-action="Messages">Messages</a></li>
-                                    <li><a asp-controller="Messaging" asp-action="Templates">Templates</a></li>
+                                    <li><a asp-controller="@MessagingController.Name" asp-action="Blasts">Blasts</a></li>
+                                    <li><a asp-controller="@MessagingController.Name" asp-action="Messages">Messages</a></li>
+                                    <li><a asp-controller="@MessagingController.Name" asp-action="Templates">Templates</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown @(mainNavPageKey==MainNavigationPageKeys.Messaging?"current-section":"")" role="presentation">
+                                <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                    Communications
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a asp-controller="@CommunicationsController.Name" asp-action="@CommunicationsController.ActionNames.CommunicationsList">Communications</a></li>
+                                    <li><a asp-controller="@CommunicationsController.Name" asp-action="@CommunicationsController.ActionNames.CreativesList">Creatives</a></li>
                                 </ul>
                             </li>
                         }
                         @if (await User.HasPermission(AuthorizationService, PermissionNames.BasicReporting))
                         {
-                            <li><a asp-controller="Reporting" asp-action="Index" class="@(mainNavPageKey==MainNavigationPageKeys.Reporting?"current-section":"")">Reporting</a></li>
+                            <li><a asp-controller="@ReportingController.Name" asp-action="Index" class="@(mainNavPageKey==MainNavigationPageKeys.Reporting?"current-section":"")">Reporting</a></li>
                         }
                         @if (await User.HasPermission(AuthorizationService, PermissionNames.CustomerRelationshipData))
                         {
-                            <li><a asp-controller="Crm" asp-action="Index" class="@(mainNavPageKey==MainNavigationPageKeys.CRM?"current-section":"")">CRM</a></li>
+                            <li><a asp-controller="@CrmController.Name" asp-action="Index" class="@(mainNavPageKey==MainNavigationPageKeys.CRM?"current-section":"")">CRM</a></li>
                         }
-                        @if (manageTenants || manageRoles || manageUsers || manageProtectedHealthInformation || canAccessPhi)
+                        @if (manageJobs || manageTenants || manageRoles || manageUsers || manageProtectedHealthInformation || canAccessPhi)
                         {
                             <li class="dropdown @(mainNavPageKey==MainNavigationPageKeys.Setup?"current-section":"")" role="presentation">
                                 <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle" href="#">
-                                    Setup
+                                    Administer
                                     <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    @if (manageTenants)
+                                    @if (manageJobs)
                                     {
-                                        <li><a asp-controller="Application" asp-action="Index">Applications</a></li>
-                                        <li><a asp-controller="Tenants" asp-action="Index">Tenants</a></li>
-                                    }
-                                    @if (manageRoles)
-                                    {
-                                        <li><a asp-controller="Roles" asp-action="Index">Roles</a></li>
+                                        <li><a asp-controller="@JobsController.Name" asp-action="Index">Jobs</a></li>
                                     }
                                     @if (manageUsers)
                                     {
-                                        <li><a asp-controller="Users" asp-action="Index">Users</a></li>
+                                        <li><a asp-controller="@UsersController.Name" asp-action="Index">Users</a></li>
+                                    }
+                                    <li class="divider" role="separator"></li>
+                                    @if (manageTenants)
+                                    {
+                                        <li><a asp-controller="@ApplicationController.Name" asp-action="Index">Applications</a></li>
+                                        <li><a asp-controller="@TenantsController.Name" asp-action="Index">Tenants</a></li>
+                                    }
+                                    @if (manageRoles)
+                                    {
+                                        <li><a asp-controller="@RolesController.Name" asp-action="Index">Roles</a></li>
                                     }
                                     <li class="divider" role="separator"></li>
                                     @if (manageProtectedHealthInformation)

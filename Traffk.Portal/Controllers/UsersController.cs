@@ -21,6 +21,8 @@ namespace TraffkPortal.Controllers
 {
     public class UsersController : BasePageController
     {
+        public const string Name = "Users";
+
         private readonly IUserClaimsPrincipalFactory<ApplicationUser> UserClaimsPrincipalFactory;
         private readonly IAuthorizationService AuthorizationService;
         private readonly UserManager<ApplicationUser> UserManager;
@@ -144,7 +146,7 @@ namespace TraffkPortal.Controllers
                     if (model.SendInvitationEmail)
                     {
                         var code = await UserManager.GeneratePasswordResetTokenAsync(user);
-                        var callbackUrl = Url.Action(nameof(AccountController.AcceptInvitation), AccountController.ControllerName, new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+                        var callbackUrl = Url.Action(nameof(AccountController.AcceptInvitation), AccountController.Name, new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
                         await EmailSender.SendEmailCommunicationAsync(
                             SystemCommunication.CommunicationPurposes.AcceptInvitation,
                             Template.ModelTypes.CreateCallbackUrlModel(callbackUrl, model.InvitationText),

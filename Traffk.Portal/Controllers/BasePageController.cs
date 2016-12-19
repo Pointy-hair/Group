@@ -57,14 +57,18 @@ namespace TraffkPortal.Controllers
 
         protected IQueryable<T> ApplySort<T>(IQueryable<T> q, string sortCol, string sortDir, IDictionary<string, string> colMapper = null)
         {
+            var m = new Dictionary<string, string>(colMapper ?? NoMappings);
+            if (!m.ContainsKey("CreatedAt"))
+            {
+                m["CreatedAt"] = "CreatedAtUtc";
+            }
             sortCol = StringHelpers.TrimOrNull(sortCol);
             bool isAscending = AspHelpers.IsSortDirAscending(sortDir);
             ViewBag.SortCol = sortCol;
             ViewBag.SortDir = sortDir;
             if (sortCol != null)
             {
-                colMapper = colMapper ?? NoMappings;
-                sortCol = colMapper.FindOrMissing(sortCol, sortCol);
+                sortCol = m.FindOrMissing(sortCol, sortCol);
                 q = q.OrderByField(sortCol, isAscending);
             }
             return q;
@@ -131,6 +135,8 @@ namespace TraffkPortal.Controllers
             }
             base.Dispose(disposing);
         }
+
+        protected StatusCodeResult StatusCode(System.Net.HttpStatusCode code) => StatusCode((int)code);
 
         protected void SetHeroLayoutViewData(object entityId, string entityTitle, object pageKey, string entityType=null)
         {

@@ -47,7 +47,7 @@ namespace TraffkCommunicationBlastRunner
         {
             var tenant = Rdb.Tenants.Single(z => z.TenantId == job.TenantId.Value);
 
-            var blast = Rdb.CommunicationBlasts.Single(z => z.TenantId == job.TenantId && z.JobId == job.JobId);
+            var blast = Rdb.ZCommunicationBlasts.Single(z => z.TenantId == job.TenantId && z.JobId == job.JobId);
             var messageTemplate = Rdb.MessageTemplates.Include(z => z.HtmlBodyTemplate).Include(z => z.SubjectTemplate).Include(z => z.TextBodyTemplate).FirstOrDefault(z => z.MessageTemplateId == blast.MessageTemplateId);
 
             var streamByCloubBlob = new Dictionary<CloudBlob, StreamMuxer>();

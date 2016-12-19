@@ -1,0 +1,61 @@
+﻿@model IEnumerable<Communication>
+@using static TraffkPortal.Controllers.CommunicationsController
+@{
+    Layout = "~/Views/Shared/_LayoutListing.cshtml";
+    ViewData.SetTitleAndHeading("Communications");
+}
+@section listingActionButtons
+{
+    <button type="button" class="btn btn-default" asp-action="@ActionNames.CommunicationCreate">Create</button>
+}
+@section listingTable
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.SortableHeaderFor(model => model.CommunicationId)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(model => model.CreatedAt)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(model => model.CommunicationTitle)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(model => model.TopicName)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(model => model.CampaignName)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CommunicationId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreatedAt)
+                    </td>
+                    <td>
+                        <a asp-action="@ActionNames.CommunicationDetails" asp-route-id="@item.CommunicationId">
+                            @Html.DisplayFor(modelItem => item.CommunicationTitle)
+                        </a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TopicName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CampaignName)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @{ await Html.RenderPartialAsync("_PaginationPartial"); }
+
+}
