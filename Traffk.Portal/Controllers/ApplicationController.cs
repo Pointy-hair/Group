@@ -266,6 +266,7 @@ namespace TraffkPortal.Controllers
             nameof(PortalOptionsModel.AboutMessage),
             nameof(PortalOptionsModel.CssFile),
             nameof(PortalOptionsModel.LogoFile),
+            nameof(PortalOptionsModel.FaviconFile),
             nameof(PortalOptionsModel.JavascriptFile),
             nameof(PortalOptionsModel.PrimaryColor),
             nameof(PortalOptionsModel.SecondaryColor)
@@ -290,6 +291,10 @@ namespace TraffkPortal.Controllers
                 if (model.LogoFile != null)
                 {
                     po.LogoLink = await Blobs.StoreFileAsync(false, BlobStorageServices.Roots.Portal, model.LogoFile, "customlogo" + Path.GetExtension(model.LogoFile.FileName), true);
+                }
+                if (model.FaviconFile != null)
+                {
+                    po.FaviconLink = await Blobs.StoreFileAsync(false, BlobStorageServices.Roots.Portal, model.FaviconFile, "customfavicon" + Path.GetExtension(model.FaviconFile.FileName), true);
                 }
                 if (model.CssFile != null)
                 {

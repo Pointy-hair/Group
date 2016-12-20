@@ -29,6 +29,9 @@ namespace Traffk.Bal.Settings
         [DataType(DataType.ImageUrl)]
         public Uri LogoLink { get; set; }
 
+        [DataType(DataType.ImageUrl)]
+        public Uri FaviconLink { get; set; }
+
         [DataType(TraffkHelpers.CustomDataTypes.HtmlColor)]
         public string PrimaryColor { get; set; }
 
@@ -53,6 +56,7 @@ namespace Traffk.Bal.Settings
             CssLink = other.CssLink;
             JavascriptLink = other.JavascriptLink;
             LogoLink = other.LogoLink;
+            FaviconLink = other.FaviconLink;
             PrimaryColor = other.PrimaryColor;
             SecondaryColor = other.SecondaryColor;
             SystemAdminName = other.SystemAdminName;

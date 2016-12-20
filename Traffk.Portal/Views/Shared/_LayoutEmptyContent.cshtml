@@ -39,6 +39,10 @@ h1, .body-content a {
     {
         <link rel="stylesheet" href="@R.CssLink" />
     }
+    @if (R.FaviconLink != null)
+    {
+        <link rel="shortcut icon" href="@R.FaviconLink" />
+    }
     @Html.ApplicationInsightsJavaScript(TelemetryConfiguration)
 </head>
 <body>

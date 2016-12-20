@@ -8,6 +8,7 @@ namespace TraffkPortal.Models.ApplicationModels
         public IFormFile CssFile { get; set; }
         public IFormFile JavascriptFile { get; set; }
         public IFormFile LogoFile { get; set; }
+        public IFormFile FaviconFile { get; set; }
 
         public PortalOptionsModel() { }
 

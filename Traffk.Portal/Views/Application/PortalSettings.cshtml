@@ -53,6 +53,14 @@
             </div>
         </div>
         <div class="form-group">
+            <label asp-for="FaviconFile" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                @await Html.PartialAsync("_AssetPreviewPartial", new AssetPreviewModel(Model.FaviconLink, AssetPreviewModel.AssetTypes.Image, nameof(Model.FaviconLink), "removeUploadedAsset"))
+                <input asp-for="FaviconFile" class="form-control" />
+                <span asp-validation-for="FaviconFile" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
             <label asp-for="CssFile" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 @await Html.PartialAsync("_AssetPreviewPartial", new AssetPreviewModel(Model.CssLink, AssetPreviewModel.AssetTypes.Css, nameof(Model.CssLink), "removeUploadedAsset"))

@@ -75,6 +75,8 @@ namespace TraffkPortal.Resources
 
         public Uri LogoLink { get { return O.LogoLink; } }
 
+        public Uri FaviconLink { get { return O.FaviconLink; } }
+
         public Uri CssLink { get { return O.CssLink; } }
 
         public bool HasBasicColors => !string.IsNullOrEmpty(PrimaryColor) && !string.IsNullOrEmpty(SecondaryColor) && PrimaryColor!=SecondaryColor;
