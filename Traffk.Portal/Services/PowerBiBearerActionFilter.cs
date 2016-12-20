@@ -24,7 +24,16 @@ namespace TraffkPortal.Services
         {
             await next();
             var bearer = await Current.PowerBi.GetBearer();
-            context.HttpContext.Response.Cookies.Append("powerBiBearer", bearer);
+            var bearerCookieKey = "powerBiBearer";
+            if (bearer != null)
+            {
+                context.HttpContext.Response.Cookies.Append(bearerCookieKey, bearer);
+            }
+            else
+            {
+                context.HttpContext.Response.Cookies.Delete(bearerCookieKey);
+            }
+            
         }
     }
 }
