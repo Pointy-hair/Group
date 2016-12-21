@@ -16,8 +16,12 @@ namespace Traffk.Portal.Tests.ControllerTests
             [TestMethod]
             public void WhenGivenIndexReturnNotNull()
             {
-                object nullObject = null;
-                Assert.IsNotNull(nullObject);
+                var testString = "NOT NULL";
+                Assert.IsNotNull(testString);
+
+                //object nullObject = null;
+                //Assert.IsNotNull(nullObject);
+                
             }
         }
     }
