@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v1.1",
-    "signature": "f1d3ff5c437589d21507b2a63653b053bde4cf45"
+    "signature": "284a9713271ee8677a0a33c8f5210f3da7cb7b2b"
   },
   "compilationOptions": {},
   "targets": {
@@ -9,6 +9,7 @@
       "Traffk.Portal.Tests/1.1.0": {
         "dependencies": {
           "dotnet-test-mstest": "1.1.2-preview",
+          "MSTest.TestAdapter": "1.1.8-rc",
           "MSTest.TestFramework": "1.0.8-rc",
           "Traffk.Portal": "1.0.0"
         },
@@ -1187,6 +1188,7 @@
           "lib/dotnet/Microsoft.VisualStudio.TestPlatform.ObjectModel.dll": {}
         }
       },
+      "MSTest.TestAdapter/1.1.8-rc": {},
       "MSTest.TestAdapter.Dotnet/1.1.5-preview": {
         "runtime": {
           "lib/dotnet/Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll": {},
@@ -2324,6 +2326,11 @@
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-p94x245t1kqcz1D2mxvYeUuUnn2rPKodhftkzeexk14gjJrXxbHatMLnI3MQRnpAH/C/biiluQRJM2TwvVb8jQ=="
+    },
+    "MSTest.TestAdapter/1.1.8-rc": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-f8OGPR3HHOQAGE4Bkz7W7e04082aFC53Wvy8FtW0nPPDlGtnvvPJvSxpmEdw2L4FcwobF1mrGMokVAz3r35axw=="
     },
     "MSTest.TestAdapter.Dotnet/1.1.5-preview": {
       "type": "package",
