@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Traffk.Portal;
+using Traffk.CommunicationBlaster;
 
-namespace Traffk.Portal.Tests.ControllerTests
+namespace Traffk.CommunicationBlaster.Tests
 {
     [TestClass]
-    public class HomeControllerTests
+    public class CommunicationBlastRunnerTests
     {
         [TestClass]
-        public class IndexMethodTests
+        public class OnGoTests
         {
             [TestMethod]
-            public void WhenGivenIndexReturnNotNull()
+            public void WhenGivenJobRun()
             {
                 var testString = "NOT NULL";
                 Assert.IsNotNull(testString);
@@ -23,5 +23,6 @@ namespace Traffk.Portal.Tests.ControllerTests
                 //Assert.IsNotNull(nullObject);
             }
         }
+
     }
 }
