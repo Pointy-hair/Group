@@ -16,11 +16,11 @@ namespace Traffk.CommunicationBlaster.Tests
             [TestMethod]
             public void WhenGivenJobRun()
             {
-                var testString = "NOT NULL";
-                Assert.IsNotNull(testString);
+                //var testString = "NOT NULL";
+                //Assert.IsNotNull(testString);
 
-                //object nullObject = null;
-                //Assert.IsNotNull(nullObject);
+                object nullObject = null;
+                Assert.IsNotNull(nullObject);
             }
         }
 
