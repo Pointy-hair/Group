@@ -243,6 +243,9 @@ namespace TraffkPortal.Controllers
                 case nameof(PortalOptions.LogoLink):
                     po.LogoLink = null;
                     break;
+                case nameof(PortalOptions.FaviconLink):
+                    po.FaviconLink = null;
+                    break;
                 default:
                     throw new UnexpectedSwitchValueException(assetKey);
             }
