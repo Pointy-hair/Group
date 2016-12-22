@@ -1,4 +1,0 @@
-C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\RevolutionaryStuff.SqlSchemaFoundations\bin\Release\RevolutionaryStuff.SqlSchemaFoundations.dll
-C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\RevolutionaryStuff.SqlSchemaFoundations\bin\Release\RevolutionaryStuff.SqlSchemaFoundations.pdb
-C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\RevolutionaryStuff.SqlSchemaFoundations\obj\Release\RevolutionaryStuff.SqlSchemaFoundations.dll
-C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\RevolutionaryStuff.SqlSchemaFoundations\obj\Release\RevolutionaryStuff.SqlSchemaFoundations.pdb

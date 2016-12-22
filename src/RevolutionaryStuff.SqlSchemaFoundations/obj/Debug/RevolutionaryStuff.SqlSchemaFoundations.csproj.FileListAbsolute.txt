@@ -1,9 +1,0 @@
-C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\RevolutionaryStuff.SqlSchemaFoundations\bin\Debug\RevolutionaryStuff.SqlSchemaFoundations.dll
-C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\RevolutionaryStuff.SqlSchemaFoundations\bin\Debug\RevolutionaryStuff.SqlSchemaFoundations.pdb
-C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\RevolutionaryStuff.SqlSchemaFoundations\obj\Debug\RevolutionaryStuff.SqlSchemaFoundations.csprojResolveAssemblyReference.cache
-C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\RevolutionaryStuff.SqlSchemaFoundations\obj\Debug\RevolutionaryStuff.SqlSchemaFoundations.dll
-C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\RevolutionaryStuff.SqlSchemaFoundations\obj\Debug\RevolutionaryStuff.SqlSchemaFoundations.pdb
-C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\RevolutionaryStuff.SqlSchemaFoundations\bin\Debug\RevolutionaryStuff.SqlSchemaFoundations.dll
-C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\RevolutionaryStuff.SqlSchemaFoundations\bin\Debug\RevolutionaryStuff.SqlSchemaFoundations.pdb
-C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\RevolutionaryStuff.SqlSchemaFoundations\obj\Debug\RevolutionaryStuff.SqlSchemaFoundations.dll
-C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\RevolutionaryStuff.SqlSchemaFoundations\obj\Debug\RevolutionaryStuff.SqlSchemaFoundations.pdb
