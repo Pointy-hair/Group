@@ -28,3 +28,13 @@
 /tests/Traffk.CommunicationBlaster.Tests/bin
 *.user
 *.suo
+/tests/RevolutionaryStuff.Azure.Tests/obj
+/tests/RevolutionaryStuff.Azure.Tests/bin
+/tests/RevolutionaryStuff.Core.Tests/obj
+/tests/RevolutionaryStuff.Core.Tests/bin
+/tests/RevolutionaryStuff.DataFoundations.Tests/obj
+/tests/RevolutionaryStuff.DataFoundations.Tests/bin
+/tests/RevolutionaryStuff.PowerBiToys.Tests/obj
+/tests/RevolutionaryStuff.PowerBiToys.Tests/bin
+/tests/RevolutionaryStuff.SqlSchemaFoundations.Tests/obj
+/tests/RevolutionaryStuff.SqlSchemaFoundations.Tests/bin
