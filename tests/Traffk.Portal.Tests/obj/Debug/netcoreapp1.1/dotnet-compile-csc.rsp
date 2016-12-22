@@ -8,8 +8,8 @@
 -debug:full
 -nostdlib
 -nologo
-"C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\Traffk.Portal.Tests\obj\Debug\netcoreapp1.1\dotnet-compile.assemblyinfo.cs"
--out:"C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\Traffk.Portal.Tests\bin\Debug\netcoreapp1.1\Traffk.Portal.Tests.dll"
+"C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\tests\Traffk.Portal.Tests\obj\Debug\netcoreapp1.1\dotnet-compile.assemblyinfo.cs"
+-out:"C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\tests\Traffk.Portal.Tests\bin\Debug\netcoreapp1.1\Traffk.Portal.Tests.dll"
 -r:"C:\Users\Darren x Traffk\.nuget\packages\BundlerMinifier.Core\2.2.306\lib\netcoreapp1.0\dotnet-bundle.dll"
 -r:"C:\Users\Darren x Traffk\.nuget\packages\cloudscribe.HtmlAgilityPack\1.0.0\lib\netstandard1.6\cloudscribe.HtmlAgilityPack.dll"
 -r:"C:\Users\Darren x Traffk\.nuget\packages\dotnet-test-mstest\1.1.2-preview\lib\netcoreapp1.0\dotnet-test-mstest.dll"
@@ -262,10 +262,10 @@
 -r:"C:\Users\Darren x Traffk\.nuget\packages\System.Xml.XPath\4.0.1\ref\netstandard1.3\System.Xml.XPath.dll"
 -r:"C:\Users\Darren x Traffk\.nuget\packages\System.Xml.XPath.XmlDocument\4.0.1\ref\netstandard1.3\System.Xml.XPath.XmlDocument.dll"
 -r:"C:\Users\Darren x Traffk\.nuget\packages\WindowsAzure.Storage\7.2.1\lib\netstandard1.3\Microsoft.WindowsAzure.Storage.dll"
--r:"C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\RevolutionaryStuff.Azure\bin\Debug\netcoreapp1.1\RevolutionaryStuff.Azure.dll"
--r:"C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\RevolutionaryStuff.Core\bin\Debug\netcoreapp1.1\RevolutionaryStuff.Core.dll"
--r:"C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\RevolutionaryStuff.PowerBiToys\bin\Debug\netcoreapp1.1\RevolutionaryStuff.PowerBiToys.dll"
--r:"C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\Traffk.Bal\bin\Debug\netcoreapp1.1\Traffk.Bal.dll"
--r:"C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\Traffk.Portal\bin\Debug\netcoreapp1.1\Traffk.Portal.dll"
-"C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\Traffk.Portal.Tests\ControllerTests\HomeControllerTests.cs"
-"C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\Traffk.Portal.Tests\Properties\AssemblyInfo.cs"
+-r:"C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\RevolutionaryStuff.Azure\bin\Debug\netcoreapp1.1\RevolutionaryStuff.Azure.dll"
+-r:"C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\RevolutionaryStuff.Core\bin\Debug\netcoreapp1.1\RevolutionaryStuff.Core.dll"
+-r:"C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\RevolutionaryStuff.PowerBiToys\bin\Debug\netcoreapp1.1\RevolutionaryStuff.PowerBiToys.dll"
+-r:"C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\Traffk.Bal\bin\Debug\netcoreapp1.1\Traffk.Bal.dll"
+-r:"C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\Traffk.Portal\bin\Debug\netcoreapp1.1\Traffk.Portal.dll"
+"C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\tests\Traffk.Portal.Tests\ControllerTests\HomeControllerTests.cs"
+"C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\tests\Traffk.Portal.Tests\Properties\AssemblyInfo.cs"

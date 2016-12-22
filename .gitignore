@@ -2,20 +2,20 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/RevolutionaryStuff.Core/obj
-/RevolutionaryStuff.Core/bin
-/.vs
-/RevolutionaryStuff.Azure/obj
-/RevolutionaryStuff.Azure/bin
-/RevolutionaryStuff.DataFoundations/obj
-/RevolutionaryStuff.DataFoundations/bin
-/RevolutionaryStuff.PowerBiToys/obj
-/RevolutionaryStuff.PowerBiToys/bin
-/RevolutionaryStuff.SqlSchemaFoundations/obj
-/RevolutionaryStuff.SqlSchemaFoundations/bin
-/Traffk.Bal/obj
-/Traffk.Bal/bin
-/Traffk.Portal/obj
-/Traffk.Portal/bin
-/Traffk.CommunicationBlaster/obj
-/Traffk.CommunicationBlaster/bin
+src/RevolutionaryStuff.Core/obj
+src/RevolutionaryStuff.Core/bin
+src/.vs
+src/RevolutionaryStuff.Azure/obj
+src/RevolutionaryStuff.Azure/bin
+src/RevolutionaryStuff.DataFoundations/obj
+src/RevolutionaryStuff.DataFoundations/bin
+src/RevolutionaryStuff.PowerBiToys/obj
+src/RevolutionaryStuff.PowerBiToys/bin
+src/RevolutionaryStuff.SqlSchemaFoundations/obj
+src/RevolutionaryStuff.SqlSchemaFoundations/bin
+src/Traffk.Bal/obj
+src/Traffk.Bal/bin
+src/Traffk.Portal/obj
+src/Traffk.Portal/bin
+src/Traffk.CommunicationBlaster/obj
+src/Traffk.CommunicationBlaster/bin

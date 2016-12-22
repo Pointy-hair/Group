@@ -13290,28 +13290,28 @@
     },
     "RevolutionaryStuff.Azure/1.0.0": {
       "type": "project",
-      "path": "../RevolutionaryStuff.Azure/project.json",
-      "msbuildProject": "../RevolutionaryStuff.Azure/RevolutionaryStuff.Azure.xproj"
+      "path": "../../src/RevolutionaryStuff.Azure/project.json",
+      "msbuildProject": "../../src/RevolutionaryStuff.Azure/RevolutionaryStuff.Azure.xproj"
     },
     "RevolutionaryStuff.Core/1.0.0": {
       "type": "project",
-      "path": "../RevolutionaryStuff.Core/project.json",
-      "msbuildProject": "../RevolutionaryStuff.Core/RevolutionaryStuff.Core.xproj"
+      "path": "../../src/RevolutionaryStuff.Core/project.json",
+      "msbuildProject": "../../src/RevolutionaryStuff.Core/RevolutionaryStuff.Core.xproj"
     },
     "RevolutionaryStuff.PowerBiToys/1.0.0": {
       "type": "project",
-      "path": "../RevolutionaryStuff.PowerBiToys/project.json",
-      "msbuildProject": "../RevolutionaryStuff.PowerBiToys/RevolutionaryStuff.PowerBiToys.xproj"
+      "path": "../../src/RevolutionaryStuff.PowerBiToys/project.json",
+      "msbuildProject": "../../src/RevolutionaryStuff.PowerBiToys/RevolutionaryStuff.PowerBiToys.xproj"
     },
     "Traffk.Bal/1.0.0": {
       "type": "project",
-      "path": "../Traffk.Bal/project.json",
-      "msbuildProject": "../Traffk.Bal/Traffk.Bal.xproj"
+      "path": "../../src/Traffk.Bal/project.json",
+      "msbuildProject": "../../src/Traffk.Bal/Traffk.Bal.xproj"
     },
     "Traffk.Portal/1.0.0": {
       "type": "project",
-      "path": "../Traffk.Portal/project.json",
-      "msbuildProject": "../Traffk.Portal/Traffk.Portal.xproj"
+      "path": "../../src/Traffk.Portal/project.json",
+      "msbuildProject": "../../src/Traffk.Portal/Traffk.Portal.xproj"
     }
   },
   "projectFileDependencyGroups": {

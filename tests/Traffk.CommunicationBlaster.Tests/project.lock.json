@@ -11057,22 +11057,22 @@
     },
     "RevolutionaryStuff.Azure/1.0.0": {
       "type": "project",
-      "path": "../RevolutionaryStuff.Azure/project.json",
-      "msbuildProject": "../RevolutionaryStuff.Azure/RevolutionaryStuff.Azure.xproj"
+      "path": "../../src/RevolutionaryStuff.Azure/project.json",
+      "msbuildProject": "../../src/RevolutionaryStuff.Azure/RevolutionaryStuff.Azure.xproj"
     },
     "RevolutionaryStuff.Core/1.0.0": {
       "type": "project",
-      "path": "../RevolutionaryStuff.Core/project.json",
-      "msbuildProject": "../RevolutionaryStuff.Core/RevolutionaryStuff.Core.xproj"
+      "path": "../../src/RevolutionaryStuff.Core/project.json",
+      "msbuildProject": "../../src/RevolutionaryStuff.Core/RevolutionaryStuff.Core.xproj"
     },
     "Traffk.Bal/1.0.0": {
       "type": "project",
-      "path": "../Traffk.Bal/project.json",
-      "msbuildProject": "../Traffk.Bal/Traffk.Bal.xproj"
+      "path": "../../src/Traffk.Bal/project.json",
+      "msbuildProject": "../../src/Traffk.Bal/Traffk.Bal.xproj"
     },
     "Traffk.CommunicationBlaster/1.0.0": {
       "type": "project",
-      "path": "../Traffk.CommunicationBlaster/project.json"
+      "path": "../../src/Traffk.CommunicationBlaster/project.json"
     }
   },
   "projectFileDependencyGroups": {
@@ -11080,7 +11080,7 @@
       "MSTest.TestAdapter >= 1.1.8-rc",
       "MSTest.TestFramework >= 1.0.8-rc",
       "Microsoft.NETCore.App >= 1.1.0",
-      "Traffk.CommunicationBlaster",
+      "Traffk.CommunicationBlaster >= 1.0.0-*",
       "dotnet-test-mstest >= 1.1.2-preview"
     ],
     ".NETCoreApp,Version=v1.1": []

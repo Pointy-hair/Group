@@ -1,5 +1,5 @@
---temp-output:C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\Traffk.Bal.Tests\obj\Debug\netcoreapp1.1\
---out:C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\Traffk.Bal.Tests\bin\Debug\netcoreapp1.1\Traffk.Bal.Tests.dll
+--temp-output:C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\tests\Traffk.Bal.Tests\obj\Debug\netcoreapp1.1\
+--out:C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\tests\Traffk.Bal.Tests\bin\Debug\netcoreapp1.1\Traffk.Bal.Tests.dll
 --define:DEBUG
 --define:TRACE
 --define:NETCOREAPP1_1
@@ -180,8 +180,8 @@
 --reference:C:\Users\Darren x Traffk\.nuget\packages\System.Xml.XPath\4.0.1\ref\netstandard1.3\System.Xml.XPath.dll
 --reference:C:\Users\Darren x Traffk\.nuget\packages\System.Xml.XPath.XmlDocument\4.0.1\ref\netstandard1.3\System.Xml.XPath.XmlDocument.dll
 --reference:C:\Users\Darren x Traffk\.nuget\packages\WindowsAzure.Storage\7.2.1\lib\netstandard1.3\Microsoft.WindowsAzure.Storage.dll
---reference:C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\RevolutionaryStuff.Azure\bin\Debug\netcoreapp1.1\RevolutionaryStuff.Azure.dll
---reference:C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\RevolutionaryStuff.Core\bin\Debug\netcoreapp1.1\RevolutionaryStuff.Core.dll
---reference:C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\Traffk.Bal\bin\Debug\netcoreapp1.1\Traffk.Bal.dll
-C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\Traffk.Bal.Tests\EmailTests\RawEmailerTests.cs
-C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\Traffk.Bal.Tests\Properties\AssemblyInfo.cs
+--reference:C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\RevolutionaryStuff.Azure\bin\Debug\netcoreapp1.1\RevolutionaryStuff.Azure.dll
+--reference:C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\RevolutionaryStuff.Core\bin\Debug\netcoreapp1.1\RevolutionaryStuff.Core.dll
+--reference:C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\Traffk.Bal\bin\Debug\netcoreapp1.1\Traffk.Bal.dll
+C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\tests\Traffk.Bal.Tests\EmailTests\RawEmailerTests.cs
+C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\tests\Traffk.Bal.Tests\Properties\AssemblyInfo.cs
