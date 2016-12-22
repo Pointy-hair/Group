@@ -5,6 +5,7 @@
 src/RevolutionaryStuff.Core/obj
 src/RevolutionaryStuff.Core/bin
 src/.vs
+/.vs
 src/RevolutionaryStuff.Azure/obj
 src/RevolutionaryStuff.Azure/bin
 src/RevolutionaryStuff.DataFoundations/obj
