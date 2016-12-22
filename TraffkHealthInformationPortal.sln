@@ -3,33 +3,38 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "RevolutionaryStuff.Core", "RevolutionaryStuff.Core\RevolutionaryStuff.Core.xproj", "{292AE427-4C2A-4A9B-90F1-7D1CEB6724F7}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "RevolutionaryStuff.Core", "src\RevolutionaryStuff.Core\RevolutionaryStuff.Core.xproj", "{292AE427-4C2A-4A9B-90F1-7D1CEB6724F7}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "RevolutionaryStuff.PowerBiToys", "RevolutionaryStuff.PowerBiToys\RevolutionaryStuff.PowerBiToys.xproj", "{BA4BF0F1-9690-4EEF-89BD-23B32983671C}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "RevolutionaryStuff.PowerBiToys", "src\RevolutionaryStuff.PowerBiToys\RevolutionaryStuff.PowerBiToys.xproj", "{BA4BF0F1-9690-4EEF-89BD-23B32983671C}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "RevolutionaryStuff.Azure", "RevolutionaryStuff.Azure\RevolutionaryStuff.Azure.xproj", "{FD0F6C81-25A4-4B3B-AC35-EC67E6CF7510}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "RevolutionaryStuff.Azure", "src\RevolutionaryStuff.Azure\RevolutionaryStuff.Azure.xproj", "{FD0F6C81-25A4-4B3B-AC35-EC67E6CF7510}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "RevolutionaryStuff.DataFoundations", "RevolutionaryStuff.DataFoundations\RevolutionaryStuff.DataFoundations.xproj", "{78068C01-C016-4F73-86E9-476191E0B328}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "RevolutionaryStuff.DataFoundations", "src\RevolutionaryStuff.DataFoundations\RevolutionaryStuff.DataFoundations.xproj", "{78068C01-C016-4F73-86E9-476191E0B328}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevolutionaryStuff.SqlSchemaFoundations", "RevolutionaryStuff.SqlSchemaFoundations\RevolutionaryStuff.SqlSchemaFoundations.csproj", "{AB94B67B-7239-4505-834B-8ED8D7B01E94}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevolutionaryStuff.SqlSchemaFoundations", "src\RevolutionaryStuff.SqlSchemaFoundations\RevolutionaryStuff.SqlSchemaFoundations.csproj", "{AB94B67B-7239-4505-834B-8ED8D7B01E94}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RevolutionaryStuff", "RevolutionaryStuff", "{59BE3A01-C86A-4209-8F43-56EF2DC29D76}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Traffk", "Traffk", "{F3EAADFD-9E92-4493-9D3A-901BCFC8CBEF}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Traffk.Bal", "Traffk.Bal\Traffk.Bal.xproj", "{DD568131-0662-4B5A-9B27-E0C7BF818A06}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Traffk.Bal", "src\Traffk.Bal\Traffk.Bal.xproj", "{DD568131-0662-4B5A-9B27-E0C7BF818A06}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Traffk.CommunicationBlastRunner", "Traffk.CommunicationBlaster\Traffk.CommunicationBlastRunner.xproj", "{5C571BB5-D107-4157-B518-3016D8A1E37B}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Traffk.CommunicationBlastRunner", "src\Traffk.CommunicationBlaster\Traffk.CommunicationBlastRunner.xproj", "{5C571BB5-D107-4157-B518-3016D8A1E37B}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Traffk.Portal", "Traffk.Portal\Traffk.Portal.xproj", "{B3752BF8-E155-490A-93BA-06AF7C98BDC8}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Traffk.Portal", "src\Traffk.Portal\Traffk.Portal.xproj", "{B3752BF8-E155-490A-93BA-06AF7C98BDC8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Traffk.Tests", "Traffk.Tests", "{B0C6A62E-9DCF-4D97-8E4A-CBDEC80D96EA}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Traffk.Portal.Tests", "Traffk.Portal.Tests\Traffk.Portal.Tests.xproj", "{6EFB4B65-2349-4686-89AA-71A1036AF822}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Traffk.Portal.Tests", "tests\Traffk.Portal.Tests\Traffk.Portal.Tests.xproj", "{6EFB4B65-2349-4686-89AA-71A1036AF822}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Traffk.Bal.Tests", "Traffk.Bal.Tests\Traffk.Bal.Tests.xproj", "{16343C6C-D1D3-4002-8AE8-79DB078E97C7}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Traffk.Bal.Tests", "tests\Traffk.Bal.Tests\Traffk.Bal.Tests.xproj", "{16343C6C-D1D3-4002-8AE8-79DB078E97C7}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Traffk.CommunicationBlaster.Tests", "Traffk.CommunicationBlaster.Tests\Traffk.CommunicationBlaster.Tests.xproj", "{C76C8E90-6E24-4B43-994A-99930CB0D285}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Traffk.CommunicationBlaster.Tests", "tests\Traffk.CommunicationBlaster.Tests\Traffk.CommunicationBlaster.Tests.xproj", "{C76C8E90-6E24-4B43-994A-99930CB0D285}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C54FEED7-13B1-4B57-AA7D-A540B7B94083}"
+	ProjectSection(SolutionItems) = preProject
+		global.json = global.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
