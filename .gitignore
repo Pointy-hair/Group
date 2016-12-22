@@ -26,3 +26,5 @@
 /tests/Traffk.Portal.Tests/bin
 /tests/Traffk.CommunicationBlaster.Tests/obj
 /tests/Traffk.CommunicationBlaster.Tests/bin
+*.user
+*.suo
