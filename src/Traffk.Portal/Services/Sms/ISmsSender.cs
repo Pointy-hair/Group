@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace TraffkPortal.Services
+namespace TraffkPortal.Services.Sms
 {
     public interface ISmsSender
     {

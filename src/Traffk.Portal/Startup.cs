@@ -21,6 +21,7 @@ using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
 using TraffkPortal.Permissions;
 using TraffkPortal.Services;
+using TraffkPortal.Services.Sms;
 using TraffkPortal.Services.TenantServices;
 
 namespace TraffkPortal
@@ -92,7 +93,7 @@ namespace TraffkPortal
             services.Configure<CrmDdbContext.CrmDdbOptions>(Configuration.GetSection(nameof(CrmDdbContext.CrmDdbOptions)));
             services.Configure<NoTenantMiddleware.NoTenantMiddlewareOptions>(Configuration.GetSection(nameof(NoTenantMiddleware.NoTenantMiddlewareOptions)));
             services.Configure<BlobStorageServices.BlobStorageServicesOptions>(Configuration.GetSection(nameof(BlobStorageServices.BlobStorageServicesOptions)));
-
+            services.Configure<TwilioSmsSenderOptions>(Configuration.GetSection(nameof(TwilioSmsSenderOptions)));
             services.Configure<TraffkHttpHeadersFilter.TraffkHttpHeadersFilterOptions>(Configuration.GetSection(nameof(TraffkHttpHeadersFilter.TraffkHttpHeadersFilterOptions)));
 
 
@@ -147,6 +148,7 @@ namespace TraffkPortal
             services.AddScoped<IEmailer, TrackingEmailer>();
             services.AddScoped<IEmailSender, AuthMessageSender>();
             services.AddScoped<ISmsSender, AuthMessageSender>();
+            services.AddSingleton<ITwilioSmsSender, TwilioSmsSender>();
             services.AddScoped<CurrentTenantServices>();
             services.AddScoped<TenantFinderService>();
             services.AddScoped<ITraffkTenantFinder, TenantFinderService>();
