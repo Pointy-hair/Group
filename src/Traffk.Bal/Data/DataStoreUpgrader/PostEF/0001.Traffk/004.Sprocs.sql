@@ -24,6 +24,7 @@ end
 
 exec db.SprocPropertySet  'ApplicationFindByHost', '1', @propertyName='AddToDbContext'
 exec db.SprocPropertySet  'ApplicationFindByHost', 'Collection:Traffk.Bal.Data.Rdb.ApplicationHostItem', @propertyName='SprocType'
+exec db.SprocParameterPropertySet 'ApplicationFindByHost', '@applicationType', 'ApplicationTypes', @propertyName='EnumType'
 
 GO
 

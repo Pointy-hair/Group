@@ -23,6 +23,15 @@ namespace RevolutionaryStuff.Core
         {
             public static readonly DataContractJsonSerializer Serializer = SerializationHelpers.GetJsonSerializer<AuthenticationResult>();
 
+            [IgnoreDataMember]
+            public bool IsError => Error != null;
+
+            [DataMember(Name = "error")]
+            public string Error { get; set; }
+
+            [DataMember(Name = "error_description")]
+            public string ErrorDescription { get; set; }
+
             [DataMember(Name = "token_type")]
             public string TokenType { get; set; }
 
@@ -78,10 +87,8 @@ namespace RevolutionaryStuff.Core
                 if (ResultCache == null || !ResultCache.Find(cacheKey, out res))
                 {
                     var response = await client.PostAsync(uri, WebHelpers.CreateHttpContent(datas));
-                    using (var st = await response.Content.ReadAsStreamAsync())
-                    {
-                        res = (AuthenticationResult)AuthenticationResult.Serializer.ReadObject(st);
-                    }
+                    var json = await response.Content.ReadAsStringAsync();
+                    res = AuthenticationResult.Serializer.ReadObjectFromString<AuthenticationResult>(json);
                     if (ResultCache != null)
                     {
                         ResultCache.Add(cacheKey, res);

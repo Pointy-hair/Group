@@ -1,5 +1,7 @@
 ﻿create schema deerwalk
 
+GO
+
 /*
 drop table deerwalk.Eligibility
 drop table deerwalk.Pharmacy

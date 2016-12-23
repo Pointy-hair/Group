@@ -14,6 +14,10 @@ using Traffk.Bal.Permissions;
 using System.Collections.Generic;
 using System;
 using Traffk.Bal.Services;
+using RevolutionaryStuff.Core.Collections;
+using Traffk.Bal;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using RevolutionaryStuff.Core;
 
 namespace TraffkPortal.Controllers
 {
@@ -137,7 +141,7 @@ namespace TraffkPortal.Controllers
                 Rdb.Applications.Add(new Application
                 {
                     Tenant = t,
-                    ApplicationType = Application.ApplicationTypes.Portal,
+                    ApplicationType = ApplicationTypes.Portal,
                     ApplicationName = "Portal"
                 });
                 await Rdb.SaveChangesAsync();
@@ -171,6 +175,12 @@ namespace TraffkPortal.Controllers
         {
             ViewData["TenantId"] = tenant.TenantId;
             ViewData["TenantName"] = tenant.TenantName;
+            var applicationNameById = new Dictionary<int, string>();
+            foreach (var a in tenant.TenantApplications)
+            {
+                applicationNameById[a.ApplicationId] = a.ApplicationName;
+            }
+            ViewData["ApplicationTitleById"] = applicationNameById;
             SetHeroLayoutViewData(tenant.TenantId, tenant.TenantName, pageKey);
         }
 
@@ -431,7 +441,7 @@ namespace TraffkPortal.Controllers
         protected Task<Tenant> GetTenantAsync(int? tenantId)
         {
             if (tenantId == null) return null;
-            return Rdb.Tenants.SingleOrDefaultAsync(z => z.TenantId == tenantId.GetValueOrDefault(this.TenantId));
+            return Rdb.Tenants.Include(t=>t.TenantApplications).SingleOrDefaultAsync(z => z.TenantId == tenantId.GetValueOrDefault(this.TenantId));
         }
 
 

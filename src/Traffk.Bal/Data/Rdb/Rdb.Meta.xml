@@ -41,6 +41,15 @@
         <Column name="PostChangeLogId" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="db" refTable="ChangeLog" />
       </Columns>
     </Table>
+    <Table schema="db" name="SprocParameterProperties">
+      <Columns>
+        <Column name="SchemaName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="SprocName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="ParameterName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyName" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyValue" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" />
+      </Columns>
+    </Table>
     <Table schema="db" name="SprocProperties">
       <Columns>
         <Column name="SchemaName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
@@ -77,6 +86,7 @@
         </Column>
         <Column name="ApplicationType" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80">
           <Properties>
+            <Property name="EnumType" value="ApplicationTypes" />
             <Property name="MS_Description" value="Type of application" />
           </Properties>
         </Column>
@@ -451,7 +461,11 @@
             <Property name="MS_Description" value="Identifyable title for this asset." />
           </Properties>
         </Column>
-        <Column name="ModelType" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="80" />
+        <Column name="ModelType" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="80">
+          <Properties>
+            <Property name="EnumType" value="CommunicationModels" />
+          </Properties>
+        </Column>
         <Column name="TemplateEngineType" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80" />
         <Column name="CreativeSettings" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1">
           <Properties>
@@ -480,9 +494,9 @@
         <Column name="FiscalYear" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="smallint" />
         <Column name="FiscalQuarter" position="9" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="tinyint" />
         <Column name="FiscalMonth" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="tinyint" />
-        <Column name="FiscalDay" position="11" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="tinyint" />
-        <Column name="FiscalYearName" position="12" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="16" />
-        <Column name="FiscalQuarterName" position="13" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="16" />
+        <Column name="FiscalDay" position="11" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="smallint" />
+        <Column name="FiscalYearName" position="12" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="50" />
+        <Column name="FiscalQuarterName" position="13" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="50" />
       </Columns>
       <Collections>
         <Collection schema="deerwalk" table="Eligibility" column="InsLtdEffDateDateDimId" />
@@ -528,6 +542,24 @@
         <Collection schema="deerwalk" table="Eligibility" column="InsVisTermDateDateDimId" />
       </Collections>
     </Table>
+    <Table schema="dbo" name="InflationRates">
+      <Columns>
+        <Column name="DateDimensionId" position="1" isPrimaryKey="0" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="CalendarDate" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="date" />
+        <Column name="CalendarYear" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="CalendarQuarter" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="CalendarMonth" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="CalendarDay" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="FiscalYear" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="smallint" />
+        <Column name="FiscalQuarter" position="9" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="tinyint" />
+        <Column name="FiscalMonth" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="tinyint" />
+        <Column name="FiscalDay" position="11" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="smallint" />
+        <Column name="FiscalYearName" position="12" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="50" />
+        <Column name="FiscalQuarterName" position="13" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="50" />
+        <Column name="Inflation_Rate" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="decimal" />
+      </Columns>
+    </Table>
     <Table schema="dbo" name="Jobs">
       <Properties>
         <Property name="AddToDbContext" value="1" />
@@ -570,6 +602,16 @@
         <Collection schema="dbo" table="ZCommunicationBlasts" column="JobId" />
         <Collection schema="dbo" table="CommunicationBlasts" column="JobId" />
       </Collections>
+    </Table>
+    <Table schema="dbo" name="LastYearsClaims">
+      <Columns>
+        <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="ContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
+        <Column name="RevPaidDateDateDimId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="ClaimType" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="1" />
+        <Column name="SumRevPaidAmt" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="CntRevClaims" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+      </Columns>
     </Table>
     <Table schema="dbo" name="MessageTemplates">
       <Properties>
@@ -623,6 +665,18 @@
       <Collections>
         <Collection schema="dbo" table="ReleaseChanges" column="ReleaseId" />
       </Collections>
+    </Table>
+    <Table schema="dbo" name="sysdiagrams">
+      <Properties>
+        <Property name="microsoft_database_tools_support" value="1" />
+      </Properties>
+      <Columns>
+        <Column name="name" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="principal_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="diagram_id" position="3" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="version" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="definition" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varbinary" maxLen="-1" />
+      </Columns>
     </Table>
     <Table schema="dbo" name="SystemCommunications">
       <Properties>
@@ -5523,6 +5577,16 @@
         <Column name="admissionFromEr" position="12" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
       </Columns>
     </Table>
+    <Table schema="jbt" name="claimsbyday">
+      <Columns>
+        <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="ContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
+        <Column name="RevPaidDateDateDimId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="ClaimType" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="1" />
+        <Column name="SumRevPaidAmt" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="CntRevClaims" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+      </Columns>
+    </Table>
     <Table schema="reporting" name="AdeeshMedicalClaimsPMPM">
       <Columns>
         <Column name="Date" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="date" />
@@ -5537,6 +5601,26 @@
         <Column name="CopayAmtAvg" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
         <Column name="DeductibleAmtTotal" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
         <Column name="DeductibleAmtAvg" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+      </Columns>
+    </Table>
+    <Table schema="reporting" name="ClaimsByDay">
+      <Columns>
+        <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="ContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
+        <Column name="RevPaidDateDateDimId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="ClaimType" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="1" />
+        <Column name="SumRevPaidAmt" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="CntRevClaims" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+      </Columns>
+    </Table>
+    <Table schema="reporting" name="LastYearsClaims">
+      <Columns>
+        <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="ContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
+        <Column name="RevPaidDateDateDimId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="ClaimType" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="1" />
+        <Column name="SumRevPaidAmt" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="CntRevClaims" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
       </Columns>
     </Table>
     <Table schema="reporting" name="MedicalClaimsByMonth">
@@ -5610,6 +5694,16 @@
         <Column name="AverageDeductiblePerClaim" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
         <Column name="AverageClaimsPerMember" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
         <Column name="AvgPaidPerClaim" position="15" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+      </Columns>
+    </Table>
+    <Table schema="reporting" name="ThisYearsClaims">
+      <Columns>
+        <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="ContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
+        <Column name="RevPaidDateDateDimId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="ClaimType" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="1" />
+        <Column name="SumRevPaidAmt" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="CntRevClaims" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
       </Columns>
     </Table>
     <Table schema="sys" name="database_firewall_rules">
@@ -5749,6 +5843,15 @@
         <Arg position="1" mode="IN" name="@namespace" sqlType="varchar" maxLen="255" />
       </Args>
     </Sproc>
+    <Sproc schema="db" name="SprocParameterPropertySet">
+      <Args>
+        <Arg position="1" mode="IN" name="@sprocName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@parameterName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="3" mode="IN" name="@propertyVal" sqlType="nvarchar" maxLen="3750" />
+        <Arg position="4" mode="IN" name="@sprocSchema" sqlType="nvarchar" maxLen="128" />
+        <Arg position="5" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
+      </Args>
+    </Sproc>
     <Sproc schema="db" name="SprocPropertySet">
       <Args>
         <Arg position="1" mode="IN" name="@sprocName" sqlType="nvarchar" maxLen="128" />
@@ -5774,12 +5877,24 @@
       </Properties>
       <Args>
         <Arg position="1" mode="IN" name="@hostName" sqlType="nvarchar" maxLen="1024" />
-        <Arg position="2" mode="IN" name="@applicationType" sqlType="varchar" maxLen="80" />
+        <Arg position="2" mode="IN" name="@applicationType" sqlType="varchar" maxLen="80">
+          <Properties>
+            <Property name="EnumType" value="ApplicationTypes" />
+          </Properties>
+        </Arg>
       </Args>
     </Sproc>
     <Sproc schema="dbo" name="DateDimensionsForTenantCreate">
       <Args>
         <Arg position="1" mode="IN" name="@tenantId" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="dbo" name="FiscalYearsConfigure">
+      <Args>
+        <Arg position="1" mode="IN" name="@tenantId" sqlType="int" />
+        <Arg position="2" mode="IN" name="@baselineFiscalYear" sqlType="int" />
+        <Arg position="3" mode="IN" name="@baselineCalendarYear" sqlType="int" />
+        <Arg position="4" mode="IN" name="@baselineCalendarMonth" sqlType="int" />
       </Args>
     </Sproc>
     <Sproc schema="dbo" name="GetFieldCounts">
@@ -5813,6 +5928,70 @@
       <Args>
         <Arg position="1" mode="IN" name="@jobId" sqlType="int" />
       </Args>
+    </Sproc>
+    <Sproc schema="dbo" name="sp_alterdiagram">
+      <Properties>
+        <Property name="microsoft_database_tools_support" value="1" />
+      </Properties>
+      <Args>
+        <Arg position="1" mode="IN" name="@diagramname" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@owner_id" sqlType="int" />
+        <Arg position="3" mode="IN" name="@version" sqlType="int" />
+        <Arg position="4" mode="IN" name="@definition" sqlType="varbinary" maxLen="-1" />
+      </Args>
+    </Sproc>
+    <Sproc schema="dbo" name="sp_creatediagram">
+      <Properties>
+        <Property name="microsoft_database_tools_support" value="1" />
+      </Properties>
+      <Args>
+        <Arg position="1" mode="IN" name="@diagramname" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@owner_id" sqlType="int" />
+        <Arg position="3" mode="IN" name="@version" sqlType="int" />
+        <Arg position="4" mode="IN" name="@definition" sqlType="varbinary" maxLen="-1" />
+      </Args>
+    </Sproc>
+    <Sproc schema="dbo" name="sp_dropdiagram">
+      <Properties>
+        <Property name="microsoft_database_tools_support" value="1" />
+      </Properties>
+      <Args>
+        <Arg position="1" mode="IN" name="@diagramname" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@owner_id" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="dbo" name="sp_helpdiagramdefinition">
+      <Properties>
+        <Property name="microsoft_database_tools_support" value="1" />
+      </Properties>
+      <Args>
+        <Arg position="1" mode="IN" name="@diagramname" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@owner_id" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="dbo" name="sp_helpdiagrams">
+      <Properties>
+        <Property name="microsoft_database_tools_support" value="1" />
+      </Properties>
+      <Args>
+        <Arg position="1" mode="IN" name="@diagramname" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@owner_id" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="dbo" name="sp_renamediagram">
+      <Properties>
+        <Property name="microsoft_database_tools_support" value="1" />
+      </Properties>
+      <Args>
+        <Arg position="1" mode="IN" name="@diagramname" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@owner_id" sqlType="int" />
+        <Arg position="3" mode="IN" name="@new_diagramname" sqlType="nvarchar" maxLen="128" />
+      </Args>
+    </Sproc>
+    <Sproc schema="dbo" name="sp_upgraddiagrams">
+      <Properties>
+        <Property name="microsoft_database_tools_support" value="1" />
+      </Properties>
     </Sproc>
     <Sproc schema="migrate" name="ContactsCreateFromDeerwalkEligibility">
       <Args>

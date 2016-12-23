@@ -1,12 +1,16 @@
-﻿namespace Traffk.Bal.Data.Rdb
+﻿using RevolutionaryStuff.Core;
+
+namespace Traffk.Bal.Data.Rdb
 {
+    public enum ApplicationTypes
+    {
+        Default,
+        [EnumeratedStringValue(TraffkHelpers.TraffkUrn + "/portal")]
+        Portal,
+    }
+
     public partial class Application
     {
-        public static class ApplicationTypes
-        {
-            public const string Portal = TraffkHelpers.TraffkUrn+"/portal";
-        }
-
         partial void OnApplicationSettingsDeserialized()
         {
             ApplicationSettings.EnsureMemberClasses();

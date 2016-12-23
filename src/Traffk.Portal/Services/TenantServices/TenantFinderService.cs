@@ -27,10 +27,7 @@ namespace TraffkPortal.Services.TenantServices
 
         public override string ToString() => $"{base.ToString()}: tenantId={TenantId}, preferredHostname=[{PreferredHostname}], actualHostname=[{ActualHostname}]";
 
-        Task<int> ITenantFinder<int>.GetTenantIdAsync()
-        {
-            return Task.FromResult(TenantId);
-        }
+        Task<int> ITenantFinder<int>.GetTenantIdAsync() => Task.FromResult(TenantId);
 
         private static readonly ICache<string, ApplicationHostItem> HostMapCache = CachingServices.Instance.CreateSynchronized<string, ApplicationHostItem>();
 
@@ -68,7 +65,7 @@ namespace TraffkPortal.Services.TenantServices
             {
                 var z = HostMapCache.Do(ActualHostname, () =>
                 {
-                    var res = db.ApplicationFindByHostAsync(ActualHostname, Application.ApplicationTypes.Portal).ExecuteSynchronously();
+                    var res = db.ApplicationFindByHostAsync(ActualHostname, ApplicationTypes.Portal).ExecuteSynchronously();
                     return res.FirstOrDefault();
                 });
                 if (z != null)

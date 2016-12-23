@@ -97,7 +97,6 @@ namespace TraffkPortal
 
 
             services.AddSingleton<CachingServices>();
-            services.AddSingleton<TraffkPortalSecrets>();
 
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
@@ -158,6 +157,7 @@ namespace TraffkPortal
             services.AddScoped<BlobStorageServices>();
             services.AddScoped<PowerBiServices>();
             services.AddScoped<CrmDdbContext>();
+            services.AddScoped<ConfigStringFormatter>();
 
             services.AddScoped<SetPowerBiBearerActionFilter>();
 

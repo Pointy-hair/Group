@@ -150,6 +150,7 @@ exec db.ColumnPropertySet 'Applications', 'ApplicationType', 'Type of applicatio
 exec db.ColumnPropertySet 'Applications', 'ApplicationName', 'Human readible name of the application'
 exec db.ColumnPropertySet 'Applications', 'ApplicationSettings', 'Settings particular to this type of application'
 exec db.ColumnPropertySet 'Applications', 'ApplicationSettings', 'Bal.Settings.ApplicationSettings', @propertyName='JsonSettingsClass'
+exec db.ColumnPropertySet 'Applications', 'ApplicationType', 'ApplicationTypes', @propertyName='EnumType'
 
 GO
 
@@ -575,6 +576,7 @@ exec db.ColumnPropertySet 'Creatives', 'CreativeTitle', 'Identifyable title for 
 exec db.ColumnPropertySet 'Creatives', 'CreativesRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
 exec db.ColumnPropertySet 'Creatives', 'CreativesRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
 exec db.ColumnPropertySet 'Creatives', 'CreativeSettings', 'Bal.Settings.CreativeSettings', @propertyName='JsonSettingsClass'
+exec db.ColumnPropertySet 'Creatives', 'ModelType', 'CommunicationModels', @propertyName='EnumType'
 
 
 GO

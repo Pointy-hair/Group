@@ -64,17 +64,18 @@ namespace Traffk.Bal.Data.Rdb
 
             public static readonly ICollection<Definition> None = new List<Definition>().AsReadOnly();
             public static readonly ICollection<Definition> All = new List<Definition>(General.All).AsReadOnly();
-            public static ICollection<Definition> GetByApplicationType(string applicationType)
+            public static ICollection<Definition> GetByApplicationType(ApplicationTypes applicationType)
             {
                 switch (applicationType)
                 {
-                    case Application.ApplicationTypes.Portal:
+                    case ApplicationTypes.Portal:
                         return General.All;
                     default:
                         return None;
                 }
             }
         }
+
 
         public static class CommunicationPurposes
         {

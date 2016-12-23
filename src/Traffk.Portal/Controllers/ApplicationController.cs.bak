@@ -8,17 +8,12 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using TraffkPortal.Permissions;
 using Microsoft.EntityFrameworkCore;
-using Traffk.Bal;
 using Traffk.Bal.Permissions;
 using Traffk.Bal.Data.Rdb;
-using Traffk.Bal.Settings;
-using Traffk.Bal.Services;
 using TraffkPortal.Models.ApplicationModels;
 using Traffk.Bal.Settings;
 using System.IO;
-using RevolutionaryStuff.Core.Collections;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Collections.Generic;
+using Traffk.Bal.Services;
 
 namespace TraffkPortal.Controllers
 {
@@ -32,13 +27,6 @@ namespace TraffkPortal.Controllers
         public class ActionNames
         {
             public const string ApplicationBasics = "Edit";
-            public const string SystemCommunications = "SystemCommunications";
-            public const string SystemCommunicationsSubmission = "SystemCommunicationsSubmission";
-        }
-
-        public static class ViewNames
-        {
-            public const string SystemCommunications = "SystemCommunications";
         }
 
         public enum PageKeys
@@ -47,7 +35,6 @@ namespace TraffkPortal.Controllers
             CommunicationSettings,
             PortalSettings,
             RegistrationSettings,
-            SystemCommunications,
         }
 
         private void SetHeroLayoutViewData(Application app, PageKeys pageKey)
@@ -77,31 +64,6 @@ namespace TraffkPortal.Controllers
         private async Task<Application> GetApplicationAsync(int applicationId)
         {
             return await Rdb.Applications.FirstOrDefaultAsync(a => a.ApplicationId == applicationId && a.TenantId == TenantId);
-        }
-
-        private void PopulateViewBagWithCommunicationSelectListItemsByCommunicationModel(int tenantId)
-        {
-            var m = new MultipleValueDictionary<CommunicationModels, SelectListItem>();
-            Stuff.GetEnumValues<CommunicationModels>().ForEach(cm => m.Add(cm, new SelectListItem { Text = AspHelpers.NoneDropdownItemText, Value = AspHelpers.NoneDropdownItemValue }));
-            foreach (var comm in Rdb.Communications.Where(c => c.TenantId == tenantId).Include(c => c.Creative).OrderBy(c=>c.CommunicationTitle))
-            {
-                if (comm.Creative == null) continue;
-                m.Add(comm.Creative.ModelType, new SelectListItem { Text = $"{comm.CommunicationTitle} ({comm.CommunicationId})", Value = comm.CommunicationId.ToString() });
-            }
-            var d = m.ToDictionaryOfCollection();
-            ViewBag.CommunicationSelectListItemsByCommunicationModel = d;
-        }
-
-        [Route("{id}/SystemCommunications")]
-        [ActionName(ActionNames.SystemCommunications)]
-        public async Task<IActionResult> SystemCommunications(int id)
-        {
-            var app = await GetApplicationAsync(id);
-            if (app == null) return NotFound();
-            PopulateViewBagWithCommunicationSelectListItemsByCommunicationModel(app.TenantId);
-            SetHeroLayoutViewData(app, PageKeys.SystemCommunications);
-            var model = SystemCommunicationsModel.Create(app.ApplicationSettings.CommunicationIdBySystemCommunicationPurpose);
-            return View(ViewNames.SystemCommunications, model);
         }
 
         [Route("{id}/Details")]

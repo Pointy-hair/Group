@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
@@ -16,7 +17,7 @@ namespace TraffkPortal.Services
         private const string PowerBiUsernameKey = "PowerBiUsername";
         private const string PowerBiPasswordKey = "PowerBiPassword";
 
-        private readonly TraffkPortalSecrets TraffkPortalSecrets;
+        private readonly IHostingEnvironment Env;
         private readonly ITraffkTenantFinder TenantFinder;
         private readonly TraffkRdbContext Rdb;
         private readonly IHttpContextAccessor HttpContextAccessor;
@@ -40,8 +41,8 @@ namespace TraffkPortal.Services
                             app.ClientID,
                             app.ClientSecretKey,
                             PowerBiEndpointOptions.Value.RestApiResourceUrl,
-                            TraffkPortalSecrets.PowerBiUsername,
-                            TraffkPortalSecrets.PowerBiPassword,
+                            Stringer.Transform(app.Username),
+                            app.Password,
                             BearerCache)
                         );
                 }
@@ -54,7 +55,9 @@ namespace TraffkPortal.Services
         {
             get
             {
-                return Rdb.Applications.First(a => a.TenantId == TenantId && a.ApplicationType==Application.ApplicationTypes.Portal);
+                return Rdb.Applications.First(a => 
+                a.TenantId == TenantId && 
+                (a.ApplicationType==ApplicationTypes.Portal || a.ApplicationTypeStringValue== "urn:traffk.com/portal"));
             }
         }
 
@@ -71,8 +74,10 @@ namespace TraffkPortal.Services
             }
         }
 
+        private readonly ConfigStringFormatter Stringer;
+
         public CurrentContextServices(
-            TraffkPortalSecrets traffkPortalSecrets,
+            ConfigStringFormatter stringer,
             ITraffkTenantFinder tenantFinder,
             TraffkRdbContext rdb, 
             IHttpContextAccessor httpContextAccessor, 
@@ -82,7 +87,7 @@ namespace TraffkPortal.Services
             )
             : base(tenantFinder, rdb)
         {
-            TraffkPortalSecrets = traffkPortalSecrets;
+            Stringer = stringer;
             TenantFinder = tenantFinder;
             Rdb = rdb;
             HttpContextAccessor = httpContextAccessor;

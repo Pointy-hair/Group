@@ -138,7 +138,10 @@ namespace TraffkPortal.Controllers
 
         protected StatusCodeResult StatusCode(System.Net.HttpStatusCode code) => StatusCode((int)code);
 
-        protected void SetHeroLayoutViewData(object entityId, string entityTitle, object pageKey, string entityType=null)
+        protected void SetHeroLayoutViewData(object entityId, string entityTitle, object pageKey)
+            => SetHeroLayoutViewData(entityId, entityTitle, pageKey, (string)null);
+
+        protected void SetHeroLayoutViewData<TEntityType>(object entityId, string entityTitle, object pageKey, TEntityType entityType = default(TEntityType))
         {
             ViewData[ViewDataKeys.EntityId] = entityId;
             ViewData[ViewDataKeys.EntityTitle] = entityTitle;

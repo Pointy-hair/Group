@@ -13,10 +13,7 @@ namespace RevolutionaryStuff.PowerBiToys
         private readonly IOptions<PowerBiEndpointOptions> EndpointOptions;
         private readonly IBearerGetter BearerGetter;
 
-        public Task<string> GetBearer()
-        {
-            return BearerGetter.GetBearer();
-        }
+        public Task<string> GetBearer() => BearerGetter.GetBearer();
 
         public PowerBiServices(IOptions<PowerBiEndpointOptions> endpointOptions, IBearerGetter bearerGetter)
         {

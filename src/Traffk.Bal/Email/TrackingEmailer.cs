@@ -75,7 +75,7 @@ namespace Traffk.Bal.Email
         async Task IEmailer.SendEmailAsync(IEnumerable<MimeMessage> messages, Action<PreSendEventArgs> preSend, Action<PostSendEventArgs> postSend, object context)
         {
             var tenantId = await TenantFinder.GetTenantIdAsync();
-            var app = Rdb.Applications.FirstOrDefault(z => z.TenantId == tenantId && z.ApplicationType== Application.ApplicationTypes.Portal);
+            var app = Rdb.Applications.FirstOrDefault(z => z.TenantId == tenantId && z.ApplicationType== ApplicationTypes.Portal);
             var hostname = app.ApplicationSettings.Hosts.HostInfos[0].Hostname;
             var smtpOptions = Options.Value;
             var logByMessage = new Dictionary<string, CommunicationLog>();

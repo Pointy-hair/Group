@@ -10,6 +10,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Traffk.Bal.Services;
 
 namespace Traffk.Bal.Data.Rdb
 {
@@ -28,10 +29,9 @@ namespace Traffk.Bal.Data.Rdb
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var sso = optionsBuilder.Options.FindExtension<SqlServerOptionsExtension>();
-            if (sso != null)
+            if (sso != null && Configger!=null)
             {
-                var tenantId = TenantFinder.GetTenantIdAsync().ExecuteSynchronously();
-                var connectionString = sso.ConnectionString.Replace("{TENANTID}", tenantId.ToString());
+                var connectionString = Configger.Transform(sso.ConnectionString);
                 optionsBuilder.UseSqlServer(connectionString);
             }
             else
@@ -40,10 +40,13 @@ namespace Traffk.Bal.Data.Rdb
             }
         }
 
-        public TraffkRdbContext(DbContextOptions<TraffkRdbContext> options, ITraffkTenantFinder tenantFinder)
+        private readonly ConfigStringFormatter Configger;
+
+        public TraffkRdbContext(DbContextOptions<TraffkRdbContext> options, ITraffkTenantFinder tenantFinder, ConfigStringFormatter configger)
             : base(options)
         {
             TenantFinder = tenantFinder;
+            Configger = configger;
         }
 
         public async Task<SystemCommunication> GetSystemCommunication(string communicationPurpose, string communicationMedium, int? applicationId=null, int? tenantId=null)

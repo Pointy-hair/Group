@@ -28,6 +28,9 @@ namespace Traffk.Bal.Settings
         [DataMember(Name = "ReusableValues")]
         public IList<ReusableValue> ResourceValues { get; set; }
 
+        [DataMember(Name = "CommunicationIdBySystemCommunicationPurpose")]
+        public IDictionary<SystemCommunicationPurposes, int> CommunicationIdBySystemCommunicationPurpose { get; set; } = new Dictionary<SystemCommunicationPurposes, int>();
+
         public static ApplicationSettings CreateFromJson(string json)
         {
             return JsonSerializer.ReadObjectFromString<ApplicationSettings>(json);

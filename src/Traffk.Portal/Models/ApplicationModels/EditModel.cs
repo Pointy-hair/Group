@@ -25,7 +25,7 @@ namespace TraffkPortal.Models.ApplicationModels
         {
             if (app == null) return;
             ApplicationId = app.ApplicationId;
-            ApplicationType = app.ApplicationType;
+            ApplicationType = app.ApplicationTypeStringValue;
             ApplicationName = app.ApplicationName;
             EmailSenderAddress = app.ApplicationSettings.EmailSenderAddress;
             EmailSenderName = app.ApplicationSettings.EmailSenderName;

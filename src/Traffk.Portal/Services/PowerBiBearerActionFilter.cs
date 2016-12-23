@@ -13,6 +13,8 @@ namespace TraffkPortal.Services
 
     public sealed class SetPowerBiBearerActionFilter : IAsyncActionFilter
     {
+        private const string BearerCookieName = "powerBiBearer";
+
         private readonly CurrentContextServices Current;
 
         public SetPowerBiBearerActionFilter(CurrentContextServices current)
@@ -24,16 +26,14 @@ namespace TraffkPortal.Services
         {
             await next();
             var bearer = await Current.PowerBi.GetBearer();
-            var bearerCookieKey = "powerBiBearer";
-            if (bearer != null)
+            if (bearer == null)
             {
-                context.HttpContext.Response.Cookies.Append(bearerCookieKey, bearer);
+                context.HttpContext.Response.Cookies.Delete(BearerCookieName);
             }
             else
             {
-                context.HttpContext.Response.Cookies.Delete(bearerCookieKey);
+                context.HttpContext.Response.Cookies.Append(BearerCookieName, bearer);
             }
-            
         }
     }
 }

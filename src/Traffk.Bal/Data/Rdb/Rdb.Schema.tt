@@ -123,7 +123,7 @@ foreach (var z in doc.XPathSelectElements("/SchemaMeta/Sprocs/Sproc[Properties/P
 foreach (var a in z.XPathSelectElements("Args/Arg"))
 {
 	bool nullable = true;
-	string dataType = SqlTypeToClrType(GetAttrVal(a, "sqlType"));
+	string dataType = GetPropertyValue(a, "EnumType") ?? SqlTypeToClrType(GetAttrVal(a, "sqlType"));
 	if (dataType=="string")
 	{
 		nullable = false;	
@@ -141,6 +141,7 @@ if (isReader)
 {
 	var memberName = GetAttrVal(a, "name").Substring(1);
 	bool nullable = true;
+	bool convertToString = GetPropertyValue(a, "EnumType") != null;
 	switch (GetAttrVal(a, "sqlType"))
 	{
 		case "nvarchar":
@@ -160,7 +161,7 @@ if (isReader)
 		default:
 			throw new Exception("unrecognized direction "+direction);
 	}
-#>                    new SqlParameter("<#=GetAttrVal(a, "name")#>", <#=memberName#>==null ? DBNull.Value:(object) <#=memberName#>){Direction=<#=direction#>},
+#>                    new SqlParameter("<#=GetAttrVal(a, "name")#>", <#=memberName#>==null ? DBNull.Value:(object) <#=memberName#><#=convertToString?".ToString()":""#>){Direction=<#=direction#>},
 <#
 }
 #>
@@ -364,6 +365,40 @@ foreach (var f in z.XPathSelectElements("Columns/Column"))
 		maxLen = GetAttrVal(f, "maxLen");
 		if (maxLen=="-1") maxLen = null;	
 	}
+	if (comment!=null)
+	{
+#>
+		/// <summary>
+		/// <#=comment#>
+		/// </summary>
+		[Description("<#=comment#>")]
+<#
+	}
+	if (displayName!=null)
+	{
+#>		[DisplayName("<#=displayName#>")]
+<#	
+	}
+	string enumType = GetPropertyValue(f, "EnumType");
+	if (enumType!=null)
+	{
+		var enumPropertyName = propertyName;
+		propertyName += "StringValue";
+#>
+		[NotMapped]
+		public <#=enumType#> <#=enumPropertyName#>
+        {
+            get
+            {
+                <#=enumType#> e;
+                if (Enum.TryParse(<#=propertyName#>, true, out e)) return e;
+                return 0;
+            }
+            set { <#=propertyName#> = value.ToString(); }
+        }
+
+<#
+	}
 	if (jsonSettingsClass!=null)
 	{
 		var settingsPropertyName = propertyName;
@@ -390,20 +425,6 @@ foreach (var f in z.XPathSelectElements("Columns/Column"))
         private <#=jsonSettingsClass#> <#=settingsFieldName#>;
 
 <#
-	}
-	if (comment!=null)
-	{
-#>
-		/// <summary>
-		/// <#=comment#>
-		/// </summary>
-		[Description("<#=comment#>")]
-<#
-	}
-	if (displayName!=null)
-	{
-#>		[DisplayName("<#=displayName#>")]
-<#	
 	}
 	if (sampleData!=null)
 	{

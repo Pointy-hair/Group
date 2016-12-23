@@ -31,14 +31,16 @@ namespace RevolutionaryStuff.Core.Collections
             return string.Format("MultipleValueDictionary keyCount={1} itemCount={2}", this.GetType(), this.ValuesByKey.Count, this.AtomEnumerable.Count());
         }
 
-        public IDictionary<K, V> ToDictionary(Func<ICollection<V>, V> singleElementSelector)
-        {
-            Requires.NonNull(singleElementSelector, nameof(singleElementSelector));
+        public IDictionary<K, IList<V>> ToDictionaryOfCollection() => ToDictionary<IList<V>>(vals => new List<V>(vals));
 
-            var d = new Dictionary<K, V>(this.Count);
+        public IDictionary<K, VPrime> ToDictionary<VPrime>(Func<ICollection<V>, VPrime> elementsMapper)
+        {
+            Requires.NonNull(elementsMapper, nameof(elementsMapper));
+
+            var d = new Dictionary<K, VPrime>(this.Count);
             foreach (var key in this.Keys)
             {
-                d[key] = singleElementSelector(this[key]);
+                d[key] = elementsMapper(this[key]);
             }
             return d;
         }

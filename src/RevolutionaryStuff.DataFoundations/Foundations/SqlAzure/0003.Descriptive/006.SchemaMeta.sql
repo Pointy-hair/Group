@@ -1,4 +1,4 @@
-﻿CREATE view [db].[SchemaMeta]
+﻿create view [db].[SchemaMeta]
 as
 select *
 from
@@ -146,7 +146,19 @@ from
 						p.parameter_mode '@mode',
 						p.parameter_name '@name',
 						p.data_type '@sqlType',
-						p.character_maximum_length '@maxLen'
+						p.character_maximum_length '@maxLen',
+						(
+							select 
+								pp.PropertyName '@name',
+								pp.PropertyValue '@value'
+							from 
+								db.SprocParameterProperties pp with (nolock)
+							where
+								pp.SchemaName = r.specific_schema and
+								pp.SprocName = r.routine_name and
+								pp.ParameterName = p.parameter_name
+							for xml path ('Property'), type
+						) Properties
 					from 
 						information_Schema.parameters p with (nolock)
 					where
@@ -170,3 +182,5 @@ from
 ) x(SchemaMeta)
 
 GO
+
+

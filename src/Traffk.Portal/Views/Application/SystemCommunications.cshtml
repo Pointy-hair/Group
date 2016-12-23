@@ -1,0 +1,35 @@
+﻿@using Traffk.Bal
+@using static TraffkPortal.Controllers.ApplicationController
+@model IEnumerable<TraffkPortal.Models.ApplicationModels.SystemCommunicationsModel>
+@{
+    Layout = "_LayoutApplication.cshtml";
+    var itemByPurpose = Model.ToDictionary(i => i.Purpose);
+}
+
+<form asp-action="@ActionNames.SystemCommunicationsSubmission">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.SortableHeaderFor(z => z.Purpose)
+                </th>
+                <th>
+                    Communication
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (SystemCommunicationPurposes purpose in Enum.GetValues(typeof(SystemCommunicationPurposes)))
+            {
+                var items = ViewBag.CommunicationSelectListItemsByCommunicationModel[purpose];
+                var item = itemByPurpose.GetValue(purpose);
+                <tr>
+                    <td>@purpose</td>
+                    <td>
+                        <select asp-items="items"></select>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>
