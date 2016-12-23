@@ -6,6 +6,7 @@
 /src/RevolutionaryStuff.Core/bin
 /src/.vs
 /.vs
+/.vs/restore.dg
 /src/RevolutionaryStuff.Azure/obj
 /src/RevolutionaryStuff.Azure/bin
 /src/RevolutionaryStuff.DataFoundations/obj
@@ -38,3 +39,4 @@
 /tests/RevolutionaryStuff.PowerBiToys.Tests/bin
 /tests/RevolutionaryStuff.SqlSchemaFoundations.Tests/obj
 /tests/RevolutionaryStuff.SqlSchemaFoundations.Tests/bin
+*.lock.json
