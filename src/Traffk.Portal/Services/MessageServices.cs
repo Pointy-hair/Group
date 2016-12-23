@@ -4,6 +4,7 @@ using Traffk.Bal.Email;
 using MimeKit;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Templates;
+using TraffkPortal.Services.Sms;
 
 namespace TraffkPortal.Services
 {
@@ -15,12 +16,14 @@ namespace TraffkPortal.Services
         private readonly IEmailer Emailer;
         private readonly CurrentContextServices Current;
         private readonly TraffkRdbContext DB;
+        private readonly ITwilioSmsSender TwilioSmsSender;
 
-        public AuthMessageSender(IEmailer emailer, CurrentContextServices current, TraffkRdbContext db)
+        public AuthMessageSender(IEmailer emailer, CurrentContextServices current, TraffkRdbContext db, ITwilioSmsSender twilioSmsSender)
         {
             Emailer = emailer;
             Current = current;
             DB = db;
+            TwilioSmsSender = twilioSmsSender;
         }
 
         Task ISmsSender.SendSmsAsync(string number, string message)
@@ -28,8 +31,8 @@ namespace TraffkPortal.Services
             Requires.Text(number, nameof(number));
             Requires.Text(message, nameof(message));
 
-            // Plug in your SMS service here to send a text message.
-            return Task.FromResult(0);
+            //#23 - if changing SMS provider, change line below.
+            return TwilioSmsSender.SendSmsAsync(number, message);
         }
 
         private Task SendEmailAsync(MimeMessage message)

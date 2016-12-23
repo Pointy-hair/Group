@@ -1,1 +1,17 @@
-#:C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\tests\RevolutionaryStuff.SqlSchemaFoundations.Tests\RevolutionaryStuff.SqlSchemaFoundations.Tests.xproj
+#:C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\Traffk.Portal\Traffk.Portal.xproj
+C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\Traffk.Portal\Traffk.Portal.xproj|C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\RevolutionaryStuff.Core\RevolutionaryStuff.Core.xproj
+C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\Traffk.Portal\Traffk.Portal.xproj|C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\RevolutionaryStuff.PowerBiToys\RevolutionaryStuff.PowerBiToys.xproj
+C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\Traffk.Portal\Traffk.Portal.xproj|C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\Traffk.Bal\Traffk.Bal.xproj
+C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\RevolutionaryStuff.PowerBiToys\RevolutionaryStuff.PowerBiToys.xproj|C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\RevolutionaryStuff.Core\RevolutionaryStuff.Core.xproj
+C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\Traffk.Bal\Traffk.Bal.xproj|C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\RevolutionaryStuff.Azure\RevolutionaryStuff.Azure.xproj
+C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\Traffk.Bal\Traffk.Bal.xproj|C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\RevolutionaryStuff.Core\RevolutionaryStuff.Core.xproj
+C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\RevolutionaryStuff.Azure\RevolutionaryStuff.Azure.xproj|C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\RevolutionaryStuff.Core\RevolutionaryStuff.Core.xproj
+#:C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\tests\Traffk.Portal.Tests\Traffk.Portal.Tests.xproj
+C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\tests\Traffk.Portal.Tests\Traffk.Portal.Tests.xproj|C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\Traffk.Portal\Traffk.Portal.xproj
+C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\Traffk.Portal\Traffk.Portal.xproj|C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\RevolutionaryStuff.Core\RevolutionaryStuff.Core.xproj
+C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\Traffk.Portal\Traffk.Portal.xproj|C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\RevolutionaryStuff.PowerBiToys\RevolutionaryStuff.PowerBiToys.xproj
+C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\Traffk.Portal\Traffk.Portal.xproj|C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\Traffk.Bal\Traffk.Bal.xproj
+C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\RevolutionaryStuff.PowerBiToys\RevolutionaryStuff.PowerBiToys.xproj|C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\RevolutionaryStuff.Core\RevolutionaryStuff.Core.xproj
+C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\Traffk.Bal\Traffk.Bal.xproj|C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\RevolutionaryStuff.Azure\RevolutionaryStuff.Azure.xproj
+C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\Traffk.Bal\Traffk.Bal.xproj|C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\RevolutionaryStuff.Core\RevolutionaryStuff.Core.xproj
+C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\RevolutionaryStuff.Azure\RevolutionaryStuff.Azure.xproj|C:\Users\Darren x Traffk\Source\Repos\HealthInformationPortal\src\RevolutionaryStuff.Core\RevolutionaryStuff.Core.xproj
