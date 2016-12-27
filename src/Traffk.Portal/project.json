@@ -43,8 +43,7 @@
     "Serilog.Extensions.Logging": "1.4.0-dev-10136",
     "System.Runtime.Serialization.Json": "4.3.0",
     "Serilog.Sinks.AzureTableStorage": "3.0.0",
-    "Serilog": "2.4.0-dev-00767",
-    "Twilio": "5.0.0-rca2"
+    "Serilog": "2.4.0-dev-00767"
   },
   "tools": {
     "BundlerMinifier.Core": "2.2.306",
