@@ -9,8 +9,8 @@
             var h = window.innerHeight;
             //alert("w:" + w + " h:" + h);
             $(".panel-body").css("height", h - 300).css("width", w - 100);
-            //loadPowerBiReport('frame1', 'https://app.powerbi.com/reportEmbed?reportId=bd81d8a0-b110-4455-b8b4-38ce86501f72');
-            loadPowerBiResourceUsingLibrary('powerBiContainer', 'bd81d8a0-b110-4455-b8b4-38ce86501f72');
+            var report = loadPowerBiResourceUsingLibrary('powerBiContainer', 'bd81d8a0-b110-4455-b8b4-38ce86501f72');
+            trackUserInteraction(report);
         });
     </script>
 }

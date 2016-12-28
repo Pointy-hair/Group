@@ -85,16 +85,32 @@ function loadPowerBiResource(iframeId, embedUrl, embedAction) {
     iframe.src = embedUrl;
 };
 
-function loadPowerBiResourceUsingLibrary(iframeId, reportId) {
+function loadPowerBiResourceUsingLibrary(divId, reportId, type) {
     var powerBiBearer = getCookie("powerBiBearer");
+    switch(type) {
+        case "PowerBiReport":
+            type = 'report';
+            break;
+        case "PowerBiTile":
+            type = 'tile';
+            break;
+        default:
+            type = 'report';
+    } 
     var embedConfiguration = {
-        type: 'report',
+        type: type,
         id: reportId,
         accessToken: powerBiBearer,
         embedUrl: 'https://app.powerbi.com/reportEmbed'
     };
-    var $reportContainer = $('#' + iframeId);
-    var report = powerbi.embed($reportContainer.get(0), embedConfiguration);
+    var $reportContainer = $('#' + divId);
+    return report = powerbi.embed($reportContainer.get(0), embedConfiguration);
+};
+
+function trackUserInteraction(report) {
+    report.on('dataSelected', function (event) {
+        console.log(event);
+    });
 };
 
 var autoLogoutLogoffSeconds = Math.floor(parseInt(getCookie("sessionTimeoutInSeconds")) / 2);  //sliding expiration cuts window in half
