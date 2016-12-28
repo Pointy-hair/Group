@@ -60,7 +60,7 @@ function loadPowerBiTile(iframeId, embedUrl) {
 
 function loadPowerBiResource(iframeId, embedUrl, embedAction) {
     var powerBiBearer = getCookie("powerBiBearer");
-    debugAlert("loadPowerBiResource iframeId=[" + iframeId + "] embedAction=[" + embedAction + "] embedUrl=[" + embedUrl + "] powerBiBearer=[" + powerBiBearer + "]")
+    debugAlert("loadPowerBiResource iframeId=[" + iframeId + "] embedAction=[" + embedAction + "] embedUrl=[" + embedUrl + "] powerBiBearer=[" + powerBiBearer + "]");
     requiresText(powerBiBearer, "powerBiBearer");
     requiresText(iframeId, "iframeId");
     requiresText(embedUrl, "embedUrl");
@@ -83,6 +83,18 @@ function loadPowerBiResource(iframeId, embedUrl, embedAction) {
         iframe.contentWindow.postMessage(message, "*");
     }
     iframe.src = embedUrl;
+};
+
+function loadPowerBiResourceUsingLibrary(iframeId, reportId) {
+    var powerBiBearer = getCookie("powerBiBearer");
+    var embedConfiguration = {
+        type: 'report',
+        id: reportId,
+        accessToken: powerBiBearer,
+        embedUrl: 'https://app.powerbi.com/reportEmbed'
+    };
+    var $reportContainer = $('#' + iframeId);
+    var report = powerbi.embed($reportContainer.get(0), embedConfiguration);
 };
 
 var autoLogoutLogoffSeconds = Math.floor(parseInt(getCookie("sessionTimeoutInSeconds")) / 2);  //sliding expiration cuts window in half
