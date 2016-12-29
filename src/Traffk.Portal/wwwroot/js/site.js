@@ -162,7 +162,7 @@ if (loggedInAtLoad=="true")
     var longTimeLeftInterval = window.setInterval(function () {
         var timeLeft = getTimeTillAutoLogoff();
         $("#idleTicker").text("autoLogoutLogoffSeconds: " + autoLogoutLogoffSeconds + "; autoLogoutWarningSeconds: " + autoLogoutWarningSeconds + "; timeLeft: " + timeLeft + "; " + loggedInAtLoad);
-        if (timeLeft < autoLogoutWarningSeconds) {
+        if (timeLeft < autoLogoutWarningSeconds || timeLeft < 0 ) {
             if (timeLeftInterval == null)
             {
                 $("#secondsTillLogout").text(timeLeft);
@@ -192,9 +192,9 @@ if (loggedInAtLoad=="true")
 }
 
 function idleReactivate() {
-    $("#inactivityWarningModal").modal('hide');
     window.clearInterval(timeLeftInterval);
-    timeLeftInterval = null;
+    timeLeftInterval = getTimeTillAutoLogoff();
+    $("#inactivityWarningModal").modal('hide');
     $.ajax({
         url: "/Account/KeepAlive",
         contentType: 'application/json; charset=utf-8',
@@ -207,6 +207,7 @@ function idleReactivate() {
         },
         error: function (xhr) {
             errorAlert("idleReactivate failed");
+            timeLeftInterval = null;
         }
     });
 
