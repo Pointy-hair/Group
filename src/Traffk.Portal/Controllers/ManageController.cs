@@ -111,6 +111,8 @@ namespace TraffkPortal.Controllers
             {
                 return ErrorResult();
             }
+            model.PhoneNumber = GetRawPhoneNumber(model.PhoneNumber);
+            model.PhoneNumber = ParseCountryCode(model.PhoneNumber);
             var code = await _userManager.GenerateChangePhoneNumberTokenAsync(user, model.PhoneNumber);
             await SmsSender.SendSmsAsync(model.PhoneNumber, "Your security code is: " + code);
             return RedirectToAction(nameof(VerifyPhoneNumber), new { PhoneNumber = model.PhoneNumber });
@@ -356,6 +358,22 @@ namespace TraffkPortal.Controllers
         private Task<ApplicationUser> GetCurrentUserAsync()
         {
             return _userManager.GetUserAsync(HttpContext.User);
+        }
+
+        private static string GetRawPhoneNumber(string phone)
+        {
+            return new string(phone.Where(char.IsDigit).ToArray());
+        }
+
+        private static string ParseCountryCode(string phone)
+        {
+            var length = phone.Length;
+            if (length == 10)
+            {
+                return "1" + phone;
+            }
+
+            return phone;
         }
 
         #endregion
