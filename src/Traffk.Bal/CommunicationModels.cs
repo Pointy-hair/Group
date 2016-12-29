@@ -1,8 +1,8 @@
 ﻿namespace Traffk.Bal
 {
-    public enum CommunicationModels
+    public enum CommunicationModelTypes
     {
-        Undefined,
+        Undefined=0,
         CallbackUrl,
         SimpleCodeModel,
         SimpleContentModel,

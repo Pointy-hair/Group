@@ -2,7 +2,7 @@
 @{
     Layout = "~/Views/Shared/_LayoutHeroEntity.cshtml";
     var pageKey = (CommunicationPageKeys)ViewData[ViewDataKeys.PageKey];
-    var entityId = (int) ViewData[ViewDataKeys.EntityId];
+    var entityId = (int)ViewData[ViewDataKeys.EntityId];
     var isNewEntity = entityId < 1;
     if (isNewEntity)
     {
@@ -15,10 +15,13 @@
     <li><a asp-action="Blast" asp-route-id="@entityId" class="@(pageKey==CommunicationPageKeys.Background?"current-section":"")">Main</a></li>
     @if (!isNewEntity)
     {
-        <li><a asp-action="@ActionNames.CommunicationCreative" asp-route-id="@entityId" class="@(pageKey==CommunicationPageKeys.Message?"current-section":"")">Creative</a></li>
-        <li><a asp-action="@ActionNames.CommunicationQuery" asp-route-id="@entityId" class="@(pageKey == CommunicationPageKeys.Query ? "current-section" : "")">Query</a></li>
+        <li><a asp-action="@ActionNames.CommunicationCreative" asp-route-id="@entityId" class="@(pageKey==CommunicationPageKeys.Creative?"current-section":"")">Creative</a></li>
+        @*
+            <li><a asp-action="@ActionNames.CommunicationQuery" asp-route-id="@entityId" class="@(pageKey == CommunicationPageKeys.Query ? "current-section" : "")">Query</a></li>
+        *@
         <li><a asp-action="@ActionNames.CommunicationSchedule" asp-route-id="@entityId" class="@(pageKey == CommunicationPageKeys.Schedule ? "current-section" : "")">Schedule</a></li>
-        <li><a asp-action="@ActionNames.CommunicationBlasts" asp-route-id="@entityId" class="@(pageKey == CommunicationPageKeys.Blasts ? "current-section" : "")">Blasts</a></li>
+        @*    <li><a asp-action="@ActionNames.CommunicationBlasts" asp-route-id="@entityId" class="@(pageKey == CommunicationPageKeys.Blasts ? "current-section" : "")">Blasts</a></li>
+        *@
     }
     @RenderSection("navItems", required: false)
 }
@@ -35,12 +38,12 @@
         switch (jobStatus)
         {
             case Job.StatusNames.NonYetQueued:
-            <button type="button" class="btn caseefault" asp-action="Create">Send Now</button>;
+                <button type="button" class="btn caseefault" asp-action="Create">Send Now</button>;
                 break;
             case Job.StatusNames.Queued:
             case Job.StatusNames.Dequeued:
             case Job.StatusNames.Running:
-            <button type="button" class="btn caseefault" asp-action="Create">Cancel In Progress Send</button>;
+                <button type="button" class="btn caseefault" asp-action="Create">Cancel In Progress Send</button>;
                 break;
         }
     }

@@ -59,14 +59,12 @@
                 <div class="form-group">
                     <input type="radio" name="dailyPatternType" value="EveryNDays"  @(Model.DailyPattern.EveryWeekday ? "" : "checked='checked'")  />
                     <label asp-for="DailyPattern.EveryNDays" class="control-label"></label>
-                    <input asp-for="DailyPattern.EveryNDays" class="form-control inline-block" type="date" disabled="@(Model.EndAfterNOccurrences != null ? "enabled" : "disabled")" />
+                    <input asp-for="DailyPattern.EveryNDays" class="form-control inline-block" type="number"/>
                     <span asp-validation-for="DailyPattern.EveryNDays" class="text-danger" />
                 </div>
                 <div class="form-group">
-                    <input type="radio" name="dailyPatternType" value="EveryWeekday" @(Model.DailyPattern.EveryWeekday ? "checked='checked'" : "") />
+                    <input type="radio" name="dailyPatternType" value="EveryWeekday" @(Model.DailyPattern.EveryWeekday ? "checked='checked'" : "")  />
                     <label asp-for="DailyPattern.EveryWeekday" class="control-label"></label>
-                    <input asp-for="DailyPattern.EveryWeekday" class="form-control inline-block" type="date" disabled="@(Model.EndAfterNOccurrences != null ? "enabled" : "disabled")" />
-                    <span asp-validation-for="DailyPattern.EveryWeekday" class="text-danger" />
                 </div>
             </div>
             <div class="pattern-section" id="pattern-section-weekly" style="@(Model.PatternType==PatternTypes.Weekly ? "":"display:none")">

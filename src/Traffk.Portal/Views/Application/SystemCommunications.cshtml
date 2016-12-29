@@ -3,7 +3,6 @@
 @model IEnumerable<TraffkPortal.Models.ApplicationModels.SystemCommunicationsModel>
 @{
     Layout = "_LayoutApplication.cshtml";
-    var itemByPurpose = Model.ToDictionary(i => i.Purpose);
 }
 
 <form asp-action="@ActionNames.SystemCommunicationsSubmission">
@@ -19,17 +18,19 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (SystemCommunicationPurposes purpose in Enum.GetValues(typeof(SystemCommunicationPurposes)))
+            @foreach (var item in Model)
             {
-                var items = ViewBag.CommunicationSelectListItemsByCommunicationModel[purpose];
-                var item = itemByPurpose.GetValue(purpose);
+                var choices = ViewBag.CommunicationSelectListItemsByCommunicationModel[item.ModelType];
                 <tr>
-                    <td>@purpose</td>
                     <td>
-                        <select asp-items="items"></select>
+                        @Html.DisplayFor(modelItem => item.Purpose)
+                    </td>
+                    <td>
+                        <select asp-items="choices" asp-for="@item.CommunicationId"></select>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
+    <input type="submit" value="Save" class="btn btn-default" />
 </form>

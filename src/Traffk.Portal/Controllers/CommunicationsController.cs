@@ -7,12 +7,14 @@ using Microsoft.AspNetCore.Authorization;
 using TraffkPortal.Permissions;
 using Traffk.Bal.Permissions;
 using Traffk.Bal.Data.Rdb;
-using System.Collections.Generic;
 using Traffk.Bal.Data.Ddb.Crm;
 using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
 using RevolutionaryStuff.Core;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Traffk.Bal.Data;
+using TraffkPortal.Models.CommunicationModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace TraffkPortal.Controllers
 {
@@ -29,10 +31,16 @@ namespace TraffkPortal.Controllers
             public const string CommunicationCreate = "CommunicationCreate";
             public const string CommunicationDetails = "CommunicationDetails";
             public const string CommunicationSave = "CommunicationSave";
-            public const string CommunicationCreative = "CommunicationCreative";
-            public const string CommunicationQuery = "CommunicationQuery";
+
             public const string CommunicationSchedule = "CommunicationSchedule";
+            public const string CommunicationScheduleSave = "CommunicationScheduleSave";
+
+            public const string CommunicationCreative = "CommunicationCreative";
+            public const string CommunicationCreativeSave = "CommunicationCreativeSave";
+            /*
+            public const string CommunicationQuery = "CommunicationQuery";
             public const string CommunicationBlasts = "CommunicationBlasts";
+            */
 
             public const string CreativesList = "Creatives";
             public const string CreativeDetails = "CreativeDetails";
@@ -44,6 +52,8 @@ namespace TraffkPortal.Controllers
         {
             public const string CommunicationsList = "Communications";
             public const string CommunicationDetails = "CommunicationDetails";
+            public const string CommunicationSchedule = "CommunicationSchedule";
+            public const string CommunicationCreative = "CommunicationCreative";
             public const string CreativesList = "Creatives";
             public const string CreativeDetails = "CreativeDetails";
         }
@@ -69,10 +79,13 @@ namespace TraffkPortal.Controllers
         public enum CommunicationPageKeys
         {
             Background,
-            Message,
             Schedule,
-            Blasts,
-            Query,
+            Creative,
+            /*
+                        Message,
+                        Blasts,
+                        Query,
+            */
         }
 
         private void SetHeroLayoutViewData(Communication comm, CommunicationPageKeys pageKey)
@@ -95,28 +108,26 @@ namespace TraffkPortal.Controllers
             return View(ViewNames.CommunicationsList, items);
         }
 
-        private Task<Communication> FindCommunicationByIdAsync(int id) => Rdb.Communications.FindAsync(id);
-
-
-
+        private Task<Communication> FindCommunicationByIdAsync(int id) => 
+            Rdb.Communications.Include(z => z.Creative).FirstOrDefaultAsync(z => z.CommunicationId == id);
 
         [Route("Create")]
         [ActionName(ActionNames.CommunicationCreate)]
         public IActionResult CommunicationCreate()
         {
-            var item = new Communication();
-            SetHeroLayoutViewData(item, CommunicationPageKeys.Background);
-            return View(ViewNames.CommunicationDetails, item);
+            var comm = new Communication();
+            SetHeroLayoutViewData(comm, CommunicationPageKeys.Background);
+            return View(ViewNames.CommunicationDetails, comm);
         }
 
         [Route("{id}")]
         [ActionName(ActionNames.CommunicationDetails)]
         public async Task<IActionResult> CommunicationEdit(int id)
         {
-            var item = await FindCommunicationByIdAsync(id);
-            if (item == null) return NotFound();
-            SetHeroLayoutViewData(item, CommunicationPageKeys.Background);
-            return View(ViewNames.CommunicationDetails, item);
+            var comm = await FindCommunicationByIdAsync(id);
+            if (comm == null) return NotFound();
+            SetHeroLayoutViewData(comm, CommunicationPageKeys.Background);
+            return View(ViewNames.CommunicationDetails, comm);
         }
 
         [HttpPost]
@@ -134,19 +145,120 @@ namespace TraffkPortal.Controllers
         {
             if (ModelState.IsValid)
             {
-                Communication communication = await FindCommunicationByIdAsync(id);
-                if (communication == null)
+                var comm = await FindCommunicationByIdAsync(id);
+                if (comm == null)
                 {
-                    communication = new Communication();
-                    Rdb.Communications.Add(communication);
+                    comm = new Communication();
+                    Rdb.Communications.Add(comm);
                 }
-                communication.CommunicationTitle = model.CommunicationTitle;
-                communication.CampaignName = model.CampaignName;
-                communication.TopicName = model.TopicName;
+                comm.CommunicationTitle = model.CommunicationTitle;
+                comm.CampaignName = model.CampaignName;
+                comm.TopicName = model.TopicName;
                 await Rdb.SaveChangesAsync();
-                return RedirectToAction(ActionNames.CreativesList);
+                return RedirectToAction(ActionNames.CommunicationsList);
             }
             return await CommunicationEdit(id);
+        }
+
+        #endregion
+
+        #region Schedule
+
+        [Route("{id}/Schedule")]
+        [ActionName(ActionNames.CommunicationSchedule)]
+        public async Task<IActionResult> CommunicationSchedule(int id)
+        {
+            var item = await FindCommunicationByIdAsync(id);
+            if (item == null) return NotFound();
+            SetHeroLayoutViewData(item, CommunicationPageKeys.Schedule);
+            return View(ViewNames.CommunicationSchedule, item.CommunicationSettings?.Recurrence ?? new RecurrenceSettings());
+        }
+
+        [ActionName(ActionNames.CommunicationScheduleSave)]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("{id}/Schedule/Save")]
+        public async Task<IActionResult> CommunicationScheduleSave(
+            int id,
+            RecurrenceSettings model)
+        {
+            var item = await FindCommunicationByIdAsync(id);
+            if (item == null) return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                if (model.DailyPattern.EveryWeekday)
+                {
+                    model.DailyPattern.EveryNDays = 0;
+                }
+                item.CommunicationSettings.Recurrence = model;
+                Rdb.Communications.Update(item);
+                await Rdb.AddNextScheduledBlasts(id, false, true);
+                await Rdb.SaveChangesAsync();
+                return RedirectToAction(ActionNames.CommunicationDetails);
+            }
+            SetHeroLayoutViewData(item, CommunicationPageKeys.Schedule);
+            return View(ViewNames.CommunicationSchedule, model);
+        }
+
+        #endregion
+
+        #region Communication Creatives
+
+        [Route("{id}/Creative")]
+        [ActionName(ActionNames.CommunicationCreative)]
+        public async Task<IActionResult> CommunicationCreative(int id)
+        {
+            var comm = await FindCommunicationByIdAsync(id);
+            if (comm == null) return NotFound();
+            SetHeroLayoutViewData(comm, CommunicationPageKeys.Creative);
+            PopulateViewBagWithTemplateModelSelectListItems();
+            return View(ViewNames.CommunicationCreative, new CommunicationCreativeModel(id, comm.Creative));
+        }
+
+        [HttpPost]
+        [ActionName(ActionNames.CommunicationCreativeSave)]
+        [ValidateAntiForgeryToken]
+        [Route("{id}/Creative/Save")]
+        public async Task<IActionResult> CommunicationCreativeSave(
+            int id,
+            [Bind(
+            nameof(Creative.CreativeId),
+            nameof(Creative.CreativeTitle),
+            nameof(Creative.TemplateEngineType),
+            nameof(Creative.ModelTypeStringValue),
+            nameof(Creative.CreativeSettings),
+            nameof(Creative.CreativeSettings)+"."+nameof(CreativeSettings.EmailSubject),
+            nameof(Creative.CreativeSettings)+"."+nameof(CreativeSettings.EmailHtmlBody),
+            nameof(Creative.CreativeSettings)+"."+nameof(CreativeSettings.EmailTextBody),
+            nameof(Creative.CreativeSettings)+"."+nameof(CreativeSettings.TextMessageBody)
+            )]
+            CommunicationCreativeModel model)
+        {
+            var comm = await FindCommunicationByIdAsync(id);
+            if (comm == null) return NotFound();
+            if (ModelState.IsValid)
+            {
+                Creative creative = await FindCreativeByIdAsync(model.CreativeId);
+                if (creative == null)
+                {
+                    creative = new Creative();
+                    comm.Creative = creative;
+                    Rdb.Creatives.Add(creative);
+                }
+                creative.CreativeTitle = model.CreativeTitle;
+                creative.ModelType = model.ModelType;
+                creative.TemplateEngineType = model.TemplateEngineType ?? Template.TemplateEngineTypes.TraffkDollarString;
+                creative.CreativeSettings.EmailSubject = model.CreativeSettings.EmailSubject;
+                creative.CreativeSettings.EmailHtmlBody = model.CreativeSettings.EmailHtmlBody;
+                creative.CreativeSettings.EmailTextBody = model.CreativeSettings.EmailTextBody;
+                creative.CreativeSettings.TextMessageBody = model.CreativeSettings.TextMessageBody;
+                await Rdb.SaveChangesAsync();
+                return RedirectToAction(ActionNames.CommunicationDetails);
+            }
+            SetHeroLayoutViewData(comm, CommunicationPageKeys.Creative);
+            PopulateViewBagWithTemplateModelSelectListItems();
+            return View(ViewNames.CommunicationCreative, model);
         }
 
         #endregion
@@ -202,7 +314,7 @@ namespace TraffkPortal.Controllers
             [Bind(
             nameof(Creative.CreativeTitle),
             nameof(Creative.TemplateEngineType),
-            nameof(Creative.ModelType),
+            nameof(Creative.ModelTypeStringValue),
             nameof(Creative.CreativeSettings),
             nameof(Creative.CreativeSettings)+"."+nameof(CreativeSettings.EmailSubject),
             nameof(Creative.CreativeSettings)+"."+nameof(CreativeSettings.EmailHtmlBody),
@@ -221,7 +333,7 @@ namespace TraffkPortal.Controllers
                 }
                 creative.CreativeTitle = model.CreativeTitle;
                 creative.ModelType = model.ModelType;
-                creative.TemplateEngineType = model.TemplateEngineType;
+                creative.TemplateEngineType = model.TemplateEngineType ?? Template.TemplateEngineTypes.TraffkDollarString;
                 creative.CreativeSettings.EmailSubject = model.CreativeSettings.EmailSubject;
                 creative.CreativeSettings.EmailHtmlBody = model.CreativeSettings.EmailHtmlBody;
                 creative.CreativeSettings.EmailTextBody = model.CreativeSettings.EmailTextBody;

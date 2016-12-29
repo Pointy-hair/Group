@@ -9,7 +9,7 @@ namespace TraffkCommunicationBlastRunner
 {
     public class Program : JobRunnerProgram<CommunicationBlastRunner>
     {
-        protected override string JobType => Job.JobTypes.CommunicationBlast;
+        protected override JobTypes JobType => JobTypes.CommunicationBlast;
 
         protected override void OnConfigureServices(IServiceCollection services)
         {

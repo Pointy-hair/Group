@@ -2,15 +2,15 @@
 {
     public enum SystemCommunicationPurposes
     {
-        [CommunicationModel(CommunicationModels.CallbackUrl)]
+        [CommunicationModel(CommunicationModelTypes.CallbackUrl)]
         UserAcceptInvitation,
-        [CommunicationModel(CommunicationModels.CallbackUrl)]
+        [CommunicationModel(CommunicationModelTypes.CallbackUrl)]
         UserAccountVerification,
-        [CommunicationModel(CommunicationModels.CallbackUrl)]
+        [CommunicationModel(CommunicationModelTypes.CallbackUrl)]
         UserPasswordReset,
-        [CommunicationModel(CommunicationModels.SimpleCodeModel)]
+        [CommunicationModel(CommunicationModelTypes.SimpleCodeModel)]
         UserTwoFactorLoginCode,
-        [CommunicationModel(CommunicationModels.SimpleContentModel)]
+        [CommunicationModel(CommunicationModelTypes.SimpleContentModel)]
         DirectMessage,
     }
 }

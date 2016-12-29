@@ -1,0 +1,19 @@
+﻿@using static TraffkPortal.Controllers.CommunicationsController
+@model Traffk.Bal.Data.RecurrenceSettings
+@{
+    Layout = "_LayoutCommunication.cshtml";
+}
+@section pageAlerts
+{
+    <div class="alert alert-info" role="alert" id="Next Scheduled Send">Next occurrence: @Model.NextOccurrence?.StartAtUtc.ToLocalTime()</div>    
+}
+<form asp-action="@ActionNames.CommunicationScheduleSave">
+    <div class="form-horizontal">
+        @await Html.PartialAsync("_RecurrenceSettingsPartial", Model)
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>

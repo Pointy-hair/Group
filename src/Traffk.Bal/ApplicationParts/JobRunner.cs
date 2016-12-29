@@ -18,18 +18,18 @@ namespace Traffk.Bal.ApplicationParts
 
             try
             {
-                job.JobStatus = Job.StatusNames.Running;
+                job.JobStatus = JobStatuses.Running;
                 var prev = job.JobResult;
                 job.JobResult = CreateJobResult();
                 job.JobResult.PreviousResult = prev;
                 db.Update(job);
                 await db.SaveChangesAsync();
                 await OnGoAsync(job);
-                job.JobStatus = Job.StatusNames.CompletedSuccess;
+                job.JobStatus = JobStatuses.CompletedSuccess;
             }
             catch (Exception ex)
             {
-                job.JobStatus = Job.StatusNames.CompletedError;
+                job.JobStatus = JobStatuses.CompletedError;
                 job.JobResult.Error = new ExceptionError(ex);
             }
             db.Update(job);

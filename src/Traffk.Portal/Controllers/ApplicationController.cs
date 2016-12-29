@@ -14,11 +14,9 @@ using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Settings;
 using Traffk.Bal.Services;
 using TraffkPortal.Models.ApplicationModels;
-using Traffk.Bal.Settings;
 using System.IO;
 using RevolutionaryStuff.Core.Collections;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Collections.Generic;
 
 namespace TraffkPortal.Controllers
 {
@@ -81,8 +79,8 @@ namespace TraffkPortal.Controllers
 
         private void PopulateViewBagWithCommunicationSelectListItemsByCommunicationModel(int tenantId)
         {
-            var m = new MultipleValueDictionary<CommunicationModels, SelectListItem>();
-            Stuff.GetEnumValues<CommunicationModels>().ForEach(cm => m.Add(cm, new SelectListItem { Text = AspHelpers.NoneDropdownItemText, Value = AspHelpers.NoneDropdownItemValue }));
+            var m = new MultipleValueDictionary<CommunicationModelTypes, SelectListItem>();
+            Stuff.GetEnumValues<CommunicationModelTypes>().ForEach(cm => m.Add(cm, new SelectListItem { Text = AspHelpers.NoneDropdownItemText, Value = AspHelpers.NoneDropdownItemValue }));
             foreach (var comm in Rdb.Communications.Where(c => c.TenantId == tenantId).Include(c => c.Creative).OrderBy(c=>c.CommunicationTitle))
             {
                 if (comm.Creative == null) continue;

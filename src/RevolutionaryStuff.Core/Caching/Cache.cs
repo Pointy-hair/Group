@@ -110,19 +110,17 @@ namespace RevolutionaryStuff.Core.Caching
                 => Inner.FindOrCreate(CreateKey(key, ScopeKey), creator);
         }
 
-        public static ICacher Synchronized(ICacher inner) => inner as SynchronizedCacher ?? new SynchronizedCacher(inner);
+        public static ICacher Synchronized(ICacher inner) 
+            => inner as SynchronizedCacher ?? new SynchronizedCacher(inner);
 
-        public static ICacher CreateScope(this ICacher inner, params object[] keyParts) => new ScopedCacher(inner, keyParts);
+        public static ICacher CreateScope(this ICacher inner, params object[] keyParts) 
+            => new ScopedCacher(inner, keyParts);
 
         public static CacheEntry<TVal> FindOrCreate<TVal>(this ICacher inner, string key, Func<string, Task<CacheEntry<TVal>>> asynccreator)
-        {
-            return inner.FindOrCreate(key, k => asynccreator(k).ExecuteSynchronously());
-        }
+            => inner.FindOrCreate(key, k => asynccreator(k).ExecuteSynchronously());
 
         public static ICache<K, V> CreateSynchronized<K, V>(int maxItems = int.MaxValue)
-        {
-            return new SynchronizedCache<K, V>(new RandomCache<K, V>(maxItems));
-        }
+            => new SynchronizedCache<K, V>(new RandomCache<K, V>(maxItems));
 
         public static bool ContainsKey<K, D>(this ICache<K, D> cache, K key)
         {
@@ -130,20 +128,14 @@ namespace RevolutionaryStuff.Core.Caching
             return cache.Find(key, out data);
         }
 
-        public static void Refresh<K, D>(this ICache<K, D> cache, Action creator)
-        {
-            Stuff.SingleActor(creator, cache);
-        }
+        public static void Refresh<K, D>(this ICache<K, D> cache, Action creator) 
+            => creator.SingleActor(cache);
 
         public static D Do<K, D>(this ICache<K, D> cache, K key, Func<D> creator)
-        {
-            return Do(cache, key, false, true, z=>creator());
-        }
+            => Do(cache, key, false, true, z => creator());
 
         public static D Do<K, D>(this ICache<K, D> cache, K key, Func<D, D> creator)
-        {
-            return Do(cache, key, false, true, creator);
-        }
+            => Do(cache, key, false, true, creator);
 
         public static D Do<K, D>(this ICache<K, D> cache, K key, bool mustBeFresh, bool storeNull, Func<D,D> creator) //where D : class
         {
@@ -241,9 +233,7 @@ namespace RevolutionaryStuff.Core.Caching
         }
 
         public static ICache<K, D> Synchronized<K, D>(ICache<K, D> inner)
-        {
-            return new SynchronizedCache<K, D>(inner);
-        }
+            => new SynchronizedCache<K, D>(inner);
 
         public static string CreateKey(params object[] args)
         {

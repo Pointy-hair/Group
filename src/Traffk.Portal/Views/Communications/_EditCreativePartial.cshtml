@@ -1,20 +1,25 @@
 ﻿@model Creative
+<input type="hidden" asp-for="CreativeId" />
+<input type="hidden" asp-for="TemplateEngineType" value="@Template.TemplateEngineTypes.TraffkDollarString" />
 <div class="form-group">
-    <label class="col-md-2 control-label">zzz</label>
-    <input type="hidden" asp-for="CreativeId" />
+    <label asp-for="CreativeTitle" class="col-md-2 control-label"></label>
     <div class="col-md-10">
-        <div class="row">
-            <label asp-for="ModelType" class="control-label"></label>
-        </div>
-        <div class="row">
-            <select asp-for="ModelType" asp-items="ViewBag.ModelListItems"></select>
-        </div>
-        <div class="row">
-            <input asp-for="CreativeSettings.EmailSubject" class="form-control" />
-            <textarea asp-for="CreativeSettings.EmailHtmlBody" class="form-control htmleditor"></textarea>
-            <span asp-validation-for="CreativeSettings.EmailHtmlBody" class="text-danger" />
-            <textarea asp-for="CreativeSettings.EmailTextBody" class="form-control"></textarea>
-            <textarea asp-for="CreativeSettings.TextMessageBody" class="form-control"></textarea>
-        </div>
+        <input asp-for="CreativeTitle" class="form-control" />
+        <span asp-validation-for="CreativeTitle" class="text-danger" />
+    </div>
+</div>
+<div class="form-group">
+    <div class="row">
+        <label asp-for="ModelTypeStringValue" class="control-label"></label>
+    </div>
+    <div class="row">
+        <select asp-for="ModelTypeStringValue" asp-items="ViewBag.ModelListItems"></select>
+    </div>
+    <div class="row">
+        <input asp-for="CreativeSettings.EmailSubject" class="form-control" />
+        <textarea asp-for="CreativeSettings.EmailHtmlBody" class="form-control htmleditor"></textarea>
+        <span asp-validation-for="CreativeSettings.EmailHtmlBody" class="text-danger" />
+        <textarea asp-for="CreativeSettings.EmailTextBody" class="form-control"></textarea>
+        <textarea asp-for="CreativeSettings.TextMessageBody" class="form-control"></textarea>
     </div>
 </div>

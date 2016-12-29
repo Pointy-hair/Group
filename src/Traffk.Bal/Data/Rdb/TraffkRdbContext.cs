@@ -100,7 +100,7 @@ namespace Traffk.Bal.Data.Rdb
                 var nextOccurrence = b.CommunicationBlastSettings?.Recurrence?.NextOccurrence;
                 if (nextOccurrence == null) continue;
                 var kids = await ZCommunicationBlasts.Where(z => z.ParentCommunicationBlastId == b.CommunicationBlastId && z.Job != null).Include(z => z.Job).ToListAsync();
-                var nextScheduled = kids.Where(z=>z.Job.JobStatus!=Job.StatusNames.Cancelled).OrderByDescending(z => z.Job.DontRunBeforeUtc).FirstOrDefault();
+                var nextScheduled = kids.Where(z=>z.Job.JobStatus!=JobStatuses.Cancelled).OrderByDescending(z => z.Job.DontRunBeforeUtc).FirstOrDefault();
                 if (nextScheduled == null)
                 {
                     var newBlast = new ZCommunicationBlast()
@@ -114,15 +114,15 @@ namespace Traffk.Bal.Data.Rdb
                         TenantId = b.TenantId,
                         Job = new Job
                         {
-                            JobStatus = Job.StatusNames.Queued,
+                            JobStatus = JobStatuses.Queued,
                             DontRunBeforeUtc = nextOccurrence.StartAtUtc,
                             TenantId = b.TenantId,
-                            JobType = Job.JobTypes.CommunicationBlast,
+                            JobType = JobTypes.CommunicationBlast,
                         }
                     };
                     if (deleteUpcomingNonConformantBlasts)
                     {
-                        var toRemove = kids.Where(z => z.Job.JobStatus == Job.StatusNames.Queued).ToList();
+                        var toRemove = kids.Where(z => z.Job.JobStatus == JobStatuses.Queued).ToList();
                         if (toRemove.Count > 0)
                         {
                             ZCommunicationBlasts.RemoveRange(toRemove);
