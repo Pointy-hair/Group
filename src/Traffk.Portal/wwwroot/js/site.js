@@ -104,16 +104,40 @@ function loadPowerBiResourceUsingLibrary(divId, reportId, type) {
         embedUrl: 'https://app.powerbi.com/reportEmbed'
     };
     var $reportContainer = $('#' + divId);
-    return report = powerbi.embed($reportContainer.get(0), embedConfiguration);
+    return powerbi.embed($reportContainer.get(0), embedConfiguration);
 };
 
 function trackUserInteraction(report) {
     report.on('dataSelected', function (event) {
         console.log(event);
+        var userInteractionString = "You clicked on: <br />";
+        if (event.type === 'dataSelected') {
+            var clickedReport = event.detail.report;
+            var reportString = "Report: " + clickedReport.displayName + "<br/>";
+            userInteractionString += reportString;
+
+            var visual = event.detail.visual;
+            var visualString = "Visual: " + visual.title + "<br/>";
+            userInteractionString += visualString;
+
+            var dataPointsArray = event.detail.dataPoints;
+            for (var i = 0; i < dataPointsArray.length; i++) {
+                var identityArray = dataPointsArray[i].identity;
+                for (var j = 0; j < identityArray.length; j++) {
+                    var identityDataPoint = identityArray[j];
+                    var identityDataPointString = identityDataPoint.target.column + ": " + identityDataPoint.equals + "<br/>";
+                    userInteractionString += identityDataPointString;
+                }
+
+                //TODO: Add value array to string when it is implemented by JS library
+            }
+
+        }
+        document.getElementById("userInteractionDiv").innerHTML = userInteractionString;
     });
 };
 
-var autoLogoutLogoffSeconds = Math.floor(parseInt(getCookie("sessionTimeoutInSeconds")) / 2);  //sliding expiration cuts window in half
+var autoLogoutLogoffSeconds = Math.floor(parseInt(getCookie("sessionTimeoutInSeconds")));  //sliding expiration cuts window in half
 
 function getTimeTillAutoLogoff() {
     //var lastSeenAt = store.get("lastSeenAtWhileLoggedIn");
