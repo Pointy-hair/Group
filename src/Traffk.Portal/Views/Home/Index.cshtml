@@ -3,7 +3,7 @@
     ViewData["BodyContainerClass"] = "container-full-width no-side-padding";
 }
 @section Scripts {
-    <script type="text/javascript">
+    @*<script type="text/javascript">
         $(document).ready(function () {
             var w = window.innerWidth;
             var h = window.innerHeight;
@@ -12,6 +12,25 @@
             var report = loadPowerBiResourceUsingLibrary('powerBiContainer', 'bd81d8a0-b110-4455-b8b4-38ce86501f72');
             trackUserInteraction(report);
         });
+    </script>*@
+    <script type="text/javascript">
+            function initViz() {
+                var containerDiv = document.getElementById("powerBiContainer"),
+                    url = "https://public.tableau.com/views/RegionalSampleWorkbook/Storms",
+                    options = {
+                        hideTabs: true,
+                        onFirstInteractive: function () {
+                            console.log("Run this code when the viz has finished loading.");
+                        }
+                    };
+
+                var viz = new tableau.Viz(containerDiv, url, options);
+                // Create a viz object and embed it in the container div.
+            }
+
+            $(document).ready(function () {
+                initViz();
+            });
     </script>
 }
 
