@@ -40,3 +40,4 @@
 /tests/RevolutionaryStuff.SqlSchemaFoundations.Tests/obj
 /tests/RevolutionaryStuff.SqlSchemaFoundations.Tests/bin
 *.lock.json
+/.vs/config/applicationhost.config
