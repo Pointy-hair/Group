@@ -19,6 +19,7 @@ using Traffk.Bal.Email;
 using Traffk.Bal.Identity;
 using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
+using Traffk.Tableau;
 using TraffkPortal.Permissions;
 using TraffkPortal.Services;
 using TraffkPortal.Services.Sms;
@@ -160,8 +161,11 @@ namespace TraffkPortal
             services.AddScoped<PowerBiServices>();
             services.AddScoped<CrmDdbContext>();
             services.AddScoped<ConfigStringFormatter>();
+            services.AddScoped<ITableauServices, TableauServices>();
+            services.AddScoped<ITrustedTicketGetter, TrustedTicketGetter>();
 
             services.AddScoped<SetPowerBiBearerActionFilter>();
+            services.AddScoped<TableauTrustedTicketActionFilter>();
 
             services.Add(new ServiceDescriptor(typeof(ICacher), Cache.DataCacher));
         }

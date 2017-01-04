@@ -3,25 +3,11 @@
     ViewData["BodyContainerClass"] = "container-full-width no-side-padding";
 }
 @section Scripts {
-    <script type="text/javascript">
-            function initViz() {
-                var containerDiv = document.getElementById("powerBiContainer"),
-                    url = "https://public.tableau.com/views/RegionalSampleWorkbook/Storms",
-                    options = {
-                        hideTabs: true,
-                        onFirstInteractive: function () {
-                            console.log("Run this code when the viz has finished loading.");
-                        }
-                    };
-
-                var viz = new tableau.Viz(containerDiv, url, options);
-                // Create a viz object and embed it in the container div.
-            }
-
-            $(document).ready(function () {
-                initViz();
-            });
-    </script>
+<script type="text/javascript">
+        $(document).ready(function () {
+            initViz("Superstore", "Overview");
+        });
+</script>
 }
 
 <center>

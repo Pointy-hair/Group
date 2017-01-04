@@ -17,10 +17,14 @@ namespace TraffkPortal.Controllers
             TableauServices = tableauServices;
         }
 
+        [Produces("text/html")]
         [Route("DataVisualization/{workbook}/{view}")]
-        public HttpContent Index(string workbook, string view)
+        public HttpContent Index(string workbook, string view, string trustedTicket = "", string[] options = null)
         {
-            var trustedTicket = Request.Cookies["tableauTicket"];
+            if (String.IsNullOrEmpty(trustedTicket))
+            {
+                trustedTicket = Request.Cookies["tableauTicket"];
+            }
             var reportHttpContent = TableauServices.GetVisualization(workbook, view, trustedTicket);
             return reportHttpContent.Result;
         }

@@ -19,7 +19,7 @@ namespace Traffk.Tableau
 
     public sealed class TableauTrustedTicketActionFilter : IAsyncActionFilter
     {
-        private const string TrustedTicketCookieName = "tableauTicket";
+        private const string TrustedTicketCookieName = "trustedTicket";
         private readonly ITableauServices TableauServices;
 
         public TableauTrustedTicketActionFilter(ITableauServices tableauServices)
