@@ -21,12 +21,16 @@
 /src/Traffk.Portal/bin
 /src/Traffk.CommunicationBlaster/obj
 /src/Traffk.CommunicationBlaster/bin
+/src/Traffk.Tableau/obj
+/src/Traffk.Tableau/bin
 /tests/Traffk.Bal.Tests/obj
 /tests/Traffk.Bal.Tests/bin
 /tests/Traffk.Portal.Tests/obj
 /tests/Traffk.Portal.Tests/bin
 /tests/Traffk.CommunicationBlaster.Tests/obj
 /tests/Traffk.CommunicationBlaster.Tests/bin
+/tests/Traffk.Tableau.Tests/obj
+/tests/Traffk.Tableau.Tests/bin
 *.user
 *.suo
 /tests/RevolutionaryStuff.Azure.Tests/obj

@@ -8,6 +8,7 @@ using Traffk.Bal.Data.Rdb;
 using TraffkPortal.Services;
 using TraffkPortal.Permissions;
 using Traffk.Bal.Permissions;
+using Traffk.Tableau;
 
 namespace TraffkPortal.Controllers
 {
@@ -24,6 +25,7 @@ namespace TraffkPortal.Controllers
             : base(AspHelpers.MainNavigationPageKeys.Main, db, current, loggerFactory)
         { }
 
+        [SetTableauTrustedTicket]
         [SetPowerBiBearer]
         public IActionResult Index()
         {
