@@ -167,7 +167,7 @@ namespace TraffkPortal.Controllers
                         var callbackUrl = Url.Action(nameof(ConfirmEmail), Name, new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
                         await EmailSender.SendEmailCommunicationAsync(
                             SystemCommunicationPurposes.UserAccountVerification,
-                            Template.ModelTypes.CreateCallbackUrlModel(callbackUrl),
+                            CommunicationModelFactory.CreateCallbackUrlModel(callbackUrl),
                             model.Email);
                     }
                     else
@@ -343,7 +343,7 @@ namespace TraffkPortal.Controllers
                 var callbackUrl = Url.Action(nameof(ResetPassword), Name, new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
                 await EmailSender.SendEmailCommunicationAsync(
                     SystemCommunicationPurposes.UserPasswordReset,
-                    Template.ModelTypes.CreateCallbackUrlModel(callbackUrl),
+                    CommunicationModelFactory.CreateCallbackUrlModel(callbackUrl),
                     model.Email);
                 return View(nameof(ForgotPasswordConfirmation));
             }
@@ -491,14 +491,14 @@ namespace TraffkPortal.Controllers
             {
                 await EmailSender.SendEmailCommunicationAsync(
                     SystemCommunicationPurposes.UserTwoFactorLoginCode,
-                    Template.ModelTypes.CreateSimpleCodeModel(code),
+                    CommunicationModelFactory.CreateSimpleCodeModel(code),
                     await UserManager.GetEmailAsync(user));
             }
             else if (model.SelectedProvider == "Phone")
             {
                 await SmsSender.SendSmsCommunicationAsync(
                     SystemCommunicationPurposes.UserTwoFactorLoginCode,
-                    Template.ModelTypes.CreateSimpleCodeModel(code),
+                    CommunicationModelFactory.CreateSimpleCodeModel(code),
                     await UserManager.GetPhoneNumberAsync(user));
             }
 

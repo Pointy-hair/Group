@@ -214,7 +214,7 @@ namespace TraffkPortal.Controllers
         {
             var contact = await FindContactByIdAsync(id);
             if (contact == null) return NotFound();
-            var model = Template.ModelTypes.CreateSimpleContentModel(subject, body);
+            var model = CommunicationModelFactory.CreateSimpleContentModel(subject, body);
             await EmailSender.SendEmailCommunicationAsync(SystemCommunicationPurposes.DirectMessage, model, contact.PrimaryEmail, contact.FullName, contact.ContactId);
             return Ok();
         }

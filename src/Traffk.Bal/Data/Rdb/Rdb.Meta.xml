@@ -474,10 +474,14 @@
         </Column>
         <Column name="ModelType" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="80">
           <Properties>
-            <Property name="EnumType" value="CommunicationModelTypes" />
+            <Property name="EnumType" value="Traffk.Bal.Communications.CommunicationModelTypes" />
           </Properties>
         </Column>
-        <Column name="TemplateEngineType" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80" />
+        <Column name="TemplateEngineType" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80">
+          <Properties>
+            <Property name="EnumType" value="Traffk.Bal.Communications.TemplateEngineTypes" />
+          </Properties>
+        </Column>
         <Column name="CreativeSettings" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1">
           <Properties>
             <Property name="JsonSettingsClass" value="Bal.Settings.CreativeSettings" />
@@ -5513,6 +5517,22 @@
         <Column name="metric_name" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
         <Column name="prescription_class" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="200" />
         <Column name="svc_drug_name" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="200" />
+      </Columns>
+    </Table>
+    <Table schema="reporting" name="AverageRisk2">
+      <Columns>
+        <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="ContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
+        <Column name="mbr_id" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" />
+        <Column name="Relationship_to_Member" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="program_type" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="program_name" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="average_risk_score" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+        <Column name="care_alert_id" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="care_alert_desc" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="200" />
+        <Column name="metric_Type" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="prescription_class" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="200" />
+        <Column name="svc_drug_name" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="200" />
       </Columns>
     </Table>
     <Table schema="reporting" name="ClaimsByDay">

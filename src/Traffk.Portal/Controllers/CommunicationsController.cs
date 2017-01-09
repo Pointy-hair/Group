@@ -17,6 +17,7 @@ using TraffkPortal.Models.CommunicationModels;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
 using System;
+using Traffk.Bal.Communications;
 
 namespace TraffkPortal.Controllers
 {
@@ -269,7 +270,7 @@ namespace TraffkPortal.Controllers
         {
             creative.CreativeTitle = model.CreativeTitle;
             creative.ModelType = model.ModelType;
-            creative.TemplateEngineType = model.TemplateEngineType ?? Template.TemplateEngineTypes.TraffkDollarString;
+            creative.TemplateEngineType = model.TemplateEngineType == TemplateEngineTypes.Undefined ? TemplateEngineTypes.TraffkDollarString : model.TemplateEngineType;
             creative.CreativeSettings.EmailSubject = model.CreativeSettings.EmailSubject;
             creative.CreativeSettings.EmailHtmlBody = model.CreativeSettings.EmailHtmlBody;
             creative.CreativeSettings.EmailTextBody = model.CreativeSettings.EmailTextBody;
@@ -299,7 +300,7 @@ namespace TraffkPortal.Controllers
 
         private void PopulateViewBagWithTemplateModelSelectListItems()
         {
-            var items = Template.ModelTypes.All.OrderBy().ConvertAll(mt => new SelectListItem { Text = mt, Value = mt }).ToList();
+            var items = Stuff.GetEnumValues<CommunicationModelTypes>().ConvertAll(cmt => new SelectListItem { Text = cmt.ToString(), Value = cmt.ToString() }).OrderBy(z => z.Text).ToList();
             items.Insert(0, new SelectListItem { Text = AspHelpers.NoneDropdownItemText, Value = AspHelpers.NoneDropdownItemValue });
             ViewBag.ModelListItems = items;
         }

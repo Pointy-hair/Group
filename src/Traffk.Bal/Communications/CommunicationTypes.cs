@@ -2,6 +2,7 @@
 {
     public enum CommunicationTypes
     {
+        Undefined = 0,
         Email,
         Sms,
     }

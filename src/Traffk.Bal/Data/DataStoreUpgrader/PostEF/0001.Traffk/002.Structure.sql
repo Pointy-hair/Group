@@ -374,8 +374,8 @@ exec db.ColumnPropertySet 'Creatives', 'CreativeTitle', 'Identifyable title for 
 exec db.ColumnPropertySet 'Creatives', 'CreativesRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
 exec db.ColumnPropertySet 'Creatives', 'CreativesRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
 exec db.ColumnPropertySet 'Creatives', 'CreativeSettings', 'Bal.Settings.CreativeSettings', @propertyName='JsonSettingsClass'
-exec db.ColumnPropertySet 'Creatives', 'ModelType', 'CommunicationModelTypes', @propertyName='EnumType'
-
+exec db.ColumnPropertySet 'Creatives', 'ModelType', 'Traffk.Bal.Communications.CommunicationModelTypes', @propertyName='EnumType'
+exec db.ColumnPropertySet 'Creatives', 'TemplateEngineType', 'Traffk.Bal.Communications.TemplateEngineTypes', @propertyName='EnumType'
 
 GO
 

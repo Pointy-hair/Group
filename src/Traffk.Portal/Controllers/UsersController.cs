@@ -164,7 +164,7 @@ namespace TraffkPortal.Controllers
                         var callbackUrl = Url.Action(nameof(AccountController.AcceptInvitation), AccountController.Name, new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
                         await EmailSender.SendEmailCommunicationAsync(
                             SystemCommunicationPurposes.UserAcceptInvitation,
-                            Template.ModelTypes.CreateCallbackUrlModel(callbackUrl, model.InvitationText),
+                            CommunicationModelFactory.CreateCallbackUrlModel(callbackUrl, model.InvitationText),
                             email);
                     }
                 }
