@@ -1,19 +1,22 @@
 ﻿using Microsoft.Extensions.Configuration;
 using RevolutionaryStuff.Core;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Settings;
 
-namespace Traffk.Bal.Templates
+namespace Traffk.Bal.Communications
 {
-    public class TemplateManager
+    internal class CommunicationsFiller
     {
+        public delegate string CodeExtractor(CreativeSettings cs);
+
         protected IDictionary<string, ReusableValue> ReusableValueByKey;
 
-        public ITemplateFinder Finder { get; }
+        private readonly ICreativeSettingsFinder Finder;
 
-        public TemplateManager(ITemplateFinder finder, IList<ReusableValue> reusableValues)
+        public CommunicationsFiller(ICreativeSettingsFinder finder, ICollection<ReusableValue> reusableValues)
         {
             Requires.NonNull(finder, nameof(finder));
 
@@ -43,26 +46,37 @@ namespace Traffk.Bal.Templates
             return null;
         }
 
-        public string Evaluate(Template template, IDictionary<string, object> contextObjectsByKey)
+        public class CompiledContext
         {
-            Requires.NonNull(template, nameof(template));
+            public readonly IConfiguration Config;
 
-            var builder = new ConfigurationBuilder();
-            if (contextObjectsByKey != null)
+            public CompiledContext(IDictionary<string, object> contextObjectsByKey)
             {
-                foreach (var kvp in contextObjectsByKey)
+                var builder = new ConfigurationBuilder();
+                if (contextObjectsByKey != null)
                 {
-                    builder.AddObject(kvp.Value, kvp.Key);
+                    foreach (var kvp in contextObjectsByKey)
+                    {
+                        builder.AddObject(kvp.Value, kvp.Key);
+                    }
                 }
+                Config = (IConfiguration)builder.Build();
             }
-            var c = (IConfiguration) builder.Build();
+        }
 
-            Requires.Equals(template.TemplateEngineType, Template.TemplateEngineTypes.TraffkDollarString);
+        public void Flatten(CreativeSettings s)
+        {
+            s.EmailHtmlBody = Flatten(s.EmailHtmlBody, z => z.EmailHtmlBody);
+            s.EmailSubject = Flatten(s.EmailSubject, z => z.EmailSubject);
+            s.EmailTextBody = Flatten(s.EmailTextBody, z => z.EmailTextBody);
+            s.TextMessageBody = Flatten(s.TextMessageBody, z => z.TextMessageBody);
+        }
 
-            var s = template.Code ?? "";
+        private string Flatten(string s, CodeExtractor extractor)
+        {
+            if (string.IsNullOrWhiteSpace(s)) return s;
             s = s.Replace("{{", IntermediateOpenSquigleReplacement);
-
-EvalFuncs:
+            EvalFuncs:
             var funcMatches = DollarStringFunctionExpr.Matches(s);
             if (funcMatches.Count > 0)
             {
@@ -74,13 +88,30 @@ EvalFuncs:
                         var pl = m.Groups["ParamList"].Value;
                         int templateId = int.Parse(pl);
                         s = s.Replace(m);
-                        var layout = Finder.FindTemplateById(templateId);
-                        m = FindFirstFunction(layout.Code, "RenderBody");
-                        s = layout.Code.Replace(m, s);
+                        var layoutCode = extractor(Finder.FindSettingsById(templateId));
+                        m = FindFirstFunction(layoutCode, "RenderBody");
+                        s = layoutCode.Replace(m, s);
                         goto EvalFuncs;
                     }
                 }
             }
+            s = s.Replace(IntermediateOpenSquigleReplacement, "{{");
+            return s;
+        }
+
+        public string Evaluate(Creative creative, CodeExtractor extractor, CompiledContext context)
+        {
+            Requires.NonNull(creative, nameof(creative));
+            Requires.NonNull(extractor, nameof(extractor));
+            Requires.NonNull(context, nameof(context));
+
+            var c = context.Config;
+
+            Requires.Equals(creative.TemplateEngineType, Template.TemplateEngineTypes.TraffkDollarString);
+
+            var s = extractor(creative.CreativeSettings) ?? "";
+            s = Flatten(s, extractor);
+            s = s.Replace("{{", IntermediateOpenSquigleReplacement);
 
             s = DollarStringIndexerExpr.Replace(s, delegate (Match m)
             {
@@ -95,7 +126,7 @@ EvalFuncs:
                 return "";
             });
 
-            s = DollarStringTokenExpr.Replace(s, delegate (Match m) 
+            s = DollarStringTokenExpr.Replace(s, delegate (Match m)
             {
                 var fieldKey = m.Groups[1].Value.Replace('.', ':');
                 return c[fieldKey];

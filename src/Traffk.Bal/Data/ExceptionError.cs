@@ -3,21 +3,27 @@ using RevolutionaryStuff.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 
-namespace Traffk.Bal.Data.Ddb
+namespace Traffk.Bal.Data
 {
+    [DataContract]
     public class ExceptionError
     {
         [JsonProperty("errorType")]
+        [DataMember(Name = "errorType")]
         public string ErrorType { get; set; }
 
         [JsonProperty("errorMessage")]
+        [DataMember(Name = "errorMessage")]
         public string ErrorMessage { get; set; }
 
         [JsonProperty("errorCode")]
+        [DataMember(Name = "errorCode")]
         public object ErrorCode { get; set; }
 
         [JsonProperty("innerErrors")]
+        [DataMember(Name = "innerErrors")]
         public IList<ExceptionError> InnerErrors { get; set; }
 
         public ExceptionError()

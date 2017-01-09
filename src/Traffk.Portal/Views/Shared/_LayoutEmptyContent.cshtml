@@ -115,17 +115,6 @@ h1, .body-content a {
                         {
                             <li class="dropdown @(mainNavPageKey==MainNavigationPageKeys.Messaging?"current-section":"")" role="presentation">
                                 <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle" href="#">
-                                    Messaging
-                                    <span class="caret"></span>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a asp-controller="@MessagingController.Name" asp-action="Blasts">Blasts</a></li>
-                                    <li><a asp-controller="@MessagingController.Name" asp-action="Messages">Messages</a></li>
-                                    <li><a asp-controller="@MessagingController.Name" asp-action="Templates">Templates</a></li>
-                                </ul>
-                            </li>
-                            <li class="dropdown @(mainNavPageKey==MainNavigationPageKeys.Messaging?"current-section":"")" role="presentation">
-                                <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle" href="#">
                                     Communications
                                     <span class="caret"></span>
                                 </a>

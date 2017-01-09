@@ -1,4 +1,4 @@
-﻿@model Creative
+﻿@model TraffkPortal.Models.CommunicationModels.CreativeModel
 @using static TraffkPortal.Controllers.CommunicationsController
 @{
     if (Model.CreativeId <= 0)
@@ -11,7 +11,7 @@
     }
 }
 
-<form asp-action="@ActionNames.CreativeSave" asp-route-id="@Model.CreativeId">
+<form asp-action="@ActionNames.CreativeSave" asp-route-id="@Model.CreativeId" enctype="multipart/form-data">
     <div class="form-horizontal">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 

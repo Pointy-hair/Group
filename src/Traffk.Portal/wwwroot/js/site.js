@@ -184,3 +184,24 @@ $(document).ready(function () {
         }
     });
 });
+
+function removeCreativeAttachment(el, creativeId, assetKey) {
+    var url = "Creatives/" + creativeId + "/DeleteAttachment?assetKey=" + assetKey;
+    $.ajax({
+        url: url,
+        dataType: "json",
+        type: "DELETE",
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify({ assetKey: assetKey }),
+        async: true,
+        processData: false,
+        cache: false,
+        success: function (data) {
+            $("#attachmentDeletedAlert").show();
+            $(el).parent().remove();
+        },
+        error: function (xhr) {
+            alert("error:\n" + JSON.stringify(xhr));
+        }
+    });
+}

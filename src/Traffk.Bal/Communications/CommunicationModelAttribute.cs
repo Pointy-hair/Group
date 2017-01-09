@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Traffk.Bal
+namespace Traffk.Bal.Communications
 {
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
     public class CommunicationModelAttribute : Attribute

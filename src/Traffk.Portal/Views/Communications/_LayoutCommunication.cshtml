@@ -8,7 +8,7 @@
     {
         ViewData.SetTitleAndHeading("Create Blast");
     }
-    var jobStatus = ViewData["JobStatus"] as string ?? Job.StatusNames.NonYetQueued;
+    var jobStatus = Parse.ParseEnum<JobStatuses>(ViewData["JobStatus"] as string, JobStatuses.NonYetQueued);
     var parentEntityId = (int?)ViewData[ViewDataKeys.ParentEntityId];
 }
 @section navItems {
@@ -20,8 +20,7 @@
             <li><a asp-action="@ActionNames.CommunicationQuery" asp-route-id="@entityId" class="@(pageKey == CommunicationPageKeys.Query ? "current-section" : "")">Query</a></li>
         *@
         <li><a asp-action="@ActionNames.CommunicationSchedule" asp-route-id="@entityId" class="@(pageKey == CommunicationPageKeys.Schedule ? "current-section" : "")">Schedule</a></li>
-        @*    <li><a asp-action="@ActionNames.CommunicationBlasts" asp-route-id="@entityId" class="@(pageKey == CommunicationPageKeys.Blasts ? "current-section" : "")">Blasts</a></li>
-        *@
+        <li><a asp-action="@ActionNames.CommunicationBlasts" asp-route-communicationId="@entityId" class="@(pageKey == CommunicationPageKeys.Blasts ? "current-section" : "")">Blasts</a></li>
     }
     @RenderSection("navItems", required: false)
 }
@@ -37,12 +36,12 @@
     {
         switch (jobStatus)
         {
-            case Job.StatusNames.NonYetQueued:
+            case JobStatuses.NonYetQueued:
                 <button type="button" class="btn caseefault" asp-action="Create">Send Now</button>;
                 break;
-            case Job.StatusNames.Queued:
-            case Job.StatusNames.Dequeued:
-            case Job.StatusNames.Running:
+            case JobStatuses.Queued:
+            case JobStatuses.Dequeued:
+            case JobStatuses.Running:
                 <button type="button" class="btn caseefault" asp-action="Create">Cancel In Progress Send</button>;
                 break;
         }

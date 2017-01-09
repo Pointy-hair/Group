@@ -8,9 +8,33 @@ using RevolutionaryStuff.Core;
 using System.Collections.Generic;
 using Microsoft.Extensions.Options;
 using Traffk.Bal.Data.Rdb;
+using Newtonsoft.Json;
 
 namespace Traffk.Bal.Services
 {
+    public enum CloudFilePointerTypes
+    {
+        AzureBlob = 1,
+    }
+
+    public class CloudFilePointer
+    {
+        [JsonProperty("cloudFilePointerType")]
+        public CloudFilePointerTypes CloudFilePointerType { get; set; }
+
+        [JsonProperty("uri")]
+        public Uri Uri { get; set; }
+
+        [JsonProperty("containerName")]
+        public string ContainerName { get; set; }
+
+        [JsonProperty("path")]
+        public string Path { get; set; }
+
+        [JsonProperty("contentType")]
+        public string ContentType { get; set; }
+    }
+
     public class BlobStorageServices
     {
         private const string PortalRootContainerName = "portal";
@@ -68,7 +92,7 @@ namespace Traffk.Bal.Services
             return results;
         }
 
-        public async Task<Uri> StoreFileAsync(bool secure, Roots root, IFormFile file, string name=null, bool addUniqueRef=false)
+        public async Task<CloudFilePointer> StoreFileAsync(bool secure, Roots root, IFormFile file, string name=null, bool addUniqueRef=false)
         {
             var container = GetContainer(secure);
 
@@ -94,7 +118,14 @@ namespace Traffk.Bal.Services
             blob.Metadata["UploadedByUserId"] = CurrentUser.User.Id;
             await blob.SetPropertiesAsync();
             await blob.SetMetadataAsync();
-            return block.Uri;
+            return new CloudFilePointer
+            {
+                CloudFilePointerType = CloudFilePointerTypes.AzureBlob,
+                Uri = block.Uri,
+                Path = name,
+                ContainerName = container.Name,
+                ContentType = file.ContentType
+            };
         }
 
         public BlobStorageServices(CurrentTenantServices currentTenant, ICurrentUser currentUser, IOptions<BlobStorageServicesOptions> options)

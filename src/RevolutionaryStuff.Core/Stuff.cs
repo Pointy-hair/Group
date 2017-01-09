@@ -214,7 +214,7 @@ namespace RevolutionaryStuff.Core
                 {
                     if (pi.GetCustomAttribute<Newtonsoft.Json.JsonIgnoreAttribute>() != null) continue;
                     var jpn = pi.GetCustomAttribute<Newtonsoft.Json.JsonPropertyAttribute>();
-                    if ((jpn == null && pi.Name == left) || jpn.PropertyName == left)
+                    if ((jpn == null && pi.Name == left) || (jpn!=null && jpn.PropertyName == left))
                     {
                         left = pi.Name;
                         if (right == null) return left;

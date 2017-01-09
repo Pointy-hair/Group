@@ -1,10 +1,10 @@
-﻿@model TraffkPortal.Models.CommunicationModels.CommunicationCreativeModel
+﻿@model TraffkPortal.Models.CommunicationModels.CreativeModel
 @using static TraffkPortal.Controllers.CommunicationsController
 @{
     Layout = "_LayoutCommunication.cshtml";
 }
 
-<form asp-action="@ActionNames.CommunicationCreativeSave" asp-route-id="@Model.CommunicationId">
+<form asp-action="@ActionNames.CommunicationCreativeSave" asp-route-id="@Model.CommunicationId" enctype="multipart/form-data">
     <div class="form-horizontal">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group">

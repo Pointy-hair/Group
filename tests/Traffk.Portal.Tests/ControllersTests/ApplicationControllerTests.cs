@@ -1,24 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Traffk.Portal;
-using TraffkPortal;
-using TraffkPortal.Controllers;
 using Moq;
 using Traffk.Bal.Services;
 using Traffk.Bal.Data.Rdb;
 using TraffkPortal.Services;
 using Microsoft.Extensions.Logging;
-using TraffkPortal.Models.ApplicationModels;
-using Microsoft.EntityFrameworkCore;
-using Traffk.Portal.Tests.Helpers;
-using static Traffk.Bal.Services.BlobStorageServices;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Threading.Tasks;
-using System.IO;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
-using System.Threading;
-using Microsoft.Extensions.Options;
 
 namespace Traffk.Portal.Tests.ControllersTests
 {

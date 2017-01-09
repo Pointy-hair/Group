@@ -6,7 +6,6 @@ using TraffkPortal.Permissions;
 using Traffk.Bal.Permissions;
 using TraffkPortal.Services;
 using Microsoft.Extensions.Logging;
-using Traffk.Bal.Data.Ddb.Crm;
 using Traffk.Bal.Data.Rdb;
 using System.Threading.Tasks;
 using TraffkPortal.Models;
@@ -17,6 +16,7 @@ using System;
 using Traffk.Bal.Data.Ddb;
 using System.Collections.Generic;
 using Traffk.Bal;
+using Traffk.Bal.Communications;
 
 namespace TraffkPortal.Controllers
 {
@@ -120,12 +120,10 @@ namespace TraffkPortal.Controllers
             SetHeroLayoutViewData(contact.ContactId, contact.FullName, pageKey, contact.ContactType);
         }
 
-        private readonly CrmDdbContext Crm;
         private readonly IEmailSender EmailSender;
 
         public CrmController(
             IEmailSender emailSender,
-            CrmDdbContext crm,
             TraffkRdbContext db,
             CurrentContextServices current,
             ILoggerFactory loggerFactory
@@ -133,7 +131,6 @@ namespace TraffkPortal.Controllers
             : base(AspHelpers.MainNavigationPageKeys.CRM, db, current, loggerFactory)
         {
             EmailSender = emailSender;
-            Crm = crm;
         }
 
         [Route("Contacts")]
@@ -146,15 +143,6 @@ namespace TraffkPortal.Controllers
             ViewBag.ListingFilters = new ListingFilters(counts, HttpContext.Request.Path.ToUriComponent(), HttpContext.Request.QueryString.Value);
             contacts = ApplyBrowse(contacts, sortCol ?? nameof(Contact.FullName), sortDir, page, pageSize);
             return View(contacts);
-        }
-
-        [Route("Contacts/{id}/Crm")]
-        public async Task<IActionResult> Details(long id)
-        {
-            var contact = await FindContactByIdAsync(id);
-            if (contact == null) return NotFound();
-
-            return View(contact);
         }
 
         // GET: Users/Delete/5
@@ -203,12 +191,15 @@ namespace TraffkPortal.Controllers
             return View(nameof(ContactBackground), new ContactModel(contact));
         }
 
-        private async Task SetViewBagEmailTemplateItems()
+        private Task SetViewBagEmailTemplateItems()
         {
-            var communications = await
-            Rdb.SystemCommunications.Include(z => z.MessageTemplate).Where(z =>
-              z.TenantId == this.TenantId && z.CommunicationPurpose == SystemCommunication.CommunicationPurposes.DirectMessage && z.CommunicationMedium == SystemCommunication.CommunicationMediums.Email).OrderBy(z => z.MessageTemplate.MessageTemplateTitle).ToListAsync();
-            ViewBag.EmailTemplateItems = communications.ConvertAll(c => new SelectListItem { Text = c.MessageTemplate.MessageTemplateTitle, Value = c.SystemCommunicationId.ToString() });
+            return Task.CompletedTask;
+            /*
+                        var communications = await
+                        Rdb.SystemCommunications.Include(z => z.MessageTemplate).Where(z =>
+                          z.TenantId == this.TenantId && z.CommunicationPurpose == SystemCommunication.CommunicationPurposes.DirectMessage && z.CommunicationMedium == SystemCommunication.CommunicationMediums.Email).OrderBy(z => z.MessageTemplate.MessageTemplateTitle).ToListAsync();
+                        ViewBag.EmailTemplateItems = communications.ConvertAll(c => new SelectListItem { Text = c.MessageTemplate.MessageTemplateTitle, Value = c.SystemCommunicationId.ToString() });
+            */
         }
 
         [HttpPost]
@@ -224,7 +215,7 @@ namespace TraffkPortal.Controllers
             var contact = await FindContactByIdAsync(id);
             if (contact == null) return NotFound();
             var model = Template.ModelTypes.CreateSimpleContentModel(subject, body);
-            await EmailSender.SendEmailCommunicationAsync(templateId, model, contact.PrimaryEmail, contact.FullName, contact.ContactId);
+            await EmailSender.SendEmailCommunicationAsync(SystemCommunicationPurposes.DirectMessage, model, contact.PrimaryEmail, contact.FullName, contact.ContactId);
             return Ok();
         }
 
@@ -295,10 +286,13 @@ namespace TraffkPortal.Controllers
         {
             return RawContactRecordInfo(id, PageKeys.Messages, nameof(ContactMessages), m =>
             {
-                var sid = id.ToString();
-                var communicationLogs = Crm.CommunicationLogs.AsQueryable().Where(z => z.TenantId == TenantId && z.RecipientContactId == sid);
-                communicationLogs = ApplyBrowse(communicationLogs, sortCol ?? nameof(CommunicationLog.CreatedAtUtc), sortDir, page, pageSize);
-                m.CommunicationLogs = communicationLogs.ToArray();
+                var communicationLogs = Rdb.CommunicationPieces.
+                    Include(z=>z.CommunicationBlast).
+                    Include(z=>z.CommunicationBlast.Creative).
+                    Include(z=>z.CommunicationBlast.Communication).
+                    Where(z => z.TenantId == TenantId && z.ContactId == id);
+                communicationLogs = ApplyBrowse(communicationLogs, sortCol ?? nameof(CommunicationPiece.CreatedAtUtc), sortDir, page, pageSize);
+                m.CommunicationPieces = communicationLogs.ToArray();
             });
         }
 
@@ -338,7 +332,7 @@ namespace TraffkPortal.Controllers
             nameof(ContactModel.Contact)+"."+nameof(Person.MiddleName),
             nameof(ContactModel.Contact)+"."+nameof(Person.LastName),
             nameof(ContactModel.Contact)+"."+nameof(Person.Suffix),
-            nameof(ContactModel.CommunicationLogs),
+            nameof(ContactModel.CommunicationPieces),
             nameof(ContactModel.Optings)
             )]
             ContactModel model)

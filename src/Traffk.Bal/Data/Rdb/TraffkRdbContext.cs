@@ -10,11 +10,13 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Traffk.Bal.Communications;
 using Traffk.Bal.Services;
+using Traffk.Bal.Settings;
 
 namespace Traffk.Bal.Data.Rdb
 {
-    public partial class TraffkRdbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
+    public partial class TraffkRdbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>, ICreativeSettingsFinder
     {
         protected readonly ITraffkTenantFinder TenantFinder;
 
@@ -49,90 +51,62 @@ namespace Traffk.Bal.Data.Rdb
             Configger = configger;
         }
 
-        public async Task<SystemCommunication> GetSystemCommunication(string communicationPurpose, string communicationMedium, int? applicationId=null, int? tenantId=null)
-        {
-            SystemCommunication.CommunicationPurposes.RequiresPredefinedOrGeneralPurpose(communicationPurpose, nameof(communicationPurpose));
-            SystemCommunication.CommunicationMediums.RequiresPredefined(communicationMedium, nameof(communicationMedium));
-
-            if (tenantId == null)
-            {
-                tenantId = await TenantFinder.GetTenantIdAsync();
-            }
-
-            ///BUGBUG: must order by so that we get the communication for this application over the null application
-            return await SystemCommunications.Include(c=>c.MessageTemplate).FirstOrDefaultAsync(
-                c =>
-                c.CommunicationMedium == communicationMedium &&
-                c.CommunicationPurpose == communicationPurpose &&
-                (c.ApplicationId == applicationId || c.ApplicationId==null) &&
-                c.TenantId == tenantId);
-        }
-
-        public async Task<SystemCommunication> GetSystemCommunication(int communicationId, int? tenantId = null)
-        {
-            if (tenantId == null)
-            {
-                tenantId = await TenantFinder.GetTenantIdAsync();
-            }
-
-            return await SystemCommunications.Include(c => c.MessageTemplate).FirstOrDefaultAsync(
-                c =>
-                c.SystemCommunicationId == communicationId &&
-                c.TenantId == tenantId);
-        }
-
         public async Task<bool> AddNextScheduledBlasts(int? specificBlastId=null, bool allTenants=false, bool deleteUpcomingNonConformantBlasts=true)
         {
-            var parentBlasts = ZCommunicationBlasts.AsQueryable();
-            if (specificBlastId != null)
-            {
-                parentBlasts = parentBlasts.Where(b => b.CommunicationBlastId == specificBlastId.Value);
-            }
-            else if (!allTenants)
-            {
-                var tenantId = await TenantFinder.GetTenantIdAsync();
-                parentBlasts = parentBlasts.Where(b => b.TenantId == tenantId);
-            }
-            parentBlasts = parentBlasts.Where(b => b.Job != null);
-            bool saveRequired = false;
-            foreach (var b in parentBlasts)
-            {
-                var nextOccurrence = b.CommunicationBlastSettings?.Recurrence?.NextOccurrence;
-                if (nextOccurrence == null) continue;
-                var kids = await ZCommunicationBlasts.Where(z => z.ParentCommunicationBlastId == b.CommunicationBlastId && z.Job != null).Include(z => z.Job).ToListAsync();
-                var nextScheduled = kids.Where(z=>z.Job.JobStatus!=JobStatuses.Cancelled).OrderByDescending(z => z.Job.DontRunBeforeUtc).FirstOrDefault();
-                if (nextScheduled == null)
-                {
-                    var newBlast = new ZCommunicationBlast()
-                    {
-                        CommunicationBlastTitle = b.CommunicationBlastTitle,
-                        CommunicationMedium = b.CommunicationMedium,
-                        TopicName = b.TopicName,
-                        CampaignName = b.CampaignName,
-                        MessageTemplateId = b.MessageTemplateId,
-                        ParentCommunicationBlast = b,
-                        TenantId = b.TenantId,
-                        Job = new Job
+            throw new NotImplementedException();
+            /*
+
+                        var parentBlasts = ZCommunicationBlasts.AsQueryable();
+                        if (specificBlastId != null)
                         {
-                            JobStatus = JobStatuses.Queued,
-                            DontRunBeforeUtc = nextOccurrence.StartAtUtc,
-                            TenantId = b.TenantId,
-                            JobType = JobTypes.CommunicationBlast,
+                            parentBlasts = parentBlasts.Where(b => b.CommunicationBlastId == specificBlastId.Value);
                         }
-                    };
-                    if (deleteUpcomingNonConformantBlasts)
-                    {
-                        var toRemove = kids.Where(z => z.Job.JobStatus == JobStatuses.Queued).ToList();
-                        if (toRemove.Count > 0)
+                        else if (!allTenants)
                         {
-                            ZCommunicationBlasts.RemoveRange(toRemove);
-                            Jobs.RemoveRange(toRemove.ConvertAll(z => z.Job));
+                            var tenantId = await TenantFinder.GetTenantIdAsync();
+                            parentBlasts = parentBlasts.Where(b => b.TenantId == tenantId);
                         }
-                    }
-                    ZCommunicationBlasts.Add(newBlast);
-                }
-            }
-            return saveRequired;
+                        parentBlasts = parentBlasts.Where(b => b.Job != null);
+                        bool saveRequired = false;
+                        foreach (var b in parentBlasts)
+                        {
+                            var nextOccurrence = b.CommunicationBlastSettings?.Recurrence?.NextOccurrence;
+                            if (nextOccurrence == null) continue;
+                            var kids = await ZCommunicationBlasts.Where(z => z.ParentCommunicationBlastId == b.CommunicationBlastId && z.Job != null).Include(z => z.Job).ToListAsync();
+                            var nextScheduled = kids.Where(z=>z.Job.JobStatus!=JobStatuses.Cancelled).OrderByDescending(z => z.Job.DontRunBeforeUtc).FirstOrDefault();
+                            if (nextScheduled == null)
+                            {
+                                var newBlast = new ZCommunicationBlast()
+                                {
+                                    CommunicationBlastTitle = b.CommunicationBlastTitle,
+                                    CommunicationMedium = b.CommunicationMedium,
+                                    TopicName = b.TopicName,
+                                    CampaignName = b.CampaignName,
+                                    MessageTemplateId = b.MessageTemplateId,
+                                    ParentCommunicationBlast = b,
+                                    TenantId = b.TenantId,
+                                    Job = new Job
+                                    {
+                                        JobStatus = JobStatuses.Queued,
+                                        DontRunBeforeUtc = nextOccurrence.StartAtUtc,
+                                        TenantId = b.TenantId,
+                                        JobType = JobTypes.CommunicationBlast,
+                                    }
+                                };
+                                if (deleteUpcomingNonConformantBlasts)
+                                {
+                                    var toRemove = kids.Where(z => z.Job.JobStatus == JobStatuses.Queued).ToList();
+                                    if (toRemove.Count > 0)
+                                    {
+                                        ZCommunicationBlasts.RemoveRange(toRemove);
+                                        Jobs.RemoveRange(toRemove.ConvertAll(z => z.Job));
+                                    }
+                                }
+                                ZCommunicationBlasts.Add(newBlast);
+                            }
+                        }
+                        return saveRequired;
+            */
         }
 
         public async Task<GetCountsResult> GetFieldCountsAsync<TDataEntity>(params Expression<Func<TDataEntity, object>>[] fieldNameExpressions) where TDataEntity : IRdbDataEntity
@@ -164,7 +138,7 @@ namespace Traffk.Bal.Data.Rdb
             foreach (var pi in t.GetTypeInfo().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty))
             {
                 if (pi.GetCustomAttribute<NotMappedAttribute>() != null) continue;
-                var phi = pi.GetCustomAttribute<ProtectedHealthInformationIdentifierAttribute>();
+                var phi = pi.GetCustomAttribute<ProtectedHealthInformationAttribute>();
                 if (!ConstrainedDataAttribute.IsContrained(pi)) continue;
                 if (phi != null || !includePhiFields) continue;
                 var fieldName = pi.GetCustomAttribute<ColumnAttribute>()?.Name ?? pi.Name;
@@ -172,5 +146,11 @@ namespace Traffk.Bal.Data.Rdb
             }
             return GetFieldCountsAsync<TDataEntity>(fieldNames.ToArray());
         }
+
+        CreativeSettings ICreativeSettingsFinder.FindSettingsByName(string name)
+            => this.Creatives.FirstOrDefault(z => z.CreativeTitle == name)?.CreativeSettings;
+
+        CreativeSettings ICreativeSettingsFinder.FindSettingsById(int id)
+            => this.Creatives.Find(id)?.CreativeSettings;
     }
 }

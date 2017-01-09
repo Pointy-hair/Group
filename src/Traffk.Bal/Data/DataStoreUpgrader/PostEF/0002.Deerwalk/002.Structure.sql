@@ -2111,18 +2111,22 @@ exec db.ColumnPropertySet 'MedicalClaims', 'udf40', 'UserDefinedData', @property
 
 
 create index IX_MbrId on [deerwalk].[CareAlerts] (TenantId, mbr_id)
-create unique index UX_MbrId on [deerwalk].[Demographics] (TenantId, mbr_id)
-create unique index UX_MbrId on [deerwalk].[Eligibility] (TenantId, mbr_id)
-create unique index UX_DwMemberId on [deerwalk].[Eligibility] (TenantId, dw_member_id)
-create unique index UX_MbrId on [deerwalk].[HighCostDiagnosis] (TenantId, mbr_id)
+create index IX_MbrId on [deerwalk].[Demographics] (TenantId, mbr_id)
+create index IX_MbrId on [deerwalk].[Eligibility] (TenantId, mbr_id)
+create index IX_DwMemberId on [deerwalk].[Eligibility] (TenantId, dw_member_id)
+create index IX_MbrId on [deerwalk].[HighCostDiagnosis] (TenantId, mbr_id)
 create index IX_MbrId on [deerwalk].[HistoricalScores] (TenantId, mbr_id)
 create index IX_MbrId on [deerwalk].[MedicalClaims] (TenantId, mbr_id)
-create unique index UX_MbrId on [deerwalk].[MemberPCP] (TenantId, mbr_id)
+create index IX_MbrId on [deerwalk].[MemberPCP] (TenantId, mbr_id)
 create index IX_MbrId on [deerwalk].[Participation] (TenantId, mbr_id)
 create index IX_MbrId on [deerwalk].[Pharmacy] (TenantId, mbr_id)
 create index IX_DwMemberId on [deerwalk].[QualityMetrics] (TenantId, dw_member_id)
-create unique index UX_MbrId on [deerwalk].[Scores] (TenantId, mbr_id)
+create index IX_MbrId on [deerwalk].[Scores] (TenantId, mbr_id)
 create index IX_MbrId on [deerwalk].[Visits] (TenantId, mbr_id)
+
+
+
+
 
 
 

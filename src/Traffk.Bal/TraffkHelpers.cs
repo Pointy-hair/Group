@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
+using RevolutionaryStuff.Core.Crypto;
+using RevolutionaryStuff.Core.EncoderDecoders;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -23,8 +25,6 @@ namespace Traffk.Bal
         {
             public const string HtmlColor = "HtmlColor";
         }
-
-        public static string CreateRandomStringId() => Guid.NewGuid().ToString();
 
         public static readonly Regex HumanSeparatedEntrySplitter = new Regex(@"[\s;,]", RegexOptions.Singleline | RegexOptions.Compiled);
 
@@ -88,7 +88,7 @@ namespace Traffk.Bal
             var pi = mi as PropertyInfo;
             if (pi != null && pi.CanRead)
             {
-                var phi = pi.GetCustomAttribute<ProtectedHealthInformationIdentifierAttribute>();
+                var phi = pi.GetCustomAttribute<ProtectedHealthInformationAttribute>();
                 if (phi != null && !includePhi) return false;
                 if (pi.GetCustomAttribute<FreeFormDataAttribute>() != null) return false;
                 if (pi.GetCustomAttribute<ConstrainedDataAttribute>() == null) return false;

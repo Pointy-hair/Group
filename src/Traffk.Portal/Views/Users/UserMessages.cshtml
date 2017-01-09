@@ -1,0 +1,6 @@
+@using static TraffkPortal.Controllers.UsersController
+@model IEnumerable<CommunicationPiece>
+@{
+    Layout = "_LayoutUser.cshtml";
+}
+    @await Html.PartialAsync("_CommunicationPiecesPartial", Model)

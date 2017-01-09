@@ -9,39 +9,65 @@ using MimeKit;
 using H = cloudscribe.HtmlAgilityPack;
 using RevolutionaryStuff.Core;
 using Traffk.Bal.Data.Rdb;
-using Traffk.Bal.Data.Ddb;
+using Traffk.Bal.Services;
+using Traffk.Bal.Data;
+using RevolutionaryStuff.Core.Collections;
+using RevolutionaryStuff.Core.EncoderDecoders;
 
 namespace Traffk.Bal.Email
 {
-    public class TrackingEmailer : IEmailer
+    public class TrackingEmailer : ITrackingEmailer
     {
-        private readonly IOptions<SmtpOptions> Options;
         private readonly IEmailer Inner;
-        private readonly CrmDdbContext Crm;
         private readonly TraffkRdbContext Rdb;
         private readonly ITraffkTenantFinder TenantFinder;
+        private readonly ICommunicationBlastFinder BlastFinder;
 
-        public TrackingEmailer(IOptions<SmtpOptions> options, CrmDdbContext crm, TraffkRdbContext rdb, ITraffkTenantFinder tenantFinder)
+        public TrackingEmailer(IEmailer emailer, TraffkRdbContext rdb, ITraffkTenantFinder tenantFinder, ICommunicationBlastFinder blastFinder)
         {
-            Requires.NonNull(options, nameof(options));
-
-            Options = options;
-            Inner = new RawEmailer(options);
-            Crm = crm;
+            Inner = emailer;
             Rdb = rdb;
             TenantFinder = tenantFinder;
+            BlastFinder = blastFinder;
         }
 
-        private string TrackHtmlContent(string html, ICollection<CommunicationLog.TrackedLink> trackedLinkBag, string hostname, int tenantId, string contactId, string messageId)
+        public static Guid ConvertPieceSegmentToPieceUid(string part)
+            => new Guid(Base32.Decode(part));
+
+        public static Guid ConvertTrackerSegmentToTrackerUid(string part)
+            => new Guid(Base32.Decode(part));
+
+        private string TrackHtmlContent(CommunicationBlast blast, string html, Guid communicationPieceUid, MultipleValueDictionary<string, CommunicationBlastTracker> trackersByUrl, string hostname)
         {
-            return TrackHtmlContent(html, trackedLinkBag, (a, linkId) => 
-            {
-                var u = new Uri($"http://{hostname}/e/{tenantId}/{contactId}");
-                return u.AppendParameter("m", messageId).AppendParameter("l", linkId);
-            });
+            var pieceSegment = Base32.Encode(communicationPieceUid.ToByteArray());
+            return TrackHtmlContent(
+                html,
+                (pos, linkType, linkUrl) =>
+                {
+                    var tracker = trackersByUrl[linkUrl.ToString()]
+                    .FirstOrDefault(z =>
+                    z.CommunicationType == Communications.CommunicationTypes.Email &&
+                    z.Position == pos &&
+                    z.LinkType == linkType);
+                    if (tracker == null)
+                    {
+                        tracker = new CommunicationBlastTracker
+                        {
+                            CommunicationType = Communications.CommunicationTypes.Email,
+                            Position = pos,
+                            LinkType = linkType,
+                            RedirectUrl = linkUrl.ToString(),
+                            TrackerUid = Guid.NewGuid(),
+                            CommunicationBlast = blast                            
+                        };
+                        Rdb.CommunicationBlastTrackers.Add(tracker);
+                        trackersByUrl.Add(tracker.RedirectUrl, tracker);
+                    }
+                    return new Uri($"https://{hostname}/e/{pieceSegment}/{Base32.Encode(tracker.TrackerUid.ToByteArray())}");
+                });
         }
 
-        private static string TrackHtmlContent(string html, ICollection<CommunicationLog.TrackedLink> trackedLinkBag, Func<Uri, string, Uri> transformer)
+        private static string TrackHtmlContent(string html, Func<int, CommunicationBlastTrackerLinkTypes, Uri, Uri> transformer)
         {
             if (string.IsNullOrEmpty(html)) return html;
 
@@ -52,64 +78,47 @@ namespace Traffk.Bal.Email
             {
                 Uri origUrl;
                 if (!Uri.TryCreate(node.Attributes["href"]?.Value, UriKind.Absolute, out origUrl)) continue;
-                var linkId = CommunicationLog.TrackedLink.CreateId(CommunicationLog.TrackedLinkTypes.Anchor, sequence);
-                var trackedUrl = transformer(origUrl, linkId);
+                var trackedUrl = transformer(sequence++, CommunicationBlastTrackerLinkTypes.Anchor, origUrl);
                 node.Attributes["href"].Value = trackedUrl.ToString();
-                trackedLinkBag.Add(new CommunicationLog.TrackedLink(trackedUrl.PathAndQuery, origUrl, CommunicationLog.TrackedLinkTypes.Anchor, sequence++, linkId));
             }
             sequence = 0;
             foreach (var node in doc.DocumentNode.SelectNodesOrEmpty("//img"))
             {
                 Uri origUrl;
                 if (!Uri.TryCreate(node.Attributes["src"]?.Value, UriKind.Absolute, out origUrl)) continue;
-                var linkId = CommunicationLog.TrackedLink.CreateId(CommunicationLog.TrackedLinkTypes.Asset, sequence);
-                var trackedUrl = transformer(origUrl, linkId);
+                var trackedUrl = transformer(sequence++, CommunicationBlastTrackerLinkTypes.Asset, origUrl);
                 node.Attributes["src"].Value = trackedUrl.ToString();
-                trackedLinkBag.Add(new CommunicationLog.TrackedLink(trackedUrl.PathAndQuery, origUrl, CommunicationLog.TrackedLinkTypes.Asset, sequence++, linkId));
-                break;
+                break; //we only need 1 of these
             }
-
             return doc.ToHtmlString();
         }
 
-        async Task IEmailer.SendEmailAsync(IEnumerable<MimeMessage> messages, Action<PreSendEventArgs> preSend, Action<PostSendEventArgs> postSend, object context)
+        async Task ITrackingEmailer.SendEmailAsync(Creative creative, IEnumerable<MimeMessage> messages, Action<PreSendEventArgs> preSend, Action<PostSendEventArgs> postSend, object context)
         {
+            var blast = await BlastFinder.FindAsync(creative);
+            creative = blast.Creative;
+            var trackerByUrl = Rdb.CommunicationBlastTrackers.Where(z => z.CommunicationBlastId == blast.CommunicationBlastId).ToMultipleValueDictionary(z => z.RedirectUrl);
+            var piecesByMessageId = new Dictionary<string, CommunicationPiece>();
+
             var tenantId = await TenantFinder.GetTenantIdAsync();
+
             var app = Rdb.Applications.FirstOrDefault(z => z.TenantId == tenantId && z.ApplicationType== ApplicationTypes.Portal);
             var hostname = app.ApplicationSettings.Hosts.HostInfos[0].Hostname;
-            var smtpOptions = Options.Value;
-            var logByMessage = new Dictionary<string, CommunicationLog>();
             foreach (var m in messages)
             {
-                CommunicationLog log = null;
-                var contactId = m.Headers[MailHelpers.ContactIdHeader];
-                if (!string.IsNullOrEmpty(contactId))
+                var piece = new CommunicationPiece
                 {
-                    m.MessageId = m.MessageId.LeftOf("@") + "@" + Stuff.CoalesceStrings(smtpOptions.LocalDomain, m.MessageId.RightOf("@"));
-                    var to = m.To[0] as MailboxAddress;
-                    log = new CommunicationLog
-                    {
-                        TrackedLinks = new List<CommunicationLog.TrackedLink>(),
-                        CommunicationTopic = m.Headers[MailHelpers.TopicHeader],
-                        CommunicationCampaign = m.Headers[MailHelpers.CampaignHeader],
-                        RecipientContactId = contactId,
-                        RecipientEmailAddress = to.Address,
-                        Subject = m.Subject,
-                        Id = m.MessageId,
-                        TenantId = tenantId,
-                        CommunicationMedium = Data.Rdb.SystemCommunication.CommunicationMediums.Email
-                    };
-                    int jobId;
-                    if (int.TryParse(m.Headers[MailHelpers.JobId], out jobId))
-                    {
-                        log.JobId = jobId;
-                    }
-                    foreach (var part in m.FindHtmlParts())
-                    {
-                        part.Text = TrackHtmlContent(part.Text, log.TrackedLinks, hostname, tenantId, log.RecipientContactId, m.MessageId);
-                    }
+                    CommunicationBlast = blast,
+                    CommunicationPieceUid = Guid.NewGuid(),
+                    ContactId = m.ContactId(),
+                    UserId = m.UserId(),                
+                };
+                piece.Data.DeliveryEndpoint = m.To[0].ToString();
+                piecesByMessageId[m.MessageId] = piece;
+                foreach (var part in m.FindHtmlParts())
+                {
+                    part.Text = TrackHtmlContent(blast, part.Text, piece.CommunicationPieceUid, trackerByUrl, hostname);
                 }
-                logByMessage[m.MessageId] = log;
             }
             await Inner.SendEmailAsync(
                 messages, 
@@ -118,16 +127,18 @@ namespace Traffk.Bal.Email
                 {
                     if (psa.SendException != null)
                     {
-                        var log = logByMessage[psa.Message.MessageId];
-                        if (log != null)
+                        var piece = piecesByMessageId[psa.Message.MessageId];
+                        if (piece != null)
                         {
-                            log.DeliveryError = new ExceptionError(psa.SendException);
+                            piece.Data.DeliveryError = new ExceptionError(psa.SendException);
                         }
                     }
                     postSend?.Invoke(psa);
                 },
                 context);
-            await Crm.InsertEntitiesAsync(logByMessage.Values.WhereNotNull());
+
+            Rdb.CommunicationPieces.AddRange(piecesByMessageId.Values);
+            await Rdb.SaveChangesAsync();
         }
     }
 }

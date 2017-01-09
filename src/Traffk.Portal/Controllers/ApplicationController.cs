@@ -17,6 +17,8 @@ using TraffkPortal.Models.ApplicationModels;
 using System.IO;
 using RevolutionaryStuff.Core.Collections;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Traffk.Bal.Communications;
+using System;
 
 namespace TraffkPortal.Controllers
 {
@@ -31,7 +33,7 @@ namespace TraffkPortal.Controllers
         {
             public const string ApplicationBasics = "Edit";
             public const string SystemCommunications = "SystemCommunications";
-            public const string SystemCommunicationsSubmission = "SystemCommunicationsSubmission";
+            public const string SystemCommunicationsSave = "SystemCommunicationsSave";
         }
 
         public static class ViewNames
@@ -42,7 +44,6 @@ namespace TraffkPortal.Controllers
         public enum PageKeys
         {
             Basics,
-            CommunicationSettings,
             PortalSettings,
             RegistrationSettings,
             SystemCommunications,
@@ -77,17 +78,16 @@ namespace TraffkPortal.Controllers
             return await Rdb.Applications.FirstOrDefaultAsync(a => a.ApplicationId == applicationId && a.TenantId == TenantId);
         }
 
-        private void PopulateViewBagWithCommunicationSelectListItemsByCommunicationModel(int tenantId)
+        private void PopulateViewBagWithCreativeSelectListItemsByCommunicationModel(int tenantId)
         {
             var m = new MultipleValueDictionary<CommunicationModelTypes, SelectListItem>();
             Stuff.GetEnumValues<CommunicationModelTypes>().ForEach(cm => m.Add(cm, new SelectListItem { Text = AspHelpers.NoneDropdownItemText, Value = AspHelpers.NoneDropdownItemValue }));
-            foreach (var comm in Rdb.Communications.Where(c => c.TenantId == tenantId).Include(c => c.Creative).OrderBy(c=>c.CommunicationTitle))
+            foreach (var creative in Rdb.Creatives.Where(c => c.TenantId == tenantId))
             {
-                if (comm.Creative == null) continue;
-                m.Add(comm.Creative.ModelType, new SelectListItem { Text = $"{comm.CommunicationTitle} ({comm.CommunicationId})", Value = comm.CommunicationId.ToString() });
+                m.Add(creative.ModelType, new SelectListItem { Text = $"{creative.CreativeTitle} ({creative.CreativeId})", Value = creative.CreativeId.ToString() });
             }
             var d = m.ToDictionaryOfCollection();
-            ViewBag.CommunicationSelectListItemsByCommunicationModel = d;
+            ViewBag.CreativeSelectListItemsByCommunicationModel = d;
         }
 
         [Route("{id}/SystemCommunications")]
@@ -96,10 +96,38 @@ namespace TraffkPortal.Controllers
         {
             var app = await GetApplicationAsync(id);
             if (app == null) return NotFound();
-            PopulateViewBagWithCommunicationSelectListItemsByCommunicationModel(app.TenantId);
+            PopulateViewBagWithCreativeSelectListItemsByCommunicationModel(app.TenantId);
             SetHeroLayoutViewData(app, PageKeys.SystemCommunications);
-            var model = SystemCommunicationsModel.Create(app.ApplicationSettings.CommunicationIdBySystemCommunicationPurpose);
+            var model = SystemCommunicationsModel.Create(app.ApplicationSettings.CreativeIdBySystemCommunicationPurpose);
             return View(ViewNames.SystemCommunications, model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("{id}/SystemCommunications/Save")]
+        [ActionName(ActionNames.SystemCommunicationsSave)]
+        public async Task<IActionResult> SystemCommunicationsSave(int id)
+        {
+            var app = await GetApplicationAsync(id);
+            if (app == null) return NotFound();
+
+            var model = SystemCommunicationsModel.Create(app.ApplicationSettings.CreativeIdBySystemCommunicationPurpose);
+
+            foreach (var key in this.Request.Form.Keys)
+            {
+                SystemCommunicationPurposes purpose;
+                if (!Enum.TryParse(key.RightOf("CreativeIdFor_"), out purpose)) continue;
+                var scm = model.FirstOrDefault(z => z.Purpose == purpose);
+                if (scm == null) continue;
+                int creativeId;
+                int.TryParse(this.Request.Form[key], out creativeId);
+                scm.CreativeId = creativeId;                
+            }
+
+            app.ApplicationSettings.CreativeIdBySystemCommunicationPurpose = model.ToDictionary(z => z.Purpose, z => z.CreativeId);
+            Rdb.Update(app);
+            await Rdb.SaveChangesAsync();
+            return RedirectToIndex();
         }
 
         [Route("{id}/Details")]
@@ -132,28 +160,6 @@ namespace TraffkPortal.Controllers
                 return View();
             }
         }
-
-        [Route("{id}/CommunicationSettings")]
-        public async Task<ActionResult> Communications(int id)
-        {
-            var app = await GetApplicationAsync(id);
-            if (app == null) return NotFound();
-            SetHeroLayoutViewData(app, PageKeys.CommunicationSettings);
-            var definitions = SystemCommunication.Definitions.GetByApplicationType(app.ApplicationType);
-            var communications = await Rdb.SystemCommunications.Where(z => z.TenantId == this.TenantId && z.ApplicationId == id || z.ApplicationId==null).ToListAsync();
-            var messageTemplates = await Rdb.MessageTemplates.Where(z => z.TenantId == this.TenantId).ToListAsync();
-            var templateInfoByTemplateId =
-                (
-                await 
-                (
-                from z in Rdb.Templates
-                where z.TenantId == this.TenantId
-                select new Template { TemplateId = z.TemplateId, ModelType = z.ModelType, TemplateName = z.TemplateName, TemplateEngineType = z.TemplateEngineType }
-                ).ToListAsync()
-                ).ToDictionary(z=>z.TemplateId);
-            return View(new CommunicationsModel(communications, definitions, messageTemplates, templateInfoByTemplateId));
-        }
-
 
         [Route("{id}")]
         [ActionName(ActionNames.ApplicationBasics)]
@@ -329,19 +335,19 @@ namespace TraffkPortal.Controllers
                 po.SecondaryColor = model.SecondaryColor;
                 if (model.LogoFile != null)
                 {
-                    po.LogoLink = await Blobs.StoreFileAsync(false, BlobStorageServices.Roots.Portal, model.LogoFile, "customlogo" + Path.GetExtension(model.LogoFile.FileName), true);
+                    po.LogoLink = (await Blobs.StoreFileAsync(false, BlobStorageServices.Roots.Portal, model.LogoFile, "customlogo" + Path.GetExtension(model.LogoFile.FileName), true)).Uri;
                 }
                 if (model.FaviconFile != null)
                 {
-                    po.FaviconLink = await Blobs.StoreFileAsync(false, BlobStorageServices.Roots.Portal, model.FaviconFile, "customfavicon" + Path.GetExtension(model.FaviconFile.FileName), true);
+                    po.FaviconLink = (await Blobs.StoreFileAsync(false, BlobStorageServices.Roots.Portal, model.FaviconFile, "customfavicon" + Path.GetExtension(model.FaviconFile.FileName), true)).Uri;
                 }
                 if (model.CssFile != null)
                 {
-                    po.CssLink = await Blobs.StoreFileAsync(false, BlobStorageServices.Roots.Portal, model.CssFile, "customcss" + Path.GetExtension(model.CssFile.FileName), true);
+                    po.CssLink = (await Blobs.StoreFileAsync(false, BlobStorageServices.Roots.Portal, model.CssFile, "customcss" + Path.GetExtension(model.CssFile.FileName), true)).Uri;
                 }
                 if (model.JavascriptFile != null)
                 {
-                    po.JavascriptLink = await Blobs.StoreFileAsync(false, BlobStorageServices.Roots.Portal, model.JavascriptFile, "customjs" + Path.GetExtension(model.JavascriptFile.FileName), true);
+                    po.JavascriptLink = (await Blobs.StoreFileAsync(false, BlobStorageServices.Roots.Portal, model.JavascriptFile, "customjs" + Path.GetExtension(model.JavascriptFile.FileName), true)).Uri;
                 }
                 Rdb.Update(app);
                 await Rdb.SaveChangesAsync();

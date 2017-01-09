@@ -15,7 +15,7 @@ namespace TraffkCommunicationBlastRunner
         {
             base.OnConfigureServices(services);
             services.AddScoped<IOptions<SmtpOptions>, SmtpSettingsAdaptor>();
-            services.AddScoped<IEmailer, TrackingEmailer>();
+            services.AddScoped<ITrackingEmailer, TrackingEmailer>();
         }
 
         public static void Main(string[] args) => JobRunnerProgram.Main<Program>(args);

@@ -3,7 +3,8 @@
     public enum CommunicationModelTypes
     {
         Undefined=0,
-        CallbackUrl,
+        BasicModel,
+        CallbackUrlModel,
         SimpleCodeModel,
         SimpleContentModel,
         ContactSummaryPhiModel,

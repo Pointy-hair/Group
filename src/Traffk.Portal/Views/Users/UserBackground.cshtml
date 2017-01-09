@@ -1,9 +1,10 @@
+@using static TraffkPortal.Controllers.UsersController
 @model TraffkPortal.Models.UserModels.UserModel
 @{
-    ViewData.SetTitleAndHeading("Edit User", Model.UserName);
+    Layout = "_LayoutUser.cshtml";
 }
 
-<form asp-action="Edit">
+<form asp-action="@ActionNames.UserBackground">
     <div class="form-horizontal">
         @if (Model.CanAccessProtectedHealthInformation.GetValueOrDefault())
         {
@@ -84,10 +85,6 @@
         </div>
     </div>
 </form>
-
-<div>
-    <button type="button" class="btn btn-default" asp-action="Index">Back to List</button>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

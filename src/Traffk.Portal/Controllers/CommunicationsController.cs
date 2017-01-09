@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Traffk.Bal.Data;
 using TraffkPortal.Models.CommunicationModels;
 using Microsoft.EntityFrameworkCore;
+using System.IO;
+using System;
 
 namespace TraffkPortal.Controllers
 {
@@ -24,6 +26,7 @@ namespace TraffkPortal.Controllers
     public class CommunicationsController : BasePageController
     {
         public const string Name = "Communications";
+        public const string RemoveAttachmentScriptName = "removeCreativeAttachment";
 
         public static class ActionNames
         {
@@ -37,10 +40,12 @@ namespace TraffkPortal.Controllers
 
             public const string CommunicationCreative = "CommunicationCreative";
             public const string CommunicationCreativeSave = "CommunicationCreativeSave";
-            /*
-            public const string CommunicationQuery = "CommunicationQuery";
+
             public const string CommunicationBlasts = "CommunicationBlasts";
-            */
+            public const string CommunicationBlast = "CommunicationBlast";
+            /*
+                        public const string CommunicationQuery = "CommunicationQuery";
+                        */
 
             public const string CreativesList = "Creatives";
             public const string CreativeDetails = "CreativeDetails";
@@ -50,6 +55,7 @@ namespace TraffkPortal.Controllers
 
         public static class ViewNames
         {
+            public const string CommunicationBlasts = "CommunicationBlasts";
             public const string CommunicationsList = "Communications";
             public const string CommunicationDetails = "CommunicationDetails";
             public const string CommunicationSchedule = "CommunicationSchedule";
@@ -81,9 +87,9 @@ namespace TraffkPortal.Controllers
             Background,
             Schedule,
             Creative,
+            Blasts,
             /*
                         Message,
-                        Blasts,
                         Query,
             */
         }
@@ -213,7 +219,7 @@ namespace TraffkPortal.Controllers
             if (comm == null) return NotFound();
             SetHeroLayoutViewData(comm, CommunicationPageKeys.Creative);
             PopulateViewBagWithTemplateModelSelectListItems();
-            return View(ViewNames.CommunicationCreative, new CommunicationCreativeModel(id, comm.Creative));
+            return View(ViewNames.CommunicationCreative, new CreativeModel(comm.Creative, id, RemoveAttachmentScriptName));
         }
 
         [HttpPost]
@@ -231,9 +237,11 @@ namespace TraffkPortal.Controllers
             nameof(Creative.CreativeSettings)+"."+nameof(CreativeSettings.EmailSubject),
             nameof(Creative.CreativeSettings)+"."+nameof(CreativeSettings.EmailHtmlBody),
             nameof(Creative.CreativeSettings)+"."+nameof(CreativeSettings.EmailTextBody),
-            nameof(Creative.CreativeSettings)+"."+nameof(CreativeSettings.TextMessageBody)
+            nameof(Creative.CreativeSettings)+"."+nameof(CreativeSettings.TextMessageBody),
+            nameof(CreativeModel.AttachmentAssets),
+            nameof(CreativeModel.NewAttachments)
             )]
-            CommunicationCreativeModel model)
+            CreativeModel model)
         {
             var comm = await FindCommunicationByIdAsync(id);
             if (comm == null) return NotFound();
@@ -246,14 +254,7 @@ namespace TraffkPortal.Controllers
                     comm.Creative = creative;
                     Rdb.Creatives.Add(creative);
                 }
-                creative.CreativeTitle = model.CreativeTitle;
-                creative.ModelType = model.ModelType;
-                creative.TemplateEngineType = model.TemplateEngineType ?? Template.TemplateEngineTypes.TraffkDollarString;
-                creative.CreativeSettings.EmailSubject = model.CreativeSettings.EmailSubject;
-                creative.CreativeSettings.EmailHtmlBody = model.CreativeSettings.EmailHtmlBody;
-                creative.CreativeSettings.EmailTextBody = model.CreativeSettings.EmailTextBody;
-                creative.CreativeSettings.TextMessageBody = model.CreativeSettings.TextMessageBody;
-                await Rdb.SaveChangesAsync();
+                await CreativeModelSaveAsync(model, creative);
                 return RedirectToAction(ActionNames.CommunicationDetails);
             }
             SetHeroLayoutViewData(comm, CommunicationPageKeys.Creative);
@@ -261,7 +262,38 @@ namespace TraffkPortal.Controllers
             return View(ViewNames.CommunicationCreative, model);
         }
 
+
         #endregion
+
+        private async Task CreativeModelSaveAsync(CreativeModel model, Creative creative)
+        {
+            creative.CreativeTitle = model.CreativeTitle;
+            creative.ModelType = model.ModelType;
+            creative.TemplateEngineType = model.TemplateEngineType ?? Template.TemplateEngineTypes.TraffkDollarString;
+            creative.CreativeSettings.EmailSubject = model.CreativeSettings.EmailSubject;
+            creative.CreativeSettings.EmailHtmlBody = model.CreativeSettings.EmailHtmlBody;
+            creative.CreativeSettings.EmailTextBody = model.CreativeSettings.EmailTextBody;
+            creative.CreativeSettings.TextMessageBody = model.CreativeSettings.TextMessageBody;
+            bool dirty = true;
+            if (creative.CreativeId < 1)
+            {
+                await Rdb.SaveChangesAsync();
+                dirty = false;
+            }
+            if (model.NewAttachments != null)
+            {
+                foreach (var newAttachment in model.NewAttachments)
+                {
+                    var pointer = await Blobs.StoreFileAsync(false, BlobStorageServices.Roots.Portal, newAttachment, creative.AttachmentPrefix + Path.GetFileName(newAttachment.FileName), false);
+                    creative.CreativeSettings.Attachments.Add(pointer);
+                    dirty = true;
+                }
+            }
+            if (dirty)
+            {
+                await Rdb.SaveChangesAsync();
+            }
+        }
 
         #region Creatives
 
@@ -302,7 +334,7 @@ namespace TraffkPortal.Controllers
             var creative = await FindCreativeByIdAsync(id);
             if (creative == null) return NotFound();
             PopulateViewBagWithTemplateModelSelectListItems();
-            return View(ViewNames.CreativeDetails, creative);
+            return View(ViewNames.CreativeDetails, new CreativeModel(creative, null, RemoveAttachmentScriptName));
         }
 
         [HttpPost]
@@ -319,9 +351,11 @@ namespace TraffkPortal.Controllers
             nameof(Creative.CreativeSettings)+"."+nameof(CreativeSettings.EmailSubject),
             nameof(Creative.CreativeSettings)+"."+nameof(CreativeSettings.EmailHtmlBody),
             nameof(Creative.CreativeSettings)+"."+nameof(CreativeSettings.EmailTextBody),
-            nameof(Creative.CreativeSettings)+"."+nameof(CreativeSettings.TextMessageBody)
+            nameof(Creative.CreativeSettings)+"."+nameof(CreativeSettings.TextMessageBody),
+            nameof(CreativeModel.AttachmentAssets),
+            nameof(CreativeModel.NewAttachments)
             )]
-            Creative model)
+            CreativeModel model)
         {
             if (ModelState.IsValid)
             {
@@ -331,14 +365,7 @@ namespace TraffkPortal.Controllers
                     creative = new Creative();
                     Rdb.Creatives.Add(creative);
                 }
-                creative.CreativeTitle = model.CreativeTitle;
-                creative.ModelType = model.ModelType;
-                creative.TemplateEngineType = model.TemplateEngineType ?? Template.TemplateEngineTypes.TraffkDollarString;
-                creative.CreativeSettings.EmailSubject = model.CreativeSettings.EmailSubject;
-                creative.CreativeSettings.EmailHtmlBody = model.CreativeSettings.EmailHtmlBody;
-                creative.CreativeSettings.EmailTextBody = model.CreativeSettings.EmailTextBody;
-                creative.CreativeSettings.TextMessageBody = model.CreativeSettings.TextMessageBody;
-                await Rdb.SaveChangesAsync();
+                await CreativeModelSaveAsync(model, creative);
                 return RedirectToAction(ActionNames.CreativesList);
             }
             PopulateViewBagWithTemplateModelSelectListItems();
@@ -346,5 +373,43 @@ namespace TraffkPortal.Controllers
         }
 
         #endregion
+
+        #region Blasts
+
+        [ActionName(ActionNames.CommunicationBlasts)]
+        [Route("Communications/{communicationId}/Blasts")]
+        public IActionResult CommunicationBlasts(int communicationId, string sortCol, string sortDir, int? page, int? pageSize)
+        {
+            var items = from z in Rdb.CommunicationBlasts.Include(z => z.Job).Include(z => z.Creative)
+                        where z.TenantId == TenantId && z.CommunicationId == communicationId                        
+                        select z;
+            items = ApplyBrowse(
+                items, sortCol ?? nameof(Communication.CommunicationTitle), sortDir,
+                page, pageSize);
+            return View(ViewNames.CommunicationBlasts, items);
+        }
+
+        [ActionName(ActionNames.CommunicationBlast)]
+        [Route("Communications/{communicationId}/Blasts/{communicationBlastId}")]
+        public IActionResult CommunicationBlast(int communicationId, int communicationBlastId)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        [HttpDelete]
+        [Route("Creatives/{creativeId}/DeleteAttachment")]
+        public async Task<IActionResult> RemovePortalAsset(int creativeId, string assetKey)
+        {
+            var creative = await FindCreativeByIdAsync(creativeId);
+            if (creative == null) return NotFound();
+            var a = creative.CreativeSettings.Attachments.FirstOrDefault(z => z.Path == assetKey);
+            if (a == null) return NotFound();
+            creative.CreativeSettings.Attachments.Remove(a);
+            Rdb.Update(creative);
+            await Rdb.SaveChangesAsync();
+            return NoContent();
+        }
     }
 }

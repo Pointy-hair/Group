@@ -1,12 +1,12 @@
-﻿namespace Traffk.Bal
+﻿namespace Traffk.Bal.Communications
 {
     public enum SystemCommunicationPurposes
     {
-        [CommunicationModel(CommunicationModelTypes.CallbackUrl)]
+        [CommunicationModel(CommunicationModelTypes.CallbackUrlModel)]
         UserAcceptInvitation,
-        [CommunicationModel(CommunicationModelTypes.CallbackUrl)]
+        [CommunicationModel(CommunicationModelTypes.CallbackUrlModel)]
         UserAccountVerification,
-        [CommunicationModel(CommunicationModelTypes.CallbackUrl)]
+        [CommunicationModel(CommunicationModelTypes.CallbackUrlModel)]
         UserPasswordReset,
         [CommunicationModel(CommunicationModelTypes.SimpleCodeModel)]
         UserTwoFactorLoginCode,

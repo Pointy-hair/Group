@@ -426,13 +426,14 @@ exec db.ColumnPropertySet 'CommunicationBlasts', 'CommunicationBlastRowStatus', 
 
 GO
 
-create table CreativeBlastTrackers
+create table CommunicationBlastTrackers
 (
-	CreativeBlastTrackerId int not null identity primary key,
+	CommunicationBlastTrackerId int not null identity primary key,
 	TenantId int not null references Tenants(TenantId),
-	CreativeBlastCreativeTrackerRowStatus dbo.RowStatus not null default '1',
+	CommunicationBlastTrackerRowStatus dbo.RowStatus not null default '1',
 	CommunicationBlastId int not null references CommunicationBlasts(CommunicationBlastId),
 	LinkType dbo.DeveloperName not null,
+	CommunicationType dbo.DeveloperName not null,
 	TrackerUid uniqueidentifier not null,
 	RedirectUrl dbo.Url not null,
 	Position int not null
@@ -440,14 +441,16 @@ create table CreativeBlastTrackers
 
 GO
 
-create unique index UX_CreativeBlastTrackersUids on CreativeBlastTrackers(TrackerUid)
-exec db.TablePropertySet  'CreativeBlastTrackers', 'Assets referenced by a creative whose hyperlinks have been munged to support tracking'
-exec db.TablePropertySet  'CreativeBlastTrackers', '1', @propertyName='AddToDbContext'
-exec db.TablePropertySet  'CreativeBlastTrackers', '1', @propertyName='GeneratePoco'
-exec db.TablePropertySet  'CreativeBlastTrackers', 'ITraffkTenanted', @propertyName='Implements'
-exec db.ColumnPropertySet 'CreativeBlastTrackers', 'CreativeBlastCreativeTrackerRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
-exec db.ColumnPropertySet 'CreativeBlastTrackers', 'CreativeBlastCreativeTrackerRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
-exec db.ColumnPropertySet 'CreativeBlastTrackers', 'TrackerUid', 'Non-guessable guid for this item'
+create unique index UX_CommunicationBlastTrackersUids on CommunicationBlastTrackers(TrackerUid)
+exec db.TablePropertySet  'CommunicationBlastTrackers', 'Assets referenced by a creative whose hyperlinks have been munged to support tracking'
+exec db.TablePropertySet  'CommunicationBlastTrackers', '1', @propertyName='AddToDbContext'
+exec db.TablePropertySet  'CommunicationBlastTrackers', '1', @propertyName='GeneratePoco'
+exec db.TablePropertySet  'CommunicationBlastTrackers', 'ITraffkTenanted', @propertyName='Implements'
+exec db.ColumnPropertySet 'CommunicationBlastTrackers', 'CommunicationBlastTrackerRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
+exec db.ColumnPropertySet 'CommunicationBlastTrackers', 'CommunicationBlastTrackerRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'CommunicationBlastTrackers', 'TrackerUid', 'Non-guessable guid for this item'
+exec db.ColumnPropertySet 'CommunicationBlastTrackers', 'LinkType', 'CommunicationBlastTrackerLinkTypes', @propertyName='EnumType'
+exec db.ColumnPropertySet 'CommunicationBlastTrackers', 'CommunicationType', 'Traffk.Bal.Communications.CommunicationTypes', @propertyName='EnumType'
 
 GO
 
@@ -459,7 +462,8 @@ create table CommunicationPieces
 	CommunicationPieceUid uniqueidentifier not null,
 	CommunicationBlastId int not null references CommunicationBlasts(CommunicationBlastId),
 	ContactId bigint null references Contacts(ContactId),
-	UserId dbo.AspNetId null references AspNetUsers(Id)
+	UserId dbo.AspNetId null references AspNetUsers(Id),
+	Data dbo.JsonObject
 )
 
 GO
@@ -470,6 +474,7 @@ exec db.TablePropertySet  'CommunicationPieces', '1', @propertyName='AddToDbCont
 exec db.TablePropertySet  'CommunicationPieces', '1', @propertyName='GeneratePoco'
 exec db.TablePropertySet  'CommunicationPieces', 'ITraffkTenanted', @propertyName='Implements'
 exec db.ColumnPropertySet 'CommunicationPieces', 'CommunicationPieceUid', 'Non-guessable guid for this item'
+exec db.ColumnPropertySet 'CommunicationPieces', 'Data', 'Bal.Settings.CommunicationPieceData', @propertyName='JsonSettingsClass'
 
 GO
 
@@ -479,7 +484,7 @@ create table CommunicationPieceVisits
 	TenantId int not null references Tenants(TenantId),
 	CreatedAtUtc datetime not null default (getutcdate()),
 	CommunicationPieceId bigint not null references CommunicationPieces(CommunicationPieceId),
-	CreativeBlastTrackerId int not null references CreativeBlastTrackers(CreativeBlastTrackerId)
+	CommunicationBlastTrackerId int not null references CommunicationBlastTrackers(CommunicationBlastTrackerId)
 )
 
 GO

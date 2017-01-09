@@ -5,7 +5,7 @@
     Layout = "_LayoutApplication.cshtml";
 }
 
-<form asp-action="@ActionNames.SystemCommunicationsSubmission">
+<form asp-action="@ActionNames.SystemCommunicationsSave">
     <table class="table">
         <thead>
             <tr>
@@ -13,20 +13,20 @@
                     @Html.SortableHeaderFor(z => z.Purpose)
                 </th>
                 <th>
-                    Communication
+                    Creatives
                 </th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in Model)
             {
-                var choices = ViewBag.CommunicationSelectListItemsByCommunicationModel[item.ModelType];
+                var choices = ViewBag.CreativeSelectListItemsByCommunicationModel[item.ModelType];
                 <tr>
                     <td>
                         @Html.DisplayFor(modelItem => item.Purpose)
                     </td>
                     <td>
-                        <select asp-items="choices" asp-for="@item.CommunicationId"></select>
+                        <select asp-items="choices" asp-for="@item.CreativeId" name="CreativeIdFor_@item.Purpose"></select>
                     </td>
                 </tr>
             }

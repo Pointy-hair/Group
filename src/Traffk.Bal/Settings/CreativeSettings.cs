@@ -1,5 +1,8 @@
 ﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Traffk.Bal.Services;
 
 namespace Traffk.Bal.Settings
 {
@@ -11,6 +14,9 @@ namespace Traffk.Bal.Settings
         }
 
         public string ToJson() => JsonConvert.SerializeObject(this);
+
+        [JsonProperty("attachments")]
+        public List<CloudFilePointer> Attachments { get; set; } = new List<CloudFilePointer>();
 
         [JsonProperty("emailSubject")]
         public string EmailSubject { get; set; }

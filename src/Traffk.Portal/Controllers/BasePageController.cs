@@ -25,22 +25,14 @@ namespace TraffkPortal.Controllers
         protected int TenantId { get { return Current.TenantId;  } }
 
         protected ActionResult RedirectToIndex()
-        {
-            return RedirectToAction("Index");
-        }
+            => RedirectToAction("Index");
+
         protected ActionResult RedirectToHome(object routeValues=null)
-        {
-            return RedirectToAction(nameof(HomeController.Index), "Home", routeValues);
-        }
+            => RedirectToAction(nameof(HomeController.Index), "Home", routeValues);
 
         protected ActionResult ErrorResult()
         {
             return ErrorResult();
-        }
-
-        protected Task<Tenant> CurrentTenant()
-        {
-            return Rdb.Tenants.SingleOrDefaultAsync(z => z.TenantId == this.TenantId);
         }
 
         private static readonly IDictionary<string, string> NoMappings = new Dictionary<string, string>().AsReadOnly();

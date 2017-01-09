@@ -1,3 +1,4 @@
+@using static TraffkPortal.Controllers.UsersController
 @model IEnumerable<TraffkPortal.Models.UserModels.UserModel>
 @{
     Layout = "~/Views/Shared/_LayoutListing.cshtml";
@@ -5,7 +6,7 @@
 }
 @section listingActionButtons
 {
-    <button type="button" class="btn btn-default" asp-action="Create">Create</button>
+    <button type="button" class="btn btn-default" asp-action="@ActionNames.UserCreate">Create</button>
 }
 @section listingTable
 {
@@ -38,7 +39,7 @@
             {
                 <tr>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id">
+                        <a asp-action="@ActionNames.UserBackground" asp-route-id="@item.Id">
                             @Html.DisplayFor(modelItem => item.UserName)
                         </a>
                     </td>
@@ -58,14 +59,9 @@
                         @Html.DisplayFor(modelItem => item.AssignedRoleNamesCsv)
                     </td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a>
                         @if (Current.User.Id != item.Id)
                         {
-                            <text>
-                            |
-                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                            </text>
+                            <a asp-action="@ActionNames.UserDelete" asp-route-id="@item.Id">Delete</a>
                         }
                     </td>
                 </tr>

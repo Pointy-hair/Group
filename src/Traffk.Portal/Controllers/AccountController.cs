@@ -12,6 +12,7 @@ using Traffk.Bal.Data.Rdb;
 using RevolutionaryStuff.Core;
 using System;
 using TraffkPortal.Services.Sms;
+using Traffk.Bal.Communications;
 
 namespace TraffkPortal.Controllers
 {
@@ -165,7 +166,7 @@ namespace TraffkPortal.Controllers
                         var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
                         var callbackUrl = Url.Action(nameof(ConfirmEmail), Name, new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
                         await EmailSender.SendEmailCommunicationAsync(
-                            SystemCommunication.Definitions.General.AccountVerification.CommunicationPurpose,
+                            SystemCommunicationPurposes.UserAccountVerification,
                             Template.ModelTypes.CreateCallbackUrlModel(callbackUrl),
                             model.Email);
                     }
@@ -341,7 +342,7 @@ namespace TraffkPortal.Controllers
                 var code = await UserManager.GeneratePasswordResetTokenAsync(user);
                 var callbackUrl = Url.Action(nameof(ResetPassword), Name, new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
                 await EmailSender.SendEmailCommunicationAsync(
-                    SystemCommunication.Definitions.General.PasswordReset.CommunicationPurpose,
+                    SystemCommunicationPurposes.UserPasswordReset,
                     Template.ModelTypes.CreateCallbackUrlModel(callbackUrl),
                     model.Email);
                 return View(nameof(ForgotPasswordConfirmation));
@@ -489,14 +490,14 @@ namespace TraffkPortal.Controllers
             if (model.SelectedProvider == "Email")
             {
                 await EmailSender.SendEmailCommunicationAsync(
-                    SystemCommunication.Definitions.General.TwoFactorLoginCode.CommunicationPurpose,
+                    SystemCommunicationPurposes.UserTwoFactorLoginCode,
                     Template.ModelTypes.CreateSimpleCodeModel(code),
                     await UserManager.GetEmailAsync(user));
             }
             else if (model.SelectedProvider == "Phone")
             {
                 await SmsSender.SendSmsCommunicationAsync(
-                    SystemCommunication.Definitions.General.TwoFactorLoginCode.CommunicationPurpose,
+                    SystemCommunicationPurposes.UserTwoFactorLoginCode,
                     Template.ModelTypes.CreateSimpleCodeModel(code),
                     await UserManager.GetPhoneNumberAsync(user));
             }

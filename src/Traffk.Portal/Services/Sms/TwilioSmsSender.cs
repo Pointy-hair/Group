@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using RevolutionaryStuff.Core;
 
 namespace TraffkPortal.Services.Sms
 {
-    public class TwilioSmsSender : ITwilioSmsSender, ISmsSender
+    public class TwilioSmsSender : ITwilioSmsSender
     {
         private readonly TwilioSmsSenderOptions Options;
 
@@ -20,6 +20,9 @@ namespace TraffkPortal.Services.Sms
 
         public async Task SendSmsAsync(string number, string message)
         {
+            Requires.Text(number, nameof(number));
+            Requires.Text(message, nameof(message));
+
             using (var client = new HttpClient { BaseAddress = new Uri(Options.BaseUri) })
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
@@ -33,13 +36,7 @@ namespace TraffkPortal.Services.Sms
                 });
 
                 var response = await client.PostAsync(Options.RequestUri, content).ConfigureAwait(false);
-
             }
-        }
-
-        public async Task SendSmsCommunicationAsync(string communicationPurpose, object model, string number)
-        {
-            throw new NotImplementedException();
         }
     }
 }

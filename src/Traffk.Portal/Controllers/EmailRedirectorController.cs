@@ -1,55 +1,53 @@
-using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Traffk.Bal.Data.Ddb.Crm;
-using Traffk.Bal;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using RevolutionaryStuff.Core.EncoderDecoders;
 using System;
 using System.Threading.Tasks;
+using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Email;
 
 namespace TraffkPortal.Controllers
 {
     [Route("e")]
     public class EmailRedirectorController : Controller
     {
-        private readonly CrmDdbContext CRM;
+        protected readonly ILogger Logger;
+        protected readonly TraffkRdbContext Rdb;
 
-        public EmailRedirectorController(CrmDdbContext crm)
+        public EmailRedirectorController(TraffkRdbContext rdb, ILoggerFactory loggerFactory)
         {
-            CRM = crm;
+            Rdb = rdb;
+            Logger = loggerFactory.CreateLogger(this.GetType());
         }
 
-        [Route("{tenantId}/{contactId}")]
-        public async Task<IActionResult> LogAndRedirect(int tenantId, string contactId, string m, string l)
+        [Route("{tenantId}/{pieceSegment}/{trackerSegment}")]
+        public async Task<IActionResult> LogAndRedirect(int tenantId, string pieceSegment, string trackerSegment)
         {
-            var cl = CRM.CommunicationLogs.FirstOrDefault(z => z.TenantId == tenantId && z.Id == m);
-            if (cl == null || cl.TrackedLinks==null) return NotFound();
-            var tl = cl.TrackedLinks.FirstOrDefault(z => z.Id == l);
-            if (tl == null) return NotFound();
-            var utcNow = DateTime.UtcNow;
-            if (cl.FirstSeenAtUtc == null)
+            Guid g = TrackingEmailer.ConvertPieceSegmentToPieceUid(pieceSegment);
+            var piece = await Rdb.CommunicationPieces.FirstOrDefaultAsync(z => z.CommunicationPieceUid == g && z.TenantId==tenantId);
+            if (piece == null) return NotFound();
+            g = TrackingEmailer.ConvertTrackerSegmentToTrackerUid(trackerSegment);
+            var tracker = await Rdb.CommunicationBlastTrackers.FirstOrDefaultAsync(z => z.TrackerUid == g && z.TenantId == tenantId);
+            if (tracker == null) return NotFound();
+            var visit = new CommunicationPieceVisit
             {
-                cl.FirstSeenAtUtc = utcNow;
-            }
-            IActionResult res;
-            WebActionLog visitor = new WebActionLog
-            {
-                IpAddress = HttpContext.Connection.RemoteIpAddress.ToString(),
-                TraceIdentifier = HttpContext.TraceIdentifier,
-                UserAgentString = Request.Headers["User-Agent"].ToString(),
-                CreatedAtUtc = utcNow
+                CommunicationPieceId = piece.CommunicationPieceId,
+                CommunicationBlastTrackerId = tracker.CommunicationBlastTrackerId
             };
-            tl.AddVisitor(visitor);
-            switch (tl.TrackedLinkType)
+            Rdb.CommunicationPieceVisits.Add(visit);
+            await Rdb.SaveChangesAsync();
+            IActionResult res;
+            switch (tracker.LinkType)
             {
-                case CommunicationLog.TrackedLinkTypes.Asset:
-                    res = RedirectPermanent(tl.RedirectUrl.ToString());
+                case CommunicationBlastTrackerLinkTypes.Asset:
+                    res = RedirectPermanent(tracker.RedirectUrl);
                     break;
-                case CommunicationLog.TrackedLinkTypes.Anchor:
+                case CommunicationBlastTrackerLinkTypes.Anchor:
                 default:
-                    res = Redirect(tl.RedirectUrl.ToString());
+                    res = Redirect(tracker.RedirectUrl);
                     break;
             }
-            CRM.Update(cl);
-            await CRM.SaveChangesAsync();
             return res;
         }
     }
