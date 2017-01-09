@@ -1,9 +1,9 @@
-@using TraffkPortal.Models.MessagingModels
+@using static TraffkPortal.Controllers.CommunicationsController
 @model Communication
 @{
     Layout = "_LayoutCommunication.cshtml";
 }
-<form asp-action="Blast">
+<form asp-action="@ActionNames.CommunicationSave" asp-route-id="@Model.CommunicationId">
     <div class="form-horizontal">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="CommunicationId" />

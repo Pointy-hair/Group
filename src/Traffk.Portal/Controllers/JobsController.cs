@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using TraffkPortal.Services;
 using Traffk.Bal.Data.Rdb;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace TraffkPortal.Controllers
 {
@@ -53,7 +52,7 @@ namespace TraffkPortal.Controllers
             var job = await Rdb.Jobs.FindAsync(id);
             if (job==null) return NotFound();
             if (!job.CanBeCancelled) return StatusCode(System.Net.HttpStatusCode.Conflict);
-            job.JobStatus = Job.StatusNames.Cancelling;
+            job.JobStatus = JobStatuses.Cancelling;
             Rdb.Update(job);
             await Rdb.SaveChangesAsync();
             return NoContent();

@@ -1,0 +1,74 @@
+@using static TraffkPortal.Controllers.UsersController
+@model IEnumerable<TraffkPortal.Models.UserModels.UserModel>
+@{
+    Layout = "~/Views/Shared/_LayoutListing.cshtml";
+    ViewData.SetTitleAndHeading("Users");
+}
+@section listingActionButtons
+{
+    <button type="button" class="btn btn-default" asp-action="@ActionNames.UserCreate">Create</button>
+}
+@section listingTable
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.SortableHeaderFor(z => z.UserName)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.CreatedAt)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.EmailConfirmed)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.LockoutEnabled)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.TwoFactorEnabled)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(z => z.AssignedRoleNamesCsv)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <a asp-action="@ActionNames.UserBackground" asp-route-id="@item.Id">
+                            @Html.DisplayFor(modelItem => item.UserName)
+                        </a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreatedAt)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EmailConfirmed)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LockoutEnabled)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TwoFactorEnabled)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AssignedRoleNamesCsv)
+                    </td>
+                    <td>
+                        @if (Current.User.Id != item.Id)
+                        {
+                            <a asp-action="@ActionNames.UserDelete" asp-route-id="@item.Id">Delete</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @{ await Html.RenderPartialAsync("_PaginationPartial"); }
+
+}

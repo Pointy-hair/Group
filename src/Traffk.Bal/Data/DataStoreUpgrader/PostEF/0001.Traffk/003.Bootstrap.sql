@@ -36,28 +36,6 @@ Please accept your invitation to join Traffk by clicking <a href="{Model.Callbac
 
 GO
 
-insert into messagetemplates
-(TenantId, MessageTemplateTitle, SubjectTemplateId, HtmlBodyTemplateId, TextBodyTemplateId)
-values
-(1, 'Password Reset Email',	1, 3, 2),
-(1, 'Account Confirmation Email', 4, 6, 5),
-(1, 'Multi-Factor Login Code Email', 7, NULL, 8),
-(1, 'Multi-Factor Login Code Sms', NULL, NULL, 9),
-(1, 'Account Invitation Email', 10, 12, 11)
-
-GO
-
-insert into systemcommunications
-(TenantId, ApplicationId, CommunicationPurpose, CommunicationMedium, MessageTemplateId)
-values
-(1, NULL, 'System:PasswordReset', 'email', 1),
-(1, NULL, 'System:AccountVerification', 'email', 2),
-(1, NULL, 'System:TwoFactorLoginCode', 'email', 3),
-(1, NULL, 'System:TwoFactorLoginCode', 'sms', 4),
-(1, NULL, 'System:AcceptInvitation', 'email', 5)
-
-GO
-
 insert into [AspNetRoles]
 (Id, ConcurrencyStamp, Name, NormalizedName, TenantId)
 values

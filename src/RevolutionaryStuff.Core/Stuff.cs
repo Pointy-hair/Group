@@ -6,7 +6,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace RevolutionaryStuff.Core
@@ -59,27 +58,17 @@ namespace RevolutionaryStuff.Core
         }
 
         /// <summary>
-        /// Returns the first non-null value in the input
+        /// Returns the first non-null, non-blank string in the input
         /// </summary>
-        /// <param name="vals">The list of options</param>
+        /// <param name="vals">The list of strings</param>
         /// <returns>The first non-null value.  If all are null, null is returned</returns>
-        public static T Coalesce<T>(params T[] vals)
-        {
-            if (vals != null)
-            {
-                for (int x = 0; x < vals.Length; ++x)
-                {
-                    if (vals[x] != null) return vals[x];
-                }
-            }
-            return default(T);
-        }
-
         public static string CoalesceStrings(params string[] vals)
         {
             for (int x = 0; x < vals.Length; ++x)
             {
-                if (vals[x] != null && vals[x].Length > 0) return vals[x];
+                var s = vals[x];
+                if (string.IsNullOrWhiteSpace(s)) continue;
+                return s;
             }
             return null;
         }
@@ -195,99 +184,7 @@ namespace RevolutionaryStuff.Core
         /// <param name="a">The assembly that houses the resource, if null, uses the caller</param>
         /// <returns>The string, else null</returns>
         public static string GetEmbeddedResourceAsString(this Assembly a, string name)
-        {
-            using (var st = a.GetEmbeddedResourceAsStream(name))
-            {
-                if (st == null) return null;
-                return st.ReadToEnd();
-            }
-        }
-
-        public static void InvokeEvent(EventHandler h, object sender, EventArgs e=null, bool throwException=false)
-        {
-            Debug.Assert(!(sender is EventArgs), "Probably a programming bug in porting the old RSLLC.JBT");
-            if (h == null) return;
-            try
-            {
-                h(sender, e ?? EventArgs.Empty);
-            }
-            catch (Exception ex)
-            {
-                if (throwException)
-                {
-                    throw ex;
-                }
-                else
-                {
-                    Debug.WriteLine(ex);
-                }
-            }
-        }
-
-        private static bool AllowAllExceptions(Exception ex) { return true; }
-
-        public static T CallAndRetryOnFailure<T>(Func<T> func, int? retryCount = 3, TimeSpan? backoffPeriod = null, Predicate<Exception> exceptionChecker = null)
-        {
-            exceptionChecker = exceptionChecker ?? AllowAllExceptions;
-            backoffPeriod = backoffPeriod ?? TimeSpan.FromSeconds(2);
-            int z = 0;
-            for (;;)
-            {
-                try
-                {
-                    return func();
-                }
-                catch (Exception ex)
-                {
-                    if (!exceptionChecker(ex)) throw;
-                    if (z++ < retryCount.GetValueOrDefault(3))
-                    {
-                        var wait = Convert.ToInt32(backoffPeriod.Value.TotalMilliseconds * z);
-                        Trace.WriteLine(string.Format("CallAndRetryOnFailure retry={0} wait={1}", z, TimeSpan.FromMilliseconds(wait)));
-                        System.Threading.Thread.Sleep(wait);
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
-        }
-
-        public static T CallAndRetryOnFailure<T, E>(Func<T> func, int? retryCount = 3, TimeSpan? backoffPeriod = null) where E : Exception
-        {
-            Predicate<Exception> exceptionChecker = delegate (Exception ex)
-            {
-                return ex is E;
-            };
-            return CallAndRetryOnFailure(func, retryCount, backoffPeriod, exceptionChecker);
-        }
-
-        /// <summary>
-        /// Enter a critical section and act, or if someone is already inside, wait, but don't execute
-        /// </summary>
-        /// <param name="actor">The action to take</param>
-        /// <param name="locker">A lock</param>
-        public static void SingleActor(Action actor, object locker=null)
-        {
-            Requires.NonNull(actor, nameof(actor));
-            locker = locker ?? actor;
-            if (Monitor.TryEnter(locker))
-            {
-                try
-                {
-                    actor();
-                }
-                finally
-                {
-                    Monitor.Exit(locker);
-                }
-            }
-            else
-            {
-                lock (locker) { }
-            }
-        }
+            => a.GetEmbeddedResourceAsStream(name)?.ReadToEnd();
 
         public static TResult ExecuteSynchronously<TResult>(this Task<TResult> task)
         {
@@ -317,7 +214,7 @@ namespace RevolutionaryStuff.Core
                 {
                     if (pi.GetCustomAttribute<Newtonsoft.Json.JsonIgnoreAttribute>() != null) continue;
                     var jpn = pi.GetCustomAttribute<Newtonsoft.Json.JsonPropertyAttribute>();
-                    if ((jpn == null && pi.Name == left) || jpn.PropertyName == left)
+                    if ((jpn == null && pi.Name == left) || (jpn!=null && jpn.PropertyName == left))
                     {
                         left = pi.Name;
                         if (right == null) return left;

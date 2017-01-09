@@ -3,8 +3,10 @@ using System.Threading.Tasks;
 using Traffk.Bal.Email;
 using MimeKit;
 using Traffk.Bal.Data.Rdb;
-using Traffk.Bal.Templates;
 using TraffkPortal.Services.Sms;
+using Microsoft.EntityFrameworkCore;
+using System;
+using Traffk.Bal.Communications;
 
 namespace TraffkPortal.Services
 {
@@ -13,12 +15,12 @@ namespace TraffkPortal.Services
     // For more details see this link http://go.microsoft.com/fwlink/?LinkID=532713
     public class AuthMessageSender : IEmailSender, ISmsSender
     {
-        private readonly IEmailer Emailer;
+        private readonly ITrackingEmailer Emailer;
         private readonly CurrentContextServices Current;
         private readonly TraffkRdbContext DB;
         private readonly ITwilioSmsSender TwilioSmsSender;
 
-        public AuthMessageSender(IEmailer emailer, CurrentContextServices current, TraffkRdbContext db, ITwilioSmsSender twilioSmsSender)
+        public AuthMessageSender(ITrackingEmailer emailer, CurrentContextServices current, TraffkRdbContext db, ITwilioSmsSender twilioSmsSender)
         {
             Emailer = emailer;
             Current = current;
@@ -27,15 +29,9 @@ namespace TraffkPortal.Services
         }
 
         Task ISmsSender.SendSmsAsync(string number, string message)
-        {
-            Requires.Text(number, nameof(number));
-            Requires.Text(message, nameof(message));
+            => TwilioSmsSender.SendSmsAsync(number, message);
 
-            //#23 - if changing SMS provider, change line below.
-            return TwilioSmsSender.SendSmsAsync(number, message);
-        }
-
-        private Task SendEmailAsync(MimeMessage message)
+        private Task SendEmailAsync(Creative creative, MimeMessage message)
         {
             Requires.NonNull(message, nameof(message));
             Requires.Between(message.To.Count + message.Cc.Count + message.Bcc.Count, "message.Recipient.Count", 1);
@@ -50,42 +46,39 @@ namespace TraffkPortal.Services
                     );
                 message.From.Add(from);
             }
-            return Emailer.SendEmailAsync(message);
+            return Emailer.SendEmailAsync(creative, new[] { message });
         }
 
-        async Task ISmsSender.SendSmsCommunicationAsync(string communicationPurpose, object model, string number)
+        private async Task<Tuple<Creative, MimeMessage>> CreateMessageAsync(SystemCommunicationPurposes purpose, object model)
         {
-            var comm = await DB.GetSystemCommunication(communicationPurpose, SystemCommunication.CommunicationMediums.Sms, Current.Application.ApplicationId);
-            Requires.NonNull(comm, nameof(comm));
-            var message = new MimeMessage();          
-            message.Fill(new TemplateManager(new DbTemplateFinder(DB, Current.TenantId), Current.Tenant.TenantSettings.ReusableValues), comm.MessageTemplate, Current.User, null, model);
-            var body = ((TextPart)message.Body).Text;
+            int creativeId;
+            Current.Application.ApplicationSettings.CreativeIdBySystemCommunicationPurpose.TryGetValue(purpose, out creativeId);
+            Requires.Positive(creativeId, nameof(creativeId));
+            var creative = await DB.Creatives.FindAsync(creativeId);
+            Requires.NonNull(creative, nameof(creative));
+            var message = new MimeMessage();
+            message.Fill(DB, Current.Tenant.TenantSettings.ReusableValues, creative, CommunicationTypes.Email, Current.User, null, model);
+            return Tuple.Create(creative, message);
+        }
+
+        async Task ISmsSender.SendSmsCommunicationAsync(SystemCommunicationPurposes purpose, object model, string number)
+        {
+            var res = await CreateMessageAsync(purpose, model);
+            var body = ((TextPart)res.Item2.Body).Text;
             await ((ISmsSender)this).SendSmsAsync(number, body);
         }
 
-        async Task IEmailSender.SendEmailCommunicationAsync(string communicationPurpose, object model, string recipientAddress, string recipientName, long? contactId)
+        async Task IEmailSender.SendEmailCommunicationAsync(SystemCommunicationPurposes purpose, object model, string recipientAddress, string recipientName, long? contactId)
         {
-            var comm = await DB.GetSystemCommunication(communicationPurpose, SystemCommunication.CommunicationMediums.Email, Current.Application.ApplicationId);
-            await SendEmailCommunicationAsync(comm, model, recipientAddress, recipientName, contactId);
-        }
-
-        async Task IEmailSender.SendEmailCommunicationAsync(int systemCommunicationId, object model, string recipientAddress, string recipientName, long? contactId)
-        {
-            var comm = await DB.GetSystemCommunication(systemCommunicationId);
-            await SendEmailCommunicationAsync(comm, model, recipientAddress, recipientName, contactId);
-        }
-
-        private async Task SendEmailCommunicationAsync(SystemCommunication comm, object model, string recipientAddress, string recipientName, long? contactId)
-        {
-            Requires.NonNull(comm, nameof(comm));
-            var message = new MimeMessage();
+            var res = await CreateMessageAsync(purpose, model);
+            var creative = res.Item1;
+            var message = res.Item2;
             if (contactId!=null)
             {
-                message.Headers.Add(MailHelpers.ContactIdHeader, contactId.ToString());
+                message.ContactId(contactId.Value);
             }
             message.To.Add(new MailboxAddress(recipientName ?? "", recipientAddress));
-            message.Fill(new TemplateManager(new DbTemplateFinder(DB, Current.TenantId), Current.Tenant.TenantSettings.ReusableValues), comm.MessageTemplate, Current.User, null, model);
-            await SendEmailAsync(message);
+            await SendEmailAsync(creative, message);
         }
     }
 }

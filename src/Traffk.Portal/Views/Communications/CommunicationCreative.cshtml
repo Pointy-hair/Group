@@ -1,0 +1,19 @@
+﻿@model TraffkPortal.Models.CommunicationModels.CreativeModel
+@using static TraffkPortal.Controllers.CommunicationsController
+@{
+    Layout = "_LayoutCommunication.cshtml";
+}
+
+<form asp-action="@ActionNames.CommunicationCreativeSave" asp-route-id="@Model.CommunicationId" enctype="multipart/form-data">
+    <div class="form-horizontal">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            @await Html.PartialAsync("_EditCreativePartial", Model)
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>

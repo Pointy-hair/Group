@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
+using Traffk.Bal.Communications;
 
 namespace Traffk.Bal.Settings
 {
@@ -28,8 +29,8 @@ namespace Traffk.Bal.Settings
         [DataMember(Name = "ReusableValues")]
         public IList<ReusableValue> ResourceValues { get; set; }
 
-        [DataMember(Name = "CommunicationIdBySystemCommunicationPurpose")]
-        public IDictionary<SystemCommunicationPurposes, int> CommunicationIdBySystemCommunicationPurpose { get; set; } = new Dictionary<SystemCommunicationPurposes, int>();
+        [DataMember(Name = "CreativeIdBySystemCommunicationPurpose")]
+        public IDictionary<SystemCommunicationPurposes, int> CreativeIdBySystemCommunicationPurpose { get; set; } = new Dictionary<SystemCommunicationPurposes, int>();
 
         public static ApplicationSettings CreateFromJson(string json)
         {

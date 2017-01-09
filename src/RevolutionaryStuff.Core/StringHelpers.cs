@@ -209,10 +209,8 @@ namespace RevolutionaryStuff.Core
             return null;
         }
 
-        public static string ToString(object o, string nullValue = null)
-        {
-            return o?.ToString() ?? nullValue;
-        }
+        public static string ToString(this object o, string nullValue=null)
+            => o?.ToString() ?? nullValue;
 
         public static string[] Split(this string s, Regex r)
         {

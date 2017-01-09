@@ -31,7 +31,7 @@ namespace Traffk.Bal.Email
             var exceptions = new List<Exception>();
             using (var client = new SmtpClient())
             {
-                client.LocalDomain = Stuff.Coalesce(smtp.LocalDomain, client.LocalDomain);
+                client.LocalDomain = Stuff.CoalesceStrings(smtp.LocalDomain, client.LocalDomain);
                 await client.ConnectAsync(smtp.SmtpHost, smtp.SmtpPort, SecureSocketOptions.Auto).ConfigureAwait(false);
                 await client.AuthenticateAsync(smtp.SmtpUser, smtp.SmtpPassword);
                 int z = -1;

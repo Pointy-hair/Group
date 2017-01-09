@@ -146,7 +146,10 @@ namespace TraffkPortal
 
             // Add application services.
             services.AddScoped<IOptions<SmtpOptions>, SmtpSettingsAdaptor>();
-            services.AddScoped<IEmailer, TrackingEmailer>();
+            services.AddScoped<IEmailer, RawEmailer>();
+            services.AddScoped<ITrackingEmailer, TrackingEmailer>();
+            services.AddScoped<ICommunicationBlastFinder, SystemCommunicationCommunicationBlastFinder>();
+            services.AddScoped<Traffk.Bal.Communications.ICreativeSettingsFinder, TraffkRdbContext>();
             services.AddScoped<IEmailSender, AuthMessageSender>();
             services.AddScoped<ISmsSender, AuthMessageSender>();
             services.AddSingleton<ITwilioSmsSender, TwilioSmsSender>();
@@ -176,7 +179,7 @@ namespace TraffkPortal
 
             //            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             //            loggerFactory.AddDebug();
-            loggerFactory.AddSerilog();
+//            loggerFactory.AddSerilog();
 //                        loggerFactory.AddProvider()
 
 //            ILoggerProvider fds;

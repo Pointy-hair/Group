@@ -1,0 +1,47 @@
+@using static TraffkPortal.Controllers.CommunicationsController
+@model IEnumerable<CommunicationBlast>
+@{
+    Layout = "_LayoutCommunication.cshtml";
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.SortableHeaderFor(model => model.CommunicationBlastId)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(model => model.JobId);
+            </th>
+            <th>
+                @Html.SortableHeaderFor(model => model.Job.JobStatusStringValue);
+            </th>
+            <th>
+                @Html.SortableHeaderFor(model => model.Job.DontRunBefore);
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+            {
+            <tr>
+                <td>
+                    <a 
+                       asp-action="@ActionNames.CommunicationBlast" 
+                       asp-route-communicationId="@item.CommunicationId" 
+                       asp-route-communicationBlastId="@item.CommunicationBlastId">
+                        @Html.DisplayFor(modelItem => item.CommunicationBlastId)
+                    </a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.JobId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Job.JobStatusStringValue)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Job.DontRunBefore)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

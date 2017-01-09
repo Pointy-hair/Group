@@ -7,12 +7,17 @@ using Microsoft.AspNetCore.Authorization;
 using TraffkPortal.Permissions;
 using Traffk.Bal.Permissions;
 using Traffk.Bal.Data.Rdb;
-using System.Collections.Generic;
 using Traffk.Bal.Data.Ddb.Crm;
 using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
 using RevolutionaryStuff.Core;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Traffk.Bal.Data;
+using TraffkPortal.Models.CommunicationModels;
+using Microsoft.EntityFrameworkCore;
+using System.IO;
+using System;
+using Traffk.Bal.Communications;
 
 namespace TraffkPortal.Controllers
 {
@@ -22,6 +27,7 @@ namespace TraffkPortal.Controllers
     public class CommunicationsController : BasePageController
     {
         public const string Name = "Communications";
+        public const string RemoveAttachmentScriptName = "removeCreativeAttachment";
 
         public static class ActionNames
         {
@@ -29,10 +35,18 @@ namespace TraffkPortal.Controllers
             public const string CommunicationCreate = "CommunicationCreate";
             public const string CommunicationDetails = "CommunicationDetails";
             public const string CommunicationSave = "CommunicationSave";
-            public const string CommunicationCreative = "CommunicationCreative";
-            public const string CommunicationQuery = "CommunicationQuery";
+
             public const string CommunicationSchedule = "CommunicationSchedule";
+            public const string CommunicationScheduleSave = "CommunicationScheduleSave";
+
+            public const string CommunicationCreative = "CommunicationCreative";
+            public const string CommunicationCreativeSave = "CommunicationCreativeSave";
+
             public const string CommunicationBlasts = "CommunicationBlasts";
+            public const string CommunicationBlast = "CommunicationBlast";
+            /*
+                        public const string CommunicationQuery = "CommunicationQuery";
+                        */
 
             public const string CreativesList = "Creatives";
             public const string CreativeDetails = "CreativeDetails";
@@ -42,8 +56,11 @@ namespace TraffkPortal.Controllers
 
         public static class ViewNames
         {
+            public const string CommunicationBlasts = "CommunicationBlasts";
             public const string CommunicationsList = "Communications";
             public const string CommunicationDetails = "CommunicationDetails";
+            public const string CommunicationSchedule = "CommunicationSchedule";
+            public const string CommunicationCreative = "CommunicationCreative";
             public const string CreativesList = "Creatives";
             public const string CreativeDetails = "CreativeDetails";
         }
@@ -69,10 +86,13 @@ namespace TraffkPortal.Controllers
         public enum CommunicationPageKeys
         {
             Background,
-            Message,
             Schedule,
+            Creative,
             Blasts,
-            Query,
+            /*
+                        Message,
+                        Query,
+            */
         }
 
         private void SetHeroLayoutViewData(Communication comm, CommunicationPageKeys pageKey)
@@ -95,28 +115,26 @@ namespace TraffkPortal.Controllers
             return View(ViewNames.CommunicationsList, items);
         }
 
-        private Task<Communication> FindCommunicationByIdAsync(int id) => Rdb.Communications.FindAsync(id);
-
-
-
+        private Task<Communication> FindCommunicationByIdAsync(int id) => 
+            Rdb.Communications.Include(z => z.Creative).FirstOrDefaultAsync(z => z.CommunicationId == id);
 
         [Route("Create")]
         [ActionName(ActionNames.CommunicationCreate)]
         public IActionResult CommunicationCreate()
         {
-            var item = new Communication();
-            SetHeroLayoutViewData(item, CommunicationPageKeys.Background);
-            return View(ViewNames.CommunicationDetails, item);
+            var comm = new Communication();
+            SetHeroLayoutViewData(comm, CommunicationPageKeys.Background);
+            return View(ViewNames.CommunicationDetails, comm);
         }
 
         [Route("{id}")]
         [ActionName(ActionNames.CommunicationDetails)]
         public async Task<IActionResult> CommunicationEdit(int id)
         {
-            var item = await FindCommunicationByIdAsync(id);
-            if (item == null) return NotFound();
-            SetHeroLayoutViewData(item, CommunicationPageKeys.Background);
-            return View(ViewNames.CommunicationDetails, item);
+            var comm = await FindCommunicationByIdAsync(id);
+            if (comm == null) return NotFound();
+            SetHeroLayoutViewData(comm, CommunicationPageKeys.Background);
+            return View(ViewNames.CommunicationDetails, comm);
         }
 
         [HttpPost]
@@ -134,28 +152,155 @@ namespace TraffkPortal.Controllers
         {
             if (ModelState.IsValid)
             {
-                Communication communication = await FindCommunicationByIdAsync(id);
-                if (communication == null)
+                var comm = await FindCommunicationByIdAsync(id);
+                if (comm == null)
                 {
-                    communication = new Communication();
-                    Rdb.Communications.Add(communication);
+                    comm = new Communication();
+                    Rdb.Communications.Add(comm);
                 }
-                communication.CommunicationTitle = model.CommunicationTitle;
-                communication.CampaignName = model.CampaignName;
-                communication.TopicName = model.TopicName;
+                comm.CommunicationTitle = model.CommunicationTitle;
+                comm.CampaignName = model.CampaignName;
+                comm.TopicName = model.TopicName;
                 await Rdb.SaveChangesAsync();
-                return RedirectToAction(ActionNames.CreativesList);
+                return RedirectToAction(ActionNames.CommunicationsList);
             }
             return await CommunicationEdit(id);
         }
 
         #endregion
 
+        #region Schedule
+
+        [Route("{id}/Schedule")]
+        [ActionName(ActionNames.CommunicationSchedule)]
+        public async Task<IActionResult> CommunicationSchedule(int id)
+        {
+            var item = await FindCommunicationByIdAsync(id);
+            if (item == null) return NotFound();
+            SetHeroLayoutViewData(item, CommunicationPageKeys.Schedule);
+            return View(ViewNames.CommunicationSchedule, item.CommunicationSettings?.Recurrence ?? new RecurrenceSettings());
+        }
+
+        [ActionName(ActionNames.CommunicationScheduleSave)]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("{id}/Schedule/Save")]
+        public async Task<IActionResult> CommunicationScheduleSave(
+            int id,
+            RecurrenceSettings model)
+        {
+            var item = await FindCommunicationByIdAsync(id);
+            if (item == null) return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                if (model.DailyPattern.EveryWeekday)
+                {
+                    model.DailyPattern.EveryNDays = 0;
+                }
+                item.CommunicationSettings.Recurrence = model;
+                Rdb.Communications.Update(item);
+                await Rdb.AddNextScheduledBlasts(id, false, true);
+                await Rdb.SaveChangesAsync();
+                return RedirectToAction(ActionNames.CommunicationDetails);
+            }
+            SetHeroLayoutViewData(item, CommunicationPageKeys.Schedule);
+            return View(ViewNames.CommunicationSchedule, model);
+        }
+
+        #endregion
+
+        #region Communication Creatives
+
+        [Route("{id}/Creative")]
+        [ActionName(ActionNames.CommunicationCreative)]
+        public async Task<IActionResult> CommunicationCreative(int id)
+        {
+            var comm = await FindCommunicationByIdAsync(id);
+            if (comm == null) return NotFound();
+            SetHeroLayoutViewData(comm, CommunicationPageKeys.Creative);
+            PopulateViewBagWithTemplateModelSelectListItems();
+            return View(ViewNames.CommunicationCreative, new CreativeModel(comm.Creative, id, RemoveAttachmentScriptName));
+        }
+
+        [HttpPost]
+        [ActionName(ActionNames.CommunicationCreativeSave)]
+        [ValidateAntiForgeryToken]
+        [Route("{id}/Creative/Save")]
+        public async Task<IActionResult> CommunicationCreativeSave(
+            int id,
+            [Bind(
+            nameof(Creative.CreativeId),
+            nameof(Creative.CreativeTitle),
+            nameof(Creative.TemplateEngineType),
+            nameof(Creative.ModelTypeStringValue),
+            nameof(Creative.CreativeSettings),
+            nameof(Creative.CreativeSettings)+"."+nameof(CreativeSettings.EmailSubject),
+            nameof(Creative.CreativeSettings)+"."+nameof(CreativeSettings.EmailHtmlBody),
+            nameof(Creative.CreativeSettings)+"."+nameof(CreativeSettings.EmailTextBody),
+            nameof(Creative.CreativeSettings)+"."+nameof(CreativeSettings.TextMessageBody),
+            nameof(CreativeModel.AttachmentAssets),
+            nameof(CreativeModel.NewAttachments)
+            )]
+            CreativeModel model)
+        {
+            var comm = await FindCommunicationByIdAsync(id);
+            if (comm == null) return NotFound();
+            if (ModelState.IsValid)
+            {
+                Creative creative = await FindCreativeByIdAsync(model.CreativeId);
+                if (creative == null)
+                {
+                    creative = new Creative();
+                    comm.Creative = creative;
+                    Rdb.Creatives.Add(creative);
+                }
+                await CreativeModelSaveAsync(model, creative);
+                return RedirectToAction(ActionNames.CommunicationDetails);
+            }
+            SetHeroLayoutViewData(comm, CommunicationPageKeys.Creative);
+            PopulateViewBagWithTemplateModelSelectListItems();
+            return View(ViewNames.CommunicationCreative, model);
+        }
+
+
+        #endregion
+
+        private async Task CreativeModelSaveAsync(CreativeModel model, Creative creative)
+        {
+            creative.CreativeTitle = model.CreativeTitle;
+            creative.ModelType = model.ModelType;
+            creative.TemplateEngineType = model.TemplateEngineType == TemplateEngineTypes.Undefined ? TemplateEngineTypes.TraffkDollarString : model.TemplateEngineType;
+            creative.CreativeSettings.EmailSubject = model.CreativeSettings.EmailSubject;
+            creative.CreativeSettings.EmailHtmlBody = model.CreativeSettings.EmailHtmlBody;
+            creative.CreativeSettings.EmailTextBody = model.CreativeSettings.EmailTextBody;
+            creative.CreativeSettings.TextMessageBody = model.CreativeSettings.TextMessageBody;
+            bool dirty = true;
+            if (creative.CreativeId < 1)
+            {
+                await Rdb.SaveChangesAsync();
+                dirty = false;
+            }
+            if (model.NewAttachments != null)
+            {
+                foreach (var newAttachment in model.NewAttachments)
+                {
+                    var pointer = await Blobs.StoreFileAsync(false, BlobStorageServices.Roots.Portal, newAttachment, creative.AttachmentPrefix + Path.GetFileName(newAttachment.FileName), false);
+                    creative.CreativeSettings.Attachments.Add(pointer);
+                    dirty = true;
+                }
+            }
+            if (dirty)
+            {
+                await Rdb.SaveChangesAsync();
+            }
+        }
+
         #region Creatives
 
         private void PopulateViewBagWithTemplateModelSelectListItems()
         {
-            var items = Template.ModelTypes.All.OrderBy().ConvertAll(mt => new SelectListItem { Text = mt, Value = mt }).ToList();
+            var items = Stuff.GetEnumValues<CommunicationModelTypes>().ConvertAll(cmt => new SelectListItem { Text = cmt.ToString(), Value = cmt.ToString() }).OrderBy(z => z.Text).ToList();
             items.Insert(0, new SelectListItem { Text = AspHelpers.NoneDropdownItemText, Value = AspHelpers.NoneDropdownItemValue });
             ViewBag.ModelListItems = items;
         }
@@ -190,7 +335,7 @@ namespace TraffkPortal.Controllers
             var creative = await FindCreativeByIdAsync(id);
             if (creative == null) return NotFound();
             PopulateViewBagWithTemplateModelSelectListItems();
-            return View(ViewNames.CreativeDetails, creative);
+            return View(ViewNames.CreativeDetails, new CreativeModel(creative, null, RemoveAttachmentScriptName));
         }
 
         [HttpPost]
@@ -202,14 +347,16 @@ namespace TraffkPortal.Controllers
             [Bind(
             nameof(Creative.CreativeTitle),
             nameof(Creative.TemplateEngineType),
-            nameof(Creative.ModelType),
+            nameof(Creative.ModelTypeStringValue),
             nameof(Creative.CreativeSettings),
             nameof(Creative.CreativeSettings)+"."+nameof(CreativeSettings.EmailSubject),
             nameof(Creative.CreativeSettings)+"."+nameof(CreativeSettings.EmailHtmlBody),
             nameof(Creative.CreativeSettings)+"."+nameof(CreativeSettings.EmailTextBody),
-            nameof(Creative.CreativeSettings)+"."+nameof(CreativeSettings.TextMessageBody)
+            nameof(Creative.CreativeSettings)+"."+nameof(CreativeSettings.TextMessageBody),
+            nameof(CreativeModel.AttachmentAssets),
+            nameof(CreativeModel.NewAttachments)
             )]
-            Creative model)
+            CreativeModel model)
         {
             if (ModelState.IsValid)
             {
@@ -219,14 +366,7 @@ namespace TraffkPortal.Controllers
                     creative = new Creative();
                     Rdb.Creatives.Add(creative);
                 }
-                creative.CreativeTitle = model.CreativeTitle;
-                creative.ModelType = model.ModelType;
-                creative.TemplateEngineType = model.TemplateEngineType;
-                creative.CreativeSettings.EmailSubject = model.CreativeSettings.EmailSubject;
-                creative.CreativeSettings.EmailHtmlBody = model.CreativeSettings.EmailHtmlBody;
-                creative.CreativeSettings.EmailTextBody = model.CreativeSettings.EmailTextBody;
-                creative.CreativeSettings.TextMessageBody = model.CreativeSettings.TextMessageBody;
-                await Rdb.SaveChangesAsync();
+                await CreativeModelSaveAsync(model, creative);
                 return RedirectToAction(ActionNames.CreativesList);
             }
             PopulateViewBagWithTemplateModelSelectListItems();
@@ -234,5 +374,43 @@ namespace TraffkPortal.Controllers
         }
 
         #endregion
+
+        #region Blasts
+
+        [ActionName(ActionNames.CommunicationBlasts)]
+        [Route("Communications/{communicationId}/Blasts")]
+        public IActionResult CommunicationBlasts(int communicationId, string sortCol, string sortDir, int? page, int? pageSize)
+        {
+            var items = from z in Rdb.CommunicationBlasts.Include(z => z.Job).Include(z => z.Creative)
+                        where z.TenantId == TenantId && z.CommunicationId == communicationId                        
+                        select z;
+            items = ApplyBrowse(
+                items, sortCol ?? nameof(Communication.CommunicationTitle), sortDir,
+                page, pageSize);
+            return View(ViewNames.CommunicationBlasts, items);
+        }
+
+        [ActionName(ActionNames.CommunicationBlast)]
+        [Route("Communications/{communicationId}/Blasts/{communicationBlastId}")]
+        public IActionResult CommunicationBlast(int communicationId, int communicationBlastId)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        [HttpDelete]
+        [Route("Creatives/{creativeId}/DeleteAttachment")]
+        public async Task<IActionResult> RemovePortalAsset(int creativeId, string assetKey)
+        {
+            var creative = await FindCreativeByIdAsync(creativeId);
+            if (creative == null) return NotFound();
+            var a = creative.CreativeSettings.Attachments.FirstOrDefault(z => z.Path == assetKey);
+            if (a == null) return NotFound();
+            creative.CreativeSettings.Attachments.Remove(a);
+            Rdb.Update(creative);
+            await Rdb.SaveChangesAsync();
+            return NoContent();
+        }
     }
 }

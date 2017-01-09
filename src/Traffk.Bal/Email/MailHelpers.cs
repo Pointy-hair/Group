@@ -5,49 +5,83 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Traffk.Bal.Data.Rdb;
-using Traffk.Bal.Templates;
+using Traffk.Bal.Communications;
+using Traffk.Bal.Settings;
+using System;
 
 namespace Traffk.Bal.Email
 {
     public static class MailHelpers
     {
-        public const string ContactIdHeader = "x-Traffk-ContactId";
-        public const string TopicHeader = "x-Traffk-Topic";
-        public const string CampaignHeader = "x-Traffk-Campaign";
-        public const string JobId = "x-Traffk-JobId";
+        public static class HeaderNames
+        {
+            public const string UserIdHeader = "x-Traffk-UserId";
+            public const string ContactIdHeader = "x-Traffk-ContactId";
+            public const string TopicHeader = "x-Traffk-Topic";
+            public const string CampaignHeader = "x-Traffk-Campaign";
+            public const string JobId = "x-Traffk-JobId";
+        }
 
-        public static void Fill(this MimeMessage message, TemplateManager tm, MessageTemplate mt, ApplicationUser u, Contact c, object model)
+        #region Header Helpers
+
+        public static string UserId(this MimeMessage m) => m.Headers[HeaderNames.UserIdHeader];
+        public static void UserId(this MimeMessage m, string userId) => m.Headers[HeaderNames.UserIdHeader] = userId;
+        public static Int64? ContactId(this MimeMessage m) => Parse.ParseNullableInt64(m.Headers[HeaderNames.ContactIdHeader]);
+        public static void ContactId(this MimeMessage m, Int64 contactId) => m.Headers[HeaderNames.ContactIdHeader] = contactId.ToString();
+        public static string Topic(this MimeMessage m) => m.Headers[HeaderNames.TopicHeader];
+        public static void Topic(this MimeMessage m, string topic) => m.Headers[HeaderNames.TopicHeader] = topic;
+        public static string Campaign(this MimeMessage m) => m.Headers[HeaderNames.CampaignHeader];
+        public static void Campaign(this MimeMessage m, string campaign) => m.Headers[HeaderNames.CampaignHeader] = campaign;
+        public static int? JobId(this MimeMessage m) => Parse.ParseNullableInt32(m.Headers[HeaderNames.JobId]);
+        public static void JobId(this MimeMessage m, int jobId) => m.Headers[HeaderNames.JobId] = jobId.ToString();
+
+        #endregion
+
+        public static void Fill(
+            this MimeMessage message,
+            ICreativeSettingsFinder finder,
+            ICollection<ReusableValue> reusableValues,
+            Creative creative, 
+            CommunicationTypes ct, 
+            ApplicationUser u, 
+            Contact c, 
+            object model)
         {
             Requires.NonNull(message, nameof(message));
-            Requires.NonNull(tm, nameof(tm));
-            Requires.NonNull(mt, nameof(mt));
+            Requires.NonNull(creative, nameof(creative));
 
-            Template t;
-            string s;
+            var filler = new CommunicationsFiller(finder, reusableValues);
+
+            if (u != null)
+            {
+                message.UserId(u.Id);
+            }
+            if (c != null)
+            {
+                message.ContactId(c.ContactId);
+            }
+
 
             var context = new Dictionary<string, object> { { "User", u }, { "Contact", c }, { "Model", model } };
+            var compiledContext = new CommunicationsFiller.CompiledContext(context);
             var indexerByName = new Dictionary<string, IDictionary<string, string>>();
 
-            if (mt.SubjectTemplateId.HasValue)
-            {
-                t = tm.Finder.FindTemplateById(mt.SubjectTemplateId.Value);
-                s = tm.Evaluate(t, context);
-                message.Subject = s;
-            }
             MimeEntity textPart = null;
             MimeEntity htmlPart = null;
-            if (mt.TextBodyTemplateId.HasValue)
+            switch (ct)
             {
-                t = tm.Finder.FindTemplateById(mt.TextBodyTemplateId.Value);
-                s = tm.Evaluate(t, context);
-                textPart = new TextPart(TextFormat.Text) { Text = s };
+                case CommunicationTypes.Email:
+                    message.Subject = filler.Evaluate(creative, z=>z.EmailSubject, compiledContext);
+                    textPart = new TextPart(TextFormat.Text) { Text = filler.Evaluate(creative, z => z.EmailTextBody, compiledContext) };
+                    htmlPart = new TextPart(TextFormat.Html) { Text = filler.Evaluate(creative, z => z.EmailHtmlBody, compiledContext) };
+                    break;
+                case CommunicationTypes.Sms:
+                    textPart = new TextPart(TextFormat.Text) { Text = filler.Evaluate(creative, z => z.TextMessageBody, compiledContext) };
+                    break;
+                default:
+                    throw new UnexpectedSwitchValueException(ct);
             }
-            if (mt.HtmlBodyTemplateId.HasValue)
-            {
-                t = tm.Finder.FindTemplateById(mt.HtmlBodyTemplateId.Value);
-                s = tm.Evaluate(t, context);
-                htmlPart = new TextPart(TextFormat.Html) { Text = s };
-            }
+
             if (textPart == null || htmlPart == null)
             {
                 message.Body = textPart ?? htmlPart;

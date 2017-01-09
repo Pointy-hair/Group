@@ -1,7 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Traffk.Portal;
-using TraffkPortal;
-using TraffkPortal.Controllers;
 using Moq;
 using Traffk.Bal.Services;
 using Traffk.Bal.Data.Rdb;

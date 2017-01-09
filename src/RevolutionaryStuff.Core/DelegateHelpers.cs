@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace RevolutionaryStuff.Core
@@ -22,7 +23,7 @@ namespace RevolutionaryStuff.Core
     {
         private static bool AllowAllExceptions(Exception ex) { return true; }
 
-        public static async Task<T> CallAndRetryOnFailureAsync<T>(Func<Task<T>> func, int? retryCount = 5, TimeSpan? backoffPeriod = null, Predicate<Exception> exceptionChecker = null)
+        public static async Task<T> CallAndRetryOnFailureAsync<T>(this Func<Task<T>> func, int? retryCount = 5, TimeSpan? backoffPeriod = null, Predicate<Exception> exceptionChecker = null)
         {
             exceptionChecker = exceptionChecker ?? AllowAllExceptions;
             backoffPeriod = backoffPeriod ?? TimeSpan.FromMilliseconds(250);
@@ -50,7 +51,7 @@ namespace RevolutionaryStuff.Core
             }
         }
 
-        public static T CallAndRetryOnFailure<T>(Func<T> func, int? retryCount = 3, TimeSpan? backoffPeriod = null, Predicate<Exception> exceptionChecker = null)
+        public static T CallAndRetryOnFailure<T>(this Func<T> func, int? retryCount = 3, TimeSpan? backoffPeriod = null, Predicate<Exception> exceptionChecker = null)
         {
             exceptionChecker = exceptionChecker ?? AllowAllExceptions;
             backoffPeriod = backoffPeriod ?? TimeSpan.FromSeconds(2);
@@ -78,7 +79,7 @@ namespace RevolutionaryStuff.Core
             }
         }
 
-        public static T CallAndRetryOnFailure<T, E>(Func<T> func, int? retryCount = 3, TimeSpan? backoffPeriod = null) where E : Exception
+        public static T CallAndRetryOnFailure<T, E>(this Func<T> func, int? retryCount = 3, TimeSpan? backoffPeriod = null) where E : Exception
         {
             Predicate<Exception> exceptionChecker = delegate (Exception ex)
             {
@@ -87,12 +88,37 @@ namespace RevolutionaryStuff.Core
             return CallAndRetryOnFailure(func, retryCount, backoffPeriod, exceptionChecker);
         }
 
-        public static void Invoke(this EventHandler h, object sender, EventArgs e=null, bool throwException=false)
+        /// <summary>
+        /// Enter a critical section and act, or if someone is already inside, wait, but don't execute
+        /// </summary>
+        /// <param name="actor">The action to take</param>
+        /// <param name="locker">A lock</param>
+        public static void SingleActor(this Action actor, object locker = null)
         {
-            if (h == null) return;
+            Requires.NonNull(actor, nameof(actor));
+            locker = locker ?? actor;
+            if (Monitor.TryEnter(locker))
+            {
+                try
+                {
+                    actor();
+                }
+                finally
+                {
+                    Monitor.Exit(locker);
+                }
+            }
+            else
+            {
+                lock (locker) { }
+            }
+        }
+
+        public static void SafeInvoke(this EventHandler h, object sender, EventArgs e=null, bool throwException=false)
+        {
             try
             {
-                h(sender, e ?? EventArgs.Empty);
+                h?.Invoke(sender, e ?? EventArgs.Empty);
             }
             catch (Exception ex)
             {

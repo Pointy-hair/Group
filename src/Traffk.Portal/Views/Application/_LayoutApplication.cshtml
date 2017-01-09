@@ -7,7 +7,6 @@
 }
 @section navItems {
     <li><a asp-action="Edit" asp-route-id="@entityId" class="@(pageKey==PageKeys.Basics?"current-section":"")">Main</a></li>
-    <li><a asp-action="Communications" asp-route-id="@entityId" class="@(pageKey==PageKeys.CommunicationSettings?"current-section":"")">Communication Settings</a></li>
     @if (entityType == ApplicationTypes.Portal)
     {
         <li><a asp-action="PortalSettings" asp-route-id="@entityId" class="@(pageKey==PageKeys.PortalSettings?"current-section":"")">Portal Settings</a></li>

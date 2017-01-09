@@ -42,7 +42,7 @@
     "Serilog.Extensions.Logging": "1.4.0-dev-10136",
     "System.Runtime.Serialization.Json": "4.3.0",
     "Serilog.Sinks.AzureTableStorage": "3.0.0",
-    "Serilog": "2.4.0-dev-00767",
+    "Microsoft.EntityFrameworkCore": "1.1.0",
     "Microsoft.PowerBI.JavaScript": "2.2.3",
     "Microsoft.VisualStudio.Web.CodeGenerators.Mvc": {
       "version": "1.1.0-preview4-final",

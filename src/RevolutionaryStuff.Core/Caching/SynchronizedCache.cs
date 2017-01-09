@@ -77,11 +77,11 @@ namespace RevolutionaryStuff.Core.Caching
                 RWL.ExitReadLock();
                 if (found && HitHandler != null)
                 {
-                    Stuff.InvokeEvent(HitHandler, this);
+                    HitHandler.SafeInvoke(this);
                 }
                 else if (!found && MissHandler != null)
                 {
-                    Stuff.InvokeEvent(MissHandler, this);
+                    MissHandler.SafeInvoke(this);
                 }
             }
         }
@@ -112,10 +112,7 @@ namespace RevolutionaryStuff.Core.Caching
             }
             try
             {
-                if (FlushHandler != null)
-                {
-                    Stuff.InvokeEvent(FlushHandler, this);
-                }
+                FlushHandler?.SafeInvoke(this);
             }
             catch (Exception)
             {

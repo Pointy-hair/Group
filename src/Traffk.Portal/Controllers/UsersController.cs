@@ -16,12 +16,29 @@ using TraffkPortal.Services;
 using TraffkPortal.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Traffk.Bal.Communications;
 
 namespace TraffkPortal.Controllers
 {
     public class UsersController : BasePageController
     {
         public const string Name = "Users";
+
+        public enum PageKeys
+        {
+            UserBackground,
+            UserMessages,
+        }
+
+        public static class ActionNames
+        {
+            public const string UserList = "Users";
+            public const string UserBackground = "UserBackground";
+            public const string UserBackgroundSave = "UserBackgroundSave";
+            public const string UserMessages = "UserMessages";
+            public const string UserCreate = "Create";
+            public const string UserDelete = "Delete";
+        }
 
         private readonly IUserClaimsPrincipalFactory<ApplicationUser> UserClaimsPrincipalFactory;
         private readonly IAuthorizationService AuthorizationService;
@@ -42,6 +59,11 @@ namespace TraffkPortal.Controllers
             UserClaimsPrincipalFactory = userClaimsPrincipalFactory;
             AuthorizationService = authorizationService;
             UserManager = userManager;
+        }
+
+        private void SetHeroLayoutViewData(ApplicationUser user, PageKeys pageKey)
+        {
+            SetHeroLayoutViewData(user.Id, user.UserName, pageKey);
         }
 
         public override void OnActionExecuting(ActionExecutingContext context)
@@ -70,7 +92,9 @@ namespace TraffkPortal.Controllers
         }
 
         // GET: Users
-        public async Task<IActionResult> Index(string sortCol, string sortDir, int? page, int? pageSize)
+        [ActionName(ActionNames.UserList)]
+        [Route("Users")]
+        public async Task<IActionResult> Users(string sortCol, string sortDir, int? page, int? pageSize)
         {
             var rolesById = await GetRolesById();
             var users = Rdb.Users.Include(z => z.Roles).Where(z => z.TenantId == this.TenantId);
@@ -82,19 +106,9 @@ namespace TraffkPortal.Controllers
             return View(model);
         }
 
-        // GET: Users/Details/5
-        public async Task<IActionResult> Details(string id)
-        {
-            var user = await GetUserByIdAsync(id);
-            if (user == null) return NotFound();
-
-            var rolesById = await GetRolesById();
-            var p = await UserClaimsPrincipalFactory.CreateAsync(user);
-            var model = new UserModel(user, rolesById, await p.GetCanAccessProtectedHealthInformationAsync(AuthorizationService));
-            return View(model);
-        }
-
         // GET: Users/Create
+        [Route("Users/Create")]
+        [ActionName(ActionNames.UserCreate)]
         public IActionResult Create()
         {
             return View(new CreeateUserModel());
@@ -105,6 +119,7 @@ namespace TraffkPortal.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("Users/CreateSave")]
         public async Task<IActionResult> Create(
             [Bind(
             nameof(CreeateUserModel.AssignedRoleIds),
@@ -148,8 +163,8 @@ namespace TraffkPortal.Controllers
                         var code = await UserManager.GeneratePasswordResetTokenAsync(user);
                         var callbackUrl = Url.Action(nameof(AccountController.AcceptInvitation), AccountController.Name, new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
                         await EmailSender.SendEmailCommunicationAsync(
-                            SystemCommunication.CommunicationPurposes.AcceptInvitation,
-                            Template.ModelTypes.CreateCallbackUrlModel(callbackUrl, model.InvitationText),
+                            SystemCommunicationPurposes.UserAcceptInvitation,
+                            CommunicationModelFactory.CreateCallbackUrlModel(callbackUrl, model.InvitationText),
                             email);
                     }
                 }
@@ -170,7 +185,26 @@ namespace TraffkPortal.Controllers
         }
 
         // GET: Users/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        [ActionName(ActionNames.UserMessages)]
+        [Route("Users/{id}/Messages")]
+        public async Task<IActionResult> UserMessages(string id, string sortCol, string sortDir, int? page, int? pageSize)
+        {
+            var user = await GetUserByIdAsync(id);
+            if (user == null) return NotFound();
+
+            var items = Rdb.CommunicationPieces.Where(z => z.UserId == id && z.TenantId == this.TenantId);
+            items = ApplyBrowse(
+                items, sortCol ?? nameof(CommunicationPiece.CreatedAt), sortDir,
+                page, pageSize);
+
+            SetHeroLayoutViewData(user, PageKeys.UserMessages);
+            return View(items);
+        }
+
+        // GET: Users/Edit/5
+        [ActionName(ActionNames.UserBackground)]
+        [Route("Users/{id}")]
+        public async Task<IActionResult> UserBasics(string id)
         {
             var user = await GetUserByIdAsync(id);
             if (user == null) return NotFound();
@@ -178,6 +212,7 @@ namespace TraffkPortal.Controllers
             var rolesById = await GetRolesById();
             var p = await UserClaimsPrincipalFactory.CreateAsync(user);
             var model = new UserModel(user, rolesById, await p.GetCanAccessProtectedHealthInformationAsync(AuthorizationService));
+            SetHeroLayoutViewData(user, PageKeys.UserBackground);
             return View(model);
         }
 
@@ -185,8 +220,10 @@ namespace TraffkPortal.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [ActionName(ActionNames.UserBackgroundSave)]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(
+        [Route("Users/{id}/Save")]
+        public async Task<IActionResult> UserBasics(
             string id, 
             [Bind(
             nameof(UserModel.Id),
@@ -254,10 +291,13 @@ namespace TraffkPortal.Controllers
                 }
                 return RedirectToIndex();
             }
+            SetHeroLayoutViewData(user, PageKeys.UserBackground);
             return View(model);
         }
 
         // GET: Users/Delete/5
+        [ActionName(ActionNames.UserDelete)]
+        [Route("Users/{id}/Delete")]
         public async Task<IActionResult> Delete(string id)
         {
             var user = await GetUserByIdAsync(id);
@@ -272,6 +312,7 @@ namespace TraffkPortal.Controllers
         // POST: Users/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Route("Users/{id}/DeleteConfirmed")]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var user = await GetUserByIdAsync(id);

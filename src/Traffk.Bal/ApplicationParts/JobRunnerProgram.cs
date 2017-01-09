@@ -25,7 +25,7 @@ namespace Traffk.Bal.ApplicationParts
         [CommandLineSwitch(nameof(NoJobsReceivedTimeout), Mandatory = false)]
         public TimeSpan NoJobsReceivedTimeout = TimeSpan.FromMinutes(1);
 
-        protected abstract string JobType { get; }
+        protected abstract JobTypes JobType { get; }
 
         protected async override Task OnGoAsync()
         {

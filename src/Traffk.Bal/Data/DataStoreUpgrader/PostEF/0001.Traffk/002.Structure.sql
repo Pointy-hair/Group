@@ -126,6 +126,9 @@ exec db.ColumnPropertySet 'Jobs', 'CreatedAtUtc', 'Datetime when this entity was
 exec db.ColumnPropertySet 'Jobs', 'JobResult', 'Traffk.Bal.JobResult', @propertyName='JsonSettingsClass'
 exec db.ColumnPropertySet 'Jobs', 'JobRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
 exec db.ColumnPropertySet 'Jobs', 'JobRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'Jobs', 'JobType', 'JobTypes', @propertyName='EnumType'
+exec db.ColumnPropertySet 'Jobs', 'JobStatus', 'JobStatuses', @propertyName='EnumType'
+
 
 GO
 
@@ -152,8 +155,10 @@ exec db.ColumnPropertySet 'Applications', 'ApplicationSettings', 'Settings parti
 exec db.ColumnPropertySet 'Applications', 'ApplicationSettings', 'Bal.Settings.ApplicationSettings', @propertyName='JsonSettingsClass'
 exec db.ColumnPropertySet 'Applications', 'ApplicationType', 'ApplicationTypes', @propertyName='EnumType'
 
+
 GO
 
+--kill me
 create table Templates
 (
 	TemplateId int not null identity primary key,
@@ -179,6 +184,7 @@ exec db.ColumnPropertySet 'Templates', 'CreatedAtUtc', 'Datetime when this entit
 
 GO
 
+--kill me
 create table MessageTemplates
 (
 	MessageTemplateId int not null identity primary key,
@@ -199,6 +205,7 @@ exec db.ColumnPropertySet 'MessageTemplates', 'CreatedAtUtc', 'Datetime when thi
 
 GO
 
+--kill me
 create table SystemCommunications
 (
 	SystemCommunicationId int not null identity primary key,
@@ -231,6 +238,7 @@ exec db.TablePropertySet  'AspNetUserTokens', 'UserToken', @propertyName='ClassN
 
 GO
 
+--kill me
 create table CommunicationBlasts
 (
 	CommunicationBlastId int not null identity primary key,
@@ -257,147 +265,6 @@ exec db.ColumnPropertySet 'CommunicationBlasts', 'CreatedAtUtc', 'Datetime when 
 exec db.ColumnPropertySet 'CommunicationBlasts', 'CommunicationBlastSettings', 'Bal.Settings.CommunicationSettings', @propertyName='JsonSettingsClass'
 exec db.ColumnPropertySet 'CommunicationBlasts', 'CommunicationBlastRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
 exec db.ColumnPropertySet 'CommunicationBlasts', 'CommunicationBlastRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
-
-GO
-
-CREATE proc [dbo].[JobDequeue]
-	@jobType dbo.developername,
-	@serviceRoleMachineName dbo.developername,
-	@numUnits int=null,
-	@jobId int=null,
-	@tenantId int=null,
-	@maxConcurrentPerTenant int=null
-as
-begin
-
-	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
-	SET NOCOUNT ON;
-
-	set @numUnits = coalesce(@numUnits,1);
-	set @maxConcurrentPerTenant = coalesce(@maxConcurrentPerTenant,4);
-	set @maxConcurrentPerTenant = case when @maxConcurrentPerTenant>3 then 3 else @maxConcurrentPerTenant end;
-	declare @stuckMinutes int = 60*2
-	declare @dt datetime = getutcdate()
-
-	exec db.PrintNow 
-		'JobDequeue jobType={s0}, @numUnits={n0}, @jobId={n1}, @tenantId={n2}, @maxConcurrentPerTenant={n3}',
-		@s0=@jobType, @n0=@numUnits, @n1=@jobId, @n2=@tenantId, @n3=@maxConcurrentPerTenant;
-
-	;with 
-	inprog(JobId, TenantId, ConcurrencyToken) as --tasks that are currently in progress
-	(
-		select JobId, TenantId, ConcurrencyToken
-		from
-			Jobs
-		where
-			JobType=@jobType and
-			DequeuedAtUtc is not null and 
-			CompletedAtUtc is null and
-			jobStatus in ('Dequeued', 'Running') and
-			datediff(minute, DequeuedAtUtc, @dt) < @stuckMinutes -- in case a processor gets stuck and doesn't auto-reset
-	),
-	cc(TenantId, CurrentCnt) as  --count of inprogress tasks by client
-	(
-		select TenantId, count(*)
-		from
-			inprog
-		group by TenantId	
-	),
-	concurrencyTokens(TenantId, ConcurrencyToken) as -- in progress concurrency tokens
-	(
-		select distinct TenantId, ConcurrencyToken
-		from
-			inprog
-		where
-			ConcurrencyToken is not null
-	),
-	a(JobId, TenantId, OverallRank, ClientRank, ClientConcurrencyRank, ConcurrencyToken, JobStatus) as --partially filtered list of candidates
-	(
-		select 
-			JobId,
-			j.TenantId,
-			DENSE_RANK () over (order by [Priority] desc, coalesce(DontRunBeforeUtc, cast('2174-04-09' as datetime)), JobId),
-			DENSE_RANK () over (partition by j.TenantId order by [Priority] desc, coalesce(DontRunBeforeUtc, cast('2174-04-09' as datetime)), JobId),
-			DENSE_RANK () over (partition by j.TenantId, coalesce(j.ConcurrencyToken, cast(JobId as varchar(20))) order by [Priority] desc, coalesce(DontRunBeforeUtc, cast('2174-04-09' as datetime)), JobId),
-			j.ConcurrencyToken,
-			j.JobStatus
-		from 
-			Jobs j 
-				left join
-			Tenants t 
-				on j.TenantId=t.TenantId 
-				left join
-			concurrencyTokens ct 
-				on ct.ConcurrencyToken =j.ConcurrencyToken
-				and ct.TenantId=j.TenantId
-		where 
-			JobType=@jobType and
-			jobStatus in ('Queued') and
-			(DontRunBeforeUtc is null or @dt>DontRunBeforeUtc) and
-			(j.TenantId is null or @tenantId is null or j.TenantId=@tenantId) and
-			DequeuedAtUtc is null and
-			ct.ConcurrencyToken is null
-	)
-	select top(@numUnits) a.JobId
-	into #z
-	from 
-		a left join
-		cc on a.TenantId = cc.TenantId
-	where
-		a.ClientRank+coalesce(cc.CurrentCnt,0) <= @maxConcurrentPerTenant and
-		a.ClientConcurrencyRank=1
-	order by OverallRank
-
-	declare @updatedJobIds dbo.intlisttype 
-
-	update j
-	set 
-		jobstatus='Dequeued',
-		dequeuedAtutc=@dt,
-		ServiceRoleMachineName=@serviceRoleMachineName
-	output inserted.JobId, inserted.TenantId into @updatedJobIds
-	from
-		jobs j
-			inner join
-		#z z
-			on j.jobid=z.jobid
-	where
-		dequeuedAtutc is null or datediff(mi, dequeuedAtutc, @dt)>1
-
-	select j.*
-	from 
-		jobs j
-	where 
-		j.JobId in (select val from @updatedJobIds)
-
-end
-
-
-GO
-
-exec db.SprocPropertySet  'JobDequeue', '1', @propertyName='AddToDbContext'
-exec db.SprocPropertySet  'JobDequeue', 'Collection:Job', @propertyName='SprocType'
-
-GO
-
-create proc JobReset
-	@jobId int
-as
-begin
-
-	update jobs 
-	set 
-		jobStatus='Queued',
-		DequeuedAtUtc = null,
-		ServiceRoleMachineName = null
-	where jobid=@jobId
-
-end
-
-GO
-
-exec db.SprocPropertySet  'JobReset', '1', @propertyName='AddToDbContext'
-exec db.SprocPropertySet  'JobReset', 'void', @propertyName='SprocType'
 
 GO
 
@@ -429,71 +296,6 @@ BEGIN  
  
     RETURN
 END  
-
-GO
-
-alter proc GetFieldCounts
-	@schemaName sysname,
-	@tableName sysname,
-	@tenantId int,
-	@fieldNamesCsv nvarchar(max)
-AS
-begin
-
-	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
-	SET NOCOUNT ON;
-
-	create table #cnts
-	(
-		fieldName nvarchar(128),
-		fieldVal nvarchar(max),
-		fieldCnt int
-	)
-
-
-	declare @fieldName sysname
-	declare @sql nvarchar(max)
-
-	DECLARE x CURSOR FOR 
-	SELECT val
-	FROM dbo.SplitString(@fieldNamesCsv, ',')
-
-	OPEN x
-
-	NEXT_TASK:
-
-	FETCH NEXT FROM x INTO @fieldName
-
-	IF @@FETCH_STATUS = 0
-	BEGIN
-
-		set @sql = 'select '''+@fieldName+''', z.['+@fieldName+'], count(*) from '+@schemaName+'.'+@tableName+' z where tenantid='+cast(@tenantId as varchar(10))+' group by z.['+@fieldName+']'
-
-		exec db.PrintNow @sql
-
-		insert into #cnts
-		exec(@sql)
-
-		Goto NEXT_TASK;
-	END
-
-	CLOSE x
-	DEALLOCATE x
-
-	set @sql = 'select null, null, count(*) from '+@schemaName+'.'+@tableName+' z where tenantid='+cast(@tenantId as varchar(10))
-	exec db.PrintNow @sql
-	insert into #cnts
-	exec(@sql)
-
-	select * from #cnts
-
-end
-
-GO
-
-exec db.SprocPropertySet  'GetFieldCounts', '1', @propertyName='AddToDbContext'
-exec db.SprocPropertySet  'GetFieldCounts', 'internal', @propertyName='AccessModifier'
-exec db.SprocPropertySet  'GetFieldCounts', 'Collection:Traffk.Bal.Data.GetCountsResult.Item', @propertyName='SprocType'
 
 GO
 
@@ -542,10 +344,6 @@ exec db.TablePropertySet  'DateDimensions', '1', @propertyName='GeneratePoco'
 GO
 
 
-
-
-
-
 ------------------------------------------------------------
 
 
@@ -576,14 +374,14 @@ exec db.ColumnPropertySet 'Creatives', 'CreativeTitle', 'Identifyable title for 
 exec db.ColumnPropertySet 'Creatives', 'CreativesRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
 exec db.ColumnPropertySet 'Creatives', 'CreativesRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
 exec db.ColumnPropertySet 'Creatives', 'CreativeSettings', 'Bal.Settings.CreativeSettings', @propertyName='JsonSettingsClass'
-exec db.ColumnPropertySet 'Creatives', 'ModelType', 'CommunicationModels', @propertyName='EnumType'
-
+exec db.ColumnPropertySet 'Creatives', 'ModelType', 'Traffk.Bal.Communications.CommunicationModelTypes', @propertyName='EnumType'
+exec db.ColumnPropertySet 'Creatives', 'TemplateEngineType', 'Traffk.Bal.Communications.TemplateEngineTypes', @propertyName='EnumType'
 
 GO
 
 create table Communications
 (
-	CommunicationId int not null primary key,
+	CommunicationId int not null identity primary key,
 	TenantId int not null references Tenants(TenantId),
 	CommunicationRowStatus dbo.RowStatus not null default '1',
 	CreatedAtUtc datetime not null default (getutcdate()),
@@ -628,13 +426,14 @@ exec db.ColumnPropertySet 'CommunicationBlasts', 'CommunicationBlastRowStatus', 
 
 GO
 
-create table CreativeBlastTrackers
+create table CommunicationBlastTrackers
 (
-	CreativeBlastTrackerId int not null identity primary key,
+	CommunicationBlastTrackerId int not null identity primary key,
 	TenantId int not null references Tenants(TenantId),
-	CreativeBlastCreativeTrackerRowStatus dbo.RowStatus not null default '1',
+	CommunicationBlastTrackerRowStatus dbo.RowStatus not null default '1',
 	CommunicationBlastId int not null references CommunicationBlasts(CommunicationBlastId),
 	LinkType dbo.DeveloperName not null,
+	CommunicationType dbo.DeveloperName not null,
 	TrackerUid uniqueidentifier not null,
 	RedirectUrl dbo.Url not null,
 	Position int not null
@@ -642,14 +441,16 @@ create table CreativeBlastTrackers
 
 GO
 
-create unique index UX_CreativeBlastTrackersUids on CreativeBlastTrackers(TrackerUid)
-exec db.TablePropertySet  'CreativeBlastTrackers', 'Assets referenced by a creative whose hyperlinks have been munged to support tracking'
-exec db.TablePropertySet  'CreativeBlastTrackers', '1', @propertyName='AddToDbContext'
-exec db.TablePropertySet  'CreativeBlastTrackers', '1', @propertyName='GeneratePoco'
-exec db.TablePropertySet  'CreativeBlastTrackers', 'ITraffkTenanted', @propertyName='Implements'
-exec db.ColumnPropertySet 'CreativeBlastTrackers', 'CreativeBlastCreativeTrackerRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
-exec db.ColumnPropertySet 'CreativeBlastTrackers', 'CreativeBlastCreativeTrackerRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
-exec db.ColumnPropertySet 'CreativeBlastTrackers', 'TrackerUid', 'Non-guessable guid for this item'
+create unique index UX_CommunicationBlastTrackersUids on CommunicationBlastTrackers(TrackerUid)
+exec db.TablePropertySet  'CommunicationBlastTrackers', 'Assets referenced by a creative whose hyperlinks have been munged to support tracking'
+exec db.TablePropertySet  'CommunicationBlastTrackers', '1', @propertyName='AddToDbContext'
+exec db.TablePropertySet  'CommunicationBlastTrackers', '1', @propertyName='GeneratePoco'
+exec db.TablePropertySet  'CommunicationBlastTrackers', 'ITraffkTenanted', @propertyName='Implements'
+exec db.ColumnPropertySet 'CommunicationBlastTrackers', 'CommunicationBlastTrackerRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
+exec db.ColumnPropertySet 'CommunicationBlastTrackers', 'CommunicationBlastTrackerRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'CommunicationBlastTrackers', 'TrackerUid', 'Non-guessable guid for this item'
+exec db.ColumnPropertySet 'CommunicationBlastTrackers', 'LinkType', 'CommunicationBlastTrackerLinkTypes', @propertyName='EnumType'
+exec db.ColumnPropertySet 'CommunicationBlastTrackers', 'CommunicationType', 'Traffk.Bal.Communications.CommunicationTypes', @propertyName='EnumType'
 
 GO
 
@@ -661,7 +462,8 @@ create table CommunicationPieces
 	CommunicationPieceUid uniqueidentifier not null,
 	CommunicationBlastId int not null references CommunicationBlasts(CommunicationBlastId),
 	ContactId bigint null references Contacts(ContactId),
-	UserId dbo.AspNetId null references AspNetUsers(Id)
+	UserId dbo.AspNetId null references AspNetUsers(Id),
+	Data dbo.JsonObject
 )
 
 GO
@@ -672,6 +474,7 @@ exec db.TablePropertySet  'CommunicationPieces', '1', @propertyName='AddToDbCont
 exec db.TablePropertySet  'CommunicationPieces', '1', @propertyName='GeneratePoco'
 exec db.TablePropertySet  'CommunicationPieces', 'ITraffkTenanted', @propertyName='Implements'
 exec db.ColumnPropertySet 'CommunicationPieces', 'CommunicationPieceUid', 'Non-guessable guid for this item'
+exec db.ColumnPropertySet 'CommunicationPieces', 'Data', 'Bal.Settings.CommunicationPieceData', @propertyName='JsonSettingsClass'
 
 GO
 
@@ -681,7 +484,7 @@ create table CommunicationPieceVisits
 	TenantId int not null references Tenants(TenantId),
 	CreatedAtUtc datetime not null default (getutcdate()),
 	CommunicationPieceId bigint not null references CommunicationPieces(CommunicationPieceId),
-	CreativeBlastTrackerId int not null references CreativeBlastTrackers(CreativeBlastTrackerId)
+	CommunicationBlastTrackerId int not null references CommunicationBlastTrackers(CommunicationBlastTrackerId)
 )
 
 GO

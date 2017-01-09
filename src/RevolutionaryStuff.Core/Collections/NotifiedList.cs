@@ -206,9 +206,7 @@ namespace RevolutionaryStuff.Core.Collections
         }
 
         protected virtual void OnChanged()
-        {
-            DelegateHelpers.Invoke(Changed, this);
-        }
+            => DelegateHelpers.SafeInvoke(Changed, this);
 
         #endregion
     }

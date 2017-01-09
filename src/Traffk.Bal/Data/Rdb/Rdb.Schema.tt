@@ -313,13 +313,13 @@ foreach (var f in z.XPathSelectElements("Columns/Column"))
 	bool canUseMaxLen = false;
 	bool isNullable = GetAttrValAsBool(f, "isNullable");
 	bool isPrimaryKey = GetAttrValAsBool(f, "isPrimaryKey");
-	copyConstructorFieldNames.Add(propertyName);
+	var addToCopyConstructor = !isPrimaryKey;
 	string jsonSettingsClass = null;
 	string dataType;
 	switch (GetAttrVal(f, "sqlType"))
 	{
 		case "uniqueidentifier":
-			dataType = "byte[]";
+			dataType = "Guid";
 			break;
 		case "smallint":
 			dataType = "int" + (isNullable ? "?" : "");//should be a ushort, but EF doesn't like that type with SQL Server
@@ -462,6 +462,7 @@ foreach (var f in z.XPathSelectElements("Columns/Column"))
 	}
 	if (propertyName.StartsWith("CreatedAt", System.StringComparison.CurrentCultureIgnoreCase))
 	{
+		addToCopyConstructor = false;
 #>		[DatabaseGenerated(DatabaseGeneratedOption.Computed)]
 <#
 	}
@@ -496,6 +497,10 @@ foreach (var f in z.XPathSelectElements("Columns/Column"))
 		<#=accessModifier#> <#=dataType#> <#=localTimePropertyName#> => <#=propertyName#><#=isNullable?"?":""#>.ToLocalTime();
 
 <#	
+	}
+	if (addToCopyConstructor)
+	{
+		copyConstructorFieldNames.Add(propertyName);
 	}
 }
 #>

@@ -102,9 +102,6 @@
           </Properties>
         </Column>
       </Columns>
-      <Collections>
-        <Collection schema="dbo" table="SystemCommunications" column="ApplicationId" />
-      </Collections>
     </Table>
     <Table schema="dbo" name="AspNetRoleClaims">
       <Properties>
@@ -201,11 +198,11 @@
         </Column>
       </Columns>
       <Collections>
+        <Collection schema="dbo" table="CommunicationPieces" column="UserId" />
         <Collection schema="dbo" table="UserActivities" column="UserId" />
         <Collection schema="dbo" table="AspNetUserClaims" column="UserId" />
         <Collection schema="dbo" table="AspNetUserLogins" column="UserId" />
         <Collection schema="dbo" table="AspNetUserRoles" column="UserId" />
-        <Collection schema="dbo" table="CommunicationPieces" column="UserId" />
       </Collections>
     </Table>
     <Table schema="dbo" name="AspNetUserTokens">
@@ -240,8 +237,47 @@
         <Column name="JobId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="Jobs" />
       </Columns>
       <Collections>
-        <Collection schema="dbo" table="CreativeBlastTrackers" column="CommunicationBlastId" />
         <Collection schema="dbo" table="CommunicationPieces" column="CommunicationBlastId" />
+        <Collection schema="dbo" table="CommunicationBlastTrackers" column="CommunicationBlastId" />
+      </Collections>
+    </Table>
+    <Table schema="dbo" name="CommunicationBlastTrackers">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="Comment" value="Assets referenced by a creative whose hyperlinks have been munged to support tracking" />
+        <Property name="GeneratePoco" value="1" />
+        <Property name="Implements" value="ITraffkTenanted" />
+      </Properties>
+      <Columns>
+        <Column name="CommunicationBlastTrackerId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Tenants" />
+        <Column name="CommunicationBlastTrackerRowStatus" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')">
+          <Properties>
+            <Property name="AccessModifier" value="missing" />
+            <Property name="ImplementsRowStatusSemantics" value="1" />
+          </Properties>
+        </Column>
+        <Column name="CommunicationBlastId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="CommunicationBlasts" />
+        <Column name="LinkType" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80">
+          <Properties>
+            <Property name="EnumType" value="CommunicationBlastTrackerLinkTypes" />
+          </Properties>
+        </Column>
+        <Column name="TrackerUid" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="uniqueidentifier">
+          <Properties>
+            <Property name="MS_Description" value="Non-guessable guid for this item" />
+          </Properties>
+        </Column>
+        <Column name="RedirectUrl" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1024" />
+        <Column name="Position" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="CommunicationType" position="9" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80">
+          <Properties>
+            <Property name="EnumType" value="Traffk.Bal.Communications.CommunicationTypes" />
+          </Properties>
+        </Column>
+      </Columns>
+      <Collections>
+        <Collection schema="dbo" table="CommunicationPieceVisits" column="CommunicationBlastTrackerId" />
       </Collections>
     </Table>
     <Table schema="dbo" name="CommunicationPieces">
@@ -263,6 +299,11 @@
         <Column name="CommunicationBlastId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="CommunicationBlasts" />
         <Column name="ContactId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" refSchema="dbo" refTable="Contacts" />
         <Column name="UserId" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="450" refSchema="dbo" refTable="AspNetUsers" />
+        <Column name="Data" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1">
+          <Properties>
+            <Property name="JsonSettingsClass" value="Bal.Settings.CommunicationPieceData" />
+          </Properties>
+        </Column>
       </Columns>
       <Collections>
         <Collection schema="dbo" table="CommunicationPieceVisits" column="CommunicationPieceId" />
@@ -280,7 +321,7 @@
         <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Tenants" />
         <Column name="CreatedAtUtc" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())" />
         <Column name="CommunicationPieceId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bigint" refSchema="dbo" refTable="CommunicationPieces" />
-        <Column name="CreativeBlastTrackerId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="CreativeBlastTrackers" />
+        <Column name="CommunicationBlastTrackerId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="CommunicationBlastTrackers" />
       </Columns>
     </Table>
     <Table schema="dbo" name="Communications">
@@ -291,7 +332,7 @@
         <Property name="Implements" value="ITraffkTenanted" />
       </Properties>
       <Columns>
-        <Column name="CommunicationId" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="CommunicationId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
         <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Tenants" />
         <Column name="CommunicationRowStatus" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')">
           <Properties>
@@ -392,6 +433,7 @@
       <Collections>
         <Collection schema="deerwalk" table="Eligibility" column="ContactId" />
         <Collection schema="deerwalk" table="Pharmacy" column="ContactId" />
+        <Collection schema="dbo" table="CommunicationPieces" column="ContactId" />
         <Collection schema="deerwalk" table="MedicalClaims" column="ContactId" />
         <Collection schema="deerwalk" table="Demographics" column="ContactId" />
         <Collection schema="deerwalk" table="Visits" column="ContactId" />
@@ -402,37 +444,6 @@
         <Collection schema="deerwalk" table="QualityMetrics" column="ContactId" />
         <Collection schema="deerwalk" table="HighCostDiagnosis" column="ContactId" />
         <Collection schema="deerwalk" table="CareAlerts" column="ContactId" />
-        <Collection schema="dbo" table="CommunicationPieces" column="ContactId" />
-      </Collections>
-    </Table>
-    <Table schema="dbo" name="CreativeBlastTrackers">
-      <Properties>
-        <Property name="AddToDbContext" value="1" />
-        <Property name="Comment" value="Assets referenced by a creative whose hyperlinks have been munged to support tracking" />
-        <Property name="GeneratePoco" value="1" />
-        <Property name="Implements" value="ITraffkTenanted" />
-      </Properties>
-      <Columns>
-        <Column name="CreativeBlastTrackerId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
-        <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Tenants" />
-        <Column name="CreativeBlastCreativeTrackerRowStatus" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')">
-          <Properties>
-            <Property name="AccessModifier" value="missing" />
-            <Property name="ImplementsRowStatusSemantics" value="1" />
-          </Properties>
-        </Column>
-        <Column name="CommunicationBlastId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="CommunicationBlasts" />
-        <Column name="LinkType" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80" />
-        <Column name="TrackerUid" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="uniqueidentifier">
-          <Properties>
-            <Property name="MS_Description" value="Non-guessable guid for this item" />
-          </Properties>
-        </Column>
-        <Column name="RedirectUrl" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1024" />
-        <Column name="Position" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
-      </Columns>
-      <Collections>
-        <Collection schema="dbo" table="CommunicationPieceVisits" column="CreativeBlastTrackerId" />
       </Collections>
     </Table>
     <Table schema="dbo" name="Creatives">
@@ -463,10 +474,14 @@
         </Column>
         <Column name="ModelType" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="80">
           <Properties>
-            <Property name="EnumType" value="CommunicationModels" />
+            <Property name="EnumType" value="Traffk.Bal.Communications.CommunicationModelTypes" />
           </Properties>
         </Column>
-        <Column name="TemplateEngineType" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80" />
+        <Column name="TemplateEngineType" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80">
+          <Properties>
+            <Property name="EnumType" value="Traffk.Bal.Communications.TemplateEngineTypes" />
+          </Properties>
+        </Column>
         <Column name="CreativeSettings" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1">
           <Properties>
             <Property name="JsonSettingsClass" value="Bal.Settings.CreativeSettings" />
@@ -567,7 +582,11 @@
       </Properties>
       <Columns>
         <Column name="JobId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
-        <Column name="JobType" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80" />
+        <Column name="JobType" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80">
+          <Properties>
+            <Property name="EnumType" value="JobTypes" />
+          </Properties>
+        </Column>
         <Column name="TenantId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="Tenants" />
         <Column name="CreatedAtUtc" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())">
           <Properties>
@@ -577,6 +596,7 @@
         <Column name="DontRunBeforeUtc" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="datetime" />
         <Column name="JobStatus" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80">
           <Properties>
+            <Property name="EnumType" value="JobStatuses" />
             <Property name="SupportsDeletePurgeSemantics" value="1" />
           </Properties>
         </Column>
@@ -599,7 +619,6 @@
         </Column>
       </Columns>
       <Collections>
-        <Collection schema="dbo" table="ZCommunicationBlasts" column="JobId" />
         <Collection schema="dbo" table="CommunicationBlasts" column="JobId" />
       </Collections>
     </Table>
@@ -612,30 +631,6 @@
         <Column name="SumRevPaidAmt" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
         <Column name="CntRevClaims" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
       </Columns>
-    </Table>
-    <Table schema="dbo" name="MessageTemplates">
-      <Properties>
-        <Property name="AddToDbContext" value="1" />
-        <Property name="GeneratePoco" value="1" />
-        <Property name="Implements" value="ITraffkTenanted" />
-      </Properties>
-      <Columns>
-        <Column name="MessageTemplateId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
-        <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Tenants" />
-        <Column name="CreatedAtUtc" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())">
-          <Properties>
-            <Property name="MS_Description" value="Datetime when this entity was created." />
-          </Properties>
-        </Column>
-        <Column name="MessageTemplateTitle" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="255" />
-        <Column name="SubjectTemplateId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="Templates" />
-        <Column name="HtmlBodyTemplateId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="Templates" />
-        <Column name="TextBodyTemplateId" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="Templates" />
-      </Columns>
-      <Collections>
-        <Collection schema="dbo" table="SystemCommunications" column="MessageTemplateId" />
-        <Collection schema="dbo" table="ZCommunicationBlasts" column="MessageTemplateId" />
-      </Collections>
     </Table>
     <Table schema="dbo" name="ReleaseChanges">
       <Properties>
@@ -678,47 +673,6 @@
         <Column name="definition" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varbinary" maxLen="-1" />
       </Columns>
     </Table>
-    <Table schema="dbo" name="SystemCommunications">
-      <Properties>
-        <Property name="AddToDbContext" value="1" />
-        <Property name="GeneratePoco" value="1" />
-        <Property name="Implements" value="ITraffkTenanted" />
-      </Properties>
-      <Columns>
-        <Column name="SystemCommunicationId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
-        <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Tenants" />
-        <Column name="ApplicationId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="Applications" />
-        <Column name="CommunicationPurpose" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80" />
-        <Column name="CommunicationMedium" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80" />
-        <Column name="MessageTemplateId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="MessageTemplates" />
-      </Columns>
-    </Table>
-    <Table schema="dbo" name="Templates">
-      <Properties>
-        <Property name="AddToDbContext" value="1" />
-        <Property name="GeneratePoco" value="1" />
-        <Property name="Implements" value="ITraffkTenanted" />
-      </Properties>
-      <Columns>
-        <Column name="TemplateId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
-        <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Tenants" />
-        <Column name="CreatedAtUtc" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())">
-          <Properties>
-            <Property name="MS_Description" value="Datetime when this entity was created." />
-          </Properties>
-        </Column>
-        <Column name="TemplateName" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="80" />
-        <Column name="ModelType" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="80" />
-        <Column name="TemplateEngineType" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80" />
-        <Column name="IsLayout" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" default="((0))" />
-        <Column name="Code" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
-      </Columns>
-      <Collections>
-        <Collection schema="dbo" table="MessageTemplates" column="SubjectTemplateId" />
-        <Collection schema="dbo" table="MessageTemplates" column="HtmlBodyTemplateId" />
-        <Collection schema="dbo" table="MessageTemplates" column="TextBodyTemplateId" />
-      </Collections>
-    </Table>
     <Table schema="dbo" name="Tenants">
       <Properties>
         <Property name="AddToDbContext" value="1" />
@@ -747,8 +701,10 @@
         </Column>
       </Columns>
       <Collections>
-        <Collection schema="dbo" table="SystemCommunications" column="TenantId" />
+        <Collection schema="dbo" table="Communications" column="TenantId" />
+        <Collection schema="dbo" table="CommunicationBlasts" column="TenantId" />
         <Collection schema="deerwalk" table="Eligibility" column="TenantId" />
+        <Collection schema="dbo" table="CommunicationPieces" column="TenantId" />
         <Collection schema="deerwalk" table="Pharmacy" column="TenantId" />
         <Collection schema="deerwalk" table="MedicalClaims" column="TenantId" />
         <Collection schema="deerwalk" table="Demographics" column="TenantId" />
@@ -761,22 +717,16 @@
         <Collection schema="deerwalk" table="Participation" column="TenantId" />
         <Collection schema="dbo" table="Contacts" column="TenantId" />
         <Collection schema="deerwalk" table="QualityMetrics" column="TenantId" />
-        <Collection schema="dbo" table="Communications" column="TenantId" />
         <Collection schema="deerwalk" table="HighCostDiagnosis" column="TenantId" />
         <Collection schema="dbo" table="Jobs" column="TenantId" />
         <Collection schema="deerwalk" table="CareAlerts" column="TenantId" />
-        <Collection schema="dbo" table="CommunicationBlasts" column="TenantId" />
-        <Collection schema="dbo" table="CreativeBlastTrackers" column="TenantId" />
-        <Collection schema="dbo" table="CommunicationPieces" column="TenantId" />
-        <Collection schema="dbo" table="ZCommunicationBlasts" column="TenantId" />
-        <Collection schema="dbo" table="Tenants" column="ParentTenantId" />
+        <Collection schema="dbo" table="CommunicationBlastTrackers" column="TenantId" />
         <Collection schema="dbo" table="CommunicationPieceVisits" column="TenantId" />
+        <Collection schema="dbo" table="Tenants" column="ParentTenantId" />
         <Collection schema="dbo" table="AspNetUsers" column="TenantId" />
         <Collection schema="dbo" table="AspNetRoles" column="TenantId" />
         <Collection schema="dbo" table="Applications" column="TenantId" />
         <Collection schema="dbo" table="DateDimensions" column="TenantId" />
-        <Collection schema="dbo" table="Templates" column="TenantId" />
-        <Collection schema="dbo" table="MessageTemplates" column="TenantId" />
       </Collections>
     </Table>
     <Table schema="dbo" name="UserActivities">
@@ -797,43 +747,6 @@
         <Column name="ActivityType" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80" />
         <Column name="ActivityResult" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="80" />
       </Columns>
-    </Table>
-    <Table schema="dbo" name="ZCommunicationBlasts">
-      <Properties>
-        <Property name="AddToDbContext" value="1" />
-        <Property name="GeneratePoco" value="1" />
-        <Property name="Implements" value="ITraffkTenanted" />
-      </Properties>
-      <Columns>
-        <Column name="CommunicationBlastId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
-        <Column name="ParentCommunicationBlastId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="ZCommunicationBlasts" />
-        <Column name="TenantId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Tenants" />
-        <Column name="CreatedAtUtc" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())">
-          <Properties>
-            <Property name="MS_Description" value="Datetime when this entity was created." />
-          </Properties>
-        </Column>
-        <Column name="JobId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="Jobs" />
-        <Column name="CommunicationBlastTitle" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="255" />
-        <Column name="CommunicationMedium" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80" />
-        <Column name="TopicName" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" />
-        <Column name="CampaignName" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" />
-        <Column name="MessageTemplateId" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="MessageTemplates" />
-        <Column name="CommunicationBlastSettings" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1">
-          <Properties>
-            <Property name="JsonSettingsClass" value="Bal.Settings.CommunicationSettings" />
-          </Properties>
-        </Column>
-        <Column name="CommunicationBlastRowStatus" position="12" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')">
-          <Properties>
-            <Property name="AccessModifier" value="missing" />
-            <Property name="ImplementsRowStatusSemantics" value="1" />
-          </Properties>
-        </Column>
-      </Columns>
-      <Collections>
-        <Collection schema="dbo" table="ZCommunicationBlasts" column="ParentCommunicationBlastId" />
-      </Collections>
     </Table>
     <Table schema="deerwalk" name="CareAlerts">
       <Properties>
@@ -4902,22 +4815,22 @@
     </Table>
     <Table schema="i" name="Carealerts">
       <Columns>
-        <Column name="dw_record_id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
-        <Column name="dw_member_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="34" />
-        <Column name="mbr_id" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="12" />
-        <Column name="first_name" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
-        <Column name="last_name" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="13" />
-        <Column name="middle_name" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
+        <Column name="dw_record_id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
+        <Column name="dw_member_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="32" />
+        <Column name="mbr_id" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="19" />
+        <Column name="first_name" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="17" />
+        <Column name="last_name" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="20" />
+        <Column name="middle_name" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="mbr_dob" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
         <Column name="mbr_gender" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
         <Column name="mbr_status" position="9" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
-        <Column name="mbr_relationship" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="28" />
-        <Column name="pcp_full_name" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="22" />
-        <Column name="mbr_age" position="12" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="3" />
+        <Column name="mbr_relationship" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="22" />
+        <Column name="pcp_full_name" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="10" />
+        <Column name="mbr_age" position="12" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="2" />
         <Column name="mbr_months" position="13" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="2" />
         <Column name="care_alert_startDate" position="14" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
         <Column name="care_alert_id" position="15" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="21" />
-        <Column name="care_alert_desc" position="16" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="94" />
+        <Column name="care_alert_desc" position="16" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="101" />
         <Column name="metric_Type" position="17" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="15" />
         <Column name="metric_name" position="18" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="15" />
       </Columns>
@@ -4926,66 +4839,66 @@
       <Columns>
         <Column name="dw_record_id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
         <Column name="dw_account_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="dw_client_id" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
-        <Column name="dw_member_id" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="34" />
-        <Column name="mbr_id" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="12" />
-        <Column name="mbr_ssn" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="9" />
-        <Column name="mbr_first_name" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
-        <Column name="mbr_middle_name" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
-        <Column name="mbr_last_name" position="9" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="13" />
+        <Column name="dw_client_id" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="8" />
+        <Column name="dw_member_id" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="32" />
+        <Column name="mbr_id" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="19" />
+        <Column name="mbr_ssn" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="22" />
+        <Column name="mbr_first_name" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="17" />
+        <Column name="mbr_middle_name" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="mbr_last_name" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="20" />
         <Column name="mbr_current_status" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
         <Column name="mbr_gender" position="11" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
         <Column name="mbr_dob" position="12" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
-        <Column name="mbr_street_1" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="29" />
+        <Column name="mbr_street_1" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="mbr_street_2" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="mbr_city" position="15" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="20" />
+        <Column name="mbr_city" position="15" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="mbr_county" position="16" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="mbr_state" position="17" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="2" />
-        <Column name="mbr_zip" position="18" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
-        <Column name="mbr_phone" position="19" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="10" />
+        <Column name="mbr_zip" position="18" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="5" />
+        <Column name="mbr_phone" position="19" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="mbr_region_code" position="20" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="mbr_region_name" position="21" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="mbr_relationship_code" position="22" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
-        <Column name="mbr_relationship_desc" position="23" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="28" />
-        <Column name="dw_rawfilename" position="24" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
-        <Column name="dw_recievedmonth" position="25" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
-        <Column name="dw_vendor_name" position="26" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="6" />
+        <Column name="mbr_relationship_code" position="22" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="3" />
+        <Column name="mbr_relationship_desc" position="23" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="22" />
+        <Column name="dw_rawfilename" position="24" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="75" />
+        <Column name="dw_recievedmonth" position="25" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="10" />
+        <Column name="dw_vendor_name" position="26" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="33" />
       </Columns>
     </Table>
     <Table schema="i" name="Eligibility">
       <Columns>
-        <Column name="mbr_id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="12" />
-        <Column name="ins_policy_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="6" />
-        <Column name="mbr_ssn" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="9" />
-        <Column name="mbr_first_name" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
-        <Column name="mbr_middle_name" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
-        <Column name="mbr_last_name" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="13" />
+        <Column name="mbr_id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="19" />
+        <Column name="ins_policy_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="mbr_ssn" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="22" />
+        <Column name="mbr_first_name" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="17" />
+        <Column name="mbr_middle_name" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="mbr_last_name" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="20" />
         <Column name="mbr_current_status" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
         <Column name="mbr_gender" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
         <Column name="mbr_dob" position="9" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
-        <Column name="mbr_street_1" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="29" />
+        <Column name="mbr_street_1" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="mbr_street_2" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="mbr_city" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="20" />
+        <Column name="mbr_city" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="mbr_county" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="mbr_state" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="2" />
-        <Column name="mbr_zip" position="15" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
-        <Column name="mbr_phone" position="16" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="10" />
+        <Column name="mbr_zip" position="15" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="5" />
+        <Column name="mbr_phone" position="16" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="mbr_region_code" position="17" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="mbr_region_name" position="18" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="mbr_relationship_code" position="19" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
-        <Column name="mbr_relationship_desc" position="20" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="28" />
-        <Column name="ins_plan_type_code" position="21" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
-        <Column name="ins_plan_type_desc" position="22" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
-        <Column name="ins_carrier_id" position="23" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="2" />
-        <Column name="ins_carrier_name" position="24" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="6" />
-        <Column name="ins_coverage_type_code" position="25" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="ins_coverage_type_desc" position="26" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="ins_plan_id" position="27" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="ins_plan_desc" position="28" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="10" />
-        <Column name="ins_emp_group_id" position="29" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="2" />
-        <Column name="ins_emp_group_name" position="30" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="15" />
-        <Column name="ins_division_id" position="31" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
-        <Column name="ins_division_name" position="32" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
+        <Column name="mbr_relationship_code" position="19" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="3" />
+        <Column name="mbr_relationship_desc" position="20" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="22" />
+        <Column name="ins_plan_type_code" position="21" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="3" />
+        <Column name="ins_plan_type_desc" position="22" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="25" />
+        <Column name="ins_carrier_id" position="23" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="13" />
+        <Column name="ins_carrier_name" position="24" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="40" />
+        <Column name="ins_coverage_type_code" position="25" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="3" />
+        <Column name="ins_coverage_type_desc" position="26" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="41" />
+        <Column name="ins_plan_id" position="27" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="13" />
+        <Column name="ins_plan_desc" position="28" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="14" />
+        <Column name="ins_emp_group_id" position="29" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="13" />
+        <Column name="ins_emp_group_name" position="30" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="31" />
+        <Column name="ins_division_id" position="31" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="9" />
+        <Column name="ins_division_name" position="32" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="56" />
         <Column name="ins_cobra_code" position="33" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="ins_cobra_desc" position="34" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="ins_med_eff_date" position="35" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
@@ -5000,12 +4913,12 @@
         <Column name="ins_ltd_term_date" position="44" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="ins_std_eff_date" position="45" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="ins_std_term_date" position="46" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="prv_pcp_id" position="47" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="7" />
+        <Column name="prv_pcp_id" position="47" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="prv_pcp_first_name" position="48" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="prv_pcp_middle_name" position="49" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="prv_pcp_last_name" position="50" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="prv_pcp_site_id" position="51" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="udf1" position="52" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="10" />
+        <Column name="udf1" position="52" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="30" />
         <Column name="udf2" position="53" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="udf3" position="54" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="udf4" position="55" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
@@ -5015,19 +4928,19 @@
         <Column name="udf8" position="59" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="udf9" position="60" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="udf10" position="61" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="udf11" position="62" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="37" />
+        <Column name="udf11" position="62" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="udf12" position="63" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="udf13" position="64" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="udf14" position="65" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="udf15" position="66" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="udf16" position="67" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="udf17" position="68" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="udf18" position="69" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="udf19" position="70" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="udf20" position="71" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="dw_member_id" position="72" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="34" />
-        <Column name="dw_rawfilename" position="73" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
-        <Column name="udf21" position="74" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="udf16" position="67" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="9" />
+        <Column name="udf17" position="68" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="12" />
+        <Column name="udf18" position="69" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="9" />
+        <Column name="udf19" position="70" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="12" />
+        <Column name="udf20" position="71" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="9" />
+        <Column name="dw_member_id" position="72" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="32" />
+        <Column name="dw_rawfilename" position="73" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="75" />
+        <Column name="udf21" position="74" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="12" />
         <Column name="udf22" position="75" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="udf23" position="76" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="udf24" position="77" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
@@ -5052,12 +4965,12 @@
     <Table schema="i" name="Highcost">
       <Columns>
         <Column name="dw_record_id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
-        <Column name="dw_account_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
-        <Column name="dw_client_id" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
-        <Column name="dw_member_id" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="34" />
-        <Column name="mbr_id" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="12" />
-        <Column name="diagnosis_code" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="6" />
-        <Column name="paid_amount" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="22" />
+        <Column name="dw_account_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="8" />
+        <Column name="dw_client_id" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="8" />
+        <Column name="dw_member_id" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="32" />
+        <Column name="mbr_id" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="19" />
+        <Column name="diagnosis_code" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="8" />
+        <Column name="paid_amount" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="23" />
         <Column name="superGrouperDescription" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="29" />
         <Column name="grouperDescription" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="40" />
       </Columns>
@@ -5067,24 +4980,24 @@
         <Column name="dw_record_id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
         <Column name="dw_account_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="dw_client_id" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="8" />
-        <Column name="dw_member_id" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="34" />
-        <Column name="mbr_id" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="12" />
+        <Column name="dw_member_id" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="32" />
+        <Column name="mbr_id" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
         <Column name="score_type" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="score_start_date" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
         <Column name="score_end_date" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
         <Column name="ip_score" position="9" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
         <Column name="op_score" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
         <Column name="phy_score" position="11" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
-        <Column name="rx_score" position="12" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
+        <Column name="rx_score" position="12" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
         <Column name="med_score" position="13" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
-        <Column name="total_score" position="14" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
+        <Column name="total_score" position="14" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
         <Column name="concurrent_total" position="15" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
         <Column name="erScore" position="16" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
         <Column name="otherScore" position="17" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
         <Column name="concurrentInpatient" position="18" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
-        <Column name="concurrentMedical" position="19" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
+        <Column name="concurrentMedical" position="19" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
         <Column name="concurrentOutpatient" position="20" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
-        <Column name="concurrentPharmacy" position="21" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
+        <Column name="concurrentPharmacy" position="21" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
         <Column name="concurrentPhysician" position="22" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
         <Column name="concurrentIpNormalizedToGroup" position="23" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
         <Column name="concurrentOpNormalizedToGroup" position="24" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
@@ -5093,120 +5006,120 @@
     </Table>
     <Table schema="i" name="Medical">
       <Columns>
-        <Column name="rev_claim_id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="23" />
-        <Column name="rev_claim_line_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="9" />
+        <Column name="rev_claim_id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="37" />
+        <Column name="rev_claim_line_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
         <Column name="rev_claim_type" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
         <Column name="rev_claim_type_flag" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="ins_plan_type_code" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
-        <Column name="ins_plan_type_desc" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
-        <Column name="ins_carrier_id" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="2" />
-        <Column name="ins_carrier_name" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="6" />
-        <Column name="ins_coverage_type_code" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="ins_coverage_type_desc" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="ins_plan_id" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="3" />
-        <Column name="ins_emp_group_id" position="12" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="2" />
-        <Column name="ins_emp_group_name" position="13" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="15" />
-        <Column name="ins_division_id" position="14" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
-        <Column name="ins_division_name" position="15" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
-        <Column name="ins_cobra_code" position="16" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="2" />
-        <Column name="ins_cobra_desc" position="17" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="13" />
-        <Column name="mbr_id" position="18" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="12" />
-        <Column name="mbr_ssn" position="19" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="9" />
-        <Column name="mbr_first_name" position="20" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
-        <Column name="mbr_middle_name" position="21" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
-        <Column name="mbr_last_name" position="22" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="13" />
+        <Column name="ins_plan_type_code" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="2" />
+        <Column name="ins_plan_type_desc" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
+        <Column name="ins_carrier_id" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="13" />
+        <Column name="ins_carrier_name" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="40" />
+        <Column name="ins_coverage_type_code" position="9" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="2" />
+        <Column name="ins_coverage_type_desc" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
+        <Column name="ins_plan_id" position="11" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="13" />
+        <Column name="ins_emp_group_id" position="12" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="13" />
+        <Column name="ins_emp_group_name" position="13" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="31" />
+        <Column name="ins_division_id" position="14" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="9" />
+        <Column name="ins_division_name" position="15" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="56" />
+        <Column name="ins_cobra_code" position="16" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="ins_cobra_desc" position="17" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="mbr_id" position="18" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
+        <Column name="mbr_ssn" position="19" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="22" />
+        <Column name="mbr_first_name" position="20" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="17" />
+        <Column name="mbr_middle_name" position="21" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="mbr_last_name" position="22" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="18" />
         <Column name="mbr_gender" position="23" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
         <Column name="mbr_dob" position="24" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
-        <Column name="mbr_street_1" position="25" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="29" />
+        <Column name="mbr_street_1" position="25" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="mbr_street_2" position="26" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="mbr_city" position="27" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="20" />
+        <Column name="mbr_city" position="27" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="mbr_county" position="28" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="mbr_state" position="29" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="2" />
-        <Column name="mbr_zip" position="30" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
-        <Column name="mbr_phone" position="31" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="10" />
+        <Column name="mbr_zip" position="30" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="5" />
+        <Column name="mbr_phone" position="31" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="mbr_region_code" position="32" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="mbr_region_name" position="33" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="mbr_relationship_code" position="34" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
-        <Column name="mbr_relationship_desc" position="35" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="28" />
+        <Column name="mbr_relationship_code" position="34" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="3" />
+        <Column name="mbr_relationship_desc" position="35" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="22" />
         <Column name="prv_service_provider_id" position="36" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
-        <Column name="prv_npi" position="37" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="10" />
+        <Column name="prv_npi" position="37" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="prv_tin" position="38" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="prv_type_desc" position="39" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="prv_first_name" position="40" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="27" />
+        <Column name="prv_type_desc" position="39" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="45" />
+        <Column name="prv_first_name" position="40" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
         <Column name="prv_middle_name" position="41" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="prv_last_name" position="42" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="prv_gender" position="43" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
+        <Column name="prv_gender" position="43" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="prv_native_language" position="44" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="prv_network_code" position="45" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
-        <Column name="prv_network_name" position="46" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
+        <Column name="prv_network_code" position="45" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
+        <Column name="prv_network_name" position="46" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="7" />
         <Column name="prv_phone" position="47" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="prv_speciality_1_code" position="48" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="5" />
-        <Column name="prv_Specialty_1_desc" position="49" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="55" />
+        <Column name="prv_speciality_1_code" position="48" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="2" />
+        <Column name="prv_Specialty_1_desc" position="49" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="49" />
         <Column name="prv_speciality_2_code" position="50" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="prv_Specialty_2_desc" position="51" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="prv_speciality_3_code" position="52" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="prv_Specialty_3_desc" position="53" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="prv_street_1" position="54" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="29" />
+        <Column name="prv_street_1" position="54" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="prv_street_2" position="55" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="prv_city" position="56" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="20" />
+        <Column name="prv_city" position="56" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="prv_county" position="57" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="prv_state" position="58" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="2" />
-        <Column name="prv_zip" position="59" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="5" />
+        <Column name="prv_state" position="58" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="2" />
+        <Column name="prv_zip" position="59" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="3" />
         <Column name="prv_in_network_flag" position="60" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
         <Column name="prv_pcp_id" position="61" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="prv_pcp_first_name" position="62" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="prv_pcp_middle_name" position="63" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="prv_pcp_last_name" position="64" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="svc_pos_code" position="65" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="2" />
-        <Column name="svc_pos_desc" position="66" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="25" />
-        <Column name="svc_diag_1_code" position="67" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
-        <Column name="svc_diag_1_desc" position="68" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="56" />
-        <Column name="svc_diag_2_code" position="69" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="6" />
-        <Column name="svc_diag_2_desc" position="70" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="49" />
-        <Column name="svc_diag_3_code" position="71" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="6" />
-        <Column name="svc_diag_3_desc" position="72" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="49" />
-        <Column name="svc_diag_4_code" position="73" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="6" />
-        <Column name="svc_diag_4_desc" position="74" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="49" />
-        <Column name="svc_diag_5_code" position="75" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="6" />
-        <Column name="svc_diag_5_desc" position="76" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="43" />
-        <Column name="svc_diag_6_code" position="77" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="6" />
-        <Column name="svc_diag_6_desc" position="78" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="37" />
-        <Column name="svc_diag_7_code" position="79" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="6" />
-        <Column name="svc_diag_7_desc" position="80" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="37" />
-        <Column name="svc_diag_8_code" position="81" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="6" />
-        <Column name="svc_diag_8_desc" position="82" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="36" />
-        <Column name="svc_diag_9_code" position="83" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="6" />
-        <Column name="svc_diag_9_desc" position="84" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="41" />
+        <Column name="svc_pos_desc" position="66" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="50" />
+        <Column name="svc_diag_1_code" position="67" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="8" />
+        <Column name="svc_diag_1_desc" position="68" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="60" />
+        <Column name="svc_diag_2_code" position="69" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="8" />
+        <Column name="svc_diag_2_desc" position="70" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="60" />
+        <Column name="svc_diag_3_code" position="71" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="8" />
+        <Column name="svc_diag_3_desc" position="72" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="60" />
+        <Column name="svc_diag_4_code" position="73" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="8" />
+        <Column name="svc_diag_4_desc" position="74" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="60" />
+        <Column name="svc_diag_5_code" position="75" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="8" />
+        <Column name="svc_diag_5_desc" position="76" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="60" />
+        <Column name="svc_diag_6_code" position="77" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="svc_diag_6_desc" position="78" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="svc_diag_7_code" position="79" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="svc_diag_7_desc" position="80" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="svc_diag_8_code" position="81" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="svc_diag_8_desc" position="82" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="svc_diag_9_code" position="83" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="svc_diag_9_desc" position="84" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="svc_procedure_type" position="85" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="8" />
         <Column name="svc_procedure_code" position="86" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
-        <Column name="svc_procedure_desc" position="87" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="75" />
-        <Column name="svc_rev_code" position="88" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="4" />
-        <Column name="svc_rev_desc" position="89" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="67" />
-        <Column name="svc_cpt_code" position="90" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="5" />
-        <Column name="svc_cpt_desc" position="91" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="70" />
-        <Column name="svc_icd_proc_1_code" position="92" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="4" />
-        <Column name="svc_icd_proc_1_desc" position="93" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="58" />
-        <Column name="svc_icd_proc_2_code" position="94" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="4" />
-        <Column name="svc_icd_proc_2_desc" position="95" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="66" />
+        <Column name="svc_procedure_desc" position="87" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="200" />
+        <Column name="svc_rev_code" position="88" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
+        <Column name="svc_rev_desc" position="89" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="87" />
+        <Column name="svc_cpt_code" position="90" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
+        <Column name="svc_cpt_desc" position="91" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="28" />
+        <Column name="svc_icd_proc_1_code" position="92" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="7" />
+        <Column name="svc_icd_proc_1_desc" position="93" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="60" />
+        <Column name="svc_icd_proc_2_code" position="94" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="7" />
+        <Column name="svc_icd_proc_2_desc" position="95" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="60" />
         <Column name="svc_drg_type_code" position="96" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="svc_drg_type_Desc" position="97" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="svc_drg_code" position="98" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="3" />
-        <Column name="svc_drg_desc" position="99" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="68" />
-        <Column name="svc_hcpcs_code" position="100" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="5" />
-        <Column name="svc_hcpcs_desc" position="101" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="75" />
+        <Column name="svc_drg_code" position="98" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="3" />
+        <Column name="svc_drg_desc" position="99" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="68" />
+        <Column name="svc_hcpcs_code" position="100" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
+        <Column name="svc_hcpcs_desc" position="101" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="200" />
         <Column name="svc_modifier_code" position="102" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="2" />
         <Column name="svc_modifier_desc" position="103" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="svc_modifier_2_code" position="104" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="2" />
+        <Column name="svc_modifier_2_code" position="104" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="svc_modifier_2_desc" position="105" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="svc_modifier_3_code" position="106" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="2" />
+        <Column name="svc_modifier_3_code" position="106" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="svc_modifier_3_desc" position="107" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="svc_tos_code" position="108" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="3" />
-        <Column name="svc_tos_desc" position="109" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="29" />
+        <Column name="svc_tos_code" position="108" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="svc_tos_desc" position="109" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="svc_discharge_code" position="110" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="2" />
-        <Column name="svc_discharge_desc" position="111" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="90" />
-        <Column name="svc_service_qty" position="112" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
+        <Column name="svc_discharge_desc" position="111" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="80" />
+        <Column name="svc_service_qty" position="112" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
         <Column name="svc_ip_days" position="113" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
-        <Column name="svc_covered_days" position="114" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="svc_covered_days" position="114" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
         <Column name="svc_admit_type" position="115" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="svc_service_frm_date" position="116" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
         <Column name="svc_service_to_date" position="117" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
@@ -5214,27 +5127,27 @@
         <Column name="rev_paid_date" position="119" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
         <Column name="svc_benefit_code" position="120" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="7" />
         <Column name="svc_benefit_desc" position="121" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="7" />
-        <Column name="rev_allowed_amt" position="122" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="9" />
-        <Column name="rev_billed_amt" position="123" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="3" />
-        <Column name="rev_cob_paid_amt" position="124" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="9" />
-        <Column name="rev_coinsurance_amt" position="125" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="8" />
-        <Column name="rev_copay_amt" position="126" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
-        <Column name="rev_coverage_charge_amt" position="127" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="9" />
-        <Column name="rev_deductible_amt" position="128" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="8" />
-        <Column name="rev_not_covered_amt" position="129" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="9" />
-        <Column name="rev_other_savings" position="130" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="rev_ppo_savings" position="131" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="rev_paid_amt" position="132" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="9" />
+        <Column name="rev_allowed_amt" position="122" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
+        <Column name="rev_billed_amt" position="123" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
+        <Column name="rev_cob_paid_amt" position="124" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
+        <Column name="rev_coinsurance_amt" position="125" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
+        <Column name="rev_copay_amt" position="126" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
+        <Column name="rev_coverage_charge_amt" position="127" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
+        <Column name="rev_deductible_amt" position="128" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
+        <Column name="rev_not_covered_amt" position="129" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
+        <Column name="rev_other_savings" position="130" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
+        <Column name="rev_ppo_savings" position="131" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
+        <Column name="rev_paid_amt" position="132" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
         <Column name="rev_pay_type" position="133" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="rev_check_num" position="134" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="svc_pre_authorization" position="135" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="rev_adjudication_code" position="136" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
+        <Column name="rev_adjudication_code" position="136" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="rev_adjudication_desc" position="137" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="mbr_mrn" position="138" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="mbr_hicn" position="139" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="rev_bill_type_code" position="140" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="rev_bill_type_desc" position="141" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="udf1" position="142" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="6" />
+        <Column name="udf1" position="142" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="udf2" position="143" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="udf3" position="144" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="udf4" position="145" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
@@ -5249,83 +5162,83 @@
         <Column name="udf13" position="154" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="udf14" position="155" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="udf15" position="156" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="udf16" position="157" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="udf17" position="158" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="udf18" position="159" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="udf19" position="160" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="udf20" position="161" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="dw_vendor_name" position="162" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
+        <Column name="udf16" position="157" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="9" />
+        <Column name="udf17" position="158" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="12" />
+        <Column name="udf18" position="159" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="9" />
+        <Column name="udf19" position="160" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="12" />
+        <Column name="udf20" position="161" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="9" />
+        <Column name="dw_vendor_name" position="162" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="33" />
         <Column name="dw_admrule" position="163" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
         <Column name="proc1_grouper_id" position="164" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
         <Column name="proc1_grouper_desc" position="165" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="33" />
         <Column name="proc1_Subgrouper_id" position="166" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
-        <Column name="proc1_Subgrouper_desc" position="167" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="54" />
+        <Column name="proc1_Subgrouper_desc" position="167" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="44" />
         <Column name="rev_grouper_id" position="168" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
-        <Column name="rev_grouper_desc" position="169" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="33" />
-        <Column name="rev_subgrouper_id" position="170" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="54" />
-        <Column name="rev_subgrouper_desc" position="171" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="54" />
+        <Column name="rev_grouper_desc" position="169" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="29" />
+        <Column name="rev_subgrouper_id" position="170" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
+        <Column name="rev_subgrouper_desc" position="171" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="38" />
         <Column name="cpt_grouper_id" position="172" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
         <Column name="cpt_grouper_desc" position="173" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="33" />
-        <Column name="cpt_subgrouper_id" position="174" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="44" />
-        <Column name="cpt_subgrouper_desc" position="175" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="54" />
+        <Column name="cpt_subgrouper_id" position="174" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
+        <Column name="cpt_subgrouper_desc" position="175" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="44" />
         <Column name="icd1_grouper_id" position="176" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
         <Column name="icd1_grouper_desc" position="177" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="33" />
-        <Column name="icd1_subgrouper_id" position="178" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="38" />
+        <Column name="icd1_subgrouper_id" position="178" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
         <Column name="icd1_subgrouper_desc" position="179" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="45" />
-        <Column name="icd2_grouper_id" position="180" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
-        <Column name="icd2_grouper_desc" position="181" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="33" />
-        <Column name="icd2_subgrouper_id" position="182" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="44" />
-        <Column name="icd2_subgrouper_desc" position="183" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="44" />
+        <Column name="icd2_grouper_id" position="180" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="11" />
+        <Column name="icd2_grouper_desc" position="181" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="33" />
+        <Column name="icd2_subgrouper_id" position="182" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="11" />
+        <Column name="icd2_subgrouper_desc" position="183" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="44" />
         <Column name="drg_grouper_id" position="184" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
         <Column name="drg_grouper_desc" position="185" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="33" />
-        <Column name="drg_subgrouper_id" position="186" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="40" />
+        <Column name="drg_subgrouper_id" position="186" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
         <Column name="drg_subgrouper_desc" position="187" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="51" />
         <Column name="hcpcs_grouper_id" position="188" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
-        <Column name="hcpcs_grouper_desc" position="189" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="33" />
-        <Column name="hcpcs_subgrouper_id" position="190" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="51" />
-        <Column name="hcpcs_subgrouper_desc" position="191" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="51" />
-        <Column name="diag1_grouper_id" position="192" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
+        <Column name="hcpcs_grouper_desc" position="189" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="29" />
+        <Column name="hcpcs_subgrouper_id" position="190" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
+        <Column name="hcpcs_subgrouper_desc" position="191" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="43" />
+        <Column name="diag1_grouper_id" position="192" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
         <Column name="diag1_grouper_desc" position="193" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="40" />
-        <Column name="diag1_supergrouper_id" position="194" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
+        <Column name="diag1_supergrouper_id" position="194" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
         <Column name="diag1_supergrouper_desc" position="195" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="29" />
         <Column name="diag2_grouper_id" position="196" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
         <Column name="diag2_grouper_desc" position="197" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="40" />
         <Column name="diag2_supergrouper_id" position="198" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
         <Column name="diag2_supergrouper_desc" position="199" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="29" />
-        <Column name="diag3_grouper_id" position="200" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
-        <Column name="diag3_grouper_desc" position="201" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="40" />
-        <Column name="diag3_supergrouper_id" position="202" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
-        <Column name="diag3_supergrouper_desc" position="203" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="29" />
-        <Column name="diag4_grouper_id" position="204" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
-        <Column name="diag4_grouper_desc" position="205" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="40" />
-        <Column name="diag4_supergrouper_id" position="206" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
-        <Column name="diag4_supergrouper_desc" position="207" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="29" />
-        <Column name="diag5_grouper_id" position="208" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
-        <Column name="diag5_grouper_desc" position="209" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="40" />
-        <Column name="diag5_supergrouper_id" position="210" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
-        <Column name="diag5_supergrouper_desc" position="211" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="29" />
-        <Column name="diag6_grouper_id" position="212" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
-        <Column name="diag6_grouper_desc" position="213" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="40" />
-        <Column name="diag6_supergrouper_id" position="214" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
-        <Column name="diag6_supergrouper_desc" position="215" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="29" />
-        <Column name="diag7_grouper_id" position="216" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
-        <Column name="diag7_grouper_desc" position="217" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="35" />
-        <Column name="diag7_supergrouper_id" position="218" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
-        <Column name="diag7_supergrouper_desc" position="219" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="29" />
-        <Column name="diag8_grouper_id" position="220" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
-        <Column name="diag8_grouper_desc" position="221" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="40" />
-        <Column name="diag8_supergrouper_id" position="222" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
-        <Column name="diag8_supergrouper_desc" position="223" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="29" />
-        <Column name="diag9_grouper_id" position="224" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
-        <Column name="diag9_grouper_desc" position="225" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="35" />
-        <Column name="diag9_supergrouper_id" position="226" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
-        <Column name="diag9_supergrouper_desc" position="227" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="29" />
-        <Column name="cpt_betos" position="228" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
-        <Column name="cpt_betos_grouper" position="229" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="12" />
-        <Column name="cpt_betos_sub_grouper" position="230" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="60" />
-        <Column name="hcpcs_betos" position="231" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
-        <Column name="hcpcs_betos_grouper" position="232" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="25" />
-        <Column name="hcpcs_betos_sub_grouper" position="233" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="59" />
+        <Column name="diag3_grouper_id" position="200" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="6" />
+        <Column name="diag3_grouper_desc" position="201" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="40" />
+        <Column name="diag3_supergrouper_id" position="202" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="6" />
+        <Column name="diag3_supergrouper_desc" position="203" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="29" />
+        <Column name="diag4_grouper_id" position="204" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="6" />
+        <Column name="diag4_grouper_desc" position="205" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="40" />
+        <Column name="diag4_supergrouper_id" position="206" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="6" />
+        <Column name="diag4_supergrouper_desc" position="207" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="29" />
+        <Column name="diag5_grouper_id" position="208" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="6" />
+        <Column name="diag5_grouper_desc" position="209" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="40" />
+        <Column name="diag5_supergrouper_id" position="210" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="6" />
+        <Column name="diag5_supergrouper_desc" position="211" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="29" />
+        <Column name="diag6_grouper_id" position="212" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="diag6_grouper_desc" position="213" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="diag6_supergrouper_id" position="214" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="diag6_supergrouper_desc" position="215" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="diag7_grouper_id" position="216" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="diag7_grouper_desc" position="217" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="diag7_supergrouper_id" position="218" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="diag7_supergrouper_desc" position="219" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="diag8_grouper_id" position="220" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="diag8_grouper_desc" position="221" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="diag8_supergrouper_id" position="222" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="diag8_supergrouper_desc" position="223" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="diag9_grouper_id" position="224" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="diag9_grouper_desc" position="225" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="diag9_supergrouper_id" position="226" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="diag9_supergrouper_desc" position="227" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="cpt_betos" position="228" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="3" />
+        <Column name="cpt_betos_grouper" position="229" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="12" />
+        <Column name="cpt_betos_sub_grouper" position="230" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="60" />
+        <Column name="hcpcs_betos" position="231" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="3" />
+        <Column name="hcpcs_betos_grouper" position="232" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="25" />
+        <Column name="hcpcs_betos_sub_grouper" position="233" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="52" />
         <Column name="rev_betos" position="234" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="rev_betos_grouper" position="235" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="rev_betos_sub_grouper" position="236" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
@@ -5343,22 +5256,22 @@
         <Column name="proc7_betos_sub_grouper" position="248" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="dw_creation_date" position="249" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
         <Column name="dw_update_date" position="250" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
-        <Column name="dw_rawfilename" position="251" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="20" />
-        <Column name="dw_recievedmonth" position="252" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="6" />
-        <Column name="visit_id" position="253" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="6" />
-        <Column name="dw_member_id" position="254" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="34" />
+        <Column name="dw_rawfilename" position="251" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="67" />
+        <Column name="dw_recievedmonth" position="252" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
+        <Column name="visit_id" position="253" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="5" />
+        <Column name="dw_member_id" position="254" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="32" />
         <Column name="is_makalu_used" position="255" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
-        <Column name="udf21" position="256" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="udf22" position="257" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="udf23" position="258" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="udf24" position="259" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="udf25" position="260" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="udf21" position="256" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="12" />
+        <Column name="udf22" position="257" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
+        <Column name="udf23" position="258" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
+        <Column name="udf24" position="259" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
+        <Column name="udf25" position="260" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
         <Column name="udf26" position="261" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="udf27" position="262" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="udf28" position="263" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="udf29" position="264" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="udf30" position="265" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="udf31" position="266" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="3" />
+        <Column name="udf31" position="266" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="udf32" position="267" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="udf33" position="268" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="udf34" position="269" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
@@ -5370,71 +5283,56 @@
         <Column name="udf40" position="275" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
       </Columns>
     </Table>
-    <Table schema="i" name="Participation">
-      <Columns>
-        <Column name="dw_record_id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
-        <Column name="dw_account_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="dw_client_id" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="8" />
-        <Column name="dw_member_id" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="34" />
-        <Column name="mbr_id" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="12" />
-        <Column name="program_type" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="8" />
-        <Column name="program_code" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="2" />
-        <Column name="program_name" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="19" />
-        <Column name="program_status" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="program_start_date" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="10" />
-        <Column name="program_end_date" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="10" />
-      </Columns>
-    </Table>
     <Table schema="i" name="Pcp">
       <Columns>
         <Column name="dw_record_id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
         <Column name="dw_account_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="dw_client_id" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="8" />
-        <Column name="dw_member_id" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="34" />
-        <Column name="mbr_id" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="12" />
-        <Column name="pcp_name" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="22" />
-        <Column name="pcp_npi" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="10" />
+        <Column name="dw_member_id" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="32" />
+        <Column name="mbr_id" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
+        <Column name="pcp_name" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
+        <Column name="pcp_npi" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="start_date" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
         <Column name="end_date" position="9" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
       </Columns>
     </Table>
     <Table schema="i" name="Pharmacy">
       <Columns>
-        <Column name="rev_transaction_num" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="13" />
-        <Column name="ins_plan_type_code" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
-        <Column name="ins_plan_type_desc" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
-        <Column name="mbr_id" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="12" />
-        <Column name="mbr_first_name" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
-        <Column name="mbr_middle_name" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
-        <Column name="mbr_last_name" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="13" />
+        <Column name="rev_transaction_num" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="20" />
+        <Column name="ins_plan_type_code" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="2" />
+        <Column name="ins_plan_type_desc" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
+        <Column name="mbr_id" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="19" />
+        <Column name="mbr_first_name" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="15" />
+        <Column name="mbr_middle_name" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="mbr_last_name" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="20" />
         <Column name="mbr_gender" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
         <Column name="mbr_dob" position="9" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
-        <Column name="mbr_city" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="20" />
+        <Column name="mbr_city" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="mbr_county" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="mbr_zip" position="12" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
-        <Column name="mbr_relationship_code" position="13" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
-        <Column name="mbr_relationship_desc" position="14" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="28" />
-        <Column name="ins_carrier_id" position="15" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="2" />
-        <Column name="ins_carrier_name" position="16" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="6" />
-        <Column name="ins_coverage_type_code" position="17" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="ins_coverage_type_desc" position="18" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="ins_emp_group_id" position="19" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="2" />
-        <Column name="ins_emp_group_name" position="20" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="15" />
-        <Column name="ins_division_id" position="21" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
-        <Column name="ins_division_name" position="22" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
+        <Column name="mbr_zip" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="5" />
+        <Column name="mbr_relationship_code" position="13" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="3" />
+        <Column name="mbr_relationship_desc" position="14" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="22" />
+        <Column name="ins_carrier_id" position="15" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="13" />
+        <Column name="ins_carrier_name" position="16" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="40" />
+        <Column name="ins_coverage_type_code" position="17" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="2" />
+        <Column name="ins_coverage_type_desc" position="18" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
+        <Column name="ins_emp_group_id" position="19" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="13" />
+        <Column name="ins_emp_group_name" position="20" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="31" />
+        <Column name="ins_division_id" position="21" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="8" />
+        <Column name="ins_division_name" position="22" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="56" />
         <Column name="ins_cobra_code" position="23" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="ins_cobra_desc" position="24" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="prv_prescriber_id" position="25" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
-        <Column name="prv_prescriber_first_name" position="26" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="30" />
-        <Column name="prv_prescriber_middle_name" position="27" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="prv_prescriber_last_name" position="28" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="prv_prescriber_first_name" position="26" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="57" />
+        <Column name="prv_prescriber_middle_name" position="27" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="19" />
+        <Column name="prv_prescriber_last_name" position="28" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="25" />
         <Column name="prv_prescriber_type_Code" position="29" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="prv_prescriber_type_desc" position="30" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="prv_dea" position="31" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="prv_npi" position="32" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="prv_dea" position="31" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="10" />
+        <Column name="prv_npi" position="32" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="10" />
         <Column name="prv_nabp" position="33" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="prv_type_code" position="34" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="svc_written_date" position="35" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
+        <Column name="svc_written_date" position="35" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="10" />
         <Column name="svc_filled_date" position="36" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
         <Column name="svc_service_date" position="37" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
         <Column name="rev_paid_date" position="38" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
@@ -5446,30 +5344,30 @@
         <Column name="svc_dosage" position="44" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="svc_drug_strength" position="45" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="60" />
         <Column name="svc_unit_qty" position="46" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
-        <Column name="svc_days_of_supply" position="47" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="3" />
-        <Column name="svc_label_name" position="48" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="34" />
+        <Column name="svc_days_of_supply" position="47" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
+        <Column name="svc_label_name" position="48" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="30" />
         <Column name="svc_formulary_plan_code" position="49" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="svc_formulary_flag" position="50" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
         <Column name="svc_generic_flag" position="51" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
         <Column name="svc_mail_order_flag" position="52" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
         <Column name="svc_refill_qty" position="53" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="2" />
-        <Column name="svc_refill_allowed" position="54" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="svc_refill_allowed" position="54" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="2" />
         <Column name="svc_counter_allow" position="55" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="svc_daw_code" position="56" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
-        <Column name="svc_daw_desc" position="57" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="rev_allowed_amt" position="58" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="rev_billed_amt" position="59" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="rev_coinsurance_amt" position="60" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="svc_daw_desc" position="57" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="64" />
+        <Column name="rev_allowed_amt" position="58" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="8" />
+        <Column name="rev_billed_amt" position="59" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="9" />
+        <Column name="rev_coinsurance_amt" position="60" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="8" />
         <Column name="rev_copay_amt" position="61" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
-        <Column name="rev_deductible_amt" position="62" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="7" />
+        <Column name="rev_deductible_amt" position="62" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="8" />
         <Column name="rev_disp_fee_amt" position="63" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
-        <Column name="rev_ingred_cost_amt" position="64" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="8" />
-        <Column name="rev_stax_amt" position="65" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
-        <Column name="rev_usual_cust_amt" position="66" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="rev_paid_amt" position="67" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="8" />
-        <Column name="rev_adjudication_code" position="68" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
-        <Column name="rev_adjudication_desc" position="69" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="udf1" position="70" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="rev_ingred_cost_amt" position="64" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="9" />
+        <Column name="rev_stax_amt" position="65" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
+        <Column name="rev_usual_cust_amt" position="66" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="9" />
+        <Column name="rev_paid_amt" position="67" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="9" />
+        <Column name="rev_adjudication_code" position="68" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="2" />
+        <Column name="rev_adjudication_desc" position="69" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="13" />
+        <Column name="udf1" position="70" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="30" />
         <Column name="udf2" position="71" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="udf3" position="72" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="udf4" position="73" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
@@ -5484,19 +5382,19 @@
         <Column name="udf13" position="82" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="udf14" position="83" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="udf15" position="84" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="udf16" position="85" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="udf17" position="86" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="udf18" position="87" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="udf19" position="88" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="udf20" position="89" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="dw_member_id" position="90" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="34" />
+        <Column name="udf16" position="85" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="9" />
+        <Column name="udf17" position="86" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="12" />
+        <Column name="udf18" position="87" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="9" />
+        <Column name="udf19" position="88" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="12" />
+        <Column name="udf20" position="89" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="9" />
+        <Column name="dw_member_id" position="90" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="32" />
         <Column name="is_makalu_used" position="91" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
-        <Column name="dw_rawfilename" position="92" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="45" />
-        <Column name="udf21" position="93" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="udf22" position="94" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="udf23" position="95" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="udf24" position="96" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="udf25" position="97" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
+        <Column name="dw_rawfilename" position="92" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="78" />
+        <Column name="udf21" position="93" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="12" />
+        <Column name="udf22" position="94" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
+        <Column name="udf23" position="95" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
+        <Column name="udf24" position="96" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
+        <Column name="udf25" position="97" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
         <Column name="udf26" position="98" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="udf27" position="99" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="udf28" position="100" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
@@ -5517,9 +5415,9 @@
     <Table schema="i" name="Qualitymetrics">
       <Columns>
         <Column name="dw_record_id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
-        <Column name="dw_member_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="34" />
-        <Column name="memberFirstName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
-        <Column name="memberLastName" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="13" />
+        <Column name="dw_member_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="32" />
+        <Column name="memberFirstName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="17" />
+        <Column name="memberLastName" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="20" />
         <Column name="memberGender" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
         <Column name="memberDOB" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
         <Column name="measureId" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
@@ -5537,37 +5435,37 @@
         <Column name="dw_record_id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
         <Column name="dw_account_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="dw_client_id" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="8" />
-        <Column name="dw_member_id" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="34" />
-        <Column name="mbr_id" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="12" />
+        <Column name="dw_member_id" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="32" />
+        <Column name="mbr_id" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
         <Column name="score_type" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="score_start_date" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
         <Column name="score_end_date" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
         <Column name="ip_score" position="9" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
         <Column name="op_score" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
-        <Column name="phy_score" position="11" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
-        <Column name="rx_score" position="12" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
+        <Column name="phy_score" position="11" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
+        <Column name="rx_score" position="12" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
         <Column name="med_score" position="13" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
-        <Column name="total_score" position="14" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
-        <Column name="concurrent_total" position="15" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
+        <Column name="total_score" position="14" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
+        <Column name="concurrent_total" position="15" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
         <Column name="erScore" position="16" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
         <Column name="otherScore" position="17" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
         <Column name="concurrentInpatient" position="18" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
-        <Column name="concurrentMedical" position="19" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
+        <Column name="concurrentMedical" position="19" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
         <Column name="concurrentOutpatient" position="20" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
         <Column name="concurrentPharmacy" position="21" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
         <Column name="concurrentPhysician" position="22" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
         <Column name="concurrentIpNormalizedToGroup" position="23" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
         <Column name="concurrentOpNormalizedToGroup" position="24" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
-        <Column name="concurrentPhyNormalizedToGroup" position="25" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
+        <Column name="concurrentPhyNormalizedToGroup" position="25" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
       </Columns>
     </Table>
     <Table schema="i" name="Visits">
       <Columns>
-        <Column name="dw_record_id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
+        <Column name="dw_record_id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
         <Column name="dw_account_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
         <Column name="dw_client_id" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="8" />
-        <Column name="dw_member_id" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="34" />
-        <Column name="mbr_id" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="12" />
+        <Column name="dw_member_id" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="32" />
+        <Column name="mbr_id" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="11" />
         <Column name="mbr_visit_type" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="38" />
         <Column name="mbr_start_date" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
         <Column name="mbr_end_date" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
@@ -5603,6 +5501,40 @@
         <Column name="DeductibleAmtAvg" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
       </Columns>
     </Table>
+    <Table schema="reporting" name="AverageRisk">
+      <Columns>
+        <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="ContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
+        <Column name="mbr_id" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" />
+        <Column name="Relationship_to_Member" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="program_type" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="program_name" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="program_status" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="20" />
+        <Column name="average_risk_score" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+        <Column name="care_alert_id" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="care_alert_desc" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="200" />
+        <Column name="metric_Type" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="metric_name" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="prescription_class" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="200" />
+        <Column name="svc_drug_name" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="200" />
+      </Columns>
+    </Table>
+    <Table schema="reporting" name="AverageRisk2">
+      <Columns>
+        <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="ContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
+        <Column name="mbr_id" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" />
+        <Column name="Relationship_to_Member" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="program_type" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="program_name" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="average_risk_score" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+        <Column name="care_alert_id" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="care_alert_desc" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="200" />
+        <Column name="metric_Type" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="prescription_class" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="200" />
+        <Column name="svc_drug_name" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="200" />
+      </Columns>
+    </Table>
     <Table schema="reporting" name="ClaimsByDay">
       <Columns>
         <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
@@ -5611,6 +5543,18 @@
         <Column name="ClaimType" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="1" />
         <Column name="SumRevPaidAmt" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
         <Column name="CntRevClaims" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+      </Columns>
+    </Table>
+    <Table schema="reporting" name="ClaimsByDay2">
+      <Columns>
+        <Column name="AgeIntYears" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="ContactId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
+        <Column name="RevPaidDateDateDimId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="ClaimType" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="1" />
+        <Column name="SumRevPaidAmt" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="CntRevClaims" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="Gender" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
       </Columns>
     </Table>
     <Table schema="reporting" name="LastYearsClaims">
@@ -5916,7 +5860,11 @@
         <Property name="SprocType" value="Collection:Job" />
       </Properties>
       <Args>
-        <Arg position="1" mode="IN" name="@jobType" sqlType="varchar" maxLen="80" />
+        <Arg position="1" mode="IN" name="@jobType" sqlType="varchar" maxLen="80">
+          <Properties>
+            <Property name="EnumType" value="JobTypes" />
+          </Properties>
+        </Arg>
         <Arg position="2" mode="IN" name="@serviceRoleMachineName" sqlType="varchar" maxLen="80" />
         <Arg position="3" mode="IN" name="@numUnits" sqlType="int" />
         <Arg position="4" mode="IN" name="@jobId" sqlType="int" />

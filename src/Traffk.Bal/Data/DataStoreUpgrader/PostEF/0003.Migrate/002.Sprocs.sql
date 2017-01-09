@@ -172,9 +172,19 @@ begin
 
 	exec db.AssertNotNull @tenantId
 
+	declare @col_length int
+
+	select @col_length=count(*) from information_Schema.tables where table_schema=@sourceSchema and table_name=@sourceTable
+	if (@col_length<>1)
+	begin
+		
+		exec db.PrintNow 'MoveRows {s0}.{s1} DOES NOT EXIST', @s0=@sourceSchema, @s1=@sourceTable
+		return;
+
+	end
+
 	declare @column_name sysname
 	declare @data_type nvarchar(100)
-	declare @col_length int
 
 	declare @sql nvarchar(max)=''
 	declare @sqlb nvarchar(max)=''
@@ -413,7 +423,7 @@ InsertContactBatch:
 	exec migrate.ContactsCreateFromDeerwalkSetContactIds @tenantId, 'Pharmacy', 'PharmacyId', 'mbr_id', @batchSize
 	exec migrate.ContactsCreateFromDeerwalkSetContactIds @tenantId, 'QualityMetrics', 'QualityMetricId', 'dw_member_id', @batchSize, 'DeerwalkMemberId'
 	exec migrate.ContactsCreateFromDeerwalkSetContactIds @tenantId, 'Scores', 'ScoreId', 'mbr_id', @batchSize
-	exec migrate.ContactsCreateFromDeerwalkSetContactIds @tenantId, 'Visit', 'VisitId', 'mbr_id', @batchSize
+	exec migrate.ContactsCreateFromDeerwalkSetContactIds @tenantId, 'Visits', 'VisitId', 'mbr_id', @batchSize
 
 end
 
@@ -460,7 +470,7 @@ begin
 
 	if (@createContactsAfterImport=1)
 	begin
-		exec ContactsCreateFromDeerwalkEligibility @tenantId, @batchSize
+		exec migrate.ContactsCreateFromDeerwalkEligibility @tenantId, @batchSize
 	end
 
 end

@@ -3,6 +3,7 @@ using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.ApplicationParts;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
@@ -13,6 +14,7 @@ namespace Traffk.Bal.Data
     {
         public class Occurrence
         {
+            [DisplayName("Start Time (UTC)")]
             public DateTime StartAtUtc { get; }
             public TimeSpan Duration { get; }
             public DateTime EndsAtUtc { get; }
@@ -97,16 +99,18 @@ namespace Traffk.Bal.Data
         {
 
             [JsonProperty("everyNDays")]
+            [DisplayName("Every")]
             public uint EveryNDays { get; set; }
 
 
             [JsonProperty("everyWeekday")]
+            [DisplayName("Every weekday")]
             public bool EveryWeekday { get; set; } = true;
 
             public void Validate()
             {
-                if (EveryNDays < 1 && !EveryWeekday) throw new ArgumentOutOfRangeException("Exactly 1 of EveryNDays and EveryWeekday must be set");
-                if (EveryNDays > 0 && EveryWeekday) throw new ArgumentOutOfRangeException("Exactly 1 of EveryNDays and EveryWeekday must be set");
+                if (EveryNDays < 1 && !EveryWeekday) throw new ArgumentOutOfRangeException($"Exactly 1 of {nameof(EveryNDays)} and {nameof(EveryWeekday)} must be set");
+                if (EveryNDays > 0 && EveryWeekday) throw new ArgumentOutOfRangeException($"Exactly 1 of {nameof(EveryNDays)} and {nameof(EveryWeekday)} must be set");
             }
         }
 
@@ -229,15 +233,18 @@ namespace Traffk.Bal.Data
 
 
         [JsonProperty("startDate")]
+        [DisplayName("Start")]
         public DateTime StartDate { get; set; }
 
 
         [Range(1, uint.MaxValue)]
         [JsonProperty("endAfterNOccurrences")]
+        [DisplayName("End after N occurrences")]
         public uint EndAfterNOccurrences { get; set; } = 1;
 
 
         [JsonProperty("endBeforeDate")]
+        [DisplayName("End by date")]
         public DateTime? EndBeforeDate { get; set; }
 
         [JsonIgnore]

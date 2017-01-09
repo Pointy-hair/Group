@@ -3,49 +3,37 @@ using RevolutionaryStuff.Core;
 using Traffk.Bal.ApplicationParts;
 using Traffk.Bal.Data.Ddb.Crm;
 using Traffk.Bal.Data.Rdb;
-using System.Linq;
-using System.Collections.Generic;
 using Traffk.Bal.Email;
-using Microsoft.EntityFrameworkCore;
-using MimeKit;
 using System.Threading.Tasks;
-using Traffk.Bal.Templates;
-using RevolutionaryStuff.Core.Threading;
-using Traffk.Bal.Data.Query;
 using Traffk.Bal.JobResults;
-using System.Diagnostics;
 using Traffk.Bal.Services;
-using Microsoft.WindowsAzure.Storage.Blob;
-using System.IO;
-using RevolutionaryStuff.Core.Streams;
 
 namespace TraffkCommunicationBlastRunner
 {
     public class CommunicationBlastRunner : JobRunner<ContactsFromEligibilityJobResult>
     {
         private readonly int MessagesPerBlock = 2;
-        private readonly CrmDdbContext Crm;
         private readonly TraffkRdbContext Rdb;
-        private readonly IEmailer Emailer;
+        private readonly ITrackingEmailer Emailer;
         private readonly BlobStorageServices Blobs;
 
 
-        public CommunicationBlastRunner(BlobStorageServices blobs, CrmDdbContext crm, TraffkRdbContext rdb, IEmailer emailer)
+        public CommunicationBlastRunner(BlobStorageServices blobs, TraffkRdbContext rdb, ITrackingEmailer emailer)
         {
             Requires.NonNull(blobs, nameof(blobs));
-            Requires.NonNull(crm, nameof(crm));
             Requires.NonNull(rdb, nameof(rdb));
             Requires.NonNull(emailer, nameof(emailer));
 
             Blobs = blobs;
-            Crm = crm;
             Rdb = rdb;
             Emailer = emailer;
         }
 
         protected async override Task OnGoAsync(Job job, ContactsFromEligibilityJobResult result)
         {
-            var tenant = Rdb.Tenants.Single(z => z.TenantId == job.TenantId.Value);
+            var tenant = await Rdb.Tenants.FindAsync(job.TenantId.Value);
+            throw new NotImplementedException();
+#if false
 
             var blast = Rdb.ZCommunicationBlasts.Single(z => z.TenantId == job.TenantId && z.JobId == job.JobId);
             var messageTemplate = Rdb.MessageTemplates.Include(z => z.HtmlBodyTemplate).Include(z => z.SubjectTemplate).Include(z => z.TextBodyTemplate).FirstOrDefault(z => z.MessageTemplateId == blast.MessageTemplateId);
@@ -163,6 +151,7 @@ if (e!=null)                    throw new NotImplementedException();
 
             wq.WaitTillDone();
             streamByCloubBlob.Values.ForEach(sm => sm.Dispose());
+#endif
         }
     }
 }
