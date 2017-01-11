@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Traffk.Bal.Data.Ddb
+namespace Traffk.Bal.Data
 {
     public class Note
     {

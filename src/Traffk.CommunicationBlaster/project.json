@@ -12,7 +12,6 @@
     "Microsoft.Extensions.Options.ConfigurationExtensions": "1.1.0",
     "Microsoft.Extensions.PlatformAbstractions": "1.1.0",
     "MimeKit": "1.10.0",
-    "RevolutionaryStuff.Azure": "1.0.0-*",
     "RevolutionaryStuff.Core": "1.0.0-*",
     "Traffk.Bal": "1.0.0-*"
   },

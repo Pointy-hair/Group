@@ -3,7 +3,6 @@
 
   "dependencies": {
     "cloudscribe.HtmlAgilityPack": "1.0.0",
-    "RevolutionaryStuff.Azure": "1.0.0-*",
     "RevolutionaryStuff.Core": "1.0.0-*",
     "WindowsAzure.Storage": "7.2.1",
     "MailKit": "1.10.0",

@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 using TraffkPortal.Permissions;
 using Traffk.Bal.Permissions;
 using Traffk.Bal.Data.Rdb;
-using Traffk.Bal.Data.Ddb.Crm;
 using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
 using RevolutionaryStuff.Core;
@@ -66,11 +65,9 @@ namespace TraffkPortal.Controllers
         }
 
         private readonly BlobStorageServices Blobs;
-        private readonly CrmDdbContext Crm;
 
         public CommunicationsController(
             BlobStorageServices blobs,
-            CrmDdbContext crm,
             TraffkRdbContext db,
             CurrentContextServices current,
             ILoggerFactory loggerFactory
@@ -78,7 +75,6 @@ namespace TraffkPortal.Controllers
             : base(AspHelpers.MainNavigationPageKeys.Messaging, db, current, loggerFactory)
         {
             Blobs = blobs;
-            Crm = crm;
         }
 
         #region Communications

@@ -10,6 +10,8 @@
     },
     "MSTest.TestAdapter": "1.1.8-rc",
     "MSTest.TestFramework": "1.0.8-rc",
+    "RevolutionaryStuff.Core": "1.0.0-*",
+    "Traffk.Bal": "1.0.0-*",
     "Traffk.CommunicationBlaster": "1.0.0-*"
   },
 

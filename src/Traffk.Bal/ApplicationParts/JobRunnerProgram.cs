@@ -6,7 +6,6 @@ using RevolutionaryStuff.Core.ApplicationParts;
 using RevolutionaryStuff.Core.Threading;
 using System;
 using System.Threading.Tasks;
-using Traffk.Bal.Data.Ddb.Crm;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Services;
 
@@ -99,11 +98,9 @@ namespace Traffk.Bal.ApplicationParts
             base.OnConfigureServices(services);
 
             services.Configure<BlobStorageServices.BlobStorageServicesOptions>(Configuration.GetSection(nameof(BlobStorageServices.BlobStorageServicesOptions)));
-            services.Configure<CrmDdbContext.CrmDdbOptions>(Configuration.GetSection(nameof(CrmDdbContext.CrmDdbOptions)));
 
             services.AddDbContext<TraffkRdbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddScoped<CrmDdbContext>();
             services.AddScoped<JobRunner, TJobRunner>();
             services.AddSingleton<ITraffkTenantFinder>(new ThreadStaticTenantFinder(this));
             services.AddScoped<CurrentTenantServices>();

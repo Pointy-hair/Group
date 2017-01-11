@@ -1,5 +1,4 @@
-﻿using Traffk.Bal.Data.Ddb.Crm;
-
+﻿
 namespace Traffk.Bal.Data.Rdb
 {
     [ConstrainedData(
@@ -22,15 +21,16 @@ namespace Traffk.Bal.Data.Rdb
         nameof(mbr_current_status),
         nameof(mbr_gender)
     )]
+
     public partial class Eligibility
     {
         [HideInPortal]
-        public Address Address => new Address
+        public IAddress Address => new Address
         {
-            AddressLine1 = mbr_street_1,
-            AddressLine2 = mbr_street_2,
+            Address1 = mbr_street_1,
+            Address2 = mbr_street_2,
             State = mbr_state,
-            Country = mbr_county,
+            //Country = mbr_county,
             PostalCode = mbr_zip,
             City = mbr_city
         };

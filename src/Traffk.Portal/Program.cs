@@ -15,7 +15,6 @@ namespace TraffkPortal
                 .Build();
 
             Services.CachingServices.Initialize(host.Services);
-            Services.CachingServices.Instance.Register(RevolutionaryStuff.Azure.DocumentDb.DdbContext.Flusher, Services.CachingServices.FlushPeriods.Long);
 
             host.Run();
         }

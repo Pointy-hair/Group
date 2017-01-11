@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using Traffk.Bal.Data;
-using Traffk.Bal.Data.Ddb;
 
 namespace Traffk.Bal
 {
