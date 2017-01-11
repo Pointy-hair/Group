@@ -5,5 +5,5 @@
 }
 @section listingTable
 {
-    @await Html.PartialAsync("_NotesPartial", Model.Contact.Notes, z => z.Contact.Notes)
+    @await Html.PartialAsync("_NotesPartial", Model.Contact.ContactDetails.Notes, z => z.Contact.ContactDetails.Notes)
 }
