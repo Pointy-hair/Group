@@ -61,7 +61,15 @@
                 {
                     foreach (var a in Model.Contact.ContactDetails.Addresses)
                     {
-                        <div>@a.ToString()</div>
+                        <div>
+                            @a.AddressLine1<br />
+                            @if (String.IsNullOrEmpty(@a.AddressLine2) == false)
+                            {
+                                @a.AddressLine2
+                            }
+                            @a.City, @a.State @a.PostalCode<br/>
+                            @a.Country
+                        </div>
                     }
                 }
             </div>
@@ -73,7 +81,7 @@
                 {
                     foreach (var a in Model.Contact.ContactDetails.PhoneNumbers)
                     {
-                        <div>@a.ToString()</div>
+                        <div>@String.Format("{0:(###) ###-####}", long.Parse(a.PhoneNumber))</div>
                     }
                 }
             </div>

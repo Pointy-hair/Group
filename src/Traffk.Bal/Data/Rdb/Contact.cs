@@ -1,6 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Traffk.Bal.Data.Ddb.Crm;
@@ -105,6 +107,7 @@ namespace Traffk.Bal.Data.Rdb
             public List<ContactAddress> Addresses { get; set; }
 
             [JsonProperty("phoneNumbers")]
+            [DisplayName("Phone Numbers")]
             public List<ContactPhone> PhoneNumbers { get; set; }
         }
     }
@@ -139,6 +142,7 @@ namespace Traffk.Bal.Data.Rdb
             Notes = other.Notes;
             PhoneNumber = other.PhoneNumber;
         }
+
         public override string ToString() => $"{this.GetType().Name} number={PhoneNumber} type={PhoneType} note={Notes}";
     }
 
