@@ -3,7 +3,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Traffk.Bal.Data;
-using Traffk.Bal.Data.Ddb;
 using Traffk.Bal.Data.Rdb;
 
 namespace Traffk.Bal.ApplicationParts

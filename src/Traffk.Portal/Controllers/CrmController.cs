@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TraffkPortal.Models.CrmModels;
 using System;
-using Traffk.Bal.Data.Ddb;
+using Traffk.Bal.Data;
 using System.Collections.Generic;
 using Traffk.Bal;
 using Traffk.Bal.Communications;
@@ -332,8 +332,8 @@ namespace TraffkPortal.Controllers
             nameof(ContactModel.Contact)+"."+nameof(Person.MiddleName),
             nameof(ContactModel.Contact)+"."+nameof(Person.LastName),
             nameof(ContactModel.Contact)+"."+nameof(Person.Suffix),
-            nameof(ContactModel.CommunicationPieces),
-            nameof(ContactModel.Optings)
+            nameof(ContactModel.CommunicationPieces)
+//            nameof(ContactModel.Optings)
             )]
             ContactModel model)
         {

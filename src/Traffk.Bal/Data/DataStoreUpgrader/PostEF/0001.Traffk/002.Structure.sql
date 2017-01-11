@@ -32,6 +32,25 @@ GO
 ALTER TABLE [db].[SchemaUpgraderLog] ENABLE TRIGGER SchemaUpgraderNonDeletable
 GO
 
+create table Addresses
+(
+	AddressId int not null identity primary key,
+	TenantId int not null references Tenants(TenantId),
+	Address1 nvarchar(255) null,
+	Address2 nvarchar(255) null,
+	City nvarchar(100) null,
+	[State] nvarchar(100) null,
+	PostalCode nvarchar(50) null
+)
+
+GO
+
+exec db.TablePropertySet  'Addresses', '1', @propertyName='AddToDbContext'
+exec db.TablePropertySet  'Addresses', '1', @propertyName='GeneratePoco'
+exec db.TablePropertySet  'Addresses', 'Address', @propertyName='ClassName'
+
+GO
+
 create table Contacts
 (
 	ContactId bigint not null identity primary key,
@@ -41,6 +60,7 @@ create table Contacts
 	CreatedAtUtc datetime not null default (getutcdate()), 
 	FullName dbo.Title null,
 	MemberId varchar(50) null,
+	ProviderId varchar(50) null,
 	DeerwalkMemberId varchar(50) null,
 	PrimaryEmail dbo.EmailAddress null,
 
@@ -57,6 +77,7 @@ create table Contacts
 
 GO
 
+create unique index UX_ProviderId on Contacts(TenantId, ProviderId) where ProviderId is not null and ContactRowStatus <> 'p' and ContactRowStatus <> 'd'
 create unique index UX_MemberId on Contacts(TenantId, MemberId) where MemberId is not null and ContactRowStatus <> 'p' and ContactRowStatus <> 'd'
 create unique index UX_DeerwalkMemberId on Contacts(TenantId, DeerwalkMemberId) where DeerwalkMemberId is not null and ContactRowStatus <> 'p' and ContactRowStatus <> 'd'
 exec db.TablePropertySet  'Contacts', '1', @propertyName='AddToDbContext'
@@ -70,14 +91,16 @@ exec db.ColumnPropertySet 'Contacts', 'PrimaryEmail', 'EmailAddress', @propertyN
 
 exec db.TablePropertySet  'Contacts', 'Organization', @propertyName='InheritanceClass:Organization,Organizations'
 exec db.TablePropertySet  'Contacts', 'Person', @propertyName='InheritanceClass:Person,People'
+exec db.TablePropertySet  'Contacts', 'Provider', @propertyName='InheritanceClass:Provider,Providers'
 exec db.ColumnPropertySet 'Contacts', 'ContactType', '1', @propertyName='IsInheritanceDiscriminatorField'
 exec db.ColumnPropertySet 'Contacts', 'DateOfBirth', '1', @propertyName='InheritanceField:Person'
 exec db.ColumnPropertySet 'Contacts', 'Gender', '1', @propertyName='InheritanceField:Person'
-exec db.ColumnPropertySet 'Contacts', 'Prefix', '1', @propertyName='InheritanceField:Person'
-exec db.ColumnPropertySet 'Contacts', 'FirstName', '1', @propertyName='InheritanceField:Person'
-exec db.ColumnPropertySet 'Contacts', 'MiddleName', '1', @propertyName='InheritanceField:Person'
-exec db.ColumnPropertySet 'Contacts', 'LastName', '1', @propertyName='InheritanceField:Person'
-exec db.ColumnPropertySet 'Contacts', 'Suffix', '1', @propertyName='InheritanceField:Person'
+exec db.ColumnPropertySet 'Contacts', 'Prefix', '1', @propertyName='InheritanceField:Person,Provider'
+exec db.ColumnPropertySet 'Contacts', 'FirstName', '1', @propertyName='InheritanceField:Person,Provider'
+exec db.ColumnPropertySet 'Contacts', 'MiddleName', '1', @propertyName='InheritanceField:Person,Provider'
+exec db.ColumnPropertySet 'Contacts', 'LastName', '1', @propertyName='InheritanceField:Person,Provider'
+exec db.ColumnPropertySet 'Contacts', 'Suffix', '1', @propertyName='InheritanceField:Person,Provider'
+exec db.ColumnPropertySet 'Contacts', 'ProviderId', '1', @propertyName='InheritanceField:Provider'
 
 
 GO

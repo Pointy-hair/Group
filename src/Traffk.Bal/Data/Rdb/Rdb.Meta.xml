@@ -66,6 +66,22 @@
         <Column name="PropertyValue" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" />
       </Columns>
     </Table>
+    <Table schema="dbo" name="Addresses">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="ClassName" value="Address" />
+        <Property name="GeneratePoco" value="1" />
+      </Properties>
+      <Columns>
+        <Column name="AddressId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Tenants" />
+        <Column name="Address1" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" />
+        <Column name="Address2" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" />
+        <Column name="City" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="100" />
+        <Column name="State" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="100" />
+        <Column name="PostalCode" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="50" />
+      </Columns>
+    </Table>
     <Table schema="dbo" name="Applications">
       <Properties>
         <Property name="AddToDbContext" value="1" />
@@ -361,6 +377,7 @@
         <Property name="GeneratePoco" value="1" />
         <Property name="InheritanceClass:Organization,Organizations" value="Organization" />
         <Property name="InheritanceClass:Person,People" value="Person" />
+        <Property name="InheritanceClass:Provider,Providers" value="Provider" />
       </Properties>
       <Columns>
         <Column name="ContactId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="bigint" />
@@ -401,32 +418,42 @@
         <Column name="Prefix" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255">
           <Properties>
             <Property name="InheritanceField:Person" value="1" />
+            <Property name="InheritanceField:Person,Provider" value="1" />
           </Properties>
         </Column>
         <Column name="FirstName" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255">
           <Properties>
             <Property name="InheritanceField:Person" value="1" />
+            <Property name="InheritanceField:Person,Provider" value="1" />
           </Properties>
         </Column>
         <Column name="MiddleName" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255">
           <Properties>
             <Property name="InheritanceField:Person" value="1" />
+            <Property name="InheritanceField:Person,Provider" value="1" />
           </Properties>
         </Column>
         <Column name="LastName" position="15" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255">
           <Properties>
             <Property name="InheritanceField:Person" value="1" />
+            <Property name="InheritanceField:Person,Provider" value="1" />
           </Properties>
         </Column>
         <Column name="Suffix" position="16" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255">
           <Properties>
             <Property name="InheritanceField:Person" value="1" />
+            <Property name="InheritanceField:Person,Provider" value="1" />
           </Properties>
         </Column>
         <Column name="ContactRowStatus" position="17" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')">
           <Properties>
             <Property name="AccessModifier" value="missing" />
             <Property name="ImplementsRowStatusSemantics" value="1" />
+          </Properties>
+        </Column>
+        <Column name="ProviderId" position="18" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50">
+          <Properties>
+            <Property name="InheritanceField:Provider" value="1" />
           </Properties>
         </Column>
       </Columns>
@@ -712,6 +739,7 @@
         <Collection schema="deerwalk" table="Visits" column="TenantId" />
         <Collection schema="deerwalk" table="MemberPCP" column="TenantId" />
         <Collection schema="deerwalk" table="Scores" column="TenantId" />
+        <Collection schema="dbo" table="Addresses" column="TenantId" />
         <Collection schema="deerwalk" table="HistoricalScores" column="TenantId" />
         <Collection schema="dbo" table="Creatives" column="TenantId" />
         <Collection schema="deerwalk" table="Participation" column="TenantId" />

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Traffk.Bal.Data.Ddb.Crm;
 
 namespace Traffk.Bal.Data.Rdb
 {
@@ -62,12 +61,12 @@ namespace Traffk.Bal.Data.Rdb
         [JsonIgnore]
         public Organization AsOrganization => this as Organization;
 
-        public Ddb.Note FindNoteById(string noteId)
+        public Note FindNoteById(string noteId)
         {
             return FindNoteById(noteId, ContactDetails.Notes);
         }
 
-        private static Ddb.Note FindNoteById(string noteId, IEnumerable<Ddb.Note> notes)
+        private static Note FindNoteById(string noteId, IEnumerable<Note> notes)
         {
             if (notes == null) return null;
             foreach (var n in notes)
@@ -90,7 +89,7 @@ namespace Traffk.Bal.Data.Rdb
 
             public ContactDetails_()
             {
-                Notes = Notes ?? new List<Ddb.Note>();
+                Notes = Notes ?? new List<Note>();
                 Addresses = Addresses ?? new List<ContactAddress>();
                 PhoneNumbers = PhoneNumbers ?? new List<ContactPhone>();
             }
@@ -101,7 +100,7 @@ namespace Traffk.Bal.Data.Rdb
 
             [JsonProperty("notes")]
             [FreeFormData]
-            public List<Ddb.Note> Notes { get; set; }
+            public List<Note> Notes { get; set; }
 
             [JsonProperty("addresses")]
             public List<ContactAddress> Addresses { get; set; }

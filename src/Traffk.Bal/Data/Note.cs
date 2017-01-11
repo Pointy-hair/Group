@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Traffk.Bal.Data.Ddb
+namespace Traffk.Bal.Data
 {
     public class Note
     {

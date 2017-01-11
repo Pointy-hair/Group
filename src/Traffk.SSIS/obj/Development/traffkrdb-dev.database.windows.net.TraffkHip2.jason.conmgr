@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<DTS:ConnectionManager xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:ObjectName="traffkrdb-dev.TraffkHip2.jason"
+  DTS:DTSID="{0CCF5067-37A7-44B7-A945-4911B8065CCD}"
+  DTS:CreationName="OLEDB">
+  <DTS:ObjectData>
+    <DTS:ConnectionManager
+      DTS:ConnectionString="Data Source=traffkrdb-dev.database.windows.net;User ID=jason;Initial Catalog=TraffkHip2;Provider=SQLNCLI11.1;Auto Translate=False;">
+      <DTS:Password
+        DTS:Name="Password"
+        Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAL/67uR0WEUWm7+lh31qR9QAAAAACAAAAAAAQZgAAAAEAACAAAAAPe80yZ+vVBKvp1KJmmaQ8zCyegFmOPZOGcMDM64AkYAAAAAAOgAAAAAIAACAAAABl5tb/tmAhyeHu8YSmnNhChPnoDp4q5rhb9spIiQ91pYAAAAB9TuiqU5hm1Vw75fiS3bu5tdWK/etBHzxZCNcGtnNv4PM+ORZX8YmpAlABadu7D5uC2kR0fWfUzTFc62uZBHITw/rtOmSyb+2hIFGltpyw9Sj4g8YLYTrsrki7i/CD2qmOsGclfviQJkjrjJ3NYTZdLvJ5CFz/oAxJpMo/7O6uHUAAAAATooshlHi+4bLgePYGYQdvp/eyvDOBTUBFUhEKvgfeUpCUXxAhxVRFbH3N3B/b6ePxXrpQBWEtoK2L808xq7Br</DTS:Password>
+    </DTS:ConnectionManager>
+  </DTS:ObjectData>
+</DTS:ConnectionManager>

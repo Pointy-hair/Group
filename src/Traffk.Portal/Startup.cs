@@ -13,7 +13,6 @@ using RevolutionaryStuff.PowerBiToys;
 using Serilog;
 using System;
 using Traffk.Bal;
-using Traffk.Bal.Data.Ddb.Crm;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Email;
 using Traffk.Bal.Identity;
@@ -91,7 +90,6 @@ namespace TraffkPortal
             services.Configure<PortalOptions>(Configuration.GetSection(nameof(PortalOptions)));
             services.Configure<PowerBiEndpointOptions>(Configuration.GetSection(nameof(PowerBiEndpointOptions)));
             services.Configure<PowerBiWebApplicationOptions>(Configuration.GetSection(nameof(PowerBiWebApplicationOptions)));
-            services.Configure<CrmDdbContext.CrmDdbOptions>(Configuration.GetSection(nameof(CrmDdbContext.CrmDdbOptions)));
             services.Configure<NoTenantMiddleware.NoTenantMiddlewareOptions>(Configuration.GetSection(nameof(NoTenantMiddleware.NoTenantMiddlewareOptions)));
             services.Configure<BlobStorageServices.BlobStorageServicesOptions>(Configuration.GetSection(nameof(BlobStorageServices.BlobStorageServicesOptions)));
             services.Configure<TwilioSmsSenderOptions>(Configuration.GetSection(nameof(TwilioSmsSenderOptions)));
@@ -162,7 +160,6 @@ namespace TraffkPortal
             services.AddScoped<Resources.PortalResourceService>();
             services.AddScoped<BlobStorageServices>();
             services.AddScoped<PowerBiServices>();
-            services.AddScoped<CrmDdbContext>();
             services.AddScoped<ConfigStringFormatter>();
             services.AddScoped<ITableauServices, TableauServices>();
             services.AddScoped<ITrustedTicketGetter, TrustedTicketGetter>();

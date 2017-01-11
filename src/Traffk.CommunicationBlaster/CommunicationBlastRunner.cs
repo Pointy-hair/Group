@@ -1,7 +1,6 @@
 ﻿using System;
 using RevolutionaryStuff.Core;
 using Traffk.Bal.ApplicationParts;
-using Traffk.Bal.Data.Ddb.Crm;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Email;
 using System.Threading.Tasks;
