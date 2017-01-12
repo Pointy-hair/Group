@@ -1048,10 +1048,15 @@ namespace Traffk.Bal.Data.Rdb
 		[Column("ContactType")]
 		public string ContactType { get; set; }
 
-		/// <summary>
-		/// Datetime when this entity was created.
-		/// </summary>
-		[Description("Datetime when this entity was created.")]
+        [DisplayName("Gender")]
+        [MaxLength(100)]
+        [Column("Gender")]
+        public string Gender { get; set; }
+
+        /// <summary>
+        /// Datetime when this entity was created.
+        /// </summary>
+        [Description("Datetime when this entity was created.")]
 		[DisplayName("Created At Utc")]
 		[DatabaseGenerated(DatabaseGeneratedOption.Computed)]
 		[Column("CreatedAtUtc")]
@@ -1145,6 +1150,7 @@ namespace Traffk.Bal.Data.Rdb
 				DeerwalkMemberId = other.DeerwalkMemberId;
 				ContactDetailsJson = other.ContactDetailsJson;
 				PrimaryEmail = other.PrimaryEmail;
+			    Gender = other.Gender;
 			}
 			OnConstructed();
 		}
