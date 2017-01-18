@@ -51,6 +51,7 @@ namespace Traffk.Tableau.REST
         private readonly string _urlDeleteDatasourceTagTemplate;
         private readonly string _urlUpdateWorkbookTemplate;
         private readonly string _urlUpdateDatasourceTemplate;
+        private readonly string urlListViewsInSite;
 
         /// <summary>
         /// Server url with protocol
@@ -87,7 +88,7 @@ namespace Traffk.Tableau.REST
             this.ServerUrlWithProtocol                 = serverNameWithProtocol;
             this.UrlLogin                              = serverNameWithProtocol + "/api/2.0/auth/signin";
             this.UrlLogout                             = serverNameWithProtocol + "/api/2.0/auth/signout";
-            this._urlListWorkbooksForUserTemplate = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/users/{{iwsUserId}}/workbooks?pageSize={{iwsPageSize}}&pageNumber={{iwsPageNumber}}";
+            this._urlListWorkbooksForUserTemplate      = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/users/{{iwsUserId}}/workbooks?pageSize={{iwsPageSize}}&pageNumber={{iwsPageNumber}}";
             this._urlListWorkbookConnectionsTemplate   = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/workbooks/{{iwsWorkbookId}}/connections";
             this._urlListDatasourcesTemplate           = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/datasources?pageSize={{iwsPageSize}}&pageNumber={{iwsPageNumber}}";
             this._urlListProjectsTemplate              = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/projects?pageSize={{iwsPageSize}}&pageNumber={{iwsPageNumber}}";
@@ -106,6 +107,7 @@ namespace Traffk.Tableau.REST
             this._urlDeleteDatasourceTagTemplate       = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/datasources/{{iwsDatasourceId}}/tags/{{iwsTagText}}";
             this._urlUpdateWorkbookTemplate            = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/workbooks/{{iwsWorkbookId}}";
             this._urlUpdateDatasourceTemplate          = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/datasources/{{iwsDatasourceId}}";
+            this.urlListViewsInSite                    = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/views?pageSize={{iwsPageSize}}&pageNumber={{iwsPageNumber}}";
             //Any server version specific things we want to do?
             switch (serverVersion)
             {
@@ -464,6 +466,16 @@ namespace Traffk.Tableau.REST
             return workingText;
         }
 
+        public string UrlDownloadViewsForSite(TableauServerSignIn logInInfo, int pageSize, int pageNumber = 1)
+        {
+            string workingText = urlListViewsInSite.Replace("{{iwsSiteId}}", logInInfo.SiteId);
+            workingText = workingText.Replace("{{iwsPageSize}}", pageSize.ToString());
+            workingText = workingText.Replace("{{iwsPageNumber}}", pageNumber.ToString());
+            ValidateTemplateReplaceComplete(workingText);
+
+            return workingText;
+        }
+
         /// <summary>
         /// URL to download a workbook
         /// </summary>
@@ -493,6 +505,7 @@ namespace Traffk.Tableau.REST
         //    ValidateTemplateReplaceComplete(workingText);
         //    return workingText;
         //}
+
 
 
         /// <summary>
