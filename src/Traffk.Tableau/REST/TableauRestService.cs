@@ -8,7 +8,10 @@ namespace Traffk.Tableau.REST
     public class TableauRestService
     {
         //public TableauServerUrls Urls;
-
+        public TableauRestService()
+        {
+            
+        }
 
         public TableauRestService(string url, string userName, string password)
         {
@@ -33,7 +36,7 @@ namespace Traffk.Tableau.REST
             return serverLogin;
         }
 
-        public DownloadProjectsList DownloadProjectsList(TableauServerUrls onlineUrls, TableauServerSignIn onlineLogin)
+        public DownloadProjectsList DownloadProjectsList(TableauServerSignIn onlineLogin, TableauServerUrls onlineUrls )
         {
             //_statusLog.AddStatusHeader("Request site projects");
             DownloadProjectsList projects = null;
