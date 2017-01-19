@@ -21,6 +21,9 @@ namespace Traffk.Tableau.REST
                 throw new Exception("Unexpected content - not view");
             }
 
+            this.Id = content.Attributes["id"].Value;
+            this.Name = content.Attributes["name"].Value;
+            this.ContentUrl = content.Attributes["contentUrl"].Value;
         }
     }
 }

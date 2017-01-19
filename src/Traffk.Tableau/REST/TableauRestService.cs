@@ -36,7 +36,7 @@ namespace Traffk.Tableau.REST
             return serverLogin;
         }
 
-        public DownloadProjectsList DownloadProjectsList(TableauServerSignIn onlineLogin, TableauServerUrls onlineUrls )
+        public DownloadProjectsList DownloadProjectsList(TableauServerUrls onlineUrls, TableauServerSignIn onlineLogin)
         {
             //_statusLog.AddStatusHeader("Request site projects");
             DownloadProjectsList projects = null;
@@ -62,6 +62,21 @@ namespace Traffk.Tableau.REST
             //Store it
             //this.projects = projects.Projects;
             return projects;
+        }
+
+        public DownloadViewsForSite DownloadViewsForSite(TableauServerUrls onlineUrls, TableauServerSignIn onlineLogin)
+        {
+            try
+            {
+                var views = new DownloadViewsForSite(onlineUrls, onlineLogin);
+                views.ExecuteRequest();
+                return views;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
     }
 }

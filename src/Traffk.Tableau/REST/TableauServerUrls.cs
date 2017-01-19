@@ -107,7 +107,7 @@ namespace Traffk.Tableau.REST
             this._urlDeleteDatasourceTagTemplate       = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/datasources/{{iwsDatasourceId}}/tags/{{iwsTagText}}";
             this._urlUpdateWorkbookTemplate            = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/workbooks/{{iwsWorkbookId}}";
             this._urlUpdateDatasourceTemplate          = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/datasources/{{iwsDatasourceId}}";
-            this.urlListViewsInSite                    = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/views?pageSize={{iwsPageSize}}&pageNumber={{iwsPageNumber}}";
+            this.urlListViewsInSite                    = serverNameWithProtocol + "/api/2.2/sites/{{iwsSiteId}}/views?pageSize={{iwsPageSize}}&pageNumber={{iwsPageNumber}}";
             //Any server version specific things we want to do?
             switch (serverVersion)
             {

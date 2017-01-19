@@ -31,10 +31,25 @@ namespace Traffk.Tableau.Tests.REST
             {
                 var testService = new TableauRestService();
                 var testUrls = TableauServerUrls.FromContentUrl("http://traffk-dev-tab.eastus.cloudapp.azure.com/#/projects", 1);
-                var signIn = testService.SignIn(testUrls, "Darren Alfonso", "DAmico2936!");
-                var projects = testService.DownloadProjectsList(signIn, testUrls);
+                var signIn = testService.SignIn(testUrls, "Test", "TraffkTestTableau");
+                var projects = testService.DownloadProjectsList(testUrls, signIn);
                 Assert.IsNotNull(projects);
                 Assert.IsTrue(projects.Projects.Any());
+            }
+        }
+
+        [TestClass]
+        public class DownloadViewsFromSiteMethodTests
+        {
+            [TestMethod]
+            public void WhenSignedInDownloadAllViews()
+            {
+                var testService = new TableauRestService();
+                var testUrls = TableauServerUrls.FromContentUrl("http://traffk-dev-tab.eastus.cloudapp.azure.com/#/projects/1/", 50);
+                var signIn = testService.SignIn(testUrls, "Test", "TraffkTestTableau");
+                var views = testService.DownloadViewsForSite(testUrls, signIn);
+                Assert.IsNotNull(views);
+                Assert.IsTrue(views.Views.Any());
             }
         }
     }

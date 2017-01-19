@@ -80,9 +80,18 @@ internal static class XmlHelper
     /// <returns></returns>
     public static XmlNamespaceManager CreateTableauXmlNamespaceManager(string prefix)
     {
+        //var msTable = new NameTable();
+        //var ns = new XmlNamespaceManager(msTable);
+        //ns.AddNamespace(prefix, "http://tableausoftware.com/api");
+
+        return CreateTableauXmlNamespaceManager(prefix, "http://tableausoftware.com/api");
+    }
+
+    public static XmlNamespaceManager CreateTableauXmlNamespaceManager(string prefix, string url)
+    {
         var msTable = new NameTable();
         var ns = new XmlNamespaceManager(msTable);
-        ns.AddNamespace(prefix, "http://tableausoftware.com/api");
+        ns.AddNamespace(prefix, url);
 
         return ns;
     }

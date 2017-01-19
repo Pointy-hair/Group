@@ -21,7 +21,23 @@ namespace Traffk.Tableau.REST
 
         public void ExecuteRequest()
         {
-            
+            var views = new List<SiteView>();
+
+            int numberPages = 1; //Start with 1 page (we will get an updated value from server)
+            //Get subsequent pages
+            for (int thisPage = 1; thisPage <= numberPages; thisPage++)
+            {
+                try
+                {
+                    ExecuteRequestForPage(views, thisPage, out numberPages);
+                }
+                catch (Exception e)
+                {
+                    //TODO: Add logging
+                }
+            }
+
+            Views = views;
         }
 
         private void ExecuteRequestForPage(List<SiteView> views, int pageToRequest, out int totalNumberPages)
@@ -37,12 +53,13 @@ namespace Traffk.Tableau.REST
             var xmlDoc = GetWebResponseAsXml(response);
 
             //Get all the viewe nodes
-            var nsManager = XmlHelper.CreateTableauXmlNamespaceManager("iwsOnline");
+            var nsManager = XmlHelper.CreateTableauXmlNamespaceManager("iwsOnline", "http://tableau.com/api");
+            var ns = nsManager.LookupNamespace("iwsOnline");
             var xDoc = xmlDoc.ToXDocument();
-            var projectElements = xDoc.Root.Descendants(XName.Get("view", nsManager.LookupNamespace("iwsOnline")));
+            var viewElements = xDoc.Root.Descendants(XName.Get("view", ns));
 
             //Get information for each of the data sources
-            foreach (var element in projectElements)
+            foreach (var element in viewElements)
             {
                 var view = ParseSiteXElement(element);
                 views.Add(view);
