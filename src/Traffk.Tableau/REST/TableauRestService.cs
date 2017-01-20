@@ -2,20 +2,34 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
+using Traffk.Tableau.REST.RestRequests;
 
 namespace Traffk.Tableau.REST
 {
-    public class TableauRestService
+    public class TableauRestService : ITableauRestService
     {
-        //public TableauServerUrls Urls;
+        public TableauServerSignIn Login { get; set; }
+
+        private readonly TableauSignInOptions Options;
+        private readonly TableauServerUrls Urls;
+
         public TableauRestService()
         {
             
         }
 
+        public TableauRestService(IOptions<TableauSignInOptions> options)
+        {
+            Options = options.Value;
+            var urls = TableauServerUrls.FromContentUrl(Options.Url, 10);
+            Login = new TableauServerSignIn(urls, Options.Username, Options.Password);
+        }
+
         public TableauRestService(string url, string userName, string password)
         {
-            
+            var urls = TableauServerUrls.FromContentUrl(url, 10);
+            Login = new TableauServerSignIn(urls, userName, password);
         }
 
         public TableauServerSignIn SignIn(TableauServerUrls onlineUrls, string userName, string password, TaskStatusLogs statusLog = null)
@@ -30,14 +44,19 @@ namespace Traffk.Tableau.REST
             }
             catch (Exception exLogin)
             {
-                statusLog.AddError("Failed loging, " + exLogin.ToString());
+                //TODO: Serilog
             }
 
             return serverLogin;
         }
 
-        public DownloadProjectsList DownloadProjectsList(TableauServerUrls onlineUrls, TableauServerSignIn onlineLogin)
+        public DownloadProjectsList DownloadProjectsList(TableauServerUrls onlineUrls, TableauServerSignIn onlineLogin = null)
         {
+            if (onlineLogin == null)
+            {
+                onlineLogin = Login;
+            }
+
             //_statusLog.AddStatusHeader("Request site projects");
             DownloadProjectsList projects = null;
             //===================================================================================
@@ -47,34 +66,46 @@ namespace Traffk.Tableau.REST
             {
                 projects = new DownloadProjectsList(onlineUrls, onlineLogin);
                 projects.ExecuteRequest();
-
-                //List all the projects
-                //foreach (var singleProject in projects.Projects)
-                //{
-                //    //_statusLog.AddStatus(singleProject.ToString());
-                //}
             }
             catch (Exception ex)
             {
                 //_statusLog.AddError("Error during projects query, " + ex.ToString());
             }
 
-            //Store it
-            //this.projects = projects.Projects;
             return projects;
         }
 
-        public DownloadViewsForSite DownloadViewsForSite(TableauServerUrls onlineUrls, TableauServerSignIn onlineLogin)
+        public DownloadViewsForSite DonwnloadViewsForSite()
         {
             try
             {
+                var views = new DownloadViewsForSite(Urls, Login);
+                views.ExecuteRequest();
+                return views;
+            }
+            catch (Exception e)
+            {
+                //TODO: Serilog
+                throw;
+            }
+        }
+
+        public DownloadViewsForSite DownloadViewsForSite(TableauServerUrls onlineUrls, TableauServerSignIn onlineLogin = null)
+        {
+            try
+            {
+                if (onlineLogin == null)
+                {
+                    onlineLogin = Login;
+                }
+
                 var views = new DownloadViewsForSite(onlineUrls, onlineLogin);
                 views.ExecuteRequest();
                 return views;
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                //TODO: Serilog
                 throw;
             }
         }

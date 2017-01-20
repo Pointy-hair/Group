@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
+using Traffk.Tableau.REST.RestRequests;
 
 namespace Traffk.Tableau.REST
 {

@@ -19,6 +19,7 @@ using Traffk.Bal.Identity;
 using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
 using Traffk.Tableau;
+using Traffk.Tableau.REST.RestRequests;
 using TraffkPortal.Permissions;
 using TraffkPortal.Services;
 using TraffkPortal.Services.Sms;
@@ -93,6 +94,8 @@ namespace TraffkPortal
             services.Configure<NoTenantMiddleware.NoTenantMiddlewareOptions>(Configuration.GetSection(nameof(NoTenantMiddleware.NoTenantMiddlewareOptions)));
             services.Configure<BlobStorageServices.BlobStorageServicesOptions>(Configuration.GetSection(nameof(BlobStorageServices.BlobStorageServicesOptions)));
             services.Configure<TwilioSmsSenderOptions>(Configuration.GetSection(nameof(TwilioSmsSenderOptions)));
+            services.Configure<TableauSignInOptions>(Configuration.GetSection(nameof(TableauSignInOptions)));
+
             services.Configure<TraffkHttpHeadersFilter.TraffkHttpHeadersFilterOptions>(Configuration.GetSection(nameof(TraffkHttpHeadersFilter.TraffkHttpHeadersFilterOptions)));
 
 

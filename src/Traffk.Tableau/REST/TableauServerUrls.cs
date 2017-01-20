@@ -1,4 +1,5 @@
 ﻿using System;
+using Traffk.Tableau.REST.RestRequests;
 
 namespace Traffk.Tableau.REST
 {

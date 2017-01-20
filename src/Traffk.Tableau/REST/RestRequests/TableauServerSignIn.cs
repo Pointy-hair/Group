@@ -5,7 +5,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace Traffk.Tableau.REST
+namespace Traffk.Tableau.REST.RestRequests
 {
     /// <summary>
     /// Manages the signed in session for a Tableau Server site's sign in

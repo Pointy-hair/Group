@@ -11,6 +11,7 @@ using System.Linq;
 using RevolutionaryStuff.Core.ApplicationParts;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
+using Traffk.Tableau.REST;
 
 namespace TraffkPortal.Controllers
 {
@@ -91,6 +92,12 @@ namespace TraffkPortal.Controllers
                 */
                 return new CacheEntry<TreeNode<PowerBiResource>>(root);
             }).Value;
+        }
+
+        private TreeNode<SiteViewResource> GetRoot(ITableauRestService service)
+        {
+            var root = new TreeNode<SiteViewResource>(new SiteViewFolderResource("Root"));
+            var views = service.
         }
 
         [SetPowerBiBearer]

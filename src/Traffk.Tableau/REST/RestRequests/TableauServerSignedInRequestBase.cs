@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using Traffk.Tableau.REST.RestRequests;
 
 namespace Traffk.Tableau.REST
 {
