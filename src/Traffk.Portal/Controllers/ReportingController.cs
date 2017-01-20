@@ -94,11 +94,11 @@ namespace TraffkPortal.Controllers
             }).Value;
         }
 
-        private TreeNode<SiteViewResource> GetRoot(ITableauRestService service)
-        {
-            var root = new TreeNode<SiteViewResource>(new SiteViewFolderResource("Root"));
-            var views = service.
-        }
+        //private TreeNode<SiteViewResource> GetRoot(ITableauRestService service)
+        //{
+        //    var root = new TreeNode<SiteViewResource>(new SiteViewFolderResource("Root"));
+        //    var views = service.
+        //}
 
         [SetPowerBiBearer]
         [Route("/Reporting/{anchorName}")]
