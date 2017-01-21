@@ -12,6 +12,7 @@ using RevolutionaryStuff.Core.Caching;
 using RevolutionaryStuff.PowerBiToys;
 using Serilog;
 using System;
+using Serilog.Events;
 using Traffk.Bal;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Email;
@@ -65,7 +66,8 @@ namespace TraffkPortal
                     .MinimumLevel.Debug()
                     .Enrich.FromLogContext()
                     .WriteTo.Trace()
-                    .WriteTo.AzureTableStorageWithProperties(Configuration["BlobStorageServicesOptions:ConnectionString"], storageTableName:"AppLogs")
+                    .WriteTo.AzureTableStorageWithProperties(Configuration["BlobStorageServicesOptions:ConnectionString"], 
+                        storageTableName:"AppLogs", writeInBatches:true, period: TimeSpan.FromMinutes(2))
                     .CreateLogger();
         }
 

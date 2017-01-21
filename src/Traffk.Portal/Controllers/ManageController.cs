@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Serilog;
 using TraffkPortal.Models.ManageViewModels;
 using TraffkPortal.Services;
 using Traffk.Bal.Data.Rdb;
@@ -129,7 +130,7 @@ namespace TraffkPortal.Controllers
             {
                 await _userManager.SetTwoFactorEnabledAsync(user, true);
                 await _signInManager.SignInAsync(user, isPersistent: IsSigninPersistent);
-                Logger.LogInformation(1, "User enabled two-factor authentication.");
+                Log.Information("User enabled two-factor authentication.");
             }
             return RedirectToAction(nameof(Index), "Manage");
         }
@@ -145,7 +146,7 @@ namespace TraffkPortal.Controllers
             {
                 await _userManager.SetTwoFactorEnabledAsync(user, false);
                 await _signInManager.SignInAsync(user, isPersistent: IsSigninPersistent);
-                Logger.LogInformation(2, "User disabled two-factor authentication.");
+                Log.Information("User disabled two-factor authentication.");
             }
             return RedirectToAction(nameof(Index), "Manage");
         }
@@ -234,7 +235,7 @@ namespace TraffkPortal.Controllers
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: IsSigninPersistent);
-                    Logger.LogInformation(3, "User changed their password successfully.");
+                    Log.Information("User changed their password successfully.");
                     return RedirectToAction(nameof(Index), new { Message = ManageMessageId.ChangePasswordSuccess });
                 }
                 AddErrors(result);

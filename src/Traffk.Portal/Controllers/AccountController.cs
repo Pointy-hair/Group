@@ -11,6 +11,7 @@ using TraffkPortal.Services;
 using Traffk.Bal.Data.Rdb;
 using RevolutionaryStuff.Core;
 using System;
+using Serilog;
 using TraffkPortal.Services.Sms;
 using Traffk.Bal.Communications;
 
@@ -91,7 +92,6 @@ namespace TraffkPortal.Controllers
                                 }
                             }
                         }
-                        Logger.LogInformation(1, "User logged in.");
                         Uri u;
                         if (Uri.TryCreate(returnUrl, UriKind.Absolute, out u))
                         {
@@ -102,13 +102,14 @@ namespace TraffkPortal.Controllers
                             return RedirectToLocal(returnUrl);
                         }
                     }
+                    Log.Information("User logged in.");
                     if (result.RequiresTwoFactor || Current.Tenant.TenantSettings.RequiresTwoFactorAuthentication)
                     {
                         return RedirectToAction(nameof(SendCode), new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                     }
                     if (result.IsLockedOut)
                     {
-                        Logger.LogWarning(2, "User account locked out.");
+                        Log.Warning("User account locked out.");
                         return View("Lockout");
                     }
                     else
@@ -174,7 +175,7 @@ namespace TraffkPortal.Controllers
                     {
                         await SignInManager.SignInAsync(user, isPersistent: IsSigninPersistent);
                     }
-                    Logger.LogInformation(3, "User created a new account with password.");
+                    Log.Information("User created a new account with password.");
                     return RedirectToLocal(returnUrl);
                 }
                 AddErrors(result);
@@ -189,7 +190,7 @@ namespace TraffkPortal.Controllers
         public async Task<IActionResult> InactivityLogOff()
         {
             await SignInManager.SignOutAsync();
-            Logger.LogInformation(4, "User logged out.");
+            Log.Information("User logged out.");
             var returnUrl = HttpContext.Request.Headers[WebHelpers.HeaderStrings.Referer][0];
             return RedirectToAction(nameof(Login), new { returnUrl = returnUrl });
         }
@@ -201,7 +202,7 @@ namespace TraffkPortal.Controllers
         public async Task<IActionResult> LogOff()
         {
             await SignInManager.SignOutAsync();
-            Logger.LogInformation(4, "User logged out.");
+            Log.Information("User logged out.");
             return RedirectToHome();
         }
 
@@ -239,7 +240,7 @@ namespace TraffkPortal.Controllers
             var result = await SignInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: IsSigninPersistent);
             if (result.Succeeded)
             {
-                Logger.LogInformation(5, "User logged in with {Name} provider.", info.LoginProvider);
+                Log.Information("User logged in with {Name} provider.", info.LoginProvider);
                 return RedirectToLocal(returnUrl);
             }
             if (result.RequiresTwoFactor)
@@ -283,7 +284,7 @@ namespace TraffkPortal.Controllers
                     if (result.Succeeded)
                     {
                         await SignInManager.SignInAsync(user, isPersistent: IsSigninPersistent);
-                        Logger.LogInformation(6, "User created an account using {Name} provider.", info.LoginProvider);
+                        Log.Information("User created an account using {Name} provider.", info.LoginProvider);
                         return RedirectToLocal(returnUrl);
                     }
                 }
@@ -542,7 +543,7 @@ namespace TraffkPortal.Controllers
             }
             if (result.IsLockedOut)
             {
-                Logger.LogWarning(7, "User account locked out.");
+                Log.Warning("User account locked out.");
                 return View("Lockout");
             }
             else

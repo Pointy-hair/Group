@@ -13,6 +13,8 @@ using System;
 using static TraffkPortal.AspHelpers;
 using Serilog.Context;
 using RevolutionaryStuff.Core.Caching;
+using Serilog;
+using ILogger = Serilog.ILogger;
 
 namespace TraffkPortal.Controllers
 {
@@ -105,7 +107,7 @@ namespace TraffkPortal.Controllers
             MainNavPageKey = mainNavPageKey;
             Rdb = db;
             Current = current;
-            Logger = loggerFactory.CreateLogger(this.GetType());
+            Logger = Log.Logger;
             AttachLogContextProperty("TenantId", current.TenantId);
             var u = current.User;
             if (u != null)

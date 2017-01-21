@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
+using Serilog;
 using Traffk.Bal.Data.Rdb;
 using TraffkPortal.Services;
 using TraffkPortal.Permissions;
