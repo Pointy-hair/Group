@@ -1,0 +1,15 @@
+<tsResponse xmlns="http://tableau.com/api" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://tableau.com/api http://tableau.com/api/ts-api-2.2.xsd">
+  <pagination pageNumber="1" pageSize="100" totalAvailable="2" />
+  <views>
+    <view id="1f1e1d1c-2b2a-2f2e-3d3c-3b3a4f4e4d4c" name="Economic Indicators"
+         contentUrl="Finance/sheets/EconomicIndicators">
+      <workbook id="1a1b1c1d-2e2f-2a2b-3c3d-3e3f4a4b4c4d" />
+      <owner id="9f9e9d9c-8b8a-8f8e-7d7c-7b7a6f6d6e6d" />
+    </view>
+    <view id="9a8a7b6b-5c4c-3d2d-1e0e-9a8a7b6b5b4b" name="Investing in the Dow"
+          contentUrl="Finance/sheets/InvestingintheDow">
+      <workbook id="59a8a7b6-be3a-4d2d-1e9e-08a7b6b5b4ba" />
+      <owner id="9f8e7d6c5-b4a3-f2e1-d0c9-b8a7f6e5d4c" />
+    </view>
+  </views>
+</tsResponse>

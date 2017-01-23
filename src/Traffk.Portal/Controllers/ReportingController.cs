@@ -11,6 +11,8 @@ using System.Linq;
 using RevolutionaryStuff.Core.ApplicationParts;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
+using Traffk.Bal.Settings;
+using Traffk.Tableau;
 using Traffk.Tableau.REST;
 
 namespace TraffkPortal.Controllers
@@ -41,6 +43,7 @@ namespace TraffkPortal.Controllers
             : base(AspHelpers.MainNavigationPageKeys.Reporting, db, current, loggerFactory, cacher)
         {
             TableauRestService = tableauRestService;
+            AttachLogContextProperty("EventType", LoggingEventTypes.Report.ToString());
         }
 
         public class FolderResource : PowerBiResource, IName
@@ -138,10 +141,10 @@ namespace TraffkPortal.Controllers
             return View(e);
         }
 
-        [SetPowerBiBearer]
+        [SetTableauTrustedTicket]
         [Route("/Reporting/Report")]
         [ActionName(ActionNames.Report)]
-        public IActionResult Report(string contentUrl, string reportName)
+        public IActionResult Report(string workbook, string viewname)
         {
             //var root = GetRoot(TableauRestService);
             //PowerBiEmbeddableResource e = null;
@@ -156,8 +159,9 @@ namespace TraffkPortal.Controllers
             //});
             var viewModel = new SiteViewViewModel
             {
-                ContentUrl = contentUrl,
-                Name = reportName
+                WorkbookName = workbook,
+                ViewName = viewname,
+                Name = viewname
             };
             return View(viewModel);
         }

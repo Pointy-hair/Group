@@ -7,7 +7,7 @@ using System.Xml.Linq;
 /// <summary>
 /// Useful XML methods
 /// </summary>
-internal static class XmlHelper
+public static class XmlHelper
 {
     public const string XmlAttribute_Value = "value";
 
