@@ -68,7 +68,7 @@ namespace TraffkPortal
                     .Enrich.FromLogContext()
                     .WriteTo.Trace()
                     .WriteTo.AzureTableStorageWithProperties(Configuration["BlobStorageServicesOptions:ConnectionString"], 
-                        storageTableName:"AppLogs", writeInBatches:true, period: TimeSpan.FromMinutes(2))
+                        storageTableName:"AppLogs", writeInBatches:true, period: Parse.ParseTimeSpan(Configuration["LogInterval"], TimeSpan.FromSeconds(2)))
                     .CreateLogger();
         }
 
