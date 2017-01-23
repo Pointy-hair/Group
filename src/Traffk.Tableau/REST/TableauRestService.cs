@@ -22,8 +22,9 @@ namespace Traffk.Tableau.REST
         public TableauRestService(IOptions<TableauSignInOptions> options)
         {
             Options = options.Value;
-            var urls = TableauServerUrls.FromContentUrl(Options.Url, 10);
-            Login = new TableauServerSignIn(urls, Options.Username, Options.Password);
+            Urls = TableauServerUrls.FromContentUrl(Options.Url, 10);
+            Login = new TableauServerSignIn(Urls, Options.Username, Options.Password);
+            Login.ExecuteRequest();
         }
 
         public TableauRestService(string url, string userName, string password)
@@ -75,7 +76,7 @@ namespace Traffk.Tableau.REST
             return projects;
         }
 
-        public DownloadViewsForSite DonwnloadViewsForSite()
+        public DownloadViewsForSite DownloadViewsForSite()
         {
             try
             {

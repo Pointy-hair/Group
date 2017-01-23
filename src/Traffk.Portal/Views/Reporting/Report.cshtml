@@ -1,0 +1,19 @@
+﻿@using RevolutionaryStuff.PowerBiToys.Objects
+@using RevolutionaryStuff.Core.Collections
+@using RevolutionaryStuff.Core.ApplicationParts
+@using Traffk.Tableau.REST
+@model Traffk.Tableau.REST.SiteViewViewModel
+@{
+    ViewData.SetTitleAndHeading(@Model.Name);
+    ViewData["BodyContainerClass"] = "container-full-width no-side-padding";
+}
+
+@{ await Html.RenderPartialAsync("_PowerBiIFramePartial"); }
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            initVizWithContentUrl(@Model.ContentUrl);
+        });
+    </script>
+}

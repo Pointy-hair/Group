@@ -8,5 +8,6 @@ namespace Traffk.Tableau.REST
         TableauServerSignIn SignIn(TableauServerUrls onlineUrls, string userName, string password, TaskStatusLogs statusLog = null);
         DownloadProjectsList DownloadProjectsList(TableauServerUrls onlineUrls, TableauServerSignIn onlineLogin = null);
         DownloadViewsForSite DownloadViewsForSite(TableauServerUrls onlineUrls, TableauServerSignIn onlineLogin = null);
+        DownloadViewsForSite DownloadViewsForSite();
     }
 }

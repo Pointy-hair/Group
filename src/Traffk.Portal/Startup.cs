@@ -20,6 +20,7 @@ using Traffk.Bal.Identity;
 using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
 using Traffk.Tableau;
+using Traffk.Tableau.REST;
 using Traffk.Tableau.REST.RestRequests;
 using TraffkPortal.Permissions;
 using TraffkPortal.Services;
@@ -168,6 +169,7 @@ namespace TraffkPortal
             services.AddScoped<ConfigStringFormatter>();
             services.AddScoped<ITableauServices, TableauServices>();
             services.AddScoped<ITrustedTicketGetter, TrustedTicketGetter>();
+            services.AddScoped<ITableauRestService, TableauRestService>();
 
             services.AddScoped<SetPowerBiBearerActionFilter>();
             services.AddScoped<TableauTrustedTicketActionFilter>();

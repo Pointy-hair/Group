@@ -1,0 +1,32 @@
+﻿@using RevolutionaryStuff.Core.Collections
+@using RevolutionaryStuff.Core.ApplicationParts
+@using Traffk.Tableau.REST
+@using static TraffkPortal.Controllers.ReportingController
+@model IEnumerable<TreeNode<SiteViewResource>>
+<ul>
+    @foreach (var tn in Model)
+    {
+        <li role="presentation">
+            @{
+                var tsv = tn.Data;
+                //var name = $"{NameHelpers.GetName(tsv)}";
+                //var urlName = CreateAnchorName(e);
+                if (tsv is SiteView)
+                {
+                    var view = tsv as SiteView;
+                    //<a style="cursor:pointer" asp-route-anchorName="@urlName" asp-action="@ActionNames.ShowReport">@name</a>
+                    <a style="cursor:pointer" asp-route-contentUrl="@view.ContentUrl" asp-route-name="@view.Name" asp-action="@ReportingController.ActionNames.Report">@view.Name</a>
+                }
+                else if (tsv is SiteViewFolderResource)
+                {
+                    var folder = tsv as SiteViewFolderResource;
+                    <text>@folder.Name</text>
+                }
+                if (tn.HasChildren)
+                {
+                    await Html.RenderPartialAsync("_TableauViewResourceTreeNodePartial", tn.Children);
+                }
+            }
+        </li>
+    }
+</ul>

@@ -37,9 +37,15 @@ namespace Traffk.Tableau.REST
         }
     }
 
+    public class SiteViewViewModel : SiteViewResource
+    {
+        public string ContentUrl { get; set; }
+        public string Name { get; set; }
+    }
+
     public class SiteViewFolderResource : SiteViewResource, IName
     {
-        string IName.Name => Id;
+        public string Name => Id;
 
         public override string ToString() => Id;
 

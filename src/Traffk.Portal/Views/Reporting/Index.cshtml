@@ -1,9 +1,9 @@
 @using RevolutionaryStuff.PowerBiToys.Objects
 @using RevolutionaryStuff.Core.Collections
 @using RevolutionaryStuff.Core.ApplicationParts
-@model TreeNode<PowerBiResource>
+@model TreeNode<Traffk.Tableau.REST.SiteViewResource>
 @{
     ViewData.SetTitleAndHeading("Reporting");
 }
-@{ await Html.RenderPartialAsync("_PowerBiResourceTreeNodePartial", Model.Children); }
+@{ await Html.RenderPartialAsync("_TableauViewResourceTreeNodePartial", Model.Children); }
 
