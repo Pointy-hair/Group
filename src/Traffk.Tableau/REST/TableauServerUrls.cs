@@ -53,6 +53,7 @@ namespace Traffk.Tableau.REST
         private readonly string _urlUpdateWorkbookTemplate;
         private readonly string _urlUpdateDatasourceTemplate;
         private readonly string urlListViewsInSite;
+        private readonly string urlListProjectsInSite;
 
         /// <summary>
         /// Server url with protocol
@@ -109,6 +110,8 @@ namespace Traffk.Tableau.REST
             this._urlUpdateWorkbookTemplate            = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/workbooks/{{iwsWorkbookId}}";
             this._urlUpdateDatasourceTemplate          = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/datasources/{{iwsDatasourceId}}";
             this.urlListViewsInSite                    = serverNameWithProtocol + "/api/2.2/sites/{{iwsSiteId}}/views?pageSize={{iwsPageSize}}&pageNumber={{iwsPageNumber}}";
+            this.urlListProjectsInSite = serverNameWithProtocol + "/api/2.2/sites/{{iwsSiteId}}/workbooks";
+
             //Any server version specific things we want to do?
             switch (serverVersion)
             {

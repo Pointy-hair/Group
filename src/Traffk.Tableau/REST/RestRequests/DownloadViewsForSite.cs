@@ -49,15 +49,15 @@ namespace Traffk.Tableau.REST
         {
             int pageSize = urls.PageSize;
             //Create a web request, in including the users logged-in auth information in the request headers
-            var urlQuery = urls.UrlDownloadViewsForSite(_onlineSession, pageSize, pageToRequest);
+            var urlQuery = urls.UrlDownloadViewsForSite(onlineSession, pageSize, pageToRequest);
             var webRequest = CreateLoggedInWebRequest(urlQuery);
             webRequest.Method = "GET";
 
-            _onlineSession.StatusLog.AddStatus("Web request: " + urlQuery, -10);
+            onlineSession.StatusLog.AddStatus("Web request: " + urlQuery, -10);
             var response = GetWebReponseLogErrors(webRequest, "get views list");
             var xmlDoc = GetWebResponseAsXml(response);
 
-            //Get all the viewe nodes
+            //Get all the view nodes
             var xDoc = xmlDoc.ToXDocument();
             var viewElements = xDoc.Root.Descendants(XName.Get("view", xmlNamespace));
 
@@ -76,12 +76,6 @@ namespace Traffk.Tableau.REST
             totalNumberPages = GetPageCount(paginationElement, pageSize);
         }
 
-        private int GetPageCount(XElement paginationElement, int pageSize)
-        {
-            var paginationNode = paginationElement.ToXmlNode();
-            return DownloadPaginationHelper.GetNumberOfPagesFromPagination(paginationNode, pageSize);
-        }
-
         private SiteView ParseSiteXElement(XElement element)
         {
             try
@@ -94,7 +88,7 @@ namespace Traffk.Tableau.REST
             }
             catch
             {
-                _onlineSession.StatusLog.AddError("Error parsing project: " + element.ToString());
+                onlineSession.StatusLog.AddError("Error parsing project: " + element.ToString());
             }
 
             return null;
@@ -104,7 +98,7 @@ namespace Traffk.Tableau.REST
         {
             if (string.IsNullOrWhiteSpace(view.Id))
             {
-                _onlineSession.StatusLog.AddError(view.Name + " is missing a view ID. Not returned from server! xml=" + xmlNode.OuterXml);
+                onlineSession.StatusLog.AddError(view.Name + " is missing a view ID. Not returned from server! xml=" + xmlNode.OuterXml);
             }
         }
     }

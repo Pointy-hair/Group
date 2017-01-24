@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Xml.Linq;
 using Traffk.Tableau.REST.RestRequests;
 
 namespace Traffk.Tableau.REST
@@ -9,7 +10,7 @@ namespace Traffk.Tableau.REST
     /// </summary>
     public abstract class TableauServerSignedInRequestBase : TableauServerRequestBase
     {
-        protected readonly TableauServerSignIn _onlineSession;
+        protected readonly TableauServerSignIn onlineSession;
 
         /// <summary>
         /// Constructor
@@ -17,7 +18,7 @@ namespace Traffk.Tableau.REST
         /// <param name="login"></param>
         public TableauServerSignedInRequestBase(TableauServerSignIn login)
         {
-            _onlineSession = login;
+            onlineSession = login;
         }
 
         /// <summary>
@@ -29,7 +30,7 @@ namespace Traffk.Tableau.REST
         /// <returns></returns>
         protected WebRequest CreateLoggedInWebRequest(string url, string protocol = "GET", Nullable<int> requestTimeout = null)
         {
-            _onlineSession.StatusLog.AddStatus("Attempt web request: " + url, -10);
+            onlineSession.StatusLog.AddStatus("Attempt web request: " + url, -10);
 
             var webRequest = WebRequest.Create(url);
             webRequest.Method = protocol;
@@ -50,8 +51,8 @@ namespace Traffk.Tableau.REST
         /// <param name="webHeaders"></param>
         private void AppendLoggedInHeadersForRequest(WebRequest request)
         {
-            request.Headers["X-Tableau-Auth"] = _onlineSession.LogInAuthToken;
-            _onlineSession.StatusLog.AddStatus("Append header X-Tableau-Auth: " + _onlineSession.LogInAuthToken, -20);
+            request.Headers["X-Tableau-Auth"] = onlineSession.LogInAuthToken;
+            onlineSession.StatusLog.AddStatus("Append header X-Tableau-Auth: " + onlineSession.LogInAuthToken, -20);
         }
 
         /// <summary>
@@ -71,6 +72,12 @@ namespace Traffk.Tableau.REST
             {
                 throw webException;
             }
+        }
+
+        protected int GetPageCount(XElement paginationElement, int pageSize)
+        {
+            var paginationNode = paginationElement.ToXmlNode();
+            return DownloadPaginationHelper.GetNumberOfPagesFromPagination(paginationNode, pageSize);
         }
 
     }

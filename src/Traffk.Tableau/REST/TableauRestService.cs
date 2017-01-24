@@ -80,9 +80,7 @@ namespace Traffk.Tableau.REST
         {
             try
             {
-                var views = new DownloadViewsForSite(Urls, Login);
-                views.ExecuteRequest();
-                return views;
+                return DownloadViewsForSite(Urls, Login);
             }
             catch (Exception e)
             {
@@ -108,6 +106,39 @@ namespace Traffk.Tableau.REST
             {
                 //TODO: Serilog
                 throw;
+            }
+        }
+
+        public DownloadWorkbooksList DownloadWorkbooksList()
+        {
+            try
+            {
+                return DownloadWorkbooksList(Urls, Login);
+
+            }
+            catch (Exception e)
+            {
+                //TODO: Serilog
+                throw;
+            }
+        }
+
+        public DownloadWorkbooksList DownloadWorkbooksList(TableauServerUrls onlineUrls,
+            TableauServerSignIn onlineLogin = null)
+        {
+            try
+            {
+                //Get the list of workbooks
+                var workbooksList = new DownloadWorkbooksList(onlineUrls, onlineLogin);
+                workbooksList.ExecuteRequest();
+
+                return workbooksList;
+            }
+            catch (Exception exDownload)
+            {
+                //TODO: Serilog
+                throw;
+                //_statusLog.AddError("Error during workbooks list download, " + exDownload.ToString());
             }
         }
     }

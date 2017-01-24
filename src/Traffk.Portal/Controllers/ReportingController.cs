@@ -12,6 +12,7 @@ using System.Linq;
 using RevolutionaryStuff.Core.ApplicationParts;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
+using Serilog;
 using Traffk.Bal.Settings;
 using Traffk.Tableau;
 using Traffk.Tableau.REST;
@@ -104,14 +105,15 @@ namespace TraffkPortal.Controllers
             }).Value;
         }
 
-        private TreeNode<SiteViewResource> GetRoot(ITableauRestService service)
+        private TreeNode<SiteViewResource> GetReportFolderTreeRoot()
         {
             var root = new TreeNode<SiteViewResource>(new SiteViewFolderResource("Root"));
-            var views = service.DownloadViewsForSite().Views;
+            var views = TableauRestService.DownloadViewsForSite().Views;
+
             if (views.Count() > 0)
             {
                 views = views.OrderBy(r => r.Name);
-                var workbookFolders = new List<TreeNode<SiteViewResource>>();
+                var workbookFolders = GetWorkbookFolders();
 
                 foreach (var view in views)
                 {
@@ -139,6 +141,19 @@ namespace TraffkPortal.Controllers
             }
 
             return Cacher.FindOrCreate("root", async key => new CacheEntry<TreeNode<SiteViewResource>>(root)).Value;
+        }
+
+        private List<TreeNode<SiteViewResource>> GetWorkbookFolders()
+        {
+            var workbookFolders = new List<TreeNode<SiteViewResource>>();
+            var workbooks = TableauRestService.DownloadWorkbooksList().Workbooks;
+            foreach (var workbook in workbooks)
+            {
+                var newWorkbookFolder = new TreeNode<SiteViewResource>(new SiteViewFolderResource(workbook.Name, workbook.Id));
+                workbookFolders.Add(newWorkbookFolder);
+            }
+
+            return workbookFolders;
         }
 
         [SetPowerBiBearer]
@@ -183,6 +198,7 @@ namespace TraffkPortal.Controllers
                 ViewName = viewname,
                 Name = viewname
             };
+
             return View(viewModel);
         }
 
@@ -191,7 +207,7 @@ namespace TraffkPortal.Controllers
         [ActionName(ActionNames.Index)]
         public IActionResult Index()
         {
-            var root = GetRoot(TableauRestService);
+            var root = GetReportFolderTreeRoot();
             return View(root);
         }
     }

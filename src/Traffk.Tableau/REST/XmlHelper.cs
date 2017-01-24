@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -278,5 +279,25 @@ public static class XmlHelper
     public static XDocument ToXDocument(this XmlDocument xmlDocument)
     {
         return XDocument.Parse(xmlDocument.OuterXml);
+    }
+
+    public static XmlNode SelectSingleNode(this XmlNode xmlNode, string nodeName, string xmlNamespace)
+    {
+        var xElement = xmlNode.ToXElement();
+        var selectedElement = xElement.Descendants(XName.Get(nodeName, xmlNamespace)).First();
+        var selectedNode = selectedElement.ToXmlNode();
+        return selectedNode;
+    }
+
+    public static List<XmlNode> SelectNodes(this XmlNode xmlNode, string nodeName, string xmlNamespace)
+    {
+        var nodes = new List<XmlNode>();
+        var xElement = xmlNode.ToXElement();
+        var selectedElements = xElement.Descendants(XName.Get(nodeName, xmlNamespace));
+        foreach (var element in selectedElements)
+        {
+            nodes.Add(element.ToXmlNode());
+        }
+        return nodes;
     }
 }
