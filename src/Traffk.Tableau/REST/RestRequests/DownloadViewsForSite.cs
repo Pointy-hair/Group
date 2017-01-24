@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
+using Traffk.Tableau.REST.Models;
 using Traffk.Tableau.REST.RestRequests;
 
 namespace Traffk.Tableau.REST
@@ -11,6 +12,7 @@ namespace Traffk.Tableau.REST
     public class DownloadViewsForSite : TableauServerSignedInRequestBase
     {
         private readonly TableauServerUrls urls;
+        private readonly string xmlNamespace;
 
         public IEnumerable<SiteView> Views;
 
@@ -18,6 +20,8 @@ namespace Traffk.Tableau.REST
             : base(login)
         {
             urls = onlineUrls;
+            var nsManager = XmlHelper.CreateTableauXmlNamespaceManager("iwsOnline", "http://tableau.com/api");
+            xmlNamespace = nsManager.LookupNamespace("iwsOnline");
         }
 
         public void ExecuteRequest()
@@ -54,10 +58,8 @@ namespace Traffk.Tableau.REST
             var xmlDoc = GetWebResponseAsXml(response);
 
             //Get all the viewe nodes
-            var nsManager = XmlHelper.CreateTableauXmlNamespaceManager("iwsOnline", "http://tableau.com/api");
-            var ns = nsManager.LookupNamespace("iwsOnline");
             var xDoc = xmlDoc.ToXDocument();
-            var viewElements = xDoc.Root.Descendants(XName.Get("view", ns));
+            var viewElements = xDoc.Root.Descendants(XName.Get("view", xmlNamespace));
 
             //Get information for each of the data sources
             foreach (var element in viewElements)
@@ -70,7 +72,7 @@ namespace Traffk.Tableau.REST
             //Get the updated page-count
             //-------------------------------------------------------------------
 
-            var paginationElement = xDoc.Root.Descendants(XName.Get("pagination", nsManager.LookupNamespace("iwsOnline"))).FirstOrDefault();
+            var paginationElement = xDoc.Root.Descendants(XName.Get("pagination", xmlNamespace)).FirstOrDefault();
             totalNumberPages = GetPageCount(paginationElement, pageSize);
         }
 
@@ -85,8 +87,7 @@ namespace Traffk.Tableau.REST
             try
             {
                 var itemXml = element.ToXmlNode();
-                var siteView = new SiteView(itemXml);
-
+                var siteView = new SiteView(itemXml, xmlNamespace);
                 SanityCheckView(siteView, itemXml);
 
                 return siteView;

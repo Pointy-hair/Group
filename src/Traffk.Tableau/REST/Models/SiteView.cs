@@ -1,20 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Linq;
 using RevolutionaryStuff.Core.ApplicationParts;
 
-namespace Traffk.Tableau.REST
+namespace Traffk.Tableau.REST.Models
 {
     public class SiteViewResource : IName
     {
         public string Id { get; set; }
-
-        string IName.Name => Id;
-
-        public override string ToString() => Id;
+        public string Name { get; set; }
+        public override string ToString() => Id + "-" + Name;
 
     }
 
@@ -27,7 +24,7 @@ namespace Traffk.Tableau.REST
         public readonly string OwnerId;
         public readonly string ViewName;
 
-        public SiteView(XmlNode content)
+        public SiteView(XmlNode content, string xmlNamespace)
         {
             if (content.Name.ToLower() != "view")
             {
@@ -39,9 +36,18 @@ namespace Traffk.Tableau.REST
             this.ContentUrl = content.Attributes["contentUrl"].Value;
             this.WorkbookName = GetWorkbookName(ContentUrl);
             this.ViewName = GetViewName(ContentUrl);
+            this.WorkbookId = GetWorkbookId(content, xmlNamespace);
         }
 
         private readonly Regex ContentUrlPattern = new Regex(@"^(?<workbook>.*?)\/sheets\/(?<view>.*?)$");
+
+        private string GetWorkbookId(XmlNode content, string xmlNamespace)
+        {
+            var contentElement = content.ToXElement();
+            var workbookNode = contentElement.Descendants(XName.Get("workbook", xmlNamespace)).First().ToXmlNode();
+            var workbookId = workbookNode.Attributes["id"].Value;
+            return workbookId;
+        }
 
         private string GetWorkbookName(string contentUrl)
         {
@@ -67,13 +73,10 @@ namespace Traffk.Tableau.REST
 
     public class SiteViewFolderResource : SiteViewResource, IName
     {
-        public string Name => Id;
-
-        public override string ToString() => Id;
-
-        public SiteViewFolderResource(string name)
+        public SiteViewFolderResource(string name, string id = "")
         {
-            base.Id = name;
+            base.Id = id;
+            base.Name = name;
         }
     }
 }

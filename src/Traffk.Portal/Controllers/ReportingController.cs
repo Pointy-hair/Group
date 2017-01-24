@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using TraffkPortal.Services;
@@ -14,6 +15,7 @@ using RevolutionaryStuff.Core.Caching;
 using Traffk.Bal.Settings;
 using Traffk.Tableau;
 using Traffk.Tableau.REST;
+using Traffk.Tableau.REST.Models;
 
 namespace TraffkPortal.Controllers
 {
@@ -109,13 +111,31 @@ namespace TraffkPortal.Controllers
             if (views.Count() > 0)
             {
                 views = views.OrderBy(r => r.Name);
-                var viewFolder = new TreeNode<SiteViewResource>(new SiteViewFolderResource("Reports"));
+                var workbookFolders = new List<TreeNode<SiteViewResource>>();
+
                 foreach (var view in views)
                 {
-                    viewFolder.AddChildren(view);
+                    var workbookName = view.WorkbookName;
+                    var workbookId = view.WorkbookId;
+                    var parentWorkbookFolder =
+                        workbookFolders.Find(x => x.Data.Id == workbookId && x.Data.Name == workbookName);
+
+                    if (parentWorkbookFolder == null)
+                    {
+                        var newWorkbookFolder = new TreeNode<SiteViewResource>(new SiteViewFolderResource(workbookName, workbookId));
+                        newWorkbookFolder.AddChildren(view);
+                        workbookFolders.Add(newWorkbookFolder);
+                    }
+                    else
+                    {
+                        parentWorkbookFolder.AddChildren(view);
+                    }
                 }
 
-                root.Add(viewFolder);
+                foreach (var folder in workbookFolders)
+                {
+                    root.Add(folder);
+                }
             }
 
             return Cacher.FindOrCreate("root", async key => new CacheEntry<TreeNode<SiteViewResource>>(root)).Value;

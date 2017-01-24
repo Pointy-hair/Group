@@ -9,6 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Traffk.Tableau.REST;
 using Traffk.Tableau.REST.RestRequests;
 using Moq;
+using Traffk.Tableau.REST.Models;
 
 namespace Traffk.Tableau.Tests.REST.Models
 {
@@ -26,7 +27,7 @@ namespace Traffk.Tableau.Tests.REST.Models
                 var nsManager = XmlHelper.CreateTableauXmlNamespaceManager("iwsOnline", "http://tableau.com/api");
                 var ns = nsManager.LookupNamespace("iwsOnline");
                 var viewElements = testXDocument.Root.Descendants(XName.Get("view", ns));
-                var testSiteView = new SiteView(viewElements.First().ToXmlNode());
+                var testSiteView = new SiteView(viewElements.First().ToXmlNode(), ns);
 
                 Assert.AreEqual(testSiteView.WorkbookName, "Finance");
             }
@@ -39,7 +40,7 @@ namespace Traffk.Tableau.Tests.REST.Models
                 var nsManager = XmlHelper.CreateTableauXmlNamespaceManager("iwsOnline", "http://tableau.com/api");
                 var ns = nsManager.LookupNamespace("iwsOnline");
                 var viewElements = testXDocument.Root.Descendants(XName.Get("view", ns));
-                var testSiteView = new SiteView(viewElements.First().ToXmlNode());
+                var testSiteView = new SiteView(viewElements.First().ToXmlNode(), ns);
 
                 Assert.AreEqual(testSiteView.ViewName, "EconomicIndicators");
             }
