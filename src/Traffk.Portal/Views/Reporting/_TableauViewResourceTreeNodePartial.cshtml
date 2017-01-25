@@ -13,7 +13,8 @@
                 if (tsv is SiteView)
                 {
                     var view = tsv as SiteView;
-                    <a style="cursor:pointer" asp-route-workbook="@view.WorkbookName" asp-route-viewname="@view.ViewName" asp-action="@ReportingController.ActionNames.Report">@view.Name</a>
+                    var urlName = ReportingController.CreateAnchorName(tsv);
+                    <a style="cursor:pointer" asp-route-anchorName="@urlName" asp-action="@ReportingController.ActionNames.Report">@view.Name</a>
                 }
                 else if (tsv is SiteViewFolderResource)
                 {

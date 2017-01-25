@@ -100,7 +100,7 @@ namespace Traffk.Tableau.REST.RestRequests
         {
             int pageSize = urls.PageSize;
             //Create a web request, in including the users logged-in auth information in the request headers
-            var urlQuery = urls.Url_WorkbooksListForUser(onlineSession, userId, pageSize, pageToRequest);
+            var urlQuery = urls.UrlDownloadWorkbooksForSite(onlineSession, pageSize, 1);
             var webRequest = CreateLoggedInWebRequest(urlQuery);
             webRequest.Method = "GET";
 

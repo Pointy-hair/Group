@@ -15,14 +15,16 @@ namespace Traffk.Tableau.REST.Models
 
     }
 
-    public class SiteView : SiteViewResource
+    public class SiteView : SiteViewEmbeddableResource
     {
-        public readonly string Name;
         public readonly string ContentUrl;
-        public readonly string WorkbookName;
         public readonly string WorkbookId;
         public readonly string OwnerId;
-        public readonly string ViewName;
+
+        public SiteView()
+        {
+            
+        }
 
         public SiteView(XmlNode content, string xmlNamespace)
         {
@@ -64,9 +66,8 @@ namespace Traffk.Tableau.REST.Models
         }
     }
 
-    public class SiteViewViewModel : SiteViewResource
+    public class SiteViewEmbeddableResource : SiteViewResource
     {
-        public string Name { get; set; }
         public string WorkbookName { get; set; }
         public string ViewName { get; set; }
     }

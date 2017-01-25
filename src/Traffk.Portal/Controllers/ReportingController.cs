@@ -28,6 +28,7 @@ namespace TraffkPortal.Controllers
         public ITableauRestService TableauRestService { get; set; }
 
         public static string CreateAnchorName(PowerBiEmbeddableResource er) => NameHelpers.GetName(er)?.Trim()?.ToUpperCamelCase() ?? "";
+        public static string CreateAnchorName(SiteViewResource view) => NameHelpers.GetName(view)?.Trim()?.ToUpperCamelCase() + view.Id ?? "";
 
         public static class ActionNames
         {
@@ -120,7 +121,7 @@ namespace TraffkPortal.Controllers
                     var workbookName = view.WorkbookName;
                     var workbookId = view.WorkbookId;
                     var parentWorkbookFolder =
-                        workbookFolders.Find(x => x.Data.Id == workbookId && x.Data.Name == workbookName);
+                        workbookFolders.Find(x => x.Data.Id == workbookId);
 
                     if (parentWorkbookFolder == null)
                     {
@@ -179,24 +180,26 @@ namespace TraffkPortal.Controllers
         [SetTableauTrustedTicket]
         [Route("/Reporting/Report")]
         [ActionName(ActionNames.Report)]
-        public IActionResult Report(string workbook, string viewname)
+        public IActionResult Report(string anchorName)
         {
-            //var root = GetRoot(TableauRestService);
-            //PowerBiEmbeddableResource e = null;
-            //root.Walk((node, depth) => {
-            //    var pbi = node.Data as PowerBiEmbeddableResource;
-            //    if (pbi == null) return;
-            //    var urlFriendlyReportName = CreateAnchorName(pbi);
-            //    if (anchorName == urlFriendlyReportName || pbi.Id == anchorName)
-            //    {
-            //        e = pbi as PowerBiEmbeddableResource;
-            //    }
-            //});
-            var viewModel = new SiteViewViewModel
+            var root = GetReportFolderTreeRoot();
+            SiteViewEmbeddableResource matchingSiteViewResource = null;
+            root.Walk((node, depth) =>
             {
-                WorkbookName = workbook,
-                ViewName = viewname,
-                Name = viewname
+                var siteViewResource = node.Data;
+                if (siteViewResource == null) return;
+                var urlFriendlyReportName = CreateAnchorName(siteViewResource);
+                if (anchorName == urlFriendlyReportName)
+                {
+                    matchingSiteViewResource = siteViewResource as SiteViewEmbeddableResource;
+                }
+            });
+
+            var viewModel = new SiteViewEmbeddableResource
+            {
+                WorkbookName = matchingSiteViewResource.WorkbookName,
+                ViewName = matchingSiteViewResource.ViewName,
+                Name = matchingSiteViewResource.Name
             };
 
             return View(viewModel);
