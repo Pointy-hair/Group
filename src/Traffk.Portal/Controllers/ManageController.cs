@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -51,6 +52,7 @@ namespace TraffkPortal.Controllers
                 : message == ManageMessageId.Error ? "An error has occurred."
                 : message == ManageMessageId.AddPhoneSuccess ? "Your phone number was added."
                 : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
+                : message == ManageMessageId.RemovePhoneTwoFactorError ? "Your phone number cannot be removed, it is being used for two-factor authentication.  Please disable two-factor authentication before removing."
                 : "";
 
             var user = await GetCurrentUserAsync();
@@ -126,8 +128,14 @@ namespace TraffkPortal.Controllers
         public async Task<IActionResult> EnableTwoFactorAuthentication()
         {
             var user = await GetCurrentUserAsync();
+
             if (user != null)
             {
+                if (String.IsNullOrEmpty(user.PhoneNumber) || !user.PhoneNumberConfirmed)
+                {
+                    return RedirectToAction(nameof(AddPhoneNumber), "Manage");
+                }
+
                 await _userManager.SetTwoFactorEnabledAsync(user, true);
                 await _signInManager.SignInAsync(user, isPersistent: IsSigninPersistent);
                 Log.Information("User enabled two-factor authentication.");
@@ -200,6 +208,11 @@ namespace TraffkPortal.Controllers
             var user = await GetCurrentUserAsync();
             if (user != null)
             {
+                if (user.TwoFactorEnabled)
+                {
+                    return RedirectToAction(nameof(Index), new { Message = ManageMessageId.RemovePhoneTwoFactorError });
+                }
+
                 var result = await _userManager.SetPhoneNumberAsync(user, null);
                 if (result.Succeeded)
                 {
@@ -353,6 +366,7 @@ namespace TraffkPortal.Controllers
             SetPasswordSuccess,
             RemoveLoginSuccess,
             RemovePhoneSuccess,
+            RemovePhoneTwoFactorError,
             Error
         }
 
