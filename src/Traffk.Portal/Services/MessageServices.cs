@@ -6,6 +6,7 @@ using Traffk.Bal.Data.Rdb;
 using TraffkPortal.Services.Sms;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Reflection;
 using Traffk.Bal.Communications;
 
 namespace TraffkPortal.Services
@@ -52,7 +53,8 @@ namespace TraffkPortal.Services
         private async Task<Tuple<Creative, MimeMessage>> CreateMessageAsync(SystemCommunicationPurposes purpose, object model)
         {
             int creativeId;
-            Current.Application.ApplicationSettings.CreativeIdBySystemCommunicationPurpose.TryGetValue(purpose, out creativeId);
+            var creatives = Current.Application.ApplicationSettings.CreativeIdBySystemCommunicationPurpose;
+            creatives.TryGetValue(purpose, out creativeId);
             Requires.Positive(creativeId, nameof(creativeId));
             var creative = await DB.Creatives.FindAsync(creativeId);
             Requires.NonNull(creative, nameof(creative));
@@ -63,9 +65,10 @@ namespace TraffkPortal.Services
 
         async Task ISmsSender.SendSmsCommunicationAsync(SystemCommunicationPurposes purpose, object model, string number)
         {
-            var res = await CreateMessageAsync(purpose, model);
-            var body = ((TextPart)res.Item2.Body).Text;
-            await ((ISmsSender)this).SendSmsAsync(number, body);
+            //var res = await CreateMessageAsync(purpose, model);
+            //var body = ((TextPart)res.Item2.Body).Text;
+            object body = model?.GetType().GetProperty("code")?.GetValue(model, null);
+            await ((ISmsSender)this).SendSmsAsync(number, body.ToString());
         }
 
         async Task IEmailSender.SendEmailCommunicationAsync(SystemCommunicationPurposes purpose, object model, string recipientAddress, string recipientName, long? contactId)
