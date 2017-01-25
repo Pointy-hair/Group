@@ -62,13 +62,12 @@
                     foreach (var a in Model.Contact.ContactDetails.Addresses)
                     {
                         <div>
-                            @a.AddressLine1<br />
-                            @if (String.IsNullOrEmpty(@a.AddressLine2) == false)
+                            @a.Address1<br />
+                            @if (String.IsNullOrEmpty(@a.Address2) == false)
                             {
-                                @a.AddressLine2
+                                @a.Address2
                             }
                             @a.City, @a.State @a.PostalCode<br/>
-                            @a.Country
                         </div>
                     }
                 }

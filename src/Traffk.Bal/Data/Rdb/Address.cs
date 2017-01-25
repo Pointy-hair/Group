@@ -1,9 +1,11 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace Traffk.Bal.Data.Rdb
 {
     public partial class Address : IAddress
     {
+        [JsonProperty("addressLine1")]
         string IAddress.AddressLine1
         {
             get { return Address1; }
