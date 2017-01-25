@@ -195,6 +195,8 @@ namespace TraffkPortal.Controllers
                 }
             });
 
+            Log.Information(matchingSiteViewResource.Id);
+
             var viewModel = new SiteViewEmbeddableResource
             {
                 WorkbookName = matchingSiteViewResource.WorkbookName,
