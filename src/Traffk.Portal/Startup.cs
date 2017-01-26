@@ -12,6 +12,7 @@ using RevolutionaryStuff.Core.Caching;
 using RevolutionaryStuff.PowerBiToys;
 using Serilog;
 using System;
+using Serilog.Core;
 using Serilog.Events;
 using Traffk.Bal;
 using Traffk.Bal.Data.Rdb;
@@ -68,7 +69,9 @@ namespace TraffkPortal
                     .Enrich.FromLogContext()
                     .WriteTo.Trace()
                     .WriteTo.AzureTableStorageWithProperties(Configuration["BlobStorageServicesOptions:ConnectionString"], 
-                        storageTableName:"AppLogs2", writeInBatches:true, period: Parse.ParseTimeSpan(Configuration["LogInterval"], TimeSpan.FromSeconds(2)))
+                        storageTableName: Configuration["Serilog:TableName"], 
+                        writeInBatches: Parse.ParseBool(Configuration["Serilog:WriteInBatches"], true), 
+                        period: Parse.ParseTimeSpan(Configuration["Serilog:LogInterval"], TimeSpan.FromSeconds(2)))
                     .CreateLogger();
         }
 
@@ -180,10 +183,9 @@ namespace TraffkPortal
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            //loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
-            loggerFactory.AddSerilog();
+            loggerFactory.AddSerilog(Log.Logger);
             //loggerFactory.AddProvider();
 
 //            ILoggerProvider fds;
