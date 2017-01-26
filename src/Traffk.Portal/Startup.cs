@@ -25,6 +25,7 @@ using Traffk.Tableau.REST;
 using Traffk.Tableau.REST.RestRequests;
 using TraffkPortal.Permissions;
 using TraffkPortal.Services;
+using TraffkPortal.Services.Logging;
 using TraffkPortal.Services.Sms;
 using TraffkPortal.Services.TenantServices;
 
@@ -65,6 +66,7 @@ namespace TraffkPortal
             Log.Logger = new LoggerConfiguration()
                     .Enrich.WithProperty("ApplicationName", Configuration["RevolutionaryStuffCoreOptions:ApplicationName"])
                     .Enrich.WithProperty("MachineName", Environment.MachineName)
+                    .Enrich.With<EventTimeEnricher>()
                     .MinimumLevel.Verbose()
                     .Enrich.FromLogContext()
                     .WriteTo.Trace()
