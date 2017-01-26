@@ -64,11 +64,11 @@ namespace TraffkPortal
             Log.Logger = new LoggerConfiguration()
                     .Enrich.WithProperty("ApplicationName", Configuration["RevolutionaryStuffCoreOptions:ApplicationName"])
                     .Enrich.WithProperty("MachineName", Environment.MachineName)
-                    .MinimumLevel.Debug()
+                    .MinimumLevel.Verbose()
                     .Enrich.FromLogContext()
                     .WriteTo.Trace()
                     .WriteTo.AzureTableStorageWithProperties(Configuration["BlobStorageServicesOptions:ConnectionString"], 
-                        storageTableName:"AppLogs", writeInBatches:true, period: Parse.ParseTimeSpan(Configuration["LogInterval"], TimeSpan.FromSeconds(2)))
+                        storageTableName:"AppLogs2", writeInBatches:true, period: Parse.ParseTimeSpan(Configuration["LogInterval"], TimeSpan.FromSeconds(2)))
                     .CreateLogger();
         }
 
@@ -181,10 +181,10 @@ namespace TraffkPortal
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
 
-            //            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            //            loggerFactory.AddDebug();
-//            loggerFactory.AddSerilog();
-//                        loggerFactory.AddProvider()
+            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            loggerFactory.AddDebug();
+            loggerFactory.AddSerilog();
+            //loggerFactory.AddProvider();
 
 //            ILoggerProvider fds;
 

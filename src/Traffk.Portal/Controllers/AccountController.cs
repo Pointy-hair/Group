@@ -92,6 +92,7 @@ namespace TraffkPortal.Controllers
                                 }
                             }
                         }
+                        Log.Information("User logged in.");
                         Uri u;
                         if (Uri.TryCreate(returnUrl, UriKind.Absolute, out u))
                         {
@@ -102,7 +103,6 @@ namespace TraffkPortal.Controllers
                             return RedirectToLocal(returnUrl);
                         }
                     }
-                    Log.Information("User logged in.");
                     if (result.RequiresTwoFactor || Current.Tenant.TenantSettings.RequiresTwoFactorAuthentication)
                     {
                         return RedirectToAction(nameof(SendCode), new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
