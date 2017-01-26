@@ -57,6 +57,7 @@ namespace TraffkPortal.Controllers
                 public const string CareAlertsList = "ContactCareAlertsList";
                 public const string Demographic = "ContactDemographic";
                 public const string Eligiblity = "ContactEligiblity";
+                public const string EligiblityList = "ContactEligiblityList";
                 public const string HighCostDiagnosis = "ContactHighCostDiagnosis";
                 public const string HistoricalScore = "ContactHistoricalScore";
                 public const string HistoricalScoreList = "ContactHistoricalScoresList";
@@ -93,6 +94,7 @@ namespace TraffkPortal.Controllers
                 public const string CareAlertsList = "ContactCareAlertsList";
                 public const string Demographic = "ContactDemographicDetail";
                 public const string Eligiblity = "ContactEligiblityDetail";
+                public const string EligibilityList = "ContactEligibilityList";
                 public const string HighCostDiagnosis = "ContactHighCostDiagnosisDetail";
                 public const string HistoricalScore = "ContactHistoricalScoreDetail";
                 public const string HistoricalScoreList = "ContactHistoricalScoreList";
@@ -448,6 +450,15 @@ namespace TraffkPortal.Controllers
         [Route("Contacts/{id}/Eligibility")]
         public Task<IActionResult> ContactEligiblity(long id)
             => ContactHealthItemDetail(id, PageKeys.Eligibility, ViewNames.Health.Eligiblity, mid => Rdb.Eligibility.Where(z => z.ContactId == mid));
+
+        [ActionName(ActionNames.Health.EligibilityList)]
+        [Route("Contacts/{id}/EligibilityList")]
+        public Task<IActionResult> ContactEligibilityList(long id, string sortCol, string sortDir, int? page,
+            int? pageSize)
+            =>
+                ContactHealthItemList(id, sortCol, sortDir, page, pageSize, PageKeys.Eligibility,
+                    ViewNames.Health.EligiblityList, mid => Rdb.Eligibility.Where(z => z.ContactId == mid),
+                    nameof(Eligibility.ins_policy_id));
 
         [ActionName(ActionNames.Health.HighCostDiagnosis)]
         [Route("Contacts/{id}/HighCostDiagnosis")]
