@@ -147,7 +147,7 @@ namespace TraffkPortal.Controllers
         private List<TreeNode<SiteViewResource>> GetWorkbookFolders()
         {
             var workbookFolders = new List<TreeNode<SiteViewResource>>();
-            var workbooks = TableauRestService.DownloadWorkbooksList().Workbooks;
+            var workbooks = TableauRestService.DownloadWorkbooksList().Workbooks.OrderBy(x => x.Name);
             foreach (var workbook in workbooks)
             {
                 var newWorkbookFolder = new TreeNode<SiteViewResource>(new SiteViewFolderResource(workbook.Name, workbook.Id));
