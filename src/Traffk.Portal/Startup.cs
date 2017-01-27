@@ -67,6 +67,7 @@ namespace TraffkPortal
                     .Enrich.WithProperty("ApplicationName", Configuration["RevolutionaryStuffCoreOptions:ApplicationName"])
                     .Enrich.WithProperty("MachineName", Environment.MachineName)
                     .Enrich.With<EventTimeEnricher>()
+                    //.Enrich.With<UserEnricher>()
                     .MinimumLevel.Verbose()
                     .Enrich.FromLogContext()
                     .WriteTo.Trace()
@@ -153,6 +154,10 @@ namespace TraffkPortal
                 }
             });
 
+            services.AddDistributedMemoryCache();
+            services.AddSession();
+
+
             // Add application services.
             services.AddScoped<IOptions<SmtpOptions>, SmtpSettingsAdaptor>();
             services.AddScoped<IEmailer, RawEmailer>();
@@ -189,8 +194,7 @@ namespace TraffkPortal
             loggerFactory.AddDebug();
             loggerFactory.AddSerilog(Log.Logger);
             //loggerFactory.AddProvider();
-
-//            ILoggerProvider fds;
+            //ILoggerProvider fds;
 
             app.UseApplicationInsightsRequestTelemetry();
 
@@ -221,7 +225,11 @@ namespace TraffkPortal
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 
-//            app.UseSession();
+            app.UseSession();
+
+            HttpContextGetter.Configure(app.ApplicationServices.GetRequiredService<IHttpContextAccessor>());
+            //CurrentContextGetter.Configure(app.ApplicationServices.GetRequiredService<ICurrentUser>());
+
 
             app.UseMvc(routes =>
             {

@@ -11,6 +11,7 @@ using TraffkPortal.Services;
 using Traffk.Bal.Data.Rdb;
 using RevolutionaryStuff.Core;
 using System;
+using Microsoft.AspNetCore.Http;
 using Serilog;
 using TraffkPortal.Services.Sms;
 using Traffk.Bal.Communications;
@@ -93,6 +94,12 @@ namespace TraffkPortal.Controllers
                             }
                         }
                         Log.Information("User logged in.");
+                        //HttpContext.Items["UserId"] = user.Id;
+                        //HttpContext.Items["UserName"] = user.UserName;
+                        //HttpContext.Items["TenantId"] = user.TenantId.ToString();
+                        ////HttpContext.Session.SetString("UserName", user.UserName);
+                        ////HttpContext.Session.SetString("TenantId", user.TenantId.ToString());
+
                         Uri u;
                         if (Uri.TryCreate(returnUrl, UriKind.Absolute, out u))
                         {

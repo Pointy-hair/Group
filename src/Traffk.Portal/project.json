@@ -49,7 +49,8 @@
       "type": "build"
     },
     "Microsoft.DotNet.InternalAbstractions": "1.0.0",
-    "Traffk.Tableau": "1.0.0-*"
+    "Traffk.Tableau": "1.0.0-*",
+    "Microsoft.AspNetCore.Session": "1.1.0"
   },
   "tools": {
     "BundlerMinifier.Core": "2.2.306",

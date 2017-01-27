@@ -108,14 +108,14 @@ namespace TraffkPortal.Controllers
             Rdb = db;
             Current = current;
             Logger = Log.Logger;
-            AttachLogContextProperty("TenantId", current.TenantId);
-            AttachLogContextProperty("EventTime", DateTime.UtcNow);
+            //AttachLogContextProperty("TenantId", current.TenantId);
+            //AttachLogContextProperty("EventTime", DateTime.UtcNow);
             var u = current.User;
-            if (u != null)
-            {
-                AttachLogContextProperty("UserName", current.User.UserName);
-                AttachLogContextProperty("UserId", current.User.Id);
-            }
+            //if (u != null)
+            //{
+            //    AttachLogContextProperty("UserName", current.User.UserName);
+            //    AttachLogContextProperty("UserId", current.User.Id);
+            //}
             if (cacher != null)
             {
                 Cacher = cacher.CreateScope(GetType(), TenantId);
