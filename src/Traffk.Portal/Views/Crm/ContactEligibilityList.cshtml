@@ -7,43 +7,49 @@
     {
     <table class="table">
         <thead>
-            <tr>
-                <th>
-                    @Html.SortableHeaderFor(z => z.ins_policy_id)
-                </th>
-                <th>
-                    @Html.SortableHeaderFor(z => z.ins_carrier_name)
-                </th>
-                <th>
-                    @Html.SortableHeaderFor(z => z.ins_coverage_type_desc)
-                </th>
-                <th>
-                    @Html.SortableHeaderFor(z => z.ins_plan_id)
-                </th>
-                <th>
-                    @Html.SortableHeaderFor(z => z.ins_plan_desc)
-                </th>
-            </tr>
+        <tr>
+            <th>
+                @Html.SortableHeaderFor(z => z.mbr_id)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.ins_policy_id)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.ins_carrier_name)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.ins_coverage_type_desc)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.ins_plan_id)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.ins_plan_desc)
+            </th>
+        </tr>
         </thead>
         <tbody>
             @foreach (var item in Model)
             {
                 <tr>
                     <td>
+                        <a asp-action="@ActionNames.Health.Eligibility" asp-route-id="@ViewContext.GetRouteValue()">@item.mbr_id</a>
+                    </td>
+                    <td>
                         @Html.DisplayFor(modelItem => item.ins_policy_id)
                     </td>
-                    @*<td>
-                        <a asp-action="@ActionNames.Health.CareAlert" asp-route-id="@ViewContext.GetRouteValue()" asp-route-recordId="@item.dw_record_id">@item.dw_record_id</a>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ins_carrier_name)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.care_alert_desc)
+                        @Html.DisplayFor(modelItem => item.ins_coverage_type_desc)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.metric_Type)
+                        @Html.DisplayFor(modelItem => item.ins_plan_id)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.metric_name)
-                    </td>*@
+                        @Html.DisplayFor(modelItem => item.ins_plan_desc)
+                    </td>
                 </tr>
             }
         </tbody>

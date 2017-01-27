@@ -56,8 +56,8 @@ namespace TraffkPortal.Controllers
                 public const string CareAlert = "ContactCareAlert";
                 public const string CareAlertsList = "ContactCareAlertsList";
                 public const string Demographic = "ContactDemographic";
-                public const string Eligiblity = "ContactEligiblity";
-                public const string EligiblityList = "ContactEligiblityList";
+                public const string Eligibility = "ContactEligibility";
+                public const string EligibilityList = "ContactEligibilityList";
                 public const string HighCostDiagnosis = "ContactHighCostDiagnosis";
                 public const string HistoricalScore = "ContactHistoricalScore";
                 public const string HistoricalScoreList = "ContactHistoricalScoresList";
@@ -93,7 +93,7 @@ namespace TraffkPortal.Controllers
                 public const string CareAlert = "ContactCareAlertDetail";
                 public const string CareAlertsList = "ContactCareAlertsList";
                 public const string Demographic = "ContactDemographicDetail";
-                public const string Eligiblity = "ContactEligiblityDetail";
+                public const string Eligibility = "ContactEligibiliityDetail";
                 public const string EligibilityList = "ContactEligibilityList";
                 public const string HighCostDiagnosis = "ContactHighCostDiagnosisDetail";
                 public const string HistoricalScore = "ContactHistoricalScoreDetail";
@@ -446,10 +446,10 @@ namespace TraffkPortal.Controllers
         public Task<IActionResult> ContactPcp(long id)
             => ContactHealthItemDetail(id, PageKeys.MemberPCP, ViewNames.Health.MemberPcp, mid => Rdb.MemberPCP.Where(z => z.ContactId == mid));
 
-        [ActionName(ActionNames.Health.Eligiblity)]
+        [ActionName(ActionNames.Health.Eligibility)]
         [Route("Contacts/{id}/Eligibility")]
-        public Task<IActionResult> ContactEligiblity(long id)
-            => ContactHealthItemDetail(id, PageKeys.Eligibility, ViewNames.Health.Eligiblity, mid => Rdb.Eligibility.Where(z => z.ContactId == mid));
+        public Task<IActionResult> ContactEligibility(long id)
+            => ContactHealthItemDetail(id, PageKeys.Eligibility, ViewNames.Health.Eligibility, mid => Rdb.Eligibility.Where(z => z.ContactId == mid));
 
         [ActionName(ActionNames.Health.EligibilityList)]
         [Route("Contacts/{id}/EligibilityList")]
@@ -457,7 +457,7 @@ namespace TraffkPortal.Controllers
             int? pageSize)
             =>
                 ContactHealthItemList(id, sortCol, sortDir, page, pageSize, PageKeys.Eligibility,
-                    ViewNames.Health.EligiblityList, mid => Rdb.Eligibility.Where(z => z.ContactId == mid),
+                    ViewNames.Health.EligibilityList, mid => Rdb.Eligibility.Where(z => z.ContactId == mid),
                     nameof(Eligibility.ins_policy_id));
 
         [ActionName(ActionNames.Health.HighCostDiagnosis)]
