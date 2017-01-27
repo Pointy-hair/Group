@@ -28,7 +28,7 @@ namespace TraffkPortal.Controllers
         public ITableauRestService TableauRestService { get; set; }
 
         public static string CreateAnchorName(PowerBiEmbeddableResource er) => NameHelpers.GetName(er)?.Trim()?.ToUpperCamelCase() ?? "";
-        public static string CreateAnchorName(SiteViewResource view) => NameHelpers.GetName(view)?.Trim()?.ToUpperCamelCase() + view.Id ?? "";
+        public static string CreateAnchorName(SiteViewResource view) => NameHelpers.GetName(view)?.Trim()?.ToUpperCamelCase()?? "";
 
         public static class ActionNames
         {
@@ -178,9 +178,9 @@ namespace TraffkPortal.Controllers
         }
 
         [SetTableauTrustedTicket]
-        [Route("/Reporting/Report")]
+        [Route("/Reporting/Report/{id}/{anchorName}")]
         [ActionName(ActionNames.Report)]
-        public IActionResult Report(string anchorName)
+        public IActionResult Report(string id, string anchorName)
         {
             var root = GetReportFolderTreeRoot();
             SiteViewEmbeddableResource matchingSiteViewResource = null;
@@ -189,7 +189,7 @@ namespace TraffkPortal.Controllers
                 var siteViewResource = node.Data;
                 if (siteViewResource == null) return;
                 var urlFriendlyReportName = CreateAnchorName(siteViewResource);
-                if (anchorName == urlFriendlyReportName)
+                if (anchorName == urlFriendlyReportName && id == siteViewResource.Id)
                 {
                     matchingSiteViewResource = siteViewResource as SiteViewEmbeddableResource;
                 }
