@@ -195,6 +195,11 @@ namespace TraffkPortal.Controllers
                 }
             });
 
+            if (matchingSiteViewResource == null)
+            {
+                RedirectToAction(ActionNames.Index);
+            }
+
             Log.Information(matchingSiteViewResource.Id);
 
             var viewModel = new SiteViewEmbeddableResource
