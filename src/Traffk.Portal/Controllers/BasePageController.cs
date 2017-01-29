@@ -13,6 +13,7 @@ using System;
 using static TraffkPortal.AspHelpers;
 using Serilog.Context;
 using RevolutionaryStuff.Core.Caching;
+using System.Diagnostics;
 
 namespace TraffkPortal.Controllers
 {
@@ -79,8 +80,12 @@ namespace TraffkPortal.Controllers
             foreach (var kvp in WebHelpers.ParseQueryParams(HttpContext.Request.QueryString.Value).AtomEnumerable)
             {
                 if (string.IsNullOrEmpty(kvp.Key)) continue;
-                var unmapped = Stuff.GetPathFromSerializedPath(typeof(T), kvp.Key);
-                if (unmapped == null) continue;
+                var unmapped = Stuff.GetPathFromSerializedPath(typeof(TFNE), kvp.Key);
+                if (unmapped == null)
+                {
+                    Logger.LogDebug($"Was not able to apply filter on field {kvp.Key} to type {typeof(TFNE)}");
+                    continue;
+                } 
                 filters.Add(new KeyValuePair<string, string>(unmapped, kvp.Value));
             }
             q = q.ApplyFilters(filters);

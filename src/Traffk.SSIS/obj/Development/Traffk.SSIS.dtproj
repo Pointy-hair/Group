@@ -26,7 +26,7 @@
           <SSIS:Property SSIS:Name="CreatorComputerName">BACKTABLE</SSIS:Property>
           <SSIS:Property SSIS:Name="Description">
           </SSIS:Property>
-          <SSIS:Property SSIS:Name="PasswordVerifier" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAL/67uR0WEUWm7+lh31qR9QAAAAACAAAAAAAQZgAAAAEAACAAAAC92mMDdKLGMw9oed/tg/JhVBxmnoCMFrBCwaDAKuaSvgAAAAAOgAAAAAIAACAAAAD40mJ8ddKBpc6zC9IfCFX6xE+71S3Q+ZIFce/id2TSd5AAAACLb8+HtFhmsIuLuyANDeNIlZw1H1fLVtgcd60LEP5sLqTG7mamNdBJC3pDXr/4Mtelx9tM+oejQj8XKKDEXuqD87wjCISHdrNmIHpZXz7cc1SfKcSO4FBEQHCXyldS6SbtGONhBxDyRv0bjXE0o5QEGK8LZSw8NE81N9VWgeT2f2I+BP9r9eRMgp62YDc4SUhAAAAA4yxi+ryaPELsxe8AAV8I/0GE8Vj6JIZhIfzmW8u/ZRAZN0mIALZsSxTu5m2uyqejSzdtydAL5llgDK2fzkZkHg==</SSIS:Property>
+          <SSIS:Property SSIS:Name="PasswordVerifier" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAL/67uR0WEUWm7+lh31qR9QAAAAACAAAAAAAQZgAAAAEAACAAAAAcrUVB9vj2QDvNesNJ9VulvTQNJfspf1evvK4cgt8GoQAAAAAOgAAAAAIAACAAAABWKkhcqTMBwDhVoQffEK5SlEzOXBrtDNzNu+iy3lpVUJAAAAAFJQWJ2vgQlukuQEWEWianHRb381Xh/txmGkMgO7RfakZrOVc8BlQICq6dmdoYI7P+E58lVCyyb/uM11IUHP2v+LdisNhlsCF71/tcCIJUSP2Ax7VfZoCet0Uqm5X3y/UN5ejp13HzeNp+XajcSyZ4AHCpTldtySpiteaUNHeemKyYCafFdBeU27ZEtdn5GCZAAAAAS/OyXpRgXLAo60EHjiCBd/T4MFHv9SNpN7PES6PLaE5vZk6JnEbIfZax1GLVRbwth243AK7+S6CWsB427Lm/4A==</SSIS:Property>
           <SSIS:Property SSIS:Name="FormatVersion">1</SSIS:Property>
         </SSIS:Properties>
         <SSIS:Packages>
@@ -48,7 +48,7 @@
                 <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                 <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                 <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
-                <SSIS:Property SSIS:Name="Value">Data Source=traffkrdb-dev.database.windows.net;User ID=jason;Initial Catalog=TraffkHip2;Provider=SQLNCLI11.1;Auto Translate=False;</SSIS:Property>
+                <SSIS:Property SSIS:Name="Value">Data Source=traffkrdb-dev.database.windows.net;User ID=EtlGuy;Initial Catalog=TraffkHip2;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;</SSIS:Property>
                 <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
               </SSIS:Properties>
             </SSIS:Parameter>
@@ -122,7 +122,7 @@
                 <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                 <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                 <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
-                <SSIS:Property SSIS:Name="Value">jason</SSIS:Property>
+                <SSIS:Property SSIS:Name="Value">EtlGuy</SSIS:Property>
                 <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
               </SSIS:Properties>
             </SSIS:Parameter>
@@ -134,10 +134,10 @@
                 <SSIS:Property SSIS:Name="Name">Deerwalk</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMajor">1</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMinor">0</SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionBuild">34</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionBuild">225</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionComments">
                 </SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionGUID">{71439D9D-2DCE-4F19-8EE4-BD3AE4449208}</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionGUID">{90F87B30-1129-472E-A0B1-9EAEA0A0607E}</SSIS:Property>
                 <SSIS:Property SSIS:Name="PackageFormatVersion">8</SSIS:Property>
                 <SSIS:Property SSIS:Name="Description">
                 </SSIS:Property>
@@ -154,7 +154,7 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">1</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value">20</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">26</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">9</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
