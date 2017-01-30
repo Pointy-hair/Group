@@ -85,7 +85,7 @@ namespace TraffkPortal.Controllers
                 var unmapped = Stuff.GetPathFromSerializedPath(typeof(TFNE), kvp.Key);
                 if (unmapped == null)
                 {
-                    Logger.LogDebug($"Was not able to apply filter on field {kvp.Key} to type {typeof(TFNE)}");
+                    Logger.Debug($"Was not able to apply filter on field {kvp.Key} to type {typeof(TFNE)}");
                     continue;
                 } 
                 filters.Add(new KeyValuePair<string, string>(unmapped, kvp.Value));
