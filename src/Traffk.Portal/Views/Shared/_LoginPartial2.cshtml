@@ -1,0 +1,144 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using TraffkPortal.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@if (SignInManager.IsSignedIn(User))
+{
+    <ul class="nav navbar-right top-nav">
+        <li>
+            <a href="#" id="nav-help" class="popup-help_open">
+                <i class="fa fa-2x fa-question-circle-o" aria-hidden="true"></i>
+            </a>
+        </li>
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-envelope"></i> <b class="caret"></b></a>
+            <ul class="dropdown-menu message-dropdown">
+                <li class="message-preview">
+                    <a href="#">
+                        <div class="media">
+                            <span class="pull-left mobile-block-centered">
+                                <img class="media-object" src="http://placehold.it/50x50" alt="">
+                            </span>
+                            <div class="media-body">
+                                <h5 class="media-heading"><strong>John Smith</strong></h5>
+                                <p class="small text-muted"><i class="fa fa-clock-o"></i> Yesterday at 4:32 PM</p>
+                                <p>Lorem ipsum dolor sit amet, consectetur...</p>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li class="message-preview">
+                    <a href="#">
+                        <div class="media">
+                            <span class="pull-left mobile-block-centered">
+                                <img class="media-object" src="http://placehold.it/50x50" alt="">
+                            </span>
+                            <div class="media-body">
+                                <h5 class="media-heading">
+                                    <strong>John Smith</strong>
+                                </h5>
+                                <p class="small text-muted"><i class="fa fa-clock-o"></i> Yesterday at 4:32 PM</p>
+                                <p>Lorem ipsum dolor sit amet, consectetur...</p>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li class="message-preview">
+                    <a href="#">
+                        <div class="media">
+                            <span class="pull-left mobile-block-centered">
+                                <img class="media-object" src="http://placehold.it/50x50" alt="">
+                            </span>
+                            <div class="media-body">
+                                <h5 class="media-heading">
+                                    <strong>John Smith</strong>
+                                </h5>
+                                <p class="small text-muted"><i class="fa fa-clock-o"></i> Yesterday at 4:32 PM</p>
+                                <p>Lorem ipsum dolor sit amet, consectetur...</p>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li class="message-footer">
+                    <a href="#">Read All New Messages</a>
+                </li>
+            </ul>
+        </li>
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bell"></i> <b class="caret"></b></a>
+            <ul class="dropdown-menu alert-dropdown">
+                <li>
+                    <a href="#">Alert Name <span class="label label-default">Alert Badge</span></a>
+                </li>
+                <li>
+                    <a href="#">Alert Name <span class="label label-primary">Alert Badge</span></a>
+                </li>
+                <li>
+                    <a href="#">Alert Name <span class="label label-success">Alert Badge</span></a>
+                </li>
+                <li>
+                    <a href="#">Alert Name <span class="label label-info">Alert Badge</span></a>
+                </li>
+                <li>
+                    <a href="#">Alert Name <span class="label label-warning">Alert Badge</span></a>
+                </li>
+                <li>
+                    <a href="#">Alert Name <span class="label label-danger">Alert Badge</span></a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a href="#">View All</a>
+                </li>
+            </ul>
+        </li>
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> @UserManager.GetUserName(User)<b class="caret"></b></a>
+            <form asp-area="" asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm">
+                <ul class="dropdown-menu">
+                    <li>
+                        <button type="submit" style="display:none" id="LogoffButton">Log off</button>
+                    </li>
+                </ul>
+            </form>
+            <ul class="dropdown-menu">
+                <li>
+                    <a href="#"><i class="fa fa-fw fa-user"></i> Profile</a>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-fw fa-envelope"></i> Inbox</a>
+                </li>
+                <li>
+                    <a asp-area="" asp-controller="Manage" asp-action="Index"><i class="fa fa-fw fa-gear"></i> Manage</a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a onclick="$('#LogoffButton').click()"><i class="fa fa-fw fa-power-off"></i> Log Off</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+    @*<li role="presentation" class="menu-heading">Your Account</li>
+    <li class="dropdown account-nav" role="presentation">
+        <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle" href="#">
+            @UserManager.GetUserName(User)
+            <span class="caret"></span>
+        </a>
+        <form asp-area="" asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm">
+            <ul class="dropdown-menu">
+                <li><a asp-area="" asp-controller="Manage" asp-action="Index">Manage</a></li>
+                <li>
+                    <button type="submit" style="display:none" id="LogoffButton">Log off</button>
+                    <a onclick="$('#LogoffButton').click()">Log Off</a>
+                </li>
+            </ul>
+        </form>
+    </li>*@
+}
+else
+{
+    <ul class="nav navbar-right top-nav">
+        <li class="account-nav"><a asp-area="" asp-controller="Account" asp-action="Register">Register</a></li>
+        <li class="account-nav"><a asp-area="" asp-controller="Account" asp-action="Login">Log in</a></li>
+    </ul>
+}

@@ -366,6 +366,7 @@ html {
 a, a:hover {
   color: #682CB7;
   transition: all 0.15s ease-in-out;
+  cursor: pointer;
 }
 .copyright {
   font-size: 13px;
