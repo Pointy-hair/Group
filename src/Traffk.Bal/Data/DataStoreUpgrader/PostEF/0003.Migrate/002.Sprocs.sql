@@ -2,6 +2,17 @@
 
 GO
 
+create view migrate.MemberMap
+AS
+select distinct m.TenantId, m.MemberId, m.PersonContactId, m.MemberNumber, m.CarrierContactId, c.CarrierId
+from
+	health.members m (nolock)
+		inner join
+	dbo.contacts c (nolock)
+		on m.carriercontactid=c.contactid
+
+GO
+
 create proc migrate.DateDimensionLink
 	@sourceSchema sysname,
 	@sourceTable sysname,

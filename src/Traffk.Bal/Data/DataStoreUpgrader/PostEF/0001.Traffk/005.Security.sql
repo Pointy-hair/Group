@@ -69,72 +69,135 @@ AS
 
 GO
 
+create proc security.SecurityPoliciesCreate
+	@full bit = 0
+AS
+begin
 
-;with
-Frags (SchemaName, TableName, Frag) as
-(
+	set nocount on
+
+	set @full = coalesce(@full,0)
+
+	DECLARE c CURSOR FOR 
+
+	with
+	Frags (SchemaName, TableName, Frag) as
+	(
+		select 
+			t.table_schema SchemaName, 
+			t.table_name TableName,
+			--TenantRule.TenantIdColumnName,
+			--StatusRule.StatusColumnName,
+			case
+				when TenantIdColumnName is not null and StatusColumnName is not null
+				then 'security.TenantAndStatusPredicate('+TenantIdColumnName+', '+StatusColumnName+')'
+				when TenantIdColumnName is not null
+				then 'security.TenantPredicate('+TenantIdColumnName+')'
+				when StatusColumnName is not null
+				then 'security.RowStatusPredicate('+StatusColumnName+')'
+				else null
+				end
+			Frag
+		from
+			information_schema.tables t
+				outer apply
+			(
+/*
+				select 'TenantId' TenantIdColumnName
+				from db.ColumnProperties c
+				where 
+					PropertyName='Implements' and 
+					cast(PropertyValue as varchar(max))like '%ITraffkTenanted%' and
+					c.SchemaName=t.table_schema and
+					c.TableName=t.table_name	
+*/
+				select 'TenantId' TenantIdColumnName
+				from information_schema.columns c
+				where 
+					c.column_name='TenantId' and
+					c.table_schema=t.table_schema and
+					c.table_name=t.table_name and
+					c.table_schema in ('dbo', 'health', 'deerwalk')
+			) TenantRule
+				outer apply
+			(
+				select ColumnName StatusColumnName
+				from db.ColumnProperties c
+				where 
+					PropertyName='ImplementsRowStatusSemantics' and 
+					PropertyValue='1' and
+					c.SchemaName=t.table_schema and
+					c.TableName=t.table_name	
+			) StatusRule
+		where
+			t.table_type='BASE TABLE'
+	),
+	NonNullFrags(SchemaName, TableName, SchemaTable, Frag) as
+	(
+		select SchemaName, TableName, SchemaName+'.'+TableName, Frag from frags where frag is not null
+	)
 	select 
-		t.table_schema SchemaName, 
-		t.table_name TableName,
-		--TenantRule.TenantIdColumnName,
-		--StatusRule.StatusColumnName,
-		case
-			when TenantIdColumnName is not null and StatusColumnName is not null
-			then 'security.TenantAndStatusPredicate('+TenantIdColumnName+', '+StatusColumnName+')'
-			when TenantIdColumnName is not null
-			then 'security.TenantPredicate('+TenantIdColumnName+')'
-			when StatusColumnName is not null
-			then 'security.RowStatusPredicate('+StatusColumnName+')'
-			else null
-			end
-		Frag
-	from
-		information_schema.tables t
-			outer apply
-		(
-			select 'TenantId' TenantIdColumnName
-			from information_schema.columns c
-			where 
-				c.column_name='TenantId' and
-				c.table_schema=t.table_schema and
-				c.table_name=t.table_name
-		) TenantRule
-			outer apply
-		(
-			select ColumnName StatusColumnName
-			from db.ColumnProperties c
-			where 
-				PropertyName='ImplementsRowStatusSemantics' and 
-				PropertyValue='1' and
-				c.SchemaName=t.table_schema and
-				c.TableName=t.table_name	
-		) StatusRule
-	where
-		t.table_type='BASE TABLE'
-),
-NonNullFrags(SchemaName, TableName, SchemaTable, Frag) as
-(
-	select SchemaName, TableName, SchemaName+'.'+TableName, Frag from frags where frag is not null
-)
-select 
-	'create security policy security.'+
-	case when SchemaName='dbo' then '' else SchemaName end+
-	TableName+
-	' '+
-	string_agg(Pred, ',')
-from 
-(
-	select 'add filter predicate '+frag+' on '+SchemaTable Pred, SchemaTable, SchemaName, TableName
-	from NonNullFrags
-	/*
-	union all
-	select 'add block predicate '+frag+' on '+SchemaTable Pred, SchemaTable, SchemaName, TableName
-	from NonNullFrags
-	*/
-) z
-group by SchemaTable, SchemaName, TableName
+		'create security policy security.'+
+		case when SchemaName='dbo' then '' else SchemaName end+
+		TableName+
+		' '+
+		string_agg(Pred, ','),
+		'security.'+case when SchemaName='dbo' then '' else SchemaName end+ TableName SecurityPolicyName,
+		sp.object_id
+	from 
+	(
+		select 'add filter predicate '+frag+' on '+SchemaTable Pred, SchemaTable, SchemaName, TableName
+		from NonNullFrags
+		/*
+		union all
+		select 'add block predicate '+frag+' on '+SchemaTable Pred, SchemaTable, SchemaName, TableName
+		from NonNullFrags
+		*/
+	) z
+		left join
+	[sys].[security_policies] sp
+		on sp.name=(case when SchemaName='dbo' then '' else SchemaName end+TableName)
+	group by SchemaTable, SchemaName, TableName, sp.object_id
+	order by 1
 
+	OPEN c
 
+	declare @sql nvarchar(max)
+	declare @securityPolicyName sysname
+	declare @objectId int
+
+	NEXT_ITEM:
+
+	FETCH NEXT FROM c INTO @sql, @securityPolicyName, @objectId
+
+	if @@fetch_status = 0
+	begin
+
+		if (@objectId is not null)
+		begin
+
+			if (@full=0) goto NEXT_ITEM
+
+			set @sql = 'drop security policy '+@securityPolicyName+'; '+@sql
+
+		end
+
+		exec db.PrintSql @sql, 0
+--		exec (@sql)
+
+		goto NEXT_ITEM
+
+	end
+
+	close c
+
+	deallocate c
+
+end
+
+GO
+
+exec security.SecurityPoliciesCreate
 
 GO
 

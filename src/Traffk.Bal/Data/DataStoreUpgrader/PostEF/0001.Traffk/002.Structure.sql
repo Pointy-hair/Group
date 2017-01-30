@@ -4,6 +4,7 @@ drop index UX_UserName on dbo.AspNetUsers
 
 create type RowStatus from char(1) not null
 create type JsonObject from nvarchar(max) null
+create type ForeignIdType from nvarchar(50) null
 
 GO
 
@@ -29,7 +30,64 @@ exec db.ColumnPropertySet 'Tenants', 'TenantRowStatus', 'missing', @propertyName
 
 GO
 
+
+alter table AspNetRoles add TenantId int not null references Tenants(TenantId);
+alter table aspnetusers add UserRowStatus dbo.RowStatus not null default '1'
+alter table aspnetusers add UserSettings dbo.JsonObject null;
+alter table aspnetusers add CreatedAtUtc datetime not null default(getutcdate());
+create unique index UX_UserName on dbo.AspNetUsers (TenantId, NormalizedUserName) where UserRowStatus <> 'p' and UserRowStatus <> 'd'
+exec db.ColumnPropertySet 'aspnetusers', 'UserRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
+exec db.ColumnPropertySet 'aspnetusers', 'UserRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
+exec db.TablePropertySet  'aspnetusers', 'ITraffkTenanted', @propertyName='Implements'
+exec db.ColumnPropertySet 'aspnetusers', 'CreatedAtUtc', 'Datetime when this entity was created.'
+exec db.TablePropertySet  'AspNetRoles', 'ITraffkTenanted', @propertyName='Implements'
+
+GO
+
 ALTER TABLE [db].[SchemaUpgraderLog] ENABLE TRIGGER SchemaUpgraderNonDeletable
+
+GO
+
+create table Countries
+(
+	CountryId int not null primary key,--intentionally not identity
+	CountryName nvarchar(100) not null unique,
+	Alpha2 char(2) not null unique,
+	Alpha3 char(3) not null unique,
+	NumericCode char(3) not null unique
+)
+
+GO
+
+exec db.TablePropertySet  'Countries', 'Country', @propertyName='ClassName'
+exec db.TablePropertySet  'Countries', 'IDontCreate', @propertyName='Implements', @tableSchema='dbo'
+exec db.TablePropertySet  'Countries', '1', @propertyName='AddToDbContext'
+exec db.TablePropertySet  'Countries', '1', @propertyName='GeneratePoco'
+
+GO
+
+create table dbo.Lookups
+(
+	LookupId int not null identity primary key,
+	TenantId int not null references Tenants(TenantId),
+	LookupRowStatus dbo.RowStatus not null default '1',
+	CreatedAtUtc datetime not null default (getutcdate()), 
+	LookupType dbo.developerName not null,
+	LookupKey nvarchar(255) null,
+	LookupValue nvarchar(max) null
+)
+
+GO
+
+create unique index UX_Lookup_Key on dbo.Lookups(TenantId, LookupType, LookupKey) where LookupRowStatus <> 'p' and LookupRowStatus <> 'd'
+
+GO
+
+exec db.TablePropertySet  'Lookups', '1', @propertyName='AddToDbContext'
+exec db.TablePropertySet  'Lookups', '1', @propertyName='GeneratePoco'
+exec db.TablePropertySet  'Lookups', 'ITraffkTenanted', @propertyName='Implements'
+exec db.ColumnPropertySet 'Lookups', 'TenantId', 'Foreign key to the tenant that owns this account'
+
 GO
 
 create table Addresses
@@ -40,7 +98,8 @@ create table Addresses
 	Address2 nvarchar(255) null,
 	City nvarchar(100) null,
 	[State] nvarchar(100) null,
-	PostalCode nvarchar(50) null
+	PostalCode nvarchar(50) null,
+	CountryId int null references Countries(CountryId)
 )
 
 GO
@@ -48,6 +107,8 @@ GO
 exec db.TablePropertySet  'Addresses', '1', @propertyName='AddToDbContext'
 exec db.TablePropertySet  'Addresses', '1', @propertyName='GeneratePoco'
 exec db.TablePropertySet  'Addresses', 'Address', @propertyName='ClassName'
+exec db.TablePropertySet  'Addresses', 'ITraffkTenanted', @propertyName='Implements'
+exec db.ColumnPropertySet 'Addresses', 'TenantId', 'Foreign key to the tenant that owns this account'
 
 GO
 
@@ -58,12 +119,15 @@ create table Contacts
 	ContactRowStatus dbo.RowStatus not null default '1',
 	ContactType dbo.developerName not null,
 	CreatedAtUtc datetime not null default (getutcdate()), 
+	ForeignId ForeignIdType,
 	FullName dbo.Title null,
 	MemberId varchar(50) null,
 	ProviderId varchar(50) null,
+	CarrierId varchar(50) null,
 	DeerwalkMemberId varchar(50) null,
 	PrimaryEmail dbo.EmailAddress null,
 
+	SocialSecurityNumber varchar(9) null,
 	DateOfBirth date null,
 	Gender varchar(100) null,
 	Prefix dbo.Title null,
@@ -72,11 +136,13 @@ create table Contacts
 	LastName dbo.Title null,
 	Suffix dbo.Title null,
 
-	ContactDetails nvarchar(max)
+	ContactDetails dbo.JsonObject
 )
 
 GO
 
+
+create unique index UX_CarrierId on Contacts(TenantId, CarrierId) where CarrierId is not null and ContactRowStatus <> 'p' and ContactRowStatus <> 'd'
 create unique index UX_ProviderId on Contacts(TenantId, ProviderId) where ProviderId is not null and ContactRowStatus <> 'p' and ContactRowStatus <> 'd'
 create unique index UX_MemberId on Contacts(TenantId, MemberId) where MemberId is not null and ContactRowStatus <> 'p' and ContactRowStatus <> 'd'
 create unique index UX_DeerwalkMemberId on Contacts(TenantId, DeerwalkMemberId) where DeerwalkMemberId is not null and ContactRowStatus <> 'p' and ContactRowStatus <> 'd'
@@ -89,6 +155,7 @@ exec db.ColumnPropertySet 'Contacts', 'ContactRowStatus', 'missing', @propertyNa
 
 exec db.ColumnPropertySet 'Contacts', 'PrimaryEmail', 'EmailAddress', @propertyName='DataAnnotation'
 
+exec db.TablePropertySet  'Contacts', 'Carrier', @propertyName='InheritanceClass:Carrier,Carriers'
 exec db.TablePropertySet  'Contacts', 'Organization', @propertyName='InheritanceClass:Organization,Organizations'
 exec db.TablePropertySet  'Contacts', 'Person', @propertyName='InheritanceClass:Person,People'
 exec db.TablePropertySet  'Contacts', 'Provider', @propertyName='InheritanceClass:Provider,Providers'
@@ -101,26 +168,10 @@ exec db.ColumnPropertySet 'Contacts', 'MiddleName', '1', @propertyName='Inherita
 exec db.ColumnPropertySet 'Contacts', 'LastName', '1', @propertyName='InheritanceField:Person,Provider'
 exec db.ColumnPropertySet 'Contacts', 'Suffix', '1', @propertyName='InheritanceField:Person,Provider'
 exec db.ColumnPropertySet 'Contacts', 'ProviderId', '1', @propertyName='InheritanceField:Provider'
+exec db.ColumnPropertySet 'Contacts', 'CarrierId', '1', @propertyName='InheritanceField:Carrier'
+exec db.ColumnPropertySet 'Contacts', 'SocialSecurityNumber', '1', @propertyName='InheritanceField:Person'
+exec db.ColumnPropertySet 'Contacts', 'ForeignId', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
 
-
-GO
-
-
-alter table aspnetusers add TenantId int not null references Tenants(TenantId);
-alter table aspnetusers add UserRowStatus dbo.RowStatus not null default '1'
-exec db.ColumnPropertySet 'aspnetusers', 'UserRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
-exec db.ColumnPropertySet 'aspnetusers', 'UserRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
-create unique index UX_UserName on dbo.AspNetUsers (TenantId, NormalizedUserName) where UserRowStatus <> 'p' and UserRowStatus <> 'd'
-alter table aspnetusers add UserSettings dbo.JsonObject null;
-alter table aspnetusers add CreatedAtUtc datetime not null default(getutcdate());
-exec db.TablePropertySet  'aspnetusers', 'ITraffkTenanted', @propertyName='Implements'
-exec db.ColumnPropertySet 'aspnetusers', 'CreatedAtUtc', 'Datetime when this entity was created.'
-
-
-GO
-
-alter table AspNetRoles add TenantId int not null references Tenants(TenantId);
-exec db.TablePropertySet  'AspNetRoles', 'ITraffkTenanted', @propertyName='Implements'
 
 GO
 

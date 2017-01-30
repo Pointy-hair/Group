@@ -58,8 +58,8 @@
       "Foundations\\SqlAzure\\0005.ExecuteIf\\003.ExecuteSqlIfColumnNotExists.sql",
       "Foundations\\SqlAzure\\0005.ExecuteIf\\004.RoutineReplace.sql",
       "Foundations\\SqlAzure\\0007.Types\\001.PrimativeTypes.sql",
-      "Foundations\\SqlAzure\\0007.Types\\002.TableTypes.sql"
-
+      "Foundations\\SqlAzure\\0007.Types\\002.TableTypes.sql",
+      "Foundations\\SqlAzure\\0008.Diagnostic\\001.WhoIsActive.sql"
     ],
     "copyToOutput": {
       "include": [ "..\\RevolutionaryStuff.SqlServerObjects\\bin\\Debug\\RevolutionaryStuff.SqlServerAddIn.dll RevolutionaryStuff.SqlServerAddIn.dll" ]
