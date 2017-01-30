@@ -227,6 +227,11 @@ namespace TraffkPortal
             }
         }
 
+        public static void SetTitle(this ViewDataDictionary v, string fallbackTitle)
+        {
+            v.SetIfMissing("Title", fallbackTitle);
+        }
+
         public static object GetRouteValue(this ViewContext c, string key=null)
         {
             return c.ModelState[key??"id"].RawValue;
