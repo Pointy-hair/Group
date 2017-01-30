@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using TraffkPortal.Services;
@@ -11,6 +12,11 @@ using System.Linq;
 using RevolutionaryStuff.Core.ApplicationParts;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
+using Serilog;
+using Traffk.Bal.Settings;
+using Traffk.Tableau;
+using Traffk.Tableau.REST;
+using Traffk.Tableau.REST.Models;
 
 namespace TraffkPortal.Controllers
 {
@@ -19,23 +25,30 @@ namespace TraffkPortal.Controllers
     public class ReportingController : BasePageController
     {
         public const string Name = "Reporting";
+        public ITableauRestService TableauRestService { get; set; }
 
         public static string CreateAnchorName(PowerBiEmbeddableResource er) => NameHelpers.GetName(er)?.Trim()?.ToUpperCamelCase() ?? "";
+        public static string CreateAnchorName(SiteViewResource view) => NameHelpers.GetName(view)?.Trim()?.ToUpperCamelCase()?? "";
 
         public static class ActionNames
         {
             public const string ShowReport = "ShowReport";
             public const string Index = "Index";
+            public const string Report = "Report";
         }
 
         public ReportingController(
             TraffkRdbContext db,
             CurrentContextServices current,
             ILoggerFactory loggerFactory,
-            ICacher cacher
-            )
+            ICacher cacher,
+            ITableauRestService tableauRestService
+        )
             : base(AspHelpers.MainNavigationPageKeys.Reporting, db, current, loggerFactory, cacher)
-        { }
+        {
+            TableauRestService = tableauRestService;
+            AttachLogContextProperty("EventType", LoggingEventTypes.Report.ToString());
+        }
 
         public class FolderResource : PowerBiResource, IName
         {
@@ -93,6 +106,57 @@ namespace TraffkPortal.Controllers
             }).Value;
         }
 
+        private TreeNode<SiteViewResource> GetReportFolderTreeRoot()
+        {
+            var root = new TreeNode<SiteViewResource>(new SiteViewFolderResource("Root"));
+            var views = TableauRestService.DownloadViewsForSite().Views;
+
+            if (views.Count() > 0)
+            {
+                views = views.OrderBy(r => r.Name);
+                var workbookFolders = GetWorkbookFolders();
+
+                foreach (var view in views)
+                {
+                    var workbookName = view.WorkbookName;
+                    var workbookId = view.WorkbookId;
+                    var parentWorkbookFolder =
+                        workbookFolders.Find(x => x.Data.Id == workbookId);
+
+                    if (parentWorkbookFolder == null)
+                    {
+                        var newWorkbookFolder = new TreeNode<SiteViewResource>(new SiteViewFolderResource(workbookName, workbookId));
+                        newWorkbookFolder.AddChildren(view);
+                        workbookFolders.Add(newWorkbookFolder);
+                    }
+                    else
+                    {
+                        parentWorkbookFolder.AddChildren(view);
+                    }
+                }
+
+                foreach (var folder in workbookFolders)
+                {
+                    root.Add(folder);
+                }
+            }
+
+            return Cacher.FindOrCreate("root", async key => new CacheEntry<TreeNode<SiteViewResource>>(root)).Value;
+        }
+
+        private List<TreeNode<SiteViewResource>> GetWorkbookFolders()
+        {
+            var workbookFolders = new List<TreeNode<SiteViewResource>>();
+            var workbooks = TableauRestService.DownloadWorkbooksList().Workbooks.OrderBy(x => x.Name);
+            foreach (var workbook in workbooks)
+            {
+                var newWorkbookFolder = new TreeNode<SiteViewResource>(new SiteViewFolderResource(workbook.Name, workbook.Id));
+                workbookFolders.Add(newWorkbookFolder);
+            }
+
+            return workbookFolders;
+        }
+
         [SetPowerBiBearer]
         [Route("/Reporting/{anchorName}")]
         [ActionName(ActionNames.ShowReport)]
@@ -113,12 +177,47 @@ namespace TraffkPortal.Controllers
             return View(e);
         }
 
+        [SetTableauTrustedTicket]
+        [Route("/Reporting/Report/{id}/{anchorName}")]
+        [ActionName(ActionNames.Report)]
+        public IActionResult Report(string id, string anchorName)
+        {
+            var root = GetReportFolderTreeRoot();
+            SiteViewEmbeddableResource matchingSiteViewResource = null;
+            root.Walk((node, depth) =>
+            {
+                var siteViewResource = node.Data;
+                if (siteViewResource == null) return;
+                var urlFriendlyReportName = CreateAnchorName(siteViewResource);
+                if (anchorName == urlFriendlyReportName && id == siteViewResource.Id)
+                {
+                    matchingSiteViewResource = siteViewResource as SiteViewEmbeddableResource;
+                }
+            });
+
+            if (matchingSiteViewResource == null)
+            {
+                RedirectToAction(ActionNames.Index);
+            }
+
+            Log.Information(matchingSiteViewResource.Id);
+
+            var viewModel = new SiteViewEmbeddableResource
+            {
+                WorkbookName = matchingSiteViewResource.WorkbookName,
+                ViewName = matchingSiteViewResource.ViewName,
+                Name = matchingSiteViewResource.Name
+            };
+
+            return View(viewModel);
+        }
+
         [SetPowerBiBearer]
         [Route("/Reporting")]
         [ActionName(ActionNames.Index)]
         public IActionResult Index()
         {
-            var root = GetRoot();
+            var root = GetReportFolderTreeRoot();
             return View(root);
         }
     }

@@ -12,7 +12,7 @@ using Traffk.Bal.Services;
 
 namespace TraffkPortal.Services
 {
-    public class CurrentContextServices : CurrentTenantServices, ICurrentUser
+    public class CurrentContextServices : CurrentTenantServices, ICurrentUser, ICurrentContextServices
     {
         private const string PowerBiUsernameKey = "PowerBiUsername";
         private const string PowerBiPasswordKey = "PowerBiPassword";

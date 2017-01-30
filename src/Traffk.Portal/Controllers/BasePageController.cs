@@ -14,6 +14,8 @@ using static TraffkPortal.AspHelpers;
 using Serilog.Context;
 using RevolutionaryStuff.Core.Caching;
 using System.Diagnostics;
+using Serilog;
+using ILogger = Serilog.ILogger;
 
 namespace TraffkPortal.Controllers
 {
@@ -110,14 +112,15 @@ namespace TraffkPortal.Controllers
             MainNavPageKey = mainNavPageKey;
             Rdb = db;
             Current = current;
-            Logger = loggerFactory.CreateLogger(this.GetType());
-            AttachLogContextProperty("TenantId", current.TenantId);
+            Logger = Log.Logger;
+            //AttachLogContextProperty("TenantId", current.TenantId);
+            //AttachLogContextProperty("EventTime", DateTime.UtcNow);
             var u = current.User;
-            if (u != null)
-            {
-                AttachLogContextProperty("UserName", current.User.UserName);
-                AttachLogContextProperty("UserId", current.User.Id);
-            }
+            //if (u != null)
+            //{
+            //    AttachLogContextProperty("UserName", current.User.UserName);
+            //    AttachLogContextProperty("UserId", current.User.Id);
+            //}
             if (cacher != null)
             {
                 Cacher = cacher.CreateScope(GetType(), TenantId);

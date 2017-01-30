@@ -4,6 +4,20 @@ using Traffk.Bal.Services;
 using Traffk.Bal.Data.Rdb;
 using TraffkPortal.Services;
 using Microsoft.Extensions.Logging;
+using TraffkPortal.Models.ApplicationModels;
+using Microsoft.EntityFrameworkCore;
+using Traffk.Portal.Tests.Helpers;
+using static Traffk.Bal.Services.BlobStorageServices;
+using Microsoft.AspNetCore.Http;
+using System;
+using System.Threading.Tasks;
+using System.IO;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+using System.Threading;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Options;
+using Traffk.Bal;
 
 namespace Traffk.Portal.Tests.ControllersTests
 {
@@ -20,13 +34,25 @@ namespace Traffk.Portal.Tests.ControllersTests
 
             public ApplicationControllerMocks()
             {
-                //CurrentTenantServices currentTenant, ICurrentUser currentUser, IOptions<BlobStorageServicesOptions> options
-                //var mockCurrentTenantServices = new Mock<CurrentTenantServices>();
+                //var mockITraffkTenantFinder = new Mock<ITraffkTenantFinder>();
+
+                //var mockIHostingEnvironment = new Mock<IHostingEnvironment>();
+                //var mockConfigStringFormatter = new Mock<ConfigStringFormatter>(mockIHostingEnvironment.Object, mockITraffkTenantFinder.Object);
+
+                //var mockDbContextOptions = new DbContextOptions<TraffkRdbContext>();
+                //MockRdbContext = new Mock<TraffkRdbContext>(mockDbContextOptions, mockITraffkTenantFinder.Object, mockConfigStringFormatter.Object);
+
+                //var mockCurrentTenantServices = new Mock<CurrentTenantServices>(mockITraffkTenantFinder.Object, MockRdbContext.Object);
                 //var mockCurrentUser = new Mock<ICurrentUser>();
                 //var mockBlobStorageServiceOptions = new Mock<IOptions<BlobStorageServicesOptions>>();
-
+                //mockBlobStorageServiceOptions.Setup(x => x.Value).Returns(
+                //    new BlobStorageServicesOptions
+                //    {
+                //        ConnectionString = "MockBlobStorageConnectionString"
+                //    }
+                //);
+                
                 //MockBlobStorage = new Mock<BlobStorageServices>(mockCurrentTenantServices.Object, mockCurrentUser.Object, mockBlobStorageServiceOptions.Object);
-                //MockRdbContext = new Mock<TraffkRdbContext>();
                 //MockCurrentContextServices = new Mock<CurrentContextServices>();
                 //MockLoggerFactory = new Mock<ILoggerFactory>();
             }
@@ -35,11 +61,10 @@ namespace Traffk.Portal.Tests.ControllersTests
         [TestClass]
         public class PortalSettingsMethodTests
         {
-            [Ignore]
             [TestMethod]
             public void WhenGivenNonImageFileDoNotUploadFavicon()
             {
-                //Default mocks
+                ////Default mocks
                 //var mocks = new ApplicationControllerMocks();
                 //var testController = new ApplicationController(mocks.MockBlobStorage.Object,
                 //    mocks.MockRdbContext.Object,

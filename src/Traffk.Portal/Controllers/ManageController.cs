@@ -1,9 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Serilog;
 using TraffkPortal.Models.ManageViewModels;
 using TraffkPortal.Services;
 using Traffk.Bal.Data.Rdb;
@@ -50,6 +52,7 @@ namespace TraffkPortal.Controllers
                 : message == ManageMessageId.Error ? "An error has occurred."
                 : message == ManageMessageId.AddPhoneSuccess ? "Your phone number was added."
                 : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
+                : message == ManageMessageId.RemovePhoneTwoFactorError ? "Your phone number cannot be removed, it is being used for two-factor authentication.  Please disable two-factor authentication before removing."
                 : "";
 
             var user = await GetCurrentUserAsync();
@@ -111,6 +114,8 @@ namespace TraffkPortal.Controllers
             {
                 return ErrorResult();
             }
+            model.PhoneNumber = GetRawPhoneNumber(model.PhoneNumber);
+            model.PhoneNumber = ParseCountryCode(model.PhoneNumber);
             var code = await _userManager.GenerateChangePhoneNumberTokenAsync(user, model.PhoneNumber);
             await SmsSender.SendSmsAsync(model.PhoneNumber, "Your security code is: " + code);
             return RedirectToAction(nameof(VerifyPhoneNumber), new { PhoneNumber = model.PhoneNumber });
@@ -123,11 +128,17 @@ namespace TraffkPortal.Controllers
         public async Task<IActionResult> EnableTwoFactorAuthentication()
         {
             var user = await GetCurrentUserAsync();
+
             if (user != null)
             {
+                if (String.IsNullOrEmpty(user.PhoneNumber) || !user.PhoneNumberConfirmed)
+                {
+                    return RedirectToAction(nameof(AddPhoneNumber), "Manage");
+                }
+
                 await _userManager.SetTwoFactorEnabledAsync(user, true);
                 await _signInManager.SignInAsync(user, isPersistent: IsSigninPersistent);
-                Logger.LogInformation(1, "User enabled two-factor authentication.");
+                Log.Information("User enabled two-factor authentication.");
             }
             return RedirectToAction(nameof(Index), "Manage");
         }
@@ -143,7 +154,7 @@ namespace TraffkPortal.Controllers
             {
                 await _userManager.SetTwoFactorEnabledAsync(user, false);
                 await _signInManager.SignInAsync(user, isPersistent: IsSigninPersistent);
-                Logger.LogInformation(2, "User disabled two-factor authentication.");
+                Log.Information("User disabled two-factor authentication.");
             }
             return RedirectToAction(nameof(Index), "Manage");
         }
@@ -197,6 +208,11 @@ namespace TraffkPortal.Controllers
             var user = await GetCurrentUserAsync();
             if (user != null)
             {
+                if (user.TwoFactorEnabled)
+                {
+                    return RedirectToAction(nameof(Index), new { Message = ManageMessageId.RemovePhoneTwoFactorError });
+                }
+
                 var result = await _userManager.SetPhoneNumberAsync(user, null);
                 if (result.Succeeded)
                 {
@@ -232,7 +248,7 @@ namespace TraffkPortal.Controllers
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: IsSigninPersistent);
-                    Logger.LogInformation(3, "User changed their password successfully.");
+                    Log.Information("User changed their password successfully.");
                     return RedirectToAction(nameof(Index), new { Message = ManageMessageId.ChangePasswordSuccess });
                 }
                 AddErrors(result);
@@ -350,12 +366,29 @@ namespace TraffkPortal.Controllers
             SetPasswordSuccess,
             RemoveLoginSuccess,
             RemovePhoneSuccess,
+            RemovePhoneTwoFactorError,
             Error
         }
 
         private Task<ApplicationUser> GetCurrentUserAsync()
         {
             return _userManager.GetUserAsync(HttpContext.User);
+        }
+
+        private static string GetRawPhoneNumber(string phone)
+        {
+            return new string(phone.Where(char.IsDigit).ToArray());
+        }
+
+        private static string ParseCountryCode(string phone)
+        {
+            var length = phone.Length;
+            if (length == 10)
+            {
+                return "1" + phone;
+            }
+
+            return phone;
         }
 
         #endregion

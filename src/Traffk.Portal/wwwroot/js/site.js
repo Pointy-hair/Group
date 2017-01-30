@@ -60,7 +60,7 @@ function loadPowerBiTile(iframeId, embedUrl) {
 
 function loadPowerBiResource(iframeId, embedUrl, embedAction) {
     var powerBiBearer = getCookie("powerBiBearer");
-    debugAlert("loadPowerBiResource iframeId=[" + iframeId + "] embedAction=[" + embedAction + "] embedUrl=[" + embedUrl + "] powerBiBearer=[" + powerBiBearer + "]")
+    debugAlert("loadPowerBiResource iframeId=[" + iframeId + "] embedAction=[" + embedAction + "] embedUrl=[" + embedUrl + "] powerBiBearer=[" + powerBiBearer + "]");
     requiresText(powerBiBearer, "powerBiBearer");
     requiresText(iframeId, "iframeId");
     requiresText(embedUrl, "embedUrl");
@@ -85,7 +85,59 @@ function loadPowerBiResource(iframeId, embedUrl, embedAction) {
     iframe.src = embedUrl;
 };
 
-var autoLogoutLogoffSeconds = Math.floor(parseInt(getCookie("sessionTimeoutInSeconds")) / 2);  //sliding expiration cuts window in half
+function loadPowerBiResourceUsingLibrary(divId, reportId, type) {
+    var powerBiBearer = getCookie("powerBiBearer");
+    switch(type) {
+        case "PowerBiReport":
+            type = 'report';
+            break;
+        case "PowerBiTile":
+            type = 'tile';
+            break;
+        default:
+            type = 'report';
+    } 
+    var embedConfiguration = {
+        type: type,
+        id: reportId,
+        accessToken: powerBiBearer,
+        embedUrl: 'https://app.powerbi.com/reportEmbed'
+    };
+    var $reportContainer = $('#' + divId);
+    return powerbi.embed($reportContainer.get(0), embedConfiguration);
+};
+
+function trackUserInteraction(report) {
+    report.on('dataSelected', function (event) {
+        console.log(event);
+        var userInteractionString = "You clicked on: <br />";
+        if (event.type === 'dataSelected') {
+            var clickedReport = event.detail.report;
+            var reportString = "Report: " + clickedReport.displayName + "<br/>";
+            userInteractionString += reportString;
+
+            var visual = event.detail.visual;
+            var visualString = "Visual: " + visual.title + "<br/>";
+            userInteractionString += visualString;
+
+            var dataPointsArray = event.detail.dataPoints;
+            for (var i = 0; i < dataPointsArray.length; i++) {
+                var identityArray = dataPointsArray[i].identity;
+                for (var j = 0; j < identityArray.length; j++) {
+                    var identityDataPoint = identityArray[j];
+                    var identityDataPointString = identityDataPoint.target.column + ": " + identityDataPoint.equals + "<br/>";
+                    userInteractionString += identityDataPointString;
+                }
+
+                //TODO: Add value array to string when it is implemented by JS library
+            }
+
+        }
+        document.getElementById("userInteractionDiv").innerHTML = userInteractionString;
+    });
+};
+
+var autoLogoutLogoffSeconds = Math.floor(parseInt(getCookie("sessionTimeoutInSeconds")));  //sliding expiration cuts window in half
 
 function getTimeTillAutoLogoff() {
     //var lastSeenAt = store.get("lastSeenAtWhileLoggedIn");
@@ -110,7 +162,7 @@ if (loggedInAtLoad=="true")
     var longTimeLeftInterval = window.setInterval(function () {
         var timeLeft = getTimeTillAutoLogoff();
         $("#idleTicker").text("autoLogoutLogoffSeconds: " + autoLogoutLogoffSeconds + "; autoLogoutWarningSeconds: " + autoLogoutWarningSeconds + "; timeLeft: " + timeLeft + "; " + loggedInAtLoad);
-        if (timeLeft < autoLogoutWarningSeconds) {
+        if (timeLeft < autoLogoutWarningSeconds || timeLeft < 0 ) {
             if (timeLeftInterval == null)
             {
                 $("#secondsTillLogout").text(timeLeft);
@@ -140,9 +192,9 @@ if (loggedInAtLoad=="true")
 }
 
 function idleReactivate() {
-    $("#inactivityWarningModal").modal('hide');
     window.clearInterval(timeLeftInterval);
-    timeLeftInterval = null;
+    timeLeftInterval = getTimeTillAutoLogoff();
+    $("#inactivityWarningModal").modal('hide');
     $.ajax({
         url: "/Account/KeepAlive",
         contentType: 'application/json; charset=utf-8',
@@ -155,6 +207,7 @@ function idleReactivate() {
         },
         error: function (xhr) {
             errorAlert("idleReactivate failed");
+            timeLeftInterval = null;
         }
     });
 

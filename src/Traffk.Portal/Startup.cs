@@ -12,14 +12,20 @@ using RevolutionaryStuff.Core.Caching;
 using RevolutionaryStuff.PowerBiToys;
 using Serilog;
 using System;
+using Serilog.Core;
+using Serilog.Events;
 using Traffk.Bal;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Email;
 using Traffk.Bal.Identity;
 using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
+using Traffk.Tableau;
+using Traffk.Tableau.REST;
+using Traffk.Tableau.REST.RestRequests;
 using TraffkPortal.Permissions;
 using TraffkPortal.Services;
+using TraffkPortal.Services.Logging;
 using TraffkPortal.Services.Sms;
 using TraffkPortal.Services.TenantServices;
 
@@ -60,10 +66,15 @@ namespace TraffkPortal
             Log.Logger = new LoggerConfiguration()
                     .Enrich.WithProperty("ApplicationName", Configuration["RevolutionaryStuffCoreOptions:ApplicationName"])
                     .Enrich.WithProperty("MachineName", Environment.MachineName)
-                    .MinimumLevel.Debug()
+                    .Enrich.With<EventTimeEnricher>()
+                    //.Enrich.With<UserEnricher>()
+                    .MinimumLevel.Verbose()
                     .Enrich.FromLogContext()
                     .WriteTo.Trace()
-                    .WriteTo.AzureTableStorageWithProperties(Configuration["BlobStorageServicesOptions:ConnectionString"], storageTableName:"AppLogs")
+                    .WriteTo.AzureTableStorageWithProperties(Configuration["BlobStorageServicesOptions:ConnectionString"], 
+                        storageTableName: Configuration["Serilog:TableName"], 
+                        writeInBatches: Parse.ParseBool(Configuration["Serilog:WriteInBatches"], true), 
+                        period: Parse.ParseTimeSpan(Configuration["Serilog:LogInterval"], TimeSpan.FromSeconds(2)))
                     .CreateLogger();
         }
 
@@ -92,6 +103,8 @@ namespace TraffkPortal
             services.Configure<NoTenantMiddleware.NoTenantMiddlewareOptions>(Configuration.GetSection(nameof(NoTenantMiddleware.NoTenantMiddlewareOptions)));
             services.Configure<BlobStorageServices.BlobStorageServicesOptions>(Configuration.GetSection(nameof(BlobStorageServices.BlobStorageServicesOptions)));
             services.Configure<TwilioSmsSenderOptions>(Configuration.GetSection(nameof(TwilioSmsSenderOptions)));
+            services.Configure<TableauSignInOptions>(Configuration.GetSection(nameof(TableauSignInOptions)));
+
             services.Configure<TraffkHttpHeadersFilter.TraffkHttpHeadersFilterOptions>(Configuration.GetSection(nameof(TraffkHttpHeadersFilter.TraffkHttpHeadersFilterOptions)));
 
 
@@ -141,6 +154,10 @@ namespace TraffkPortal
                 }
             });
 
+            services.AddDistributedMemoryCache();
+            services.AddSession();
+
+
             // Add application services.
             services.AddScoped<IOptions<SmtpOptions>, SmtpSettingsAdaptor>();
             services.AddScoped<IEmailer, RawEmailer>();
@@ -160,8 +177,12 @@ namespace TraffkPortal
             services.AddScoped<BlobStorageServices>();
             services.AddScoped<PowerBiServices>();
             services.AddScoped<ConfigStringFormatter>();
+            services.AddScoped<ITableauServices, TableauServices>();
+            services.AddScoped<ITrustedTicketGetter, TrustedTicketGetter>();
+            services.AddScoped<ITableauRestService, TableauRestService>();
 
             services.AddScoped<SetPowerBiBearerActionFilter>();
+            services.AddScoped<TableauTrustedTicketActionFilter>();
 
             services.Add(new ServiceDescriptor(typeof(ICacher), Cache.DataCacher));
         }
@@ -169,13 +190,11 @@ namespace TraffkPortal
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-
-            //            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            //            loggerFactory.AddDebug();
-//            loggerFactory.AddSerilog();
-//                        loggerFactory.AddProvider()
-
-//            ILoggerProvider fds;
+            //loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            loggerFactory.AddDebug();
+            loggerFactory.AddSerilog(Log.Logger);
+            //loggerFactory.AddProvider();
+            //ILoggerProvider fds;
 
             app.UseApplicationInsightsRequestTelemetry();
 
@@ -206,7 +225,11 @@ namespace TraffkPortal
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 
-//            app.UseSession();
+            app.UseSession();
+
+            HttpContextGetter.Configure(app.ApplicationServices.GetRequiredService<IHttpContextAccessor>());
+            //CurrentContextGetter.Configure(app.ApplicationServices.GetRequiredService<ICurrentUser>());
+
 
             app.UseMvc(routes =>
             {

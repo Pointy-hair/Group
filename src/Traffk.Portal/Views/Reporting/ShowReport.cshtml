@@ -9,22 +9,11 @@
 }
 
 @{ await Html.RenderPartialAsync("_PowerBiIFramePartial"); }
+
 @section Scripts {
     <script type="text/javascript">
-    $(document).ready(function () {
-        @if (e is PowerBiReport)
-        {
-    <text>
-        loadPowerBiReport('frame1', '@e.EmbedUrl');
-        </text>
-        }
-        else if (e is PowerBiTile)
-        {
-    <text>
-        alert("world");
-        loadPowerBiTile('frame1', '@e.EmbedUrl');
-        </text>
-    }
+        $(document).ready(function () {
+            loadPowerBiResourceUsingLibrary('powerBiContainer', '@e.Id', '@e.GetType().Name');
     });
     </script>
 }
