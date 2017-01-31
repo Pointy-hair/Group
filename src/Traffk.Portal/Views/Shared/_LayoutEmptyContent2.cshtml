@@ -313,6 +313,33 @@
                     outline: true
                 });
             });
+
+            jQuery('.navbar-toggle').click(function () {
+                if (window.innerWidth < 768) {
+                    if (jQuery('.navbar-right').is(':visible')) {
+                        jQuery('.navbar-right').slideUp(300);
+                    } else {
+                        jQuery('.navbar-right').slideDown(300);
+                    }
+                }
+            });
+            jQuery('.toggle').click(function () {
+                var id = jQuery(this).attr('data-toggle');
+                //jQuery('#'+id).toggle('fast');
+                if (jQuery('#' + id).is(':visible')) {
+                    jQuery('#' + id).fadeOut(300);
+                } else {
+                    jQuery('#' + id).fadeIn(300);
+                }
+
+                if (jQuery(this).children('.fa-chevron-down').length > 0) {
+                    jQuery(this).children('.fa').removeClass('fa-chevron-down');
+                    jQuery(this).children('.fa').addClass('fa-chevron-up');
+                } else {
+                    jQuery(this).children('.fa').removeClass('fa-chevron-up');
+                    jQuery(this).children('.fa').addClass('fa-chevron-down');
+                }
+            });
         </script>
         <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
         <script>tinymce.init({ selector: '.htmleditor', plugins: "code" });</script>

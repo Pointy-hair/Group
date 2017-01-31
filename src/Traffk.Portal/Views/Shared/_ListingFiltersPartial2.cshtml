@@ -1,0 +1,20 @@
+﻿@model ListingFilters
+<div class="col-sm-2">
+    <button class="btn btn-large btn-white toggle" data-toggle="reports-filter">Filters</button>
+    <ul id="reports-filter" class="floated-filter list-left">
+        @foreach (var filterSection in Model.Sections)
+        {
+            <li>
+                <a href="#">@filterSection.SectionName <span>@filterSection.TotalCount</span></a>
+                <ul class="filter-subnav">
+                    @foreach (var filter in filterSection.Filters)
+                    {
+                        var filterTitle = filter.Title.RightOf("/", true);
+                        var filterId = $"listingFilter_{filterSection.SectionName}_{filter.FieldName}_{filter.Value}";
+                        <li><a href="#">@filterTitle <span>@filter.Count</span></a></li>
+                    }
+                </ul>
+            </li>
+        }
+    </ul>
+</div>

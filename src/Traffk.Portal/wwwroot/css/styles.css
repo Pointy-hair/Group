@@ -411,7 +411,7 @@ a, a:hover {
   padding-left: 0;
 }
 .navbar {
-  background: url('../img/traffk-logo.png') no-repeat fixed center #381E65; /* primary color - BACKGROUND */
+  background: url('../images/traffk-logo.png') no-repeat fixed center #381E65; /* primary color - BACKGROUND */
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5) !important;
 }
 .navbar-inverse .navbar-brand, .top-nav > li > a {
@@ -706,7 +706,7 @@ h3 {
 }
 .floated-filter li {
   border-bottom: 1px solid #bbb;
-  background: url('../img/filter-bg.png');
+  background: url('../images/filter-bg.png');
 }
 .floated-filter.list-left li a {
   padding: 15px 85px 15px 45px;
@@ -736,7 +736,7 @@ h3 {
   right: 15px;
 }
 .filter-subnav {
-  background: url('../img/filter-bg-dark.png') !important;
+  background: url('../images/filter-bg-dark.png') !important;
 }
 .filter-subnav {
   padding-left: 0;

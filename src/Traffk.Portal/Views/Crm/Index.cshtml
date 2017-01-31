@@ -1,76 +1,123 @@
 @model IEnumerable<Contact>
 @{
-    Layout = "~/Views/Shared/_LayoutListing.cshtml";
-    ViewData.SetTitleAndHeading("Contacts");
+    Layout = "~/Views/Shared/_LayoutListing2.cshtml";
+    ViewData.SetTitle("Contacts");
+    var filters = ViewBag.ListingFilters as ListingFilters;
+    var hasFilters = filters != null;
     var canAccessPhi = await User.GetCanAccessProtectedHealthInformationAsync(AuthorizationService);
 }
-@section listingActionButtons
-{
-    <div class="dropdown">
-        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-            Create
-            <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu">
-            <li><a asp-action="Create" asp-all-route-data='@new Dictionary<string, string>{{"contactTypeTemplate", "Person"}}'>Person</a></li>
-            <li><a asp-action="Create" asp-all-route-data='@new Dictionary<string, string>{{"contactTypeTemplate", "Organization"}}'>Organization</a></li>
-        </ul>
+<!-- Content: CRM -->
+<section id="crm-panel">
+    <div class="row">
+        <div class="col-xs-12">
+            <h1>Contacts</h1>
+            <p class="subheading">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        </div>
     </div>
-}
-@section listingTable
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th class="hidden">
-                    @Html.SortableHeaderFor(z => z.ContactId)
-                </th>
-                <th>
-                    @Html.SortableHeaderFor(z => z.ContactType)
-                </th>
-                @if (canAccessPhi)
-                {
-                    <th>
-                        @Html.SortableHeaderFor(z => z.MemberId)
-                    </th>
-                }
-                <th>
-                    @Html.SortableHeaderFor(z => z.FullName)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
+    <div class="panel smallest-padding">
+        <div class="row border-bottom">
+            @if (hasFilters)
             {
-                <tr>
-                    <td class="hidden">
-                        @Html.DisplayFor(modelItem => item.ContactId)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ContactType)
-                    </td>
-                    @if (canAccessPhi)
-                    {
-                        <td>
-                            @Html.DisplayFor(modelItem => item.MemberId)
-                        </td>
-                    }
-                    <td>
-                        <a asp-action="ContactBackground" asp-route-id="@item.ContactId">@Html.DisplayFor(modelItem => item.FullName)</a>
-                    </td>
-                    <td>
-                        @*
-    <a asp-action="ContactBackground" asp-route-id="@item.Id">Edit</a> |
-    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                        *@
-                        <a asp-action="Delete" asp-route-id="@item.ContactId">Delete</a>
-                    </td>
-                </tr>
+                @await Html.PartialAsync("_ListingFiltersPartial2", filters)
             }
-        </tbody>
-    </table>
-
-  @{ await Html.RenderPartialAsync("_PaginationPartial"); }
-
-}
+            <div class="col-sm-8" id="filter-tags-container">
+                <p class="primary-color">All 9 items were selected on this page, <a href="#">select all 100 items?</a>
+                </p>
+                <ul class="filter-tags">
+                    <li><a href="#">Workers Comp (3) <span><i class="fa fa-times" aria-hidden="true"></i></span></a></li>
+                    <li><a href="#">Risk Reports (3) <span><i class="fa fa-times" aria-hidden="true"></i></span></a></li>
+                </ul>
+            </div>
+                <div class="col-sm-2 text-right">
+                    <button class="btn btn-large btn-white toggle" data-toggle="actions-filter2">Actions</button>
+                    <ul id="actions-filter2" class="floated-filter list-right">
+                        <li><a href="#">Export</a></li>
+                        <li><a href="#">Create Note</a></li>
+                        <li><a href="#" class="popup-confirm_open">Delete</a></li>
+                        <li><a href="#">View</a></li>
+                    </ul>
+                </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" /></th>
+                                <th class="hidden">
+                                    @Html.SortableHeaderFor(z => z.ContactId)
+                                </th>
+                                <th>
+                                    @Html.SortableHeaderFor(z => z.ContactType)
+                                </th>
+                                @if (canAccessPhi)
+                                {
+                                    <th>
+                                        @Html.SortableHeaderFor(z => z.MemberId)
+                                    </th>
+                                }
+                                <th>
+                                    @Html.SortableHeaderFor(z => z.FullName)
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td><input type="checkbox" /></td>
+                                    <td class="hidden">
+                                        @Html.DisplayFor(modelItem => item.ContactId)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ContactType)
+                                    </td>
+                                    @if (canAccessPhi)
+                                    {
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.MemberId)
+                                        </td>
+                                    }
+                                    <td>
+                                        <a asp-action="ContactBackground" asp-route-id="@item.ContactId">@Html.DisplayFor(modelItem => item.FullName)</a>
+                                    </td>
+                                    <td class="text-center">
+                                        <i class="fa fa-ellipsis-h toggle" aria-hidden="true" data-toggle="row-action-@item.ContactId"></i>
+                                        <ul id="row-action-@item.ContactId" class="floated-filter list-right">
+                                            <!-- displaying by default for demo purpose -->
+                                            <li><a href="#">Export</a></li>
+                                            <li><a href="#">Create Note</a></li>
+                                            <li><a href="#" class="popup-confirm_open">Delete</a></li>
+                                            <li><a href="#">View</a></li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <div class="table-controls-row text-right">
+                        <ul class="table-controls">
+                            <li>
+                                Rows per page:
+                                <select>
+                                    <option value="10">10</option>
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                    <option value="75">75</option>
+                                </select>
+                            </li>
+                            <li>
+                                <i class="fa fa-chevron-left inactive" aria-hidden="true"></i>
+                                1-10 of 100
+                                <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- /end Content: CRM -->
