@@ -20,6 +20,9 @@ namespace TraffkPortal.Models
         public class Section
         {
             public string SectionName { get; set; }
+
+            public string SectionTitle => SectionName.ToTitleFriendlyString();
+
             public Filter[] Filters { get; set; }
             public int TotalCount { get; set; }
         }

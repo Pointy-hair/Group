@@ -3,11 +3,20 @@
     var filters = ViewBag.ListingFilters as ListingFilters;
     var hasFilters = filters != null;
 }
-@RenderBody()
-@*@RenderSection("listingActionButtons", required: false)
-@RenderSection("listingTable", required: true)*@
-
 @section scripts
 {
     @RenderSection("scripts", required: false)
+    <script>
+        $('input[type=checkbox]').click(function() {
+            var numberOfCheckedBoxes = document.querySelectorAll('input[type="checkbox"]:checked').length;
+            document.getElementById("checkedBoxesCount").textContent = numberOfCheckedBoxes;
+            if (numberOfCheckedBoxes > 1) {
+                $("ul.floated-filter.list-right li:not(.multiselect-action)").remove();
+            } else {
+            }
+        });
+    </script>
 }
+@RenderBody()
+@*@RenderSection("listingActionButtons", required: false)
+@RenderSection("listingTable", required: true)*@
