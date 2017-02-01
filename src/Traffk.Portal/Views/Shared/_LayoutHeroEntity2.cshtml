@@ -1,0 +1,32 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutEmptyContent2.cshtml";
+    ViewData["BodyContainerClass"] = "container-full-width no-side-padding";
+    ViewData.SetIfMissing("Heading", ViewData["EntityTitle"] as string);
+    var entityId = ViewData[ViewDataKeys.EntityId].ToString();
+}
+
+<section id="personal-page-panel">
+    <div class="row">
+        <div class="col-xs-12">
+            <h1>@ViewData[ViewDataKeys.Heading]</h1>
+            <ul class="breadcrumbs">
+                <li><a href="#">CRM</a> <span>></span> </li>
+                @*<li><a href="#">CRM: Male</a> <span>></span> </li>*@
+                <li><a href="#">@ViewData[ViewDataKeys.Heading]</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="panel smallest-padding">
+        @RenderSection("navItems", required: false)
+        <div class="row">
+            <div class="col-xs-12">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+</section>
+
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+        @RenderSection("scripts", required: false)
+    }

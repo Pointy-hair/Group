@@ -1,94 +1,73 @@
 @using TraffkPortal.Models.CrmModels
 @model ContactModel
 @{
-    Layout = "_LayoutContact.cshtml";
+    Layout = "~/Views/Crm/_LayoutContact2.cshtml";
 }
-<form asp-action="ContactBackground">
-    <div class="form-horizontal">
+<div id="personal-edit-form-container" class="personal-section medium-padding">
+    <img class="mobile-block-centered" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Placeholder_no_text.svg/1024px-Placeholder_no_text.svg.png" id="personal-page-img" alt="" />
+    <form asp-action="ContactBackground" role="form" class="inline-form">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="Contact.ContactId" />
-        <div class="form-group">
-            <label asp-for="Contact.ContactType" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="Contact.ContactType" class="form-control" readonly="readonly" />
-                <span asp-validation-for="Contact.ContactType" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="Contact.PrimaryEmail" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="Contact.PrimaryEmail" class="form-control" />
-                <span asp-validation-for="Contact.PrimaryEmail" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="Contact.FullName" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="Contact.FullName" class="form-control" />
-                <span asp-validation-for="Contact.FullName" class="text-danger" />
-            </div>
-        </div>
-        @*<div style="display:@(Model.Contact.IsPerson?"block":"none")">
-        <div class="form-group">
-            <label asp-for="Contact.Person.Gender" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="Contact.Person.Gender" class="form-control" />
-                <span asp-validation-for="Contact.Person.Gender" class="text-danger" />
-            </div>
-        </div>
-        @await Html.PartialAsync("_PersonNamePartial", Model.Contact.Person.Name, nameof(Model.Contact) + "." + nameof(Model.Contact.Person) + "." + nameof(Person.Name))
-    </div>
-    <div style="display:@(Model.Contact.IsOrganization?"block":"none")">
-        <div class="form-group">
-            <label asp-for="Contact.Company.CompanyField1" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="Contact.Company.CompanyField1" class="form-control" />
-                <span asp-validation-for="Contact.Company.CompanyField1" class="text-danger" />
-            </div>
-        </div>
-    </div>
-        *@
-        <div class="form-group">
-            <label asp-for="Contact.ContactDetails.Tags" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                @await Html.PartialAsync("_TagEditorPartial", Model.Contact.ContactDetails.Tags, z => z.Contact)
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="Contact.ContactDetails.Addresses" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                @if (Model.Contact.ContactDetails.Addresses != null)
-                {
-                    foreach (var a in Model.Contact.ContactDetails.Addresses)
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-row">
+                    <label>Text Input</label>
+                    <input class="form-control">
+                </div>
+                <div class="form-row">
+                    <label asp-for="Contact.ContactType"></label>
+                    <input asp-for="Contact.ContactType" class="form-control" readonly="readonly" />
+                    <span asp-validation-for="Contact.ContactType" class="text-danger" />
+                </div>
+                <div class="form-row">
+                    <label asp-for="Contact.PrimaryEmail"></label>
+                    <input asp-for="Contact.PrimaryEmail" class="form-control"/>
+                    <span asp-validation-for="Contact.PrimaryEmail" class="text-danger"/>
+                </div>
+                <div class="form-row">
+                    <label asp-for="Contact.FullName"></label>
+                    <input asp-for="Contact.FullName" class="form-control"/>
+                    <span asp-validation-for="Contact.FullName" class="text-danger"/>
+                </div>
+                <div class="form-row">
+                    <label asp-for="Contact.ContactDetails.Tags"></label>
+                    @await Html.PartialAsync("_TagEditorPartial", Model.Contact.ContactDetails.Tags, z => z.Contact)
+                </div>
+                <div class="form-row">
+                    <label asp-for="Contact.ContactDetails.Addresses"></label>
+                    @if (Model.Contact.ContactDetails.Addresses != null)
                     {
-                        <div>
-                            @a.Address1<br />
-                            @if (String.IsNullOrEmpty(@a.Address2) == false)
-                            {
-                                @a.Address2
-                            }
-                            @a.City, @a.State @a.PostalCode<br/>
-                        </div>
+                        foreach (var a in Model.Contact.ContactDetails.Addresses)
+                        {
+                            <div>
+                                @a.Address1<br/>
+                                @if (String.IsNullOrEmpty(@a.Address2) == false)
+                                {
+                                    @a.Address2
+                                }
+                                @a.City, @a.State @a.PostalCode<br/>
+                            </div>
+                        }
                     }
-                }
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="Contact.ContactDetails.PhoneNumbers" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                @if (Model.Contact.ContactDetails.PhoneNumbers != null)
-                {
-                    foreach (var a in Model.Contact.ContactDetails.PhoneNumbers)
+                </div>
+                <div class="form-row">
+                    <label asp-for="Contact.ContactDetails.PhoneNumbers"></label>
+                    @if (Model.Contact.ContactDetails.PhoneNumbers != null)
                     {
-                        <div>@String.Format("{0:(###) ###-####}", long.Parse(a.PhoneNumber))</div>
+                        foreach (var a in Model.Contact.ContactDetails.PhoneNumbers)
+                        {
+                            <div class="form-control">@String.Format("{0:(###) ###-####}", long.Parse(a.PhoneNumber))</div>
+                        }
                     }
-                }
+                </div>
+            </div>
+            <div class="col-sm-8">
             </div>
         </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+        <div class="row">
+            <div class="col-xs-12 text-right">
+                <input type="submit" value="Save" class="btn btn-primary btn-large"/>
             </div>
         </div>
-    </div>
-</form>
+    </form>
+</div>
