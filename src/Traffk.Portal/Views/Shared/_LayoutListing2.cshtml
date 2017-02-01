@@ -9,7 +9,7 @@
     <script>
         $('input[type=checkbox]').click(function() {
             var numberOfCheckedBoxes = document.querySelectorAll('input[type="checkbox"]:checked').length;
-            document.getElementById("checkedBoxesCount").textContent = numberOfCheckedBoxes;
+            //document.getElementById("checkedBoxesCount").textContent = numberOfCheckedBoxes;
             if (numberOfCheckedBoxes > 1) {
                 $("ul.floated-filter.list-right li:not(.multiselect-action)").remove();
             } else {

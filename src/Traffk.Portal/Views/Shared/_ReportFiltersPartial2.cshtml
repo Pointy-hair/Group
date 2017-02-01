@@ -1,0 +1,31 @@
+﻿@model ListingFilters
+<div class="col-sm-2">
+    <button class="btn btn-large btn-white toggle" data-toggle="reports-filter">Filters</button>
+    <ul id="reports-filter" class="floated-filter list-left">
+        <li>
+            <a href="#">PHI <span>3</span></a>
+            <ul class="filter-subnav">
+                <li><a href="#">PHI <span>4</span></a></li>
+                <li><a href="#">No Phi <span>3</span></a></li>
+            </ul>
+        </li>
+        <li><a href="#">Budget Vs Actual <span>4</span></a></li>
+        <li><a href="#">Risk Report <span>3</span></a></li>
+        <li><a href="#">Medical Claims <span>3</span></a></li>
+        @*Uncomment after implementing report filters*@
+        @*@foreach (var filterSection in Model.Sections)
+        {
+            <li>
+                <a href="#">@filterSection.SectionTitle<span>@filterSection.TotalCount</span></a>
+                <ul class="filter-subnav">
+                    @foreach (var filter in filterSection.Filters)
+                    {
+                        var filterTitle = filter.Title.RightOf("/", true);
+                        var filterId = $"listingFilter_{filterSection.SectionName}_{filter.FieldName}_{filter.Value}";
+                        <li><a href="#">@filter.Value <span>@filter.Count</span></a></li>
+                    }
+                </ul>
+            </li>
+        }*@
+    </ul>
+</div>
