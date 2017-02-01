@@ -2,6 +2,7 @@
 @model ContactModel
 @{
     Layout = "~/Views/Crm/_LayoutContact2.cshtml";
+    ViewData.SetTitle(ViewData["EntityTitle"] as string);
 }
 <div id="personal-edit-form-container" class="personal-section medium-padding">
     <img class="mobile-block-centered" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Placeholder_no_text.svg/1024px-Placeholder_no_text.svg.png" id="personal-page-img" alt="" />
@@ -9,7 +10,7 @@
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="Contact.ContactId" />
         <div class="row">
-            <div class="col-sm-6">
+            <div class="col-sm-12">
                 <div class="form-row">
                     <label>Text Input</label>
                     <input class="form-control">
@@ -56,12 +57,10 @@
                     {
                         foreach (var a in Model.Contact.ContactDetails.PhoneNumbers)
                         {
-                            <div class="form-control">@String.Format("{0:(###) ###-####}", long.Parse(a.PhoneNumber))</div>
+                            <div>@String.Format("{0:(###) ###-####}", long.Parse(a.PhoneNumber))</div>
                         }
                     }
                 </div>
-            </div>
-            <div class="col-sm-8">
             </div>
         </div>
         <div class="row">
