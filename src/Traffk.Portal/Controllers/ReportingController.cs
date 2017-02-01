@@ -28,7 +28,7 @@ namespace TraffkPortal.Controllers
         public ITableauRestService TableauRestService { get; set; }
 
         public static string CreateAnchorName(PowerBiEmbeddableResource er) => NameHelpers.GetName(er)?.Trim()?.ToUpperCamelCase() ?? "";
-        public static string CreateAnchorName(SiteViewResource view) => NameHelpers.GetName(view)?.Trim()?.ToUpperCamelCase()?? "";
+        public static string CreateAnchorName(SiteViewResource view) => NameHelpers.GetName(view)?.Trim()?.ToUpperCamelCase()?.RemoveSpecialCharacters() ?? "";
 
         public static class ActionNames
         {
