@@ -1,9 +1,9 @@
 ﻿@using static TraffkPortal.Controllers.CrmController
 @{
     Layout = "~/Views/Shared/_LayoutHeroEntity2.cshtml";
-    var pageKey = (PageKeys)ViewData[ViewDataKeys.PageKey];
-    var entityName = ViewData[ViewDataKeys.EntityTitle].ToString();
-    var entityId = ViewData[ViewDataKeys.EntityId].ToString();
+    var pageKey = (CrmController.PageKeys)ViewData[AspHelpers.ViewDataKeys.PageKey];
+    var entityName = ViewData[AspHelpers.ViewDataKeys.EntityTitle].ToString();
+    var entityId = ViewData[AspHelpers.ViewDataKeys.EntityId].ToString();
     var isNewEntity = string.IsNullOrEmpty(entityId);
     var isPerson = Contact.ContactTypes.IsPerson(ViewData["ContactType"] as string);
     var contactEmailAddress = ViewData["ContactEmailAddress"] as string;
@@ -14,18 +14,18 @@
     bool isHealthSection;
     switch (pageKey)
     {
-        case PageKeys.CareAlerts:
-        case PageKeys.Demographics:
-        case PageKeys.Eligibility:
-        case PageKeys.HighCostDiagnosis:
-        case PageKeys.HistoricalScores:
-        case PageKeys.MedicalClaims:
-        case PageKeys.MemberPCP:
-        case PageKeys.Participation:
-        case PageKeys.Pharmacy:
-        case PageKeys.QualityMetrics:
-        case PageKeys.Scores:
-        case PageKeys.Visit:
+        case CrmController.PageKeys.CareAlerts:
+        case CrmController.PageKeys.Demographics:
+        case CrmController.PageKeys.Eligibility:
+        case CrmController.PageKeys.HighCostDiagnosis:
+        case CrmController.PageKeys.HistoricalScores:
+        case CrmController.PageKeys.MedicalClaims:
+        case CrmController.PageKeys.MemberPCP:
+        case CrmController.PageKeys.Participation:
+        case CrmController.PageKeys.Pharmacy:
+        case CrmController.PageKeys.QualityMetrics:
+        case CrmController.PageKeys.Scores:
+        case CrmController.PageKeys.Visit:
             isHealthSection = true;
             break;
         default:
@@ -40,26 +40,26 @@
                 @*<li><a asp-action="@ActionNames.ContactBackground" asp-route-id="@entityId" class="@(pageKey==PageKeys.Background?"current-section":"")">Personal</a></li>
                 <li><a asp-action="@ActionNames.ContactMessages" asp-route-id="@entityId" class="@(pageKey==PageKeys.Messages?"current-section":"")">Messages</a></li>
                 <li><a asp-action="@ActionNames.ContactNotes" asp-route-id="@entityId" class="@(pageKey==PageKeys.Notes?"current-section":"")">Notes</a></li>*@
-                <li><a href="javascript:void(0)" class="active" data-section="personal-edit-form-container">Personal</a></li>
-                <li><a href="javascript:void(0)" data-section="personal-notes-container">Notes</a></li>
-                <li><a href="javascript:void(0)" class="popup-messages_open">Messages</a></li>
+                <li><a href="javascript:void(0)" class="@(pageKey==CrmController.PageKeys.Background?"active":"")" data-section="personal-edit-form-container">Personal</a></li>
+                <li><a href="javascript:void(0)" class="@(pageKey==CrmController.PageKeys.Background?"active":"")" data-section="personal-notes-container">Notes</a></li>
+                <li><a href="javascript:void(0)" class="@(pageKey==CrmController.PageKeys.Background?"active":"") popup-messages_open">Messages</a></li>
                 @if (isPerson)
                 {
                     <li>
                         <a href="javascript:void(0)" class="toggle" data-toggle="personal-health">Health <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
                         <ul id="personal-health" class="floated-filter">
-                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.CareAlertsList" class="@(pageKey==PageKeys.CareAlerts?"current-section":"")">Care Alerts</a></li>
-                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.Demographic" class="@(pageKey==PageKeys.Demographics?"current-section":"")">Demographics</a></li>
-                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.EligibilityList" class="@(pageKey==PageKeys.Eligibility?"current-section":"")">Eligibility</a></li>
-                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.HighCostDiagnosis" class="@(pageKey==PageKeys.HighCostDiagnosis?"current-section":"")">High Cost Diagnosis</a></li>
-                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.MedicalClaimsList" class="@(pageKey==PageKeys.MedicalClaims?"current-section":"")">Medical Claims</a></li>
-                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.MemberPcp" class="@(pageKey==PageKeys.MemberPCP?"current-section":"")">MemberPCP</a></li>
-                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.ParticipationList" class="@(pageKey==PageKeys.Participation?"current-section":"")">Participation</a></li>
-                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.PharmacyList" class="@(pageKey==PageKeys.Pharmacy?"current-section":"")">Pharmacy</a></li>
-                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.Score" class="@(pageKey==PageKeys.Scores?"current-section":"")">Score</a></li>
-                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.HistoricalScoreList" class="@(pageKey==PageKeys.HistoricalScores?"current-section":"")">Scores (Historical)</a></li>
-                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.QualityMetricsList" class="@(pageKey==PageKeys.QualityMetrics?"current-section":"")">Quality Metrics</a></li>
-                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.VisitList" class="@(pageKey==PageKeys.Visit?"current-section":"")">Visits</a></li>
+                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.CareAlertsList" class="@(pageKey==CrmController.PageKeys.CareAlerts?"current-section":"")">Care Alerts</a></li>
+                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.Demographic" class="@(pageKey==CrmController.PageKeys.Demographics?"current-section":"")">Demographics</a></li>
+                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.EligibilityList" class="@(pageKey==CrmController.PageKeys.Eligibility?"current-section":"")">Eligibility</a></li>
+                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.HighCostDiagnosis" class="@(pageKey==CrmController.PageKeys.HighCostDiagnosis?"current-section":"")">High Cost Diagnosis</a></li>
+                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.MedicalClaimsList" class="@(pageKey==CrmController.PageKeys.MedicalClaims?"current-section":"")">Medical Claims</a></li>
+                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.MemberPcp" class="@(pageKey==CrmController.PageKeys.MemberPCP?"current-section":"")">MemberPCP</a></li>
+                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.ParticipationList" class="@(pageKey==CrmController.PageKeys.Participation?"current-section":"")">Participation</a></li>
+                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.PharmacyList" class="@(pageKey==CrmController.PageKeys.Pharmacy?"current-section":"")">Pharmacy</a></li>
+                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.Score" class="@(pageKey==CrmController.PageKeys.Scores?"current-section":"")">Score</a></li>
+                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.HistoricalScoreList" class="@(pageKey==CrmController.PageKeys.HistoricalScores?"current-section":"")">Scores (Historical)</a></li>
+                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.QualityMetricsList" class="@(pageKey==CrmController.PageKeys.QualityMetrics?"current-section":"")">Quality Metrics</a></li>
+                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.VisitList" class="@(pageKey==CrmController.PageKeys.Visit?"current-section":"")">Visits</a></li>
                         </ul>
                     </li>
                 }

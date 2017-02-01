@@ -1,11 +1,11 @@
 ﻿@using static TraffkPortal.Controllers.CrmController
 @model IEnumerable<CareAlert>
 @{
-    Layout = "_LayoutContactListingContent.cshtml";
+    Layout = "~/Views/Crm/_LayoutContactListingContent2.cshtml";
 }
 @section listingTable
     {
-    <table class="table">
+    <table class="table table-bordered table-hover table-striped">
         <thead>
         <tr>
             <th>
@@ -48,6 +48,4 @@
             }
         </tbody>
     </table>
-
-    @{ await Html.RenderPartialAsync("_PaginationPartial"); }
 }
