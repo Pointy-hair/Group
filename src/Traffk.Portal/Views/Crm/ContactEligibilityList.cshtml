@@ -1,59 +1,52 @@
 ﻿@using static TraffkPortal.Controllers.CrmController
 @model IEnumerable<Eligibility>
 @{
-    Layout = "_LayoutContactListingContent.cshtml";
+    Layout = "_LayoutContactListingContent2.cshtml";
 }
 @section listingTable
     {
-    <table class="table">
-        <thead>
+<table class="table table-bordered table-hover table-striped">
+    <thead>
         <tr>
             <th>
                 @Html.SortableHeaderFor(z => z.mbr_id)
             </th>
             <th>
-                @Html.SortableHeaderFor(z => z.ins_policy_id)
+                @Html.SortableHeaderFor(z => z.mbr_gender)
             </th>
             <th>
-                @Html.SortableHeaderFor(z => z.ins_carrier_name)
+                @Html.SortableHeaderFor(z => z.mbr_dob)
             </th>
             <th>
-                @Html.SortableHeaderFor(z => z.ins_coverage_type_desc)
+                @Html.SortableHeaderFor(z => z.ins_med_eff_date)
             </th>
             <th>
-                @Html.SortableHeaderFor(z => z.ins_plan_id)
-            </th>
-            <th>
-                @Html.SortableHeaderFor(z => z.ins_plan_desc)
+                @Html.SortableHeaderFor(z => z.ins_med_term_date)
             </th>
         </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        <a asp-action="@ActionNames.Health.Eligibility" asp-route-id="@ViewContext.GetRouteValue()">@item.mbr_id</a>
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ins_policy_id)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ins_carrier_name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ins_coverage_type_desc)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ins_plan_id)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ins_plan_desc)
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <a asp-action="@ActionNames.Health.Eligibility" asp-route-id="@ViewContext.GetRouteValue()">@item.mbr_id</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.mbr_gender)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.mbr_dob)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ins_med_eff_date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ins_med_term_date)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
 
-    @{ await Html.RenderPartialAsync("_PaginationPartial"); }
 }

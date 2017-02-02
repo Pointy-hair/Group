@@ -1,6 +1,6 @@
 ﻿@model Visit
 @{
-    Layout = "_LayoutContact.cshtml";
+    @{ await Html.RenderPartialAsync("_PaginationPartial"); }
 }
 <dl class="dl-horizontal">
     @Html.DescriptionListElement(model => model.dw_record_id)

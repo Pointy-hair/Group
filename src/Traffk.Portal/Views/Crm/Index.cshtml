@@ -97,24 +97,7 @@
                             }
                         </tbody>
                     </table>
-                    <div class="table-controls-row text-right">
-                        <ul class="table-controls">
-                            <li>
-                                Rows per page:
-                                <select>
-                                    <option value="10">10</option>
-                                    <option value="25">25</option>
-                                    <option value="50">50</option>
-                                    <option value="75">75</option>
-                                </select>
-                            </li>
-                            <li>
-                                <i class="fa fa-chevron-left inactive" aria-hidden="true"></i>
-                                1-10 of 100
-                                <i class="fa fa-chevron-right" aria-hidden="true"></i>
-                            </li>
-                        </ul>
-                    </div>
+                    @{ await Html.RenderPartialAsync("_PaginationPartial2"); }
                 </div>
             </div>
         </div>

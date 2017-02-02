@@ -1,11 +1,10 @@
 @using TraffkPortal.Models.CrmModels
 @model ContactModel
 @{
-    Layout = "~/Views/Crm/_LayoutContact2.cshtml";
+    Layout = "~/Views/Crm/_LayoutContactDetailContent2.cshtml";
     ViewData.SetTitle(ViewData["EntityTitle"] as string);
 }
-<div id="personal-edit-form-container" class="personal-section medium-padding">
-    <img class="mobile-block-centered" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Placeholder_no_text.svg/1024px-Placeholder_no_text.svg.png" id="personal-page-img" alt="" />
+
     <form asp-action="ContactBackground" role="form" class="inline-form">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="Contact.ContactId" />
@@ -69,4 +68,3 @@
             </div>
         </div>
     </form>
-</div>

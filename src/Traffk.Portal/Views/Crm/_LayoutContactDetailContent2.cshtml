@@ -1,0 +1,13 @@
+﻿@using static TraffkPortal.Controllers.CrmController
+@{
+    Layout = "~/Views/Crm/_LayoutContact2.cshtml";
+    var filters = ViewBag.ListingFilters as ListingFilters;
+    var hasFilters = filters != null;
+}
+
+<div id="personal-edit-form-container" class="personal-section medium-padding">
+    <img class="mobile-block-centered" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Placeholder_no_text.svg/1024px-Placeholder_no_text.svg.png" id="personal-page-img" alt="" />
+    <div col-sm-8>
+        @RenderBody()
+    </div>
+</div>

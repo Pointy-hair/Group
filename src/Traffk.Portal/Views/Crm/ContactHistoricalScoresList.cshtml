@@ -1,52 +1,50 @@
 ﻿@using static TraffkPortal.Controllers.CrmController
 @model IEnumerable<HistoricalScore>
 @{
-    Layout = "_LayoutContactListingContent.cshtml";
+    Layout = "_LayoutContactListingContent2.cshtml";
 }
 @section listingTable
     {
-    <table class="table">
-        <thead>
+<table class="table table-bordered table-hover table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.SortableHeaderFor(z => z.score_type)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.score_start_date)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.score_end_date)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.total_score)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
             <tr>
-                <th>
-                    @Html.SortableHeaderFor(z => z.score_type)
-                </th>
-                <th>
-                    @Html.SortableHeaderFor(z => z.score_start_date)
-                </th>
-                <th>
-                    @Html.SortableHeaderFor(z => z.score_end_date)
-                </th>
-                <th>
-                    @Html.SortableHeaderFor(z => z.total_score)
-                </th>
-                <th></th>
+                <td>
+                    @Html.DisplayFor(modelItem => item.score_type)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.score_start_date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.score_end_date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.total_score)
+                </td>
+                <td>
+                    <a asp-action="@ActionNames.Health.HistoricalScore" asp-route-id="@ViewContext.GetRouteValue()" asp-route-recordId="@item.dw_record_id">Details</a>
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.score_type)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.score_start_date)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.score_end_date)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.total_score)
-                    </td>
-                    <td>
-                        <a asp-action="@ActionNames.Health.HistoricalScore" asp-route-id="@ViewContext.GetRouteValue()" asp-route-recordId="@item.dw_record_id">Details</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-
-    @{ await Html.RenderPartialAsync("_PaginationPartial"); }
+        }
+    </tbody>
+</table>
 
 }
