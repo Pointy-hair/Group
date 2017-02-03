@@ -114,7 +114,7 @@
                         <a asp-area="" asp-controller="Home" asp-action="Index" class="dropdown-toggle navbar-brand" data-toggle="dropdown">
                             @if (R.LogoLink == null)
                             {
-                                <text>TraffkPortal for @Current.Tenant.TenantName</text>
+                                <text>TraffkPortal for @Current.Tenant.TenantName</text><b class="caret"></b>
                             }
                             else
                             {
@@ -137,6 +137,14 @@
                                     }
                                 </ul>
                             </li>
+                            @if (await User.HasPermission(AuthorizationService, PermissionNames.CustomerRelationshipData))
+                            {
+                                <li><a asp-controller="@CrmController.Name" asp-action="Index" class="@(mainNavPageKey == MainNavigationPageKeys.CRM ? "active" : "")">CRM</a></li>
+                            }
+                            @if (await User.HasPermission(AuthorizationService, PermissionNames.BasicReporting))
+                            {
+                                <li><a asp-controller="@ReportingController.Name" asp-action="Index" class="@(mainNavPageKey == MainNavigationPageKeys.Reporting ? "active" : "")">Reports</a></li>
+                            }
                             @if (await User.HasPermission(AuthorizationService, PermissionNames.Messaging))
                             {
                                 <li class="dropdown" role="presentation">
@@ -149,14 +157,6 @@
                                         <li><a asp-controller="@CommunicationsController.Name" asp-action="@CommunicationsController.ActionNames.CreativesList">Creatives</a></li>
                                     </ul>
                                 </li>
-                            }
-                            @if (await User.HasPermission(AuthorizationService, PermissionNames.BasicReporting))
-                            {
-                                <li><a asp-controller="@ReportingController.Name" asp-action="Index" class="@(mainNavPageKey == MainNavigationPageKeys.Reporting ? "active" : "")">Reporting</a></li>
-                            }
-                            @if (await User.HasPermission(AuthorizationService, PermissionNames.CustomerRelationshipData))
-                            {
-                                <li><a asp-controller="@CrmController.Name" asp-action="Index" class="@(mainNavPageKey == MainNavigationPageKeys.CRM ? "active" : "")">CRM</a></li>
                             }
                             @if (manageJobs || manageTenants || manageRoles || manageUsers || manageProtectedHealthInformation || canAccessPhi)
                             {

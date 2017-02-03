@@ -5,7 +5,7 @@
         @foreach (var filterSection in Model.Sections)
         {
             <li>
-                <a href="#">@filterSection.SectionTitle<span>@filterSection.TotalCount</span></a>
+                <a href="#">@filterSection.SectionTitle</a>
                 <ul class="filter-subnav">
                     @foreach (var filter in filterSection.Filters)
                     {

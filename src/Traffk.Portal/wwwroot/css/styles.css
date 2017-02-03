@@ -420,6 +420,14 @@ a, a:hover {
 .navbar-brand {
   padding: 0 0 0 30px;
 }
+.top-nav>li>a:hover,
+.top-nav>li>a:focus,
+.top-nav>.open>a,
+.top-nav>.open>a:hover,
+.top-nav>.open>a:focus {
+    color: #fff;
+    background-color: transparent;
+}
 .top-nav {
   margin-right: 0;
 }
@@ -727,6 +735,9 @@ h3 {
 .floated-filter.list-right li a {
   padding: 15px 45px 15px 35px;
   text-align: left;
+}
+.floated-filter.list-left > li > ul.filter-subnav > li > a {
+    margin-left: 15px;
 }
 .list-right {
   right: 15px;
