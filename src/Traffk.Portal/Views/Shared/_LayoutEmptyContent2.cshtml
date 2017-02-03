@@ -22,39 +22,36 @@
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
     </environment>
-    @if (R.HasBasicColors)
-    {
-        <style>
-            h1, .body-content a {
-                color: @R.PrimaryColor;
-            }
-            .filterSection h3, .btn, .btn:hover {
-                background: @R.PrimaryColor;
-                border-color: @R.PrimaryColor;
-            }
-            .listingSection, .panel-default .panel-heading, .hero-heading-container, .current-section {
-                background-color: @R.SecondaryColor;
-            }
-        </style>
+    @{
+        var primaryColor = "#381E65";
+        if (R.HasBasicColors)
+        {
+            primaryColor = @R.PrimaryColor;
+        }
     }
-    else
-    {
-        <style>
-            /*Set primary color for theming below*/
-            .navbar, .popup-close-btn, .btn-primary, .step-indicator li.complete span.step, .step-indicator li.active span.step {
-                background-color: #381E65 !important;
-                border: none !important;
-            }
+    <style>
+        /*Set primary color for theming below*/
+        .navbar, .popup-close-btn, .btn-primary, .step-indicator li.complete span.step, .step-indicator li.active span.step {
+            background-color: @primaryColor !important;
+            border: none !important;
+        }
 
-            .primary-color, .primary-color a, #primary-subnav .dropdown-menu li.active a, #personal-page-nav li a.active, #personal-page-nav li a .fa-chevron-down, #personal-page-nav li a .fa-chevron-up {
-                color: #381E65 !important;
-            }
+        .primary-color, 
+        .primary-color a, 
+        #primary-subnav .dropdown-menu li.active a, 
+        #personal-page-nav li a.active, 
+        #personal-page-nav li a .fa-chevron-down, 
+        #personal-page-nav li a .fa-chevron-up, 
+        #primary-subnav .dropdown-menu li.dropdown a.dropdown-toggle.active,
+        #primary-subnav .dropdown-menu li a.active {
+            color: @primaryColor !important;
+        }
 
-            .form-text:focus, .form-dropdown:focus, .btn-bordered, .form-control:focus {
-                border-color: #381E65 !important;
-            }
-        </style>
-    }
+        .form-text:focus, .form-dropdown:focus, .btn-bordered, .form-control:focus {
+            border-color: @primaryColor !important;
+        }
+    </style>
+
     @if (R.CssLink != null)
     {
         <link rel="stylesheet" href="@R.CssLink" />
@@ -125,8 +122,8 @@
                             }
                         </a>
                         <ul class="dropdown-menu">
-                            <li class="dropdown @(mainNavPageKey == MainNavigationPageKeys.Main ? "current-section" : "")" role="presentation">
-                                <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle" href="#">
+                            <li class="dropdown" role="presentation">
+                                <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle @(mainNavPageKey == MainNavigationPageKeys.Main ? "active" : "")" href="#">
                                     Main
                                     <b class="caret"></b>
                                 </a>
@@ -142,8 +139,8 @@
                             </li>
                             @if (await User.HasPermission(AuthorizationService, PermissionNames.Messaging))
                             {
-                                <li class="dropdown @(mainNavPageKey == MainNavigationPageKeys.Messaging ? "current-section" : "")" role="presentation">
-                                    <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                <li class="dropdown" role="presentation">
+                                    <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle @(mainNavPageKey == MainNavigationPageKeys.Messaging ? "active" : "")" href="#">
                                         Communications
                                         <b class="caret"></b>
                                     </a>
@@ -155,16 +152,16 @@
                             }
                             @if (await User.HasPermission(AuthorizationService, PermissionNames.BasicReporting))
                             {
-                                <li><a asp-controller="@ReportingController.Name" asp-action="Index" class="@(mainNavPageKey == MainNavigationPageKeys.Reporting ? "current-section" : "")">Reporting</a></li>
+                                <li><a asp-controller="@ReportingController.Name" asp-action="Index" class="@(mainNavPageKey == MainNavigationPageKeys.Reporting ? "active" : "")">Reporting</a></li>
                             }
                             @if (await User.HasPermission(AuthorizationService, PermissionNames.CustomerRelationshipData))
                             {
-                                <li><a asp-controller="@CrmController.Name" asp-action="Index" class="@(mainNavPageKey == MainNavigationPageKeys.CRM ? "current-section" : "")">CRM</a></li>
+                                <li><a asp-controller="@CrmController.Name" asp-action="Index" class="@(mainNavPageKey == MainNavigationPageKeys.CRM ? "active" : "")">CRM</a></li>
                             }
                             @if (manageJobs || manageTenants || manageRoles || manageUsers || manageProtectedHealthInformation || canAccessPhi)
                             {
-                                <li class="dropdown @(mainNavPageKey == MainNavigationPageKeys.Setup ? "current-section" : "")" role="presentation">
-                                    <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                <li class="dropdown" role="presentation">
+                                    <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle @(mainNavPageKey == MainNavigationPageKeys.Setup ? "active" : "")" href="#">
                                         Admin
                                         <b class="caret"></b>
                                     </a>
@@ -235,7 +232,9 @@
     </div>
 </div>
     
-    <!-- popups -->
+    <a href="#" id="back-to-top" title="Back to top"><i class="fa fa-arrow-up" aria-hidden="true"></i></a>
+
+<!-- popups -->
     <div id="popup-confirm" class="popup">
         <a class="popup-confirm_close"><i class="fa fa-2x fa-times popup-close-btn"></i></a>
         <div class="popup-content-container">
@@ -340,6 +339,27 @@
                     jQuery(this).children('.fa').addClass('fa-chevron-down');
                 }
             });
+            if (jQuery('#back-to-top').length) {
+                var scrollTrigger = 100, // px
+                    backToTop = function () {
+                        var scrollTop = jQuery(window).scrollTop();
+                        if (scrollTop > scrollTrigger) {
+                            jQuery('#back-to-top').addClass('show');
+                        } else {
+                            jQuery('#back-to-top').removeClass('show');
+                        }
+                    };
+                backToTop();
+                jQuery(window).on('scroll', function () {
+                    backToTop();
+                });
+                jQuery('#back-to-top').on('click', function (e) {
+                    e.preventDefault();
+                    jQuery('html,body').animate({
+                        scrollTop: 0
+                    }, 700);
+                });
+            }
         </script>
         <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
         <script>tinymce.init({ selector: '.htmleditor', plugins: "code" });</script>

@@ -30,21 +30,19 @@
                 <form form asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" id="form-login">
                     <div asp-validation-summary="All" class="text-danger"></div>
                     <div class="group form-row">
-                        <input type="text" asp-for="Email" class="form-text" required/>
+                        <input type="text" asp-for="Email" class="form-text" required tabindex=1/>
                         <span class="highlight"></span>
                         <span class="bar"></span>
                         <label asp-for="Email" class="material"></label>
                         <span asp-validation-for="Email" class="text-danger"></span>
-                        <a href="#" class="pull-right forgot-link popup-help_open"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
                     </div>
 
                     <div class="group form-row">
-                        <input asp-for="Password" class="form-text" required/>
+                        <input asp-for="Password" class="form-text" required tabindex=2/>
                         <span class="highlight"></span>
                         <span class="bar"></span>
                         <label asp-for="Password" class="material"></label>
                         <span asp-validation-for="Password" class="text-danger"></span>
-                        <a href="#" class="pull-right forgot-link popup-help_open"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
                     </div>
 
                     <div class="form-row">

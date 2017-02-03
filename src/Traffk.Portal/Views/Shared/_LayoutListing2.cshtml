@@ -11,8 +11,9 @@
             var numberOfCheckedBoxes = document.querySelectorAll('input[type="checkbox"]:checked').length;
             //document.getElementById("checkedBoxesCount").textContent = numberOfCheckedBoxes;
             if (numberOfCheckedBoxes > 1) {
-                $("ul.floated-filter.list-right li:not(.multiselect-action)").remove();
+                $("ul.floated-filter.list-right li:not(.multiselect-action)").hide();
             } else {
+                $("ul.floated-filter.list-right li:not(.multiselect-action)").show();
             }
         });
     </script>

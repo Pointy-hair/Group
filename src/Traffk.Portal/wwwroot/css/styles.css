@@ -449,6 +449,15 @@ a, a:hover {
   background: inherit;
   font-weight: bold;
 }
+#primary-subnav .dropdown-menu li.dropdown a.dropdown-toggle.active {
+    background: inherit;
+    font-weight: bold;
+}
+
+#primary-subnav .dropdown-menu li a.active {
+    background: inherit;
+    font-weight: bold;
+}
 .top-nav > .open > .dropdown-menu {
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5) 
 }
