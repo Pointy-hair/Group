@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using Traffk.Tableau.REST.Models;
-using Traffk.Tableau.REST.RestRequests;
 
-namespace Traffk.Tableau.REST
+namespace Traffk.Tableau.REST.RestRequests
 {
     public class DownloadViewsForSite : TableauServerSignedInRequestBase
     {

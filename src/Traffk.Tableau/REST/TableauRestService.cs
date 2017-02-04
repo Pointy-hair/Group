@@ -141,5 +141,20 @@ namespace Traffk.Tableau.REST
                 //_statusLog.AddError("Error during workbooks list download, " + exDownload.ToString());
             }
         }
+
+        public string DownloadPreviewImageForView(TableauServerUrls onlineUrls, string workbookId, string viewId, TableauServerSignIn onlineLogin = null)
+        {
+            try
+            {
+                var downloadPreviewImage = new DownloadPreviewImageForView(onlineUrls, onlineLogin);
+                downloadPreviewImage.ExecuteRequest(workbookId, viewId);
+                return downloadPreviewImage.ImageUrl;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
     }
 }

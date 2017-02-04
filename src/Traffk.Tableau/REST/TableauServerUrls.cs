@@ -54,6 +54,7 @@ namespace Traffk.Tableau.REST
         private readonly string _urlUpdateDatasourceTemplate;
         private readonly string urlListViewsInSite;
         private readonly string urlListWorkbooksInSite;
+        private readonly string urlDownloadPreviewImageForView;
 
         /// <summary>
         /// Server url with protocol
@@ -111,7 +112,7 @@ namespace Traffk.Tableau.REST
             this._urlUpdateDatasourceTemplate          = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/datasources/{{iwsDatasourceId}}";
             this.urlListViewsInSite                    = serverNameWithProtocol + "/api/2.2/sites/{{iwsSiteId}}/views?pageSize={{iwsPageSize}}&pageNumber={{iwsPageNumber}}";
             this.urlListWorkbooksInSite                = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/workbooks?pageSize={{iwsPageSize}}&pageNumber={{iwsPageNumber}}";
-
+            this.urlDownloadPreviewImageForView        = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/workbooks/{{iwsWorkbookId}}/views/{{iwsViewId}}/previewImage";
 
             //Any server version specific things we want to do?
             switch (serverVersion)
@@ -486,6 +487,15 @@ namespace Traffk.Tableau.REST
             string workingText = urlListWorkbooksInSite.Replace("{{iwsSiteId}}", logInInfo.SiteId);
             workingText = workingText.Replace("{{iwsPageSize}}", pageSize.ToString());
             workingText = workingText.Replace("{{iwsPageNumber}}", pageNumber.ToString());
+            ValidateTemplateReplaceComplete(workingText);
+            return workingText;
+        }
+
+        public string UrlDownloadPreviewImageForView(TableauServerSignIn logInInfo, string workbookId, string viewId)
+        {
+            string workingText = urlDownloadPreviewImageForView.Replace("{{iwsSiteId}}", logInInfo.SiteId);
+            workingText = workingText.Replace("{{iwsWorkbookId}}", workbookId);
+            workingText = workingText.Replace("{{iwsViewId}}", viewId);
             ValidateTemplateReplaceComplete(workingText);
             return workingText;
         }
