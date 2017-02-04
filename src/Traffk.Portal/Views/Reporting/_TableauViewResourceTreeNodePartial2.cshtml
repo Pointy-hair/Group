@@ -10,7 +10,7 @@
     if (tsv is SiteViewFolderResource && tn.HasChildren)
     {
         var folder = tsv as SiteViewFolderResource;
-        <h2>@folder.Name</h2>
+        <h2 id="@folder.Name">@folder.Name</h2>
             <div class="row">
                 <div class="panel small-padding">
                     @if (tn.HasChildren)
