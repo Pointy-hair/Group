@@ -170,6 +170,7 @@
                                         {
                                             <li><a asp-controller="@JobsController.Name" asp-action="Index">Jobs</a></li>
                                         }
+                                        <li class="divider" role="separator"></li>
                                         @if (manageUsers)
                                         {
                                             <li><a asp-controller="@UsersController.Name" asp-action="Index">Users</a></li>
@@ -298,11 +299,8 @@
         </environment>
         <script>
             function setUI() {
-                jQuery('#primary-subnav .dropdown-menu').width(window
-                    .innerWidth +
-                    20); /* offset by 20, has a -20px left margin */
-                jQuery('#primary-subnav .dropdown-menu .dropdown-submenu')
-                    .width("auto"); /* offset by 20, has a -20px left margin */
+                jQuery('#primary-subnav .dropdown-menu').width(window.innerWidth + 20); /* offset by 20, has a -20px left margin */
+                jQuery('#primary-subnav .dropdown-menu .dropdown-submenu').width("auto"); /* offset by 20, has a -20px left margin */
             }
 
             jQuery(document).ready(function () {

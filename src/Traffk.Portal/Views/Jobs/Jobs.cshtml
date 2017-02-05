@@ -1,109 +1,132 @@
 @using static TraffkPortal.Controllers.JobsController;
 @model IEnumerable<Job>
 @{
-    Layout = "~/Views/Shared/_LayoutListing.cshtml";
-    ViewData.SetTitleAndHeading("Jobs");
+    var filters = ViewBag.ListingFilters as ListingFilters;
+    Layout = "~/Views/Shared/_LayoutListing2.cshtml";
+    ViewData.SetTitleAndHeading("Jobs", "This is the jobs subheading.");
 }
 @section listingActionButtons
 {
-    @*
-        <button type="button" class="btn btn-default" asp-action="Create">Create</button>
-    *@
+<button class="btn btn-large btn-white toggle" data-toggle="actions-filter2">Actions</button>
+<ul id="actions-filter2" class="floated-filter list-right">
+    <li><a href="#">Export</a></li>
+    <li><a href="#">Create Note</a></li>
+    <li class="multiselect-action"><a href="#" class="popup-confirm_open">Delete</a></li>
+    <li><a href="#">View</a></li>
+</ul>
+}
+@section listingFilters
+{
+    <div class="col-sm-2">
+        <button class="btn btn-large btn-white toggle" data-toggle="reports-filter">Filters</button>
+        <ul id="reports-filter" class="floated-filter list-left">
+            <li>
+                <a href="#">PHI</a>
+                <ul class="filter-subnav">
+                    <li><a href="#">PHI <span>4</span></a></li>
+                    <li><a href="#">No Phi <span>3</span></a></li>
+                </ul>
+            </li>
+            <li><a href="#">Budget Vs Actual <span>4</span></a></li>
+            <li><a href="#">Risk Report <span>3</span></a></li>
+            <li><a href="#">Medical Claims <span>3</span></a></li>
+        </ul>
+    </div>
 }
 @section listingTable
 {
-    <table class="table">
+    <table class="table table-bordered table-hover table-striped">
         <thead>
-            <tr>
-                <th>
-                    @Html.SortableHeaderFor(model => model.JobId)
-                </th>
-                <th>
-                    @Html.SortableHeaderFor(model => model.CreatedAt)
-                </th>
-                <th>
-                    @Html.SortableHeaderFor(model => model.DontRunBefore)
-                </th>
-                <th>
-                    @Html.SortableHeaderFor(model => model.JobStatus)
-                </th>
-                <th>
-                    @Html.SortableHeaderFor(model => model.JobType)
-                </th>
-                <th>
-                    @Html.SortableHeaderFor(model => model.JobResult)
-                </th>
-                <th></th>
-            </tr>
+        <tr>
+            <th>
+                @Html.SortableHeaderFor(model => model.JobId)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(model => model.CreatedAt)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(model => model.DontRunBefore)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(model => model.JobStatus)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(model => model.JobType)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(model => model.JobResult)
+            </th>
+            <th></th>
+        </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
-            {
-                <tr jobId="@item.JobId">
-                    <td>
-                        @Html.DisplayFor(modelItem => item.JobId)
-                        @*
-    <a asp-action="Edit" asp-route-id="@item.JobId">
-        @Html.DisplayFor(modelItem => item.JobId)
-    </a>
-                        *@
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.CreatedAt)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.DontRunBefore)
-                    </td>
-                    <td class="job-status">
-                        @Html.DisplayFor(modelItem => item.JobStatus)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.JobType)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.JobResult)
-                    </td>
-                    <td>
-                        @if (item.CanBeCancelled)
-                        {
-                            <a asp-action="@ActionNames.JobCancel" asp-route-id="@item.JobId" onclick="cancelJob(this, @item.JobId)" class="confirm-on-click" confirmHeading="Are you sure?" confirmMessage="Are you sure you want to cancel job @item.JobId?">Cancel</a>
-                        }
-                    </td>
-                </tr>
-            }
+        @foreach (var item in Model)
+        {
+            <tr jobId="@item.JobId">
+                <td>
+                    @Html.DisplayFor(modelItem => item.JobId)
+                    @*
+                                        <a asp-action="Edit" asp-route-id="@item.JobId">
+                                            @Html.DisplayFor(modelItem => item.JobId)
+                                        </a>
+                                    *@
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DontRunBefore)
+                </td>
+                <td class="job-status">
+                    @Html.DisplayFor(modelItem => item.JobStatus)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.JobType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.JobResult)
+                </td>
+                <td>
+                    @if (item.CanBeCancelled)
+                    {
+                        <a asp-action="@ActionNames.JobCancel" asp-route-id="@item.JobId" onclick="cancelJob(this, @item.JobId)" class="confirm-on-click" confirmHeading="Are you sure?" confirmMessage="Are you sure you want to cancel job @item.JobId?">Cancel</a>
+                    }
+                </td>
+            </tr>
+        }
         </tbody>
     </table>
+@{ await Html.RenderPartialAsync("_PaginationPartial2"); }
 
-    @{ await Html.RenderPartialAsync("_PaginationPartial"); }
 
 }
 
 @section Scripts {
-    <script type="text/javascript">
-        function cancelJob(el, jobId) {
-            var url = $(el).attr("href");
-            var sel = "tr[jobId='"+jobId+"'] td.job-status";
-            //alert(url+"; "+sel);
-            $.ajax({
-                url: url,
-                dataType: "json",
-                type: "DELETE",
-                contentType: 'application/json; charset=utf-8',
-                //data: JSON.stringify({ assetKey: assetKey }),
-                async: true,
-                processData: false,
-                cache: false,
-                success: function (data) {
-                    $(sel).html("Cancelling...");
-                },
-                error: function (xhr) {
-                    $(sel).html("Error...");
-                    alert("error:\n" + JSON.stringify(xhr));
-                }
-            });
-            event.preventDefault();
-            event.stopImmediatePropagation();
-            return false;
-        }
-    </script>
-}
+        <script type="text/javascript">
+            function cancelJob(el, jobId) {
+                var url = $(el).attr("href");
+                var sel = "tr[jobId='" + jobId + "'] td.job-status";
+                //alert(url+"; "+sel);
+                $.ajax({
+                    url: url,
+                    dataType: "json",
+                    type: "DELETE",
+                    contentType: 'application/json; charset=utf-8',
+                    //data: JSON.stringify({ assetKey: assetKey }),
+                    async: true,
+                    processData: false,
+                    cache: false,
+                    success: function (data) {
+                        $(sel).html("Cancelling...");
+                    },
+                    error: function (xhr) {
+                        $(sel).html("Error...");
+                        alert("error:\n" + JSON.stringify(xhr));
+                    }
+                });
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                return false;
+            }
+        </script>
+    }

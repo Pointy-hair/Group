@@ -68,6 +68,7 @@ namespace Traffk.Tableau.Tests.REST
         [TestClass]
         public class DownloadPreviewImageForViewMethodTests
         {
+            [Ignore]
             [TestMethod]
             public void WhenSignedInDownloadPreviewImage()
             {

@@ -1,48 +1,33 @@
 @model IEnumerable<Contact>
 @{
     Layout = "~/Views/Shared/_LayoutListing2.cshtml";
-    ViewData.SetTitle("Contacts");
+    ViewData.SetTitleAndHeading("Contacts", "This is the contacts subheading ");
     var filters = ViewBag.ListingFilters as ListingFilters;
     var hasFilters = filters != null;
     var canAccessPhi = await User.GetCanAccessProtectedHealthInformationAsync(AuthorizationService);
 }
 <!-- Content: CRM -->
-<section id="crm-panel">
-    <div class="row">
-        <div class="col-xs-12">
-            <h1>Contacts</h1>
-            <p class="subheading">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-        </div>
-    </div>
-    <div class="panel smallest-padding">
-        <div class="row border-bottom">
-            @if (hasFilters)
-            {
-                @await Html.PartialAsync("_ListingFiltersPartial2", filters)
-            }
-            <div class="col-sm-8" id="filter-tags-container">
-                <p class="primary-color">All <span id="checkedBoxesCount">0</span> items were selected on this page, <a href="#">select all 100 items?</a>
-                </p>
-                <ul class="filter-tags">
-                    <li><a href="#">Workers Comp (3) <span><i class="fa fa-times" aria-hidden="true"></i></span></a></li>
-                    <li><a href="#">Risk Reports (3) <span><i class="fa fa-times" aria-hidden="true"></i></span></a></li>
-                </ul>
-            </div>
-                <div class="col-sm-2 text-right">
-                    <button class="btn btn-large btn-white toggle" data-toggle="actions-filter2">Actions</button>
-                    <ul id="actions-filter2" class="floated-filter list-right">
-                        <li><a href="#">Export</a></li>
-                        <li><a href="#">Create Note</a></li>
-                        <li class="multiselect-action"><a href="#" class="popup-confirm_open">Delete</a></li>
-                        <li><a href="#">View</a></li>
-                    </ul>
-                </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover table-striped">
-                        <thead>
+                    @section listingFilters
+                    {
+                        @if (hasFilters)
+                        {
+                            @await Html.PartialAsync("_ListingFiltersPartial2", filters)
+                        }
+                    }
+                    @section listingActionButtons
+                    {
+                        <button class="btn btn-large btn-white toggle" data-toggle="actions-filter2">Actions</button>
+                        <ul id="actions-filter2" class="floated-filter list-right">
+                            <li><a href="#">Export</a></li>
+                            <li><a href="#">Create Note</a></li>
+                            <li class="multiselect-action"><a href="#" class="popup-confirm_open">Delete</a></li>
+                            <li><a href="#">View</a></li>
+                        </ul>
+                    }
+                    @section listingTable
+                    {
+                        <table class="table table-bordered table-hover table-striped">
+                            <thead>
                             <tr>
                                 <th><input type="checkbox" /></th>
                                 <th class="hidden">
@@ -62,8 +47,8 @@
                                 </th>
                                 <th></th>
                             </tr>
-                        </thead>
-                        <tbody>
+                            </thead>
+                            <tbody>
                             @foreach (var item in Model)
                             {
                                 <tr>
@@ -95,12 +80,8 @@
                                     </td>
                                 </tr>
                             }
-                        </tbody>
-                    </table>
-                    @{ await Html.RenderPartialAsync("_PaginationPartial2"); }
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+                            </tbody>
+                        </table>
+@{ await Html.RenderPartialAsync("_PaginationPartial2"); }
+                    }
 <!-- /end Content: CRM -->

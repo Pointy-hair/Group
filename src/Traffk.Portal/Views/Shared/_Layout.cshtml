@@ -3,8 +3,11 @@
 }
 @if ((ViewData[ViewDataKeys.Heading] as string) != null)
 {
-    <div class="page-header">
-        <h1>@ViewData[ViewDataKeys.Heading] <small>@ViewData[ViewDataKeys.SubHeading]</small></h1>
+    <div class="row">
+        <div class="col-xs-12">
+            <h1>@ViewBag.Heading</h1>
+            <p class="subheading">@ViewBag.Subheading</p>
+        </div>
     </div>
 }
 @RenderBody()

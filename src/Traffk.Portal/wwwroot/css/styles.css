@@ -491,6 +491,10 @@ ul ul ul {
     top: 0;
 }
 
+#primary-subnav .dropdown-menu .dropdown-submenu li {
+    display: block;
+}
+
 #primary-subnav .dropdown-menu .dropdown-submenu li a{
     padding-right: 20px;
     padding-left: 20px;

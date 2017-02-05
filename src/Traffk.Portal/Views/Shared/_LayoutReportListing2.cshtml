@@ -3,7 +3,6 @@
     var filters = ViewBag.ListingFilters as ListingFilters;
     var hasFilters = filters != null;
 }
-<div class="panel smallest-padding">
     <div class="row border-bottom">
         @RenderSection("listingFilters", required: false)
         <div class="col-sm-8" id="filter-tags-container">
@@ -21,12 +20,9 @@
     </div>
     <div class="row">
         <div class="col-xs-12">
-            <div class="table-responsive">
-                @RenderSection("listingTable", required: true)
-            </div>
+            @RenderSection("listingTable", required: true)
         </div>
     </div>
-</div>
 
 @section scripts
 {
@@ -45,4 +41,4 @@
 }
 @RenderBody()
 @*@RenderSection("listingActionButtons", required: false)
-@RenderSection("listingTable", required: true)*@
+    @RenderSection("listingTable", required: true)*@
