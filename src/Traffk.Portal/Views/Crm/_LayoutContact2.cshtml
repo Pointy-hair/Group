@@ -37,29 +37,26 @@
     <div class="row border-bottom">
         <div class="col-sm-10" id="filter-tags-container">
             <ul id="personal-page-nav">
-                @*<li><a asp-action="@ActionNames.ContactBackground" asp-route-id="@entityId" class="@(pageKey==PageKeys.Background?"current-section":"")">Personal</a></li>
-                <li><a asp-action="@ActionNames.ContactMessages" asp-route-id="@entityId" class="@(pageKey==PageKeys.Messages?"current-section":"")">Messages</a></li>
-                <li><a asp-action="@ActionNames.ContactNotes" asp-route-id="@entityId" class="@(pageKey==PageKeys.Notes?"current-section":"")">Notes</a></li>*@
                 <li><a href="javascript:void(0)" class="@(pageKey==CrmController.PageKeys.Background?"active":"")" data-section="personal-edit-form-container">Personal</a></li>
-                <li><a href="javascript:void(0)" class="@(pageKey==CrmController.PageKeys.Background?"active":"")" data-section="personal-notes-container">Notes</a></li>
-                <li><a href="javascript:void(0)" class="@(pageKey==CrmController.PageKeys.Background?"active":"") popup-messages_open">Messages</a></li>
+                <li><a href="javascript:void(0)" class="@(pageKey==CrmController.PageKeys.Notes?"active":"")" data-section="personal-notes-container">Notes</a></li>
+                <li><a href="javascript:void(0)" class="@(pageKey==CrmController.PageKeys.Messages?"active":"") popup-messages_open">Messages</a></li>
                 @if (isPerson)
                 {
                     <li>
                         <a href="javascript:void(0)" class="toggle" data-toggle="personal-health">Health <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
                         <ul id="personal-health" class="floated-filter">
-                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.CareAlertsList" class="@(pageKey==CrmController.PageKeys.CareAlerts?"current-section":"")">Care Alerts</a></li>
-                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.Demographic" class="@(pageKey==CrmController.PageKeys.Demographics?"current-section":"")">Demographics</a></li>
-                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.EligibilityList" class="@(pageKey==CrmController.PageKeys.Eligibility?"current-section":"")">Eligibility</a></li>
-                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.HighCostDiagnosis" class="@(pageKey==CrmController.PageKeys.HighCostDiagnosis?"current-section":"")">High Cost Diagnosis</a></li>
-                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.MedicalClaimsList" class="@(pageKey==CrmController.PageKeys.MedicalClaims?"current-section":"")">Medical Claims</a></li>
-                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.MemberPcp" class="@(pageKey==CrmController.PageKeys.MemberPCP?"current-section":"")">MemberPCP</a></li>
-                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.ParticipationList" class="@(pageKey==CrmController.PageKeys.Participation?"current-section":"")">Participation</a></li>
-                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.PharmacyList" class="@(pageKey==CrmController.PageKeys.Pharmacy?"current-section":"")">Pharmacy</a></li>
-                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.Score" class="@(pageKey==CrmController.PageKeys.Scores?"current-section":"")">Score</a></li>
-                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.HistoricalScoreList" class="@(pageKey==CrmController.PageKeys.HistoricalScores?"current-section":"")">Scores (Historical)</a></li>
-                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.QualityMetricsList" class="@(pageKey==CrmController.PageKeys.QualityMetrics?"current-section":"")">Quality Metrics</a></li>
-                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.VisitList" class="@(pageKey==CrmController.PageKeys.Visit?"current-section":"")">Visits</a></li>
+                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.CareAlertsList" class="@(pageKey==CrmController.PageKeys.CareAlerts?"active":"")">Care Alerts</a></li>
+                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.Demographic" class="@(pageKey==CrmController.PageKeys.Demographics?"active":"")">Demographics</a></li>
+                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.EligibilityList" class="@(pageKey==CrmController.PageKeys.Eligibility?"active":"")">Eligibility</a></li>
+                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.HighCostDiagnosis" class="@(pageKey==CrmController.PageKeys.HighCostDiagnosis?"active":"")">High Cost Diagnosis</a></li>
+                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.MedicalClaimsList" class="@(pageKey==CrmController.PageKeys.MedicalClaims?"active":"")">Medical Claims</a></li>
+                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.MemberPcp" class="@(pageKey==CrmController.PageKeys.MemberPCP?"active":"")">MemberPCP</a></li>
+                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.ParticipationList" class="@(pageKey==CrmController.PageKeys.Participation?"active":"")">Participation</a></li>
+                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.PharmacyList" class="@(pageKey==CrmController.PageKeys.Pharmacy?"active":"")">Pharmacy</a></li>
+                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.Score" class="@(pageKey==CrmController.PageKeys.Scores?"active":"")">Score</a></li>
+                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.HistoricalScoreList" class="@(pageKey==CrmController.PageKeys.HistoricalScores?"active":"")">Scores (Historical)</a></li>
+                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.QualityMetricsList" class="@(pageKey==CrmController.PageKeys.QualityMetrics?"active":"")">Quality Metrics</a></li>
+                            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.VisitList" class="@(pageKey==CrmController.PageKeys.Visit?"active":"")">Visits</a></li>
                         </ul>
                     </li>
                 }
@@ -68,7 +65,7 @@
         <div class="col-sm-2 text-right">
             <button class="btn btn-large btn-white toggle" data-toggle="actions-filter3">Actions</button>
             <ul id="actions-filter3" class="floated-filter list-right">
-                <li><a href="#">Create Note</a></li>
+                <li><a data-toggle="modal" data-target="#createNoteModal">Create Note</a></li>
                 <li><a href="#">Send Message</a></li>
                 <li><a href="#" class="popup-confirm_open">Delete</a></li>
             </ul>
@@ -76,10 +73,22 @@
     </div>
 }
 
-@*@section pageAlerts {
-    <div class="alert alert-success" role="alert" id="MessageSentAlert" style="display:none">Message has been sent.</div>
-    <div class="alert alert-success" role="alert" id="NoteCreatedAlert" style="display:none">Note was created.</div>
-    @RenderSection("pageAlerts", required: false)
+@section pageAlerts {
+    				<!-- alert -->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="alert alert-info alert-dismissable" id="MessageSentAlert" style="display:none">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <i class="fa fa-check" aria-hidden="true"></i> Message has been sent.
+            </div>
+            <div class="alert alert-info alert-dismissable" id="NoteCreatedAlert" style="display:none">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <i class="fa fa-check" aria-hidden="true"></i> Note was created.
+            </div>
+        </div>
+    </div>
+@RenderSection("pageAlerts", required: false)
+    <!-- /end alert -->
 }
 @section pageDialogs {
     @RenderSection("pageDialogs", required: false)
@@ -147,7 +156,7 @@
             </div>
         </div>
     </div>
-}*@
+}
 @section Scripts {
     <script type="text/javascript">
         function sendDirectMessage() {

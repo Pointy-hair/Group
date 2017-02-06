@@ -1,5 +1,6 @@
-﻿@using Traffk.Bal.Data.Ddb
+﻿@using Traffk.Bal.Data
 @model IEnumerable<Note>
+
 <table class="table">
     <thead>
         <tr>
@@ -26,4 +27,4 @@
     </tbody>
 </table>
 
-@{ await Html.RenderPartialAsync("_PaginationPartial"); }
+@{ await Html.RenderPartialAsync("_PaginationPartial2"); }

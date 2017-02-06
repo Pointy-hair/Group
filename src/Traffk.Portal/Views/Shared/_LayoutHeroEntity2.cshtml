@@ -25,7 +25,8 @@
         </div>
     </div>
 </section>
-
+@RenderSection("pageAlerts", required: true)
+@RenderSection("pageDialogs", required: true)
     @section Scripts {
         @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
         @RenderSection("scripts", required: false)
