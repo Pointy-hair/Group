@@ -20,6 +20,9 @@ namespace Traffk.Bal.Settings
         [DataType(DataType.Html)]
         public string AboutMessage { get; set; }
 
+        [DataType(DataType.Html)]
+        public string SupportMessage { get; set; }
+
         [DataType(DataType.Url)]
         public Uri CssLink { get; set; }
 
@@ -53,6 +56,7 @@ namespace Traffk.Bal.Settings
             HomeMessage = other.HomeMessage;
             CopyrightMessage = other.CopyrightMessage;
             AboutMessage = other.AboutMessage;
+            SupportMessage = other.SupportMessage;
             CssLink = other.CssLink;
             JavascriptLink = other.JavascriptLink;
             LogoLink = other.LogoLink;

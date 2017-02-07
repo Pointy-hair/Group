@@ -73,6 +73,8 @@ namespace TraffkPortal.Resources
 
         public HtmlString AboutMessage { get { return new HtmlString(O.AboutMessage); } }
 
+        public HtmlString SupportMessage { get { return new HtmlString(O.SupportMessage);} }
+
         public Uri LogoLink { get { return O.LogoLink; } }
 
         public Uri FaviconLink { get { return O.FaviconLink; } }

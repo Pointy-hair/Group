@@ -223,7 +223,17 @@
                                 <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact Us</a></li>
                                 <li><a href="http://www.traffk.com/">Traffk Website</a></li>
                             </ul>
-                            <p class="copyright text-center">&copy; @DateTime.Now.Year Traffk</p>
+                            <p class="copyright text-center">
+                                @*@if (R.CopyrightMessage.Value != null)
+                                {
+                                    @R.CopyrightMessage
+                                }
+                                else
+                                {
+                                    <span>Copyright</span>
+                                }*@
+                                &copy; @DateTime.Now.Year Traffk
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -257,7 +267,14 @@
         <a class="popup-help_close"><i class="fa fa-2x fa-times popup-close-btn"></i></a>
         <div class="popup-content-container">
             <h3>Need Help?</h3>
-            <p>You've come to the right place. At Traffk we want to provide you with the best experience possible.</p>
+            @if (@R.SupportMessage.Value != null)
+            {
+                <p class="subheading">@R.SupportMessage</p>
+            }
+            else
+            {
+                <p class="subheading">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            }
 
             <ul id="help-menu">
                 <li><a href="#">FAQ</a></li>
