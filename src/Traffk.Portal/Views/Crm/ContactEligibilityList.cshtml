@@ -2,7 +2,7 @@
 @model IEnumerable<Eligibility>
 @{
     Layout = "_LayoutContactListingContent2.cshtml";
-    ViewData.SetIfMissing("Heading", CrmController.ViewNames.Health.EligibilityList.ToTitleFriendlyString().Replace("Contact", ""));
+    ViewData.SetTitleAndHeading(CrmController.ViewNames.Health.EligibilityList.ToCrmHeading());
 }
 @section listingTable
     {

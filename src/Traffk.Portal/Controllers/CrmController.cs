@@ -37,6 +37,7 @@ namespace TraffkPortal.Controllers
             CareAlerts,
             Demographics,
             Eligibility,
+            EligibilityList,
             HighCostDiagnosis,
             HistoricalScores,
             MedicalClaims,

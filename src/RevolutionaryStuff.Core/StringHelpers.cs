@@ -230,5 +230,14 @@ namespace RevolutionaryStuff.Core
             }
             return sb.ToString();
         }
+
+        public static string ToCrmHeading(this string str)
+        {
+            str = str.ToTitleFriendlyString();
+            str = str.Replace("Contact", "");
+            str = str.Replace("List", "");
+            str = str.Replace("Listing", "");
+            return str;
+        }
     }
 }

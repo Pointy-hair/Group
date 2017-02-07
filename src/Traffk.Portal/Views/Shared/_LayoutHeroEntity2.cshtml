@@ -6,12 +6,13 @@
 }
 
 <section id="personal-page-panel">
+    @RenderSection("pageAlerts", required: true)
     <div class="row">
         <div class="col-xs-12">
             <ul class="breadcrumbs">
-                <li><a href="#">CRM</a> <span>></span> </li>
+                <li><a asp-controller="@CrmController.Name" asp-action="Index">CRM</a> <span>></span> </li>
                 @*<li><a href="#">CRM: Male</a> <span>></span> </li>*@
-                <li><a href="#">@ViewData[ViewDataKeys.Heading]</a></li>
+                <li>@ViewData[ViewDataKeys.Heading]</li>
             </ul>
             <h1>@ViewData[ViewDataKeys.Heading]</h1>
         </div>
@@ -25,7 +26,6 @@
         </div>
     </div>
 </section>
-@RenderSection("pageAlerts", required: true)
 @RenderSection("pageDialogs", required: true)
     @section Scripts {
         @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
