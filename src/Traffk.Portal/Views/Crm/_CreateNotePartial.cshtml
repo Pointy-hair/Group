@@ -1,0 +1,29 @@
+﻿<div id="create-note-container" class="personal-section medium-padding">
+    <h3>Create a Note</h3>
+
+    <form role="form" id="personal-edit-form" class="inline-form">
+        @*<div class="form-row">
+            <label>Text Input</label>
+            <input class="form-control">
+        </div>*@
+
+        <div class="form-row">
+            @*<label for="NewNoteContent">Note</label>*@
+            <textarea class="form-control" id="NewNoteContent"></textarea>
+        </div>
+
+        @*<div class="form-row">
+            <label>Recipients</label>
+            <input class="form-control">
+            <ul class="autocomplete-tags" id="recipient-autocomplete-tags">
+                <li><a href="#">Jessica@greenworld.com <span><i class="fa fa-times primary-color" aria-hidden="true"></i></span></a></li>
+            </ul>
+        </div>*@
+
+
+        <ul class="step-buttons">
+            <li><a href="#" class="btn btn-primary btn-large" onclick="createNote()">Save</a></li>
+            <li><a href="#" class="btn btn-large btn-grey">Cancel</a></li>
+        </ul>
+    </form>
+</div>

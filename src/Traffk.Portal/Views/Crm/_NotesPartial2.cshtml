@@ -1,0 +1,63 @@
+﻿@using Traffk.Bal.Data
+@model IEnumerable<Note>
+
+<table class="table table-bordered table-hover table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.SortableHeaderFor(z => z.CreatedAt)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.Content)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Content)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@*<div id="personal-notes-container" class="medium-padding">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.SortableHeaderFor(z => z.CreatedAt)
+                            </th>
+                            <th>
+                                @Html.SortableHeaderFor(z => z.Content)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.CreatedAt)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Content)
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @{ await Html.RenderPartialAsync("_PaginationPartial2"); }
+            </div>
+        </div>
+    </div>
+</div>*@

@@ -17,6 +17,7 @@
         case CrmController.PageKeys.CareAlerts:
         case CrmController.PageKeys.Demographics:
         case CrmController.PageKeys.Eligibility:
+        case CrmController.PageKeys.EligibilityList:
         case CrmController.PageKeys.HighCostDiagnosis:
         case CrmController.PageKeys.HistoricalScores:
         case CrmController.PageKeys.MedicalClaims:
@@ -38,12 +39,13 @@
         <div class="col-sm-10" id="filter-tags-container">
             <ul id="personal-page-nav">
                 <li><a href="javascript:void(0)" class="@(pageKey==CrmController.PageKeys.Background?"active":"")" data-section="personal-edit-form-container">Personal</a></li>
-                <li><a href="javascript:void(0)" class="@(pageKey==CrmController.PageKeys.Notes?"active":"")" data-section="personal-notes-container">Notes</a></li>
+                @*<li><a href="javascript:void(0)" id="personal-page-nav-notes" data-section="personal-notes-container">Notes</a></li>*@
+                <li><a asp-action="@ActionNames.ContactNotes" asp-route-id="@entityId">Notes</a></li>
                 <li><a href="javascript:void(0)" class="@(pageKey==CrmController.PageKeys.Messages?"active":"") popup-messages_open">Messages</a></li>
                 @if (isPerson)
                 {
                     <li>
-                        <a href="javascript:void(0)" class="toggle" data-toggle="personal-health">Health <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+                        <a href="javascript:void(0)" class="toggle @(isHealthSection?"active":"")" data-toggle="personal-health">Health <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
                         <ul id="personal-health" class="floated-filter">
                             <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.CareAlertsList" class="@(pageKey==CrmController.PageKeys.CareAlerts?"active":"")">Care Alerts</a></li>
                             <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.Demographic" class="@(pageKey==CrmController.PageKeys.Demographics?"active":"")">Demographics</a></li>
@@ -65,9 +67,9 @@
         <div class="col-sm-2 text-right">
             <button class="btn btn-large btn-white toggle" data-toggle="actions-filter3">Actions</button>
             <ul id="actions-filter3" class="floated-filter list-right">
-                <li><a data-toggle="modal" data-target="#createNoteModal">Create Note</a></li>
+                <li><a id="create-note-button" data-section="create-note-container">Create Note</a></li>
                 <li><a href="#">Send Message</a></li>
-                <li><a href="#" class="popup-confirm_open">Delete</a></li>
+                <li><a href="#" class="popup-confirm_open">Delete Person</a></li>
             </ul>
         </div>
     </div>
@@ -92,31 +94,6 @@
 }
 @section pageDialogs {
     @RenderSection("pageDialogs", required: false)
-    <div id="createNoteModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Create note regarding @entityName</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="form-horizontal">
-                        <div class="form-group">
-                            <label class="col-md-2 control-label" for="NewNoteContent">Content</label>
-                            <div class="col-md-10">
-                                <textarea name="NewNoteContent" class="form-control" id="NewNoteContent"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="createNote()">Create</button>
-                    <button type="button" class="btn" data-dismiss="modal">Cancel</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <div id="sendMessageModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -183,6 +160,7 @@
             postData,
             function () {
                 $("#NoteCreatedAlert").show();
+                $("personal-page-nav-notes").click();
             });
         }
     </script>
