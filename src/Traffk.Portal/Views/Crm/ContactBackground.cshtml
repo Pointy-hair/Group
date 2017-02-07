@@ -2,7 +2,7 @@
 @model ContactModel
 @{
     Layout = "~/Views/Crm/_LayoutContactDetailContent2.cshtml";
-    ViewData.SetTitle(ViewData["EntityTitle"] as string);
+    ViewData.SetTitleAndHeading(ViewData["EntityTitle"] as string);
 }
 
     <form asp-action="ContactBackground" role="form" class="inline-form">

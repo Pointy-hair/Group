@@ -10,6 +10,16 @@
         @RenderBody()
     </div>
 </div>
+@section breadcrumbs {
+    <ul class="breadcrumbs">
+        <li><a asp-controller="@CrmController.Name" asp-action="Index">CRM</a> <span>></span> </li>
+        @if (@ViewData[AspHelpers.ViewDataKeys.EntityTitle] != @ViewData[AspHelpers.ViewDataKeys.Heading])
+        {
+            <li><a asp-controller="@CrmController.Name" asp-action="ContactBackground" asp-for-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]">@ViewData[AspHelpers.ViewDataKeys.EntityTitle]</a> <span>></span> </li>
+        }
+        <li>@ViewData[ViewDataKeys.Heading]</li>
+    </ul>
+}
 <!--SPAish sections for CRM Contact-->
 @await Html.PartialAsync("_CreateNotePartial")
 @*@await Html.PartialAsync("_NotesPartial2", Model.Contact.ContactDetails.Notes, z => z.Contact.ContactDetails.Notes)*@

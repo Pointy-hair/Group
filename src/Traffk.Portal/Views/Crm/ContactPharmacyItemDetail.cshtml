@@ -1,6 +1,8 @@
 ﻿@model Pharmacy
 @{
     Layout = "~/Views/Crm/_LayoutContactDetailContent2.cshtml";
+    ViewData.SetTitleAndHeading(CrmController.ViewNames.Health.Pharmacy.ToCrmHeading());
+
 }
 <dl class="dl-horizontal">
     @Html.DescriptionListElement(model => model.rev_transaction_num)

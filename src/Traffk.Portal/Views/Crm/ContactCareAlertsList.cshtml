@@ -2,7 +2,7 @@
 @model IEnumerable<CareAlert>
 @{
     Layout = "~/Views/Crm/_LayoutContactListingContent2.cshtml";
-    ViewData.SetIfMissing("Heading", CrmController.ViewNames.Health.CareAlertsList.ToTitleFriendlyString().Replace("Contact", ""));
+    ViewData.SetTitleAndHeading(CrmController.ViewNames.Health.CareAlertsList.ToCrmHeading());
 }
 @section listingTable
     {

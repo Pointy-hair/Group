@@ -1,6 +1,8 @@
 ﻿@model MemberPCP
 @{
     Layout = "~/Views/Crm/_LayoutContactDetailContent2.cshtml";
+    ViewData.SetTitleAndHeading(CrmController.ViewNames.Health.MemberPcp.ToCrmHeading());
+
 }
 <dl class="dl-horizontal">
     @Html.DescriptionListElement(model => model.dw_record_id)

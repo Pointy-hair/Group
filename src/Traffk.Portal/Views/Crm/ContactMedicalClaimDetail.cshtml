@@ -1,6 +1,7 @@
 ﻿@model Traffk.Bal.Data.Rdb.MedicalClaim
 @{
-    Layout = "_LayoutContact.cshtml";
+    Layout = "~/Views/Crm/_LayoutContactDetailContent2.cshtml";
+    ViewData.SetTitleAndHeading(CrmController.ViewNames.Health.MedicalClaim.ToCrmHeading());
 }
 <dl class="dl-horizontal">
     @Html.DescriptionListElement(model => model.rev_claim_id)

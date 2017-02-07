@@ -210,8 +210,23 @@
     <!--Body Content-->
     <div id="page-wrapper">
         <div class="container body-content @(ViewData["BodyContainerClass"] as string)">
+            <!-- alert-->
+            <div class="row" style="display:none">
+                <div class="col-sm-12">
+                    <div class="alert alert-info alert-dismissable" id="MessageSentAlert" style="display: none">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        <i class="fa fa-check" aria-hidden="true"></i> Message has been sent.
+                    </div>
+                    <div class="alert alert-info alert-dismissable" id="NoteCreatedAlert" style="display: none">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        <i class="fa fa-check" aria-hidden="true"></i> Note was created.
+                    </div>
+                </div>
+            </div>
+            <!--end alert-->
+
             @RenderBody()
-            <hr />
+            <hr/>
             <footer>
                 <!-- footer -->
                 <div class="row">
@@ -225,13 +240,13 @@
                             </ul>
                             <p class="copyright text-center">
                                 @*@if (R.CopyrightMessage.Value != null)
-                                {
-                                    @R.CopyrightMessage
-                                }
-                                else
-                                {
-                                    <span>Copyright</span>
-                                }*@
+                                    {
+                                        @R.CopyrightMessage
+                                    }
+                                    else
+                                    {
+                                        <span>Copyright</span>
+                                    }*@
                                 &copy; @DateTime.Now.Year Traffk
                             </p>
                         </div>
