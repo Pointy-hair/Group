@@ -2,15 +2,100 @@
 
 GO
 
+create view migrate.CustomInsurancePlanMap
+AS
+
+select 
+	c.TenantId, c.ContactId CarrierContactId, c.CarrierId,
+	ip.InsurancePlanId, ip.InsurancePlanCode, ip.InsurancePlanDescription, 
+	cip.CustomInsurancePlanId, cip.CustomInsurancePlanCode, cip.CustomInsurancePlanDescription
+from 
+	insuranceplans ip (nolock)
+		inner join
+	custominsuranceplans cip (nolock)
+		on ip.insuranceplanid=cip.insuranceplanid
+		inner join
+	contacts c (nolock)
+		on c.contactid=ip.InsuranceCarrierContactId
+
+
+GO
+
+create view migrate.Members
+AS
+
+select distinct m.ins_carrier_id, m.mbr_id, m.mbr_ssn, m.mbr_first_name, m.mbr_middle_name, m.mbr_last_name, m.mbr_gender, m.mbr_dob, 'eligibility' source, m.ins_med_eff_date dt, 1 priority  
+from 
+	i.eligibility m
+		inner join
+	(
+		select ins_carrier_id, mbr_id, max(ins_med_eff_date) ins_med_eff_date
+		from i.eligibility
+		group by ins_carrier_id, mbr_id		
+	) r
+		on r.ins_carrier_id=m.ins_carrier_id
+		and r.mbr_id=m.mbr_id
+		and r.ins_med_eff_date=m.ins_med_eff_date
+
+
+union all
+
+select distinct m.ins_carrier_id, m.mbr_id, m.mbr_ssn, m.mbr_first_name, m.mbr_middle_name, m.mbr_last_name, m.mbr_gender, m.mbr_dob, 'medical' source, m.svc_service_to_date dt, 2 priority 
+from 
+	i.medical m
+		inner join
+	(	
+		select ins_carrier_id, mbr_id, max(svc_service_to_date) svc_service_to_date
+		from i.medical
+		group by ins_carrier_id, mbr_id	
+	) r
+		on r.ins_carrier_id=m.ins_carrier_id
+		and r.mbr_id=m.mbr_id
+		and r.svc_service_to_date=m.svc_service_to_date
+
+union all
+
+select distinct null ins_carrier_id, m.mbr_id, m.mbr_ssn, m.mbr_first_name, m.mbr_middle_name, m.mbr_last_name, m.mbr_gender, m.mbr_dob, 'demographics' source, m.dw_recievedmonth dt, 3 priority
+from 
+	i.demographics m
+		inner join
+	(	
+		select null ins_carrier_id, mbr_id, max(dw_recievedmonth) dw_recievedmonth
+		from i.demographics
+		group by mbr_id	
+	) r
+		on r.mbr_id=m.mbr_id
+		and r.dw_recievedmonth=m.dw_recievedmonth
+
+
+union all
+
+select distinct m.ins_carrier_id, m.mbr_id, null mbr_ssn, m.mbr_first_name, m.mbr_middle_name, m.mbr_last_name, m.mbr_gender, m.mbr_dob, 'pharmacy' source, m.svc_written_date dt, 4 priority
+from 
+	i.pharmacy m
+		inner join
+	(	
+		select ins_carrier_id, mbr_id, max(svc_written_date) svc_written_date
+		from i.pharmacy
+		group by ins_carrier_id, mbr_id	
+	) r
+		on r.ins_carrier_id=m.ins_carrier_id
+		and r.mbr_id=m.mbr_id
+		and r.svc_written_date=m.svc_written_date
+
+GO
+
 create view migrate.MemberMap
 AS
-select distinct m.TenantId, m.MemberId, m.PersonContactId, m.MemberNumber, m.CarrierContactId, c.CarrierId
-from
+select distinct m.TenantId, m.PersonContactId, m.MemberId, m.MemberNumber, cCarriers.CarrierId, cPeople.ForeignId
+from 
 	health.members m (nolock)
 		inner join
-	dbo.contacts c (nolock)
-		on m.carriercontactid=c.contactid
-
+	contacts cCarriers (nolock)
+		on cCarriers.ContactId=m.CarrierContactId
+		inner join
+	contacts cPeople (nolock)
+		on cPeople.ContactId=m.PersonContactId
 GO
 
 create proc migrate.DateDimensionLink
@@ -483,6 +568,57 @@ begin
 	begin
 		exec migrate.ContactsCreateFromDeerwalkEligibility @tenantId, @batchSize
 	end
+
+	update u
+	set
+		CustomInsurancePlanId=m.CustomInsurancePlanId
+	from
+		deerwalk.Eligibility u
+			inner join
+		migrate.CustomInsurancePlanMap m
+			on m.CarrierId=u.ins_carrier_id
+			and m.InsurancePlanCode=u.ins_plan_id
+			and m.CustomInsurancePlanCode=u.ins_plan_type_code
+			and m.TenantId=u.TenantId
+	where
+		u.CustomInsurancePlanId is null	and
+		u.TenantId=@tenantId
+
+	exec db.PrintNow 'Updated CustomInsurancePlanId on {n0} Eligibility records', @@rowcount
+
+	update u
+	set
+		CustomInsurancePlanId=m.CustomInsurancePlanId
+	from
+		deerwalk.pharmacy u
+			inner join
+		migrate.CustomInsurancePlanMap m
+			on m.CarrierId=u.ins_carrier_id
+			--and m.InsurancePlanCode=u.ins_plan_id
+			and m.CustomInsurancePlanCode=u.ins_plan_type_code
+			and m.TenantId=u.TenantId
+	where
+		u.CustomInsurancePlanId is null	and
+		u.TenantId=@tenantId
+
+	exec db.PrintNow 'Updated CustomInsurancePlanId on {n0} pharmacy records', @@rowcount
+
+	update u
+	set
+		CustomInsurancePlanId=m.CustomInsurancePlanId
+	from
+		deerwalk.medicalclaims u
+			inner join
+		migrate.CustomInsurancePlanMap m
+			on m.CarrierId=u.ins_carrier_id
+			and m.InsurancePlanCode=u.ins_plan_id
+			and m.CustomInsurancePlanCode=u.ins_plan_type_code
+			and m.TenantId=u.TenantId
+	where
+		u.CustomInsurancePlanId is null	and
+		u.TenantId=@tenantId
+
+	exec db.PrintNow 'Updated CustomInsurancePlanId on {n0} medical claim records', @@rowcount
 
 end
 

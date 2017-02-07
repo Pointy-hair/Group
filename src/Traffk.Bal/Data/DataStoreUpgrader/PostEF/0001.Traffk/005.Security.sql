@@ -259,54 +259,109 @@ end
 
 GO
 
-
-/*
-select 
-	a.*,
-	'CREATE TRIGGER '+SchemaName+'.'+TableName+'InsteadOfDelete
-       ON '+SchemaName+'.'+TableName+'
-INSTEAD OF DELETE
+create proc db.RowStatusTriggersCreate
+	@full bit = 0
 AS
-BEGIN
+begin
 
-	SET NOCOUNT ON;
+	set nocount on
 
-	update u
+	set @full = coalesce(@full,0)
+
+	declare @sql nvarchar(max)
+	declare @schemaName sysname
+	declare @tableName sysname
+	declare @columnName sysname
+	declare @primaryKeyColumnName sysname
+	declare @triggerName sysname
+	declare @objectId int
+
+	DECLARE c CURSOR FOR 
+
+	select c.SchemaName, c.TableName, c.ColumnName, c.TriggerName, PrimaryKeyColumnName, t.TriggerId
+	from 
+		(
+			select SchemaName, TableName, ColumnName, TableName+'InsteadOfDelete' TriggerName
+			from db.ColumnProperties
+			where 
+				PropertyName='ImplementsRowStatusSemantics' and 
+				PropertyValue='1'	
+		) c
+			inner join
+		(
+			select tc.table_schema SchemaName, tc.table_name TableName, ccu.Column_Name PrimaryKeyColumnName
+			from 
+				INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc with (nolock)
+					inner join
+				INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu with (nolock)
+					on tc.constraint_name=ccu.constraint_name 
+					and tc.table_schema=ccu.table_schema 
+					and tc.table_name=ccu.table_name
+			where
+				tc.[CONSTRAINT_TYPE]='PRIMARY KEY'
+		) pk
+			on pk.SchemaName=c.SchemaName
+			and pk.TableName=c.TableName
+			left join
+		(
+			select s.Name SchemaName, ta.Name TableName, tr.Name TriggerName, tr.object_id TriggerId
+			from 
+				sys.triggers tr
+					inner join
+				sys.tables ta
+					on ta.object_id=tr.parent_id
+					inner join
+				sys.schemas s
+					on s.schema_id=ta.schema_id	
+		) t
+			on t.schemaName=c.schemaName
+			and t.tableName=c.tableName
+			and t.TriggerName=c.triggerName
+	order by 1,2,3
+
+	OPEN c
+
+	NEXT_ITEM:
+
+	FETCH NEXT FROM c INTO @schemaName, @tableName, @columnName, @triggerName, @primaryKeyColumnName, @objectId
+
+	if @@fetch_status = 0
+	begin
+
+		set @sql ='
+'+case when @objectId is null then 'CREATE' else 'ALTER' end+' TRIGGER ['+@schemaName+'].['+@triggerName+'] ON ['+@schemaName+'].['+@tableName+']  INSTEAD OF DELETE  
+AS  
+BEGIN     
+	SET NOCOUNT ON;     
+
+	update u   
 	set
-		'+RowStatusColumnName+'=''d''
+		'+@columnName+'=''d''   
 	from
-		'+SchemaName+'.'+TableName+' u
+		'+@schemaName+'.'+@tableName+' u     
 			inner join
 		deleted d
-			on d.'+PrimaryKeyColumnName+'=u.'+PrimaryKeyColumnName+'
-	where
-		u.'+RowStatusColumnName+' not in (''p'', ''d'')
- 
-END' InsteadOfDeleteTriggerDdl
-from
-(	 
-	select 
-		c.SchemaName, c.TableName, 
-		ccu.column_name PrimaryKeyColumnName, 
-		c.ColumnName RowStatusColumnName
-	from 
-		db.ColumnProperties c with (nolock)
-			inner join
-		INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc with (nolock)
-			on tc.table_schema=c.schemaname
-			and tc.table_name=c.TableName
-			inner join
-		INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu with (nolock)
-			on tc.constraint_name=ccu.constraint_name 
-			and tc.table_schema=ccu.table_schema 
-			and tc.table_name=ccu.table_name
-	where
-		c.PropertyName='ImplementsRowStatusSemantics' and 
-		c.PropertyValue='1' and 
-		tc.[CONSTRAINT_TYPE]='PRIMARY KEY' 
-) a
-order by 1,2
+			on d.'+@primaryKeyColumnName+'=u.'+@primaryKeyColumnName+'   
+	where    
+		u.'+@columnName+' not in (''p'', ''d'')     
+		
+END		
+		'
 
-*/
+		if (@full=1 or @objectId is null)
+		begin
+			exec db.PrintSql @sql, 0
+			exec (@sql)
+		end
 
+		goto NEXT_ITEM
 
+	end
+
+	close c
+
+	deallocate c
+
+end
+
+GO

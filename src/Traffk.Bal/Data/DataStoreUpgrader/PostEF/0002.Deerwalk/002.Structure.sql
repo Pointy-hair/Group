@@ -2187,3 +2187,6 @@ alter table deerwalk.Scores add DateDimensionsLinked bit not null default 0
 alter table deerwalk.Visits add DateDimensionsLinked bit not null default 0
 
 
+alter table deerwalk.Eligibility add CustomInsurancePlanId int null references CustomInsurancePlans(CustomInsurancePlanId)
+alter table deerwalk.pharmacy add CustomInsurancePlanId int null references CustomInsurancePlans(CustomInsurancePlanId)
+alter table deerwalk.medicalclaims add CustomInsurancePlanId int null references CustomInsurancePlans(CustomInsurancePlanId)
