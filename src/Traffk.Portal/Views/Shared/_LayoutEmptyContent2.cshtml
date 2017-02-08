@@ -23,10 +23,12 @@
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
     </environment>
     @{
-        var primaryColor = "#381E65";
+        var primaryColor = "#0c77a1";
+        var secondaryColor = "#539900";
         if (R.HasBasicColors)
         {
             primaryColor = @R.PrimaryColor;
+            secondaryColor = @R.SecondaryColor;
         }
     }
     <style>
@@ -49,6 +51,20 @@
 
         .form-text:focus, .form-dropdown:focus, .btn-bordered, .form-control:focus {
             border-color: @primaryColor !important;
+        }
+
+        a, a:hover {
+          color: @primaryColor;
+        }
+
+        /*Set secondary color*/
+
+        input.form-text:focus ~ label, input.form-text:valid ~ label {
+          color: @secondaryColor;
+        }
+
+        .bar:before, .bar:after {
+            background: @secondaryColor;
         }
     </style>
 
@@ -114,12 +130,13 @@
                         <a asp-area="" asp-controller="Home" asp-action="Index" class="dropdown-toggle navbar-brand" data-toggle="dropdown">
                             @if (R.LogoLink == null)
                             {
-                                <text>TraffkPortal for @Current.Tenant.TenantName</text><b class="caret"></b>
+                                <text>TraffkPortal for @Current.Tenant.TenantName</text>
                             }
                             else
                             {
-                                <img src="@R.LogoLink" alt="@Current.Tenant.TenantName logo" height="50" /><b class="caret"></b>
+                                <img src="@R.LogoLink" alt="@Current.Tenant.TenantName logo" height="50" id="client-logo"/>
                             }
+                            <b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu">
                             <li class="dropdown" role="presentation">
@@ -343,9 +360,70 @@
                     focusdelay: 400,
                     outline: true
                 });
+                
                 setUI();
+
+                // id parent if using an img logo
+                jQuery('#client-logo').parent().addClass('img-logo');
+
+                //normalizeHeight('#reports-container .row .mini-panel-bottom');
+                jQuery('#reports-container .row').each(function () {
+                    var max_height = 0;
+                    jQuery(this).children('.col-sm-4').children('.mini-panel').children('.mini-panel-bottom').each(function () {
+                        if (jQuery(this).height() > max_height) {
+                            max_height = jQuery(this).height();
+                        }
+                    });
+                    jQuery(this).children('.col-sm-4').children('.mini-panel').children('.mini-panel-bottom').height(max_height + 'px');
+                });
             });
 
+            jQuery('.filter-tags li a').click(function() {
+                jQuery(this).parent().remove();
+            });
+
+            // click function to hide filters when visible+clicked outside
+            jQuery(document).mouseup(function (e) {
+                var container = jQuery('.floated-filter');
+                if (!container.is(e.target) && container.has(e.target).length === 0) {
+
+                    container.hide();
+                }
+            });
+
+            function normalizeHeight(selector) {
+                var max_height = 0;
+                jQuery(selector).each(function () {
+                    if (jQuery(this).height() > max_height) {
+                        max_height = jQuery(this).height();
+                    }
+                });
+                alert(max_height);
+                jQuery(selector).height(max_height + 'px');
+            }
+
+            jQuery('.section-toggle').click(function () {
+                var toggle_selector = jQuery(this).attr('data-toggle');
+                if (jQuery('.' + toggle_selector).is(':visible')) {
+                    jQuery('.' + toggle_selector).fadeOut(300);
+                    jQuery(this).children('.fa').removeClass('fa-minus');
+                    jQuery(this).children('.fa').addClass('fa-plus');
+                } else {
+                    jQuery('.' + toggle_selector).fadeIn(300);
+                    jQuery(this).children('.fa').addClass('fa-minus');
+                    jQuery(this).children('.fa').removeClass('fa-plus');
+                }
+            });
+
+            jQuery('.nav.navbar-left.top-nav').click(function () {
+                if (jQuery('#page-wrapper').hasClass('nav-open')) {
+                    jQuery('#page-wrapper').removeClass('nav-open');
+                } else {
+                    jQuery('#page-wrapper').addClass('nav-open');
+                }
+            });
+
+            //Main Navbar Expand/Collapse Script
             jQuery('.navbar-toggle').click(function () {
                 if (window.innerWidth < 768) {
                     if (jQuery('.navbar-right').is(':visible')) {
@@ -355,6 +433,8 @@
                     }
                 }
             });
+
+            //Generic Toggle Script
             jQuery('.toggle').click(function () {
                 var id = jQuery(this).attr('data-toggle');
                 //jQuery('#'+id).toggle('fast');
@@ -372,6 +452,8 @@
                     jQuery(this).children('.fa').addClass('fa-chevron-down');
                 }
             });
+
+            //Back To Top Button Script
             if (jQuery('#back-to-top').length) {
                 var scrollTrigger = 100, // px
                     backToTop = function () {
@@ -393,6 +475,7 @@
                     }, 700);
                 });
             }
+
         </script>
         <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
         <script>tinymce.init({ selector: '.htmleditor', plugins: "code" });</script>
