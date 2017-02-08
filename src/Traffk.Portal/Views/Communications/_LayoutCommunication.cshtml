@@ -1,6 +1,7 @@
 ﻿@using static TraffkPortal.Controllers.CommunicationsController
 @{
-    Layout = "~/Views/Shared/_LayoutHeroEntity.cshtml";
+    Layout = "~/Views/Shared/_LayoutHeroEntity2.cshtml";
+    ViewData.HasPageMenuItems(true);
     var pageKey = (CommunicationPageKeys)ViewData[ViewDataKeys.PageKey];
     var entityId = (int)ViewData[ViewDataKeys.EntityId];
     var isNewEntity = entityId < 1;
@@ -11,7 +12,7 @@
     var jobStatus = Parse.ParseEnum<JobStatuses>(ViewData["JobStatus"] as string, JobStatuses.NonYetQueued);
     var parentEntityId = (int?)ViewData[ViewDataKeys.ParentEntityId];
 }
-@section navItems {
+@section pageNavItems {
     <li><a asp-action="Blast" asp-route-id="@entityId" class="@(pageKey==CommunicationPageKeys.Background?"current-section":"")">Main</a></li>
     @if (!isNewEntity)
     {
@@ -22,37 +23,45 @@
         <li><a asp-action="@ActionNames.CommunicationSchedule" asp-route-id="@entityId" class="@(pageKey == CommunicationPageKeys.Schedule ? "current-section" : "")">Schedule</a></li>
         <li><a asp-action="@ActionNames.CommunicationBlasts" asp-route-communicationId="@entityId" class="@(pageKey == CommunicationPageKeys.Blasts ? "current-section" : "")">Blasts</a></li>
     }
-    @RenderSection("navItems", required: false)
+    @RenderSection("pageNavItems", required: false)
 }
-@section pageAlerts {
-    @if (ViewBag.ShowAlertCommunicationSaved == true)
-    {
-        <div class="alert alert-success" role="alert">This communication has been saved.</div>
-    }
-    @RenderSection("pageAlerts", required: false)
+@section pageActionItems {
+    @RenderSection("pageActionItems", required: false)
 }
-@section pageActionButtons {
-    @if (!isNewEntity)
-    {
-        switch (jobStatus)
+@*
+    @section pageAlerts {
+        @if (ViewBag.ShowAlertCommunicationSaved == true)
         {
-            case JobStatuses.NonYetQueued:
-                <button type="button" class="btn caseefault" asp-action="Create">Send Now</button>;
-                break;
-            case JobStatuses.Queued:
-            case JobStatuses.Dequeued:
-            case JobStatuses.Running:
-                <button type="button" class="btn caseefault" asp-action="Create">Cancel In Progress Send</button>;
-                break;
+            <div class="alert alert-success" role="alert">This communication has been saved.</div>
         }
+        @RenderSection("pageAlerts", required: false)
     }
-    @RenderSection("pageActionButtons", required: false)
-}
+        @section pageActionButtons {
+            @if (!isNewEntity)
+            {
+                switch (jobStatus)
+                {
+                    case JobStatuses.NonYetQueued:
+                        <button type="button" class="btn caseefault" asp-action="Create">Send Now</button>;
+                        break;
+                    case JobStatuses.Queued:
+                    case JobStatuses.Dequeued:
+                    case JobStatuses.Running:
+                        <button type="button" class="btn caseefault" asp-action="Create">Cancel In Progress Send</button>;
+                        break;
+                }
+            }
+            @RenderSection("pageActionButtons", required: false)
+        }
+*@
 @section pageDialogs {
     @RenderSection("pageDialogs", required: false)
 }
 @section Scripts {
     @RenderSection("scripts", required: false)
+}
+@section breadcrumbItems {
+    @RenderSection("breadcrumbItems", required: false)
 }
 
 @RenderBody()

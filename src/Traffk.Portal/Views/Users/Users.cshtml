@@ -1,40 +1,23 @@
-@using static TraffkPortal.Controllers.UsersController
 @model IEnumerable<TraffkPortal.Models.UserModels.UserModel>
+@using static TraffkPortal.Controllers.UsersController
 @{
-    Layout = "~/Views/Shared/_LayoutListing2.cshtml";
-    ViewData.SetTitleAndHeading("Users", "This is the users subheading.");
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
+    ViewData.SetTitleAndHeading("Users");
+    ViewData.IsListingPage(true);
+    ViewData.HasSelectableItems(true);
+    ViewData.HasPageActions(true);
 }
-@section listingFilters
+@section pageActionItems
 {
-    <div class="col-sm-2">
-        <button class="btn btn-large btn-white toggle" data-toggle="reports-filter">Filters</button>
-        <ul id="reports-filter" class="floated-filter list-left">
-            <li>
-                <a href="#">PHI</a>
-                <ul class="filter-subnav">
-                    <li><a href="#">PHI <span>4</span></a></li>
-                    <li><a href="#">No Phi <span>3</span></a></li>
-                </ul>
-            </li>
-            <li><a href="#">Budget Vs Actual <span>4</span></a></li>
-            <li><a href="#">Risk Report <span>3</span></a></li>
-            <li><a href="#">Medical Claims <span>3</span></a></li>
-        </ul>
-    </div>
-}
-@section listingActionButtons
-{
-    <button class="btn btn-large btn-white toggle" data-toggle="actions-filter2">Actions</button>
-    <ul id="actions-filter2" class="floated-filter list-right">
-        <li><a asp-action="@ActionNames.UserCreate">Create</a></li>
-        <li class="multiselect-action"><a href="#" class="popup-confirm_open">Delete</a></li>
-    </ul>
+    <li><a asp-action="@ActionNames.UserCreate">Create</a></li>
+    <li class="multiselect-action"><a href="#" class="popup-confirm_open">Delete</a></li>
 }
 @section listingTable
 {
-    <table class="table">
+    <table class="table table-bordered table-hover table-striped">
         <thead>
             <tr>
+                <th><input type="checkbox" id="all-items-selector" /></th>
                 <th>
                     @Html.SortableHeaderFor(z => z.UserName)
                 </th>
@@ -60,6 +43,7 @@
             @foreach (var item in Model)
             {
                 <tr>
+                    <td><input type="checkbox" class="item-selector" /></td>
                     <td>
                         <a asp-action="@ActionNames.UserBackground" asp-route-id="@item.Id">
                             @Html.DisplayFor(modelItem => item.UserName)
@@ -80,17 +64,19 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.AssignedRoleNamesCsv)
                     </td>
-                    <td>
-                        @if (Current.User.Id != item.Id)
-                        {
-                            <a asp-action="@ActionNames.UserDelete" asp-route-id="@item.Id">Delete</a>
-                        }
+                    <td class="text-center">
+                        <i class="fa fa-ellipsis-h toggle" aria-hidden="true" data-toggle="row-action-@item.Id"></i>
+                        <ul id="row-action-@item.Id" class="floated-filter list-right">
+                            @if (Current.User.Id != item.Id)
+                            {
+                                <li>
+                                    <a asp-action="@ActionNames.UserDelete" asp-route-id="@item.Id" onclick="deleteUser(this, @item.Id)" class="confirm-on-click" confirmHeading="Are you sure?" confirmMessage="Are you sure you want to delete @item.UserName?">Delete</a>
+                                </li>
+                            }
+                        </ul>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
-
-    @{ await Html.RenderPartialAsync("_PaginationPartial2"); }
-
 }

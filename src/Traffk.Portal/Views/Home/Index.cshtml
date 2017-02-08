@@ -1,48 +1,40 @@
-﻿@using Microsoft.AspNetCore.Identity
-@using TraffkPortal.Models
-@inject SignInManager<ApplicationUser> SignInManager
-@inject UserManager<ApplicationUser> UserManager
+﻿@using static TraffkPortal.Controllers.CommunicationsController
 @{
-    ViewData["Title"] = "Home Page";
-    ViewData["BodyContainerClass"] = "container-full-width no-side-padding";
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
+    ViewData.SetTitle("Home Page");
 }
 @section Scripts {
-<script type="text/javascript">
+    <script type="text/javascript">
         $(document).ready(function () {
             initViz("Superstore", "Overview");
         });
-</script>
+    </script>
 }
-
-<!-- Content: Logged in Homepage -->
-<section id="logged-in-panel">
-    <div class="row">
-        <div class="col-xs-12">
-            @*<h1>Welcome <br class="visible-xs" />@UserManager.GetUserName(User)!</h1>*@
-            <h1>@R.HomeMessage</h1>
+<div class="row">
+    <div class="col-xs-12">
+        @*<h1>Welcome <br class="visible-xs" />@UserManager.GetUserName(User)!</h1>*@
+        <h1>@R.HomeMessage</h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-6">
+        <div class="panel small-padding">
+            <h2>Recently Viewed Reports</h2>
         </div>
     </div>
-    <div class="row">
-        <div class="col-sm-6">
-            <div class="panel small-padding">
-                <h2>Recently Viewed Reports</h2>
-            </div>
-        </div>
-        <div class="col-sm-6">
-            <div class="panel small-padding">
-                <h2>New Messages</h2>
-            </div>
+    <div class="col-sm-6">
+        <div class="panel small-padding">
+            <h2>New Messages</h2>
         </div>
     </div>
-    <div class="row">
-        @{ await Html.RenderPartialAsync("_ReportFramePartial"); }
-    </div>
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="panel medium-padding">
-                <h2>News and Blog</h2>
-            </div>
+</div>
+<div class="row">
+    @{ await Html.RenderPartialAsync("_ReportFramePartial"); }
+</div>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="panel medium-padding">
+            <h2>News and Blog</h2>
         </div>
     </div>
-</section>
-<!-- /end Content: Logged in -->
+</div>

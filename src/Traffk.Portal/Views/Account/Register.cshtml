@@ -1,5 +1,7 @@
 ﻿@model RegisterViewModel
+@using static TraffkPortal.Controllers.AccountController
 @{
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
     ViewData.SetTitleAndHeading("Register", "Create a new account");
 }
 
@@ -69,8 +71,3 @@
         }
     </div>
 </div>
-
-
-@section Scripts {
-    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-}

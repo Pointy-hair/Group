@@ -1,12 +1,15 @@
 ﻿@model IEnumerable<Creative>
 @using static TraffkPortal.Controllers.CommunicationsController
 @{
-    Layout = "~/Views/Shared/_LayoutListing.cshtml";
+    Layout = "~/Views/Shared/_LayoutListing2.cshtml";
     ViewData.SetTitleAndHeading("Creatives");
 }
 @section listingActionButtons
 {
-    <button type="button" class="btn btn-default" asp-action="@ActionNames.CreativeCreate">Create</button>
+    <button class="btn btn-large btn-white toggle" data-toggle="actions-filter2">Actions</button>
+    <ul id="actions-filter2" class="floated-filter list-right">
+        <li><a asp-action="@ActionNames.CreativeCreate">Create</a></li>
+    </ul>
 }
 @section listingTable
 {
