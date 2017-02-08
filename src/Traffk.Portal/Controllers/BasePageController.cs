@@ -42,7 +42,11 @@ namespace TraffkPortal.Controllers
 
         protected IQueryable<T> ApplyPagination<T>(IQueryable<T> q, int? page = null, int? pageSize = null)
         {
-            var s = Stuff.Max(10, pageSize.GetValueOrDefault());
+            var rowsPerPageString = Request.Cookies["rowsPerPage"];
+            var rowsPerPage = Parse.ParseInt32(rowsPerPageString, 10);
+            var s = rowsPerPage;
+            //var s = Stuff.Max(10, pageSize.GetValueOrDefault());
+            //s = Stuff.Max(s, rowsPerPage);
             var p = Stuff.Max(1, page.GetValueOrDefault());
             ViewBag.PaginationSupported = true;
             ViewBag.PageNum = p;
@@ -71,6 +75,7 @@ namespace TraffkPortal.Controllers
 
         protected IQueryable<T> ApplyBrowse<T>(IQueryable<T> q, string sortCol, string sortDir, int? page, int? pageSize, IDictionary<string, string> colMapper = null)
         {
+            ViewBag.TotalItemCount = q.Count();
             q = ApplySort(q, sortCol, sortDir, colMapper);
             q = ApplyPagination(q, page, pageSize);
             return q;
