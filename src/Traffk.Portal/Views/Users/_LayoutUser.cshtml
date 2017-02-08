@@ -1,6 +1,9 @@
 ﻿@using static TraffkPortal.Controllers.UsersController
 @{
-    Layout = "~/Views/Shared/_LayoutHeroEntity.cshtml";
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
+    ViewData.HasBreadcrumbItems(true);
+    ViewData.HasPageMenuItems(true);
+    ViewData.HasPageActions(true);
     var pageKey = (PageKeys)ViewData[ViewDataKeys.PageKey];
     var entityName = ViewData[ViewDataKeys.EntityTitle].ToString();
     var entityId = ViewData[ViewDataKeys.EntityId].ToString();
@@ -11,27 +14,30 @@
         ViewData.SetTitleAndHeading("Create " + ViewData["ContactType"]);
     }
 }
-@section navItems {
+@section breadcrumbItems
+{
+    <li><a asp-controller="@Name" asp-action="@ActionNames.UserList">Users</a> <span>></span> </li>
+}
+@section pageNavItems {
     <li><a asp-action="@ActionNames.UserBackground" asp-route-id="@entityId" class="@(pageKey==PageKeys.UserBackground?"current-section":"")">Basics</a></li>
     <li><a asp-action="@ActionNames.UserMessages" asp-route-id="@entityId" class="@(pageKey==PageKeys.UserMessages?"current-section":"")">Messages</a></li>
-    @RenderSection("navItems", required: false)
+    @RenderSection("pageNavItems", false)
 }
 @section pageAlerts {
     <div class="alert alert-success" role="alert" id="MessageSentAlert" style="display:none">Message has been sent.</div>
     <div class="alert alert-success" role="alert" id="NoteCreatedAlert" style="display:none">Note was created.</div>
-    @RenderSection("pageAlerts", required: false)
+    @RenderSection("pageAlerts", false)
 }
-@section pageActionButtons {
-    <button type="button" class="btn btn-default" asp-action="@ActionNames.UserList">User List</button>
+@section pageActionItems {
     @if (!isNewEntity)
     {
-        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#createNoteModal">Create Note</button>
+        <li><a href="#" data-toggle="modal" data-target="#createNoteModal">Create Note</a></li>
         @if (contactEmailAddress != null && await User.HasPermission(AuthorizationService, PermissionNames.DirectMessaging))
         {
-            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#sendMessageModal">Send Message</button>
+            <li><a href="#"  data-toggle="modal" data-target="#sendMessageModal">Send Message</a></li>
         }
     }
-    @RenderSection("pageActionButtons", required: false)
+    @RenderSection("pageActionItems", false)
 }
 @section pageDialogs {
     @RenderSection("pageDialogs", required: false)

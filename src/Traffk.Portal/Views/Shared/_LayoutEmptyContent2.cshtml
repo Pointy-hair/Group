@@ -175,24 +175,15 @@
                                         {
                                             <li><a asp-controller="@UsersController.Name" asp-action="Index">Users</a></li>
                                         }
-                                        <li class="divider" role="separator"></li>
-                                        @if (manageTenants)
-                                        {
-                                            <li><a asp-controller="@ApplicationController.Name" asp-action="Index">Applications</a></li>
-                                            <li><a asp-controller="@TenantsController.Name" asp-action="Index">Tenants</a></li>
-                                        }
                                         @if (manageRoles)
                                         {
                                             <li><a asp-controller="@RolesController.Name" asp-action="Index">Roles</a></li>
                                         }
                                         <li class="divider" role="separator"></li>
-                                        @if (manageProtectedHealthInformation)
+                                        @if (manageTenants)
                                         {
-                                            <li><a>PHI Permission</a></li>
-                                        }
-                                        @if (canAccessPhi)
-                                        {
-                                            <li><a>PHI Policy</a></li>
+                                            <li><a asp-controller="@ApplicationController.Name" asp-action="Index">Applications</a></li>
+                                            <li><a asp-controller="@TenantsController.Name" asp-action="Index">Tenants</a></li>
                                         }
                                     </ul>
                                 </li>
@@ -200,12 +191,23 @@
                         </ul>
                     </li>
                 }
+                else
+                { 
+                    <li class="dropdown" id="primary-subnav">
+                        @if (R.LogoLink == null)
+                        {
+                            <text>TraffkPortal for @Current.Tenant.TenantName</text>
+                        }
+                        else
+                        {
+                            <img src="@R.LogoLink" alt="@Current.Tenant.TenantName logo" height="50" />
+                        }
+                    </li>
+                }
             </ul>
         </div>
         @await Html.PartialAsync("_LoginPartial2")
     </nav>
-
-
 
     <!--Body Content-->
     <div id="page-wrapper">
@@ -226,7 +228,7 @@
             <!--end alert-->
 
             @RenderBody()
-            <hr/>
+
             <footer>
                 <!-- footer -->
                 <div class="row">

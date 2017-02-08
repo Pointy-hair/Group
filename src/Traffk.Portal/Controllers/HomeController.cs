@@ -18,6 +18,11 @@ namespace TraffkPortal.Controllers
     {
         public const string Name = "Home";
 
+        public static class ActionNames
+        {
+            public const string Index = "Index";
+        }
+
         public HomeController(
             TraffkRdbContext db,
             CurrentContextServices current,
@@ -26,6 +31,7 @@ namespace TraffkPortal.Controllers
             : base(AspHelpers.MainNavigationPageKeys.Main, db, current, loggerFactory)
         { }
 
+        [ActionName(ActionNames.Index)]
         [SetTableauTrustedTicket]
         [SetPowerBiBearer]
         public IActionResult Index()

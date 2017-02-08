@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using System.Linq;
 using System.ComponentModel;
 using System.Reflection;
+using Microsoft.AspNetCore.Mvc.Razor;
 
 namespace TraffkPortal
 {
@@ -43,6 +44,13 @@ namespace TraffkPortal
             public const string EntityType = "EntityType";
             public const string PageKey = "PageKey";
             public const string TenantName = "TenantName";
+
+            public const string PageTitle = "Title";
+            public const string HasPageMenuItems = "HasSectionMenuItems";
+            public const string HasPageActions = "HasPageActions";
+            public const string HasSelectableItems = "HasSelectableItems";
+            public const string HasBreadcrumbItems = "HasBreadcrumbItems";
+            public const string IsListingPage = "IsListingPage";
         }
 
         public static SelectListItem CreateNoneSelectedSelectListItem(bool preSelected=true) 
@@ -217,6 +225,18 @@ namespace TraffkPortal
             }
         }
 
+        public static T Get<T>(this ViewDataDictionary v, string key, T fallback = default(T))
+        {
+            try
+            {
+                return (T)v[key];
+            }
+            catch (Exception)
+            {
+                return fallback;
+            }
+        }
+
         public static void SetTitleAndHeading(this ViewDataDictionary v, string fallbackTitle, string subHeading = null)
         {
             v.SetIfMissing("Title", fallbackTitle);
@@ -227,9 +247,33 @@ namespace TraffkPortal
             }
         }
 
+        public static bool GetOrSetThenGet(this ViewDataDictionary v, string key, bool? newVal = null)
+        {
+            if (newVal.HasValue)
+            {
+                v[key] = newVal.Value;
+            }
+            return v.Get<bool>(key);
+        }
+
+        public static bool IsListingPage(this ViewDataDictionary v, bool? newVal = null)
+            => v.GetOrSetThenGet(ViewDataKeys.IsListingPage, newVal);
+
+        public static bool HasBreadcrumbItems(this ViewDataDictionary v, bool? newVal = null)
+            => v.GetOrSetThenGet(ViewDataKeys.HasBreadcrumbItems, newVal);
+
+        public static bool HasPageMenuItems(this ViewDataDictionary v, bool? newVal = null) 
+            => v.GetOrSetThenGet(ViewDataKeys.HasPageMenuItems, newVal);
+
+        public static bool HasPageActions(this ViewDataDictionary v, bool? newVal = null) 
+            => v.GetOrSetThenGet(ViewDataKeys.HasPageActions, newVal);
+
+        public static bool HasSelectableItems(this ViewDataDictionary v, bool? newVal = null)
+            => v.GetOrSetThenGet(ViewDataKeys.HasSelectableItems, newVal);
+
         public static void SetTitle(this ViewDataDictionary v, string fallbackTitle)
         {
-            v.SetIfMissing("Title", fallbackTitle);
+            v.SetIfMissing(ViewDataKeys.PageTitle, fallbackTitle);
         }
 
         public static object GetRouteValue(this ViewContext c, string key=null)
@@ -277,6 +321,14 @@ namespace TraffkPortal
                 }
             }
             return HtmlString.Empty;
+        }
+
+        public static void IgnoreSectionIfDefined(this RazorPage page, string sectionName)
+        {
+            if (page.IsSectionDefined(sectionName))
+            {
+                page.IgnoreSection(sectionName);
+            }
         }
     }
 }

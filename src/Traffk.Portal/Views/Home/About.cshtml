@@ -1,7 +1,13 @@
-﻿@{
+﻿@using static TraffkPortal.Controllers.HomeController
+@{
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
     ViewData.SetTitleAndHeading("About");
+    ViewData.HasBreadcrumbItems(true);
 }
-
+@section breadcrumbItems
+{
+    <li><a asp-controller="@HomeController.Name" asp-action="@ActionNames.Index">Home</a> <span>></span> </li>
+}
 @if (R.AboutMessage.Value != null)
 {
     <div class="row">

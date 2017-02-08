@@ -1,5 +1,12 @@
-﻿@{
+﻿@using static TraffkPortal.Controllers.HomeController
+@{
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
     ViewData.SetTitleAndHeading("Contact");
+    ViewData.HasBreadcrumbItems(true);
+}
+@section breadcrumbItems
+{
+    <li><a asp-controller="@HomeController.Name" asp-action="@ActionNames.Index">Home</a> <span>></span> </li>
 }
 <div class="row">
     <div class="panel medium-padding">
@@ -10,8 +17,11 @@
             @*<abbr title="Phone">P:</abbr>
             425.555.0100*@
         </address>
+        @if (R.SystemAdminEmailAddress != null)
+        {
         <address>
-            <strong>System Admin:</strong>  <a href="mailto:@R.SystemAdminEmailAddress">@R.SystemAdminName</a><br />
+            <strong>System Admin:</strong>  <a href="mailto:@R.SystemAdminEmailAddress">@(R.SystemAdminName?? R.SystemAdminEmailAddress)</a><br />
         </address>
+        }
     </div>
 </div>

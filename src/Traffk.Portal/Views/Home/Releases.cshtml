@@ -1,7 +1,14 @@
 ﻿@model IEnumerable<Release>
+@using static TraffkPortal.Controllers.HomeController
 @{
-    Layout = "~/Views/Shared/_LayoutListing.cshtml";
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
     ViewData.SetTitleAndHeading("Releases");
+    ViewData.HasBreadcrumbItems(true);
+    ViewData.IsListingPage(true);
+}
+@section breadcrumbItems
+{
+    <li><a asp-controller="@HomeController.Name" asp-action="@ActionNames.Index">Home</a> <span>></span> </li>
 }
 @section listingTable
 {

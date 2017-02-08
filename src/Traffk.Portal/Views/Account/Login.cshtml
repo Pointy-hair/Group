@@ -1,10 +1,7 @@
-﻿@using System.Collections.Generic
-@using Microsoft.AspNetCore.Http
-@using Microsoft.AspNetCore.Http.Authentication
-@model LoginViewModel
-@inject SignInManager<ApplicationUser> SignInManager
-
+﻿@model LoginViewModel
+@using static TraffkPortal.Controllers.AccountController
 @{
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
     ViewData.SetTitle("Log In");
 }
 
@@ -60,8 +57,3 @@
         </div>
     </div>
 </section>
-<!-- /end Content: Login Panel -->
-
-@section Scripts {
-    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-}

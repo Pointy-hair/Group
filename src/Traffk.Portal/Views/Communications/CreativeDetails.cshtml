@@ -1,6 +1,7 @@
 ﻿@model TraffkPortal.Models.CommunicationModels.CreativeModel
 @using static TraffkPortal.Controllers.CommunicationsController
 @{
+    Layout = "_LayoutCommunication.cshtml";
     if (Model.CreativeId <= 0)
     {
         ViewData.SetTitleAndHeading("Create New Creative");

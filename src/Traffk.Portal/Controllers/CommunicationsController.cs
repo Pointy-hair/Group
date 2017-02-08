@@ -321,7 +321,7 @@ namespace TraffkPortal.Controllers
         public IActionResult CreativeCreate()
         {
             PopulateViewBagWithTemplateModelSelectListItems();
-            return View(ViewNames.CreativeDetails, new Creative());
+            return View(ViewNames.CreativeDetails, new CreativeModel(new Creative(), null, RemoveAttachmentScriptName));
         }
 
         [Route("Creatives/{id}")]
