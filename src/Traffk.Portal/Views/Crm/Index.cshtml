@@ -9,10 +9,13 @@
 <!-- Content: CRM -->
                     @section listingFilters
                     {
-                        @if (hasFilters)
-                        {
-                            @await Html.PartialAsync("_ListingFiltersPartial2", filters)
-                        }
+                        <div class="col-sm-2">
+                            @if (hasFilters)
+                            {
+                                @await Html.PartialAsync("_ListingFiltersPartial2", filters)
+                            }
+                        </div>
+
                     }
                     @section listingActionButtons
                     {
@@ -28,60 +31,60 @@
                     {
                         <table class="table table-bordered table-hover table-striped">
                             <thead>
-                            <tr>
-                                <th><input type="checkbox" /></th>
-                                <th class="hidden">
-                                    @Html.SortableHeaderFor(z => z.ContactId)
-                                </th>
-                                <th>
-                                    @Html.SortableHeaderFor(z => z.ContactType)
-                                </th>
-                                @if (canAccessPhi)
-                                {
-                                    <th>
-                                        @Html.SortableHeaderFor(z => z.MemberId)
-                                    </th>
-                                }
-                                <th>
-                                    @Html.SortableHeaderFor(z => z.FullName)
-                                </th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @foreach (var item in Model)
-                            {
                                 <tr>
-                                    <td><input type="checkbox" /></td>
-                                    <td class="hidden">
-                                        @Html.DisplayFor(modelItem => item.ContactId)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.ContactType)
-                                    </td>
+                                    <th><input type="checkbox" /></th>
+                                    <th class="hidden">
+                                        @Html.SortableHeaderFor(z => z.ContactId)
+                                    </th>
+                                    <th>
+                                        @Html.SortableHeaderFor(z => z.ContactType)
+                                    </th>
                                     @if (canAccessPhi)
                                     {
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.MemberId)
-                                        </td>
+                                        <th>
+                                            @Html.SortableHeaderFor(z => z.MemberId)
+                                        </th>
                                     }
-                                    <td>
-                                        <a asp-action="ContactBackground" asp-route-id="@item.ContactId">@Html.DisplayFor(modelItem => item.FullName)</a>
-                                    </td>
-                                    <td class="text-center">
-                                        <i class="fa fa-ellipsis-h toggle" aria-hidden="true" data-toggle="row-action-@item.ContactId"></i>
-                                        <ul id="row-action-@item.ContactId" class="floated-filter list-right">
-                                            <!-- displaying by default for demo purpose -->
-                                            <li><a href="#">Export</a></li>
-                                            <li><a href="#">Create Note</a></li>
-                                            <li class="multiselect-action"><a href="#" class="popup-confirm_open">Delete</a></li>
-                                            <li><a href="#">View</a></li>
-                                        </ul>
-                                    </td>
+                                    <th>
+                                        @Html.SortableHeaderFor(z => z.FullName)
+                                    </th>
+                                    <th></th>
                                 </tr>
-                            }
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td><input type="checkbox" /></td>
+                                        <td class="hidden">
+                                            @Html.DisplayFor(modelItem => item.ContactId)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.ContactType)
+                                        </td>
+                                        @if (canAccessPhi)
+                                        {
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.MemberId)
+                                            </td>
+                                        }
+                                        <td>
+                                            <a asp-action="ContactBackground" asp-route-id="@item.ContactId">@Html.DisplayFor(modelItem => item.FullName)</a>
+                                        </td>
+                                        <td class="text-center">
+                                            <i class="fa fa-ellipsis-h toggle" aria-hidden="true" data-toggle="row-action-@item.ContactId"></i>
+                                            <ul id="row-action-@item.ContactId" class="floated-filter list-right">
+                                                <!-- displaying by default for demo purpose -->
+                                                <li><a href="#">Export</a></li>
+                                                <li><a href="#">Create Note</a></li>
+                                                <li class="multiselect-action"><a href="#" class="popup-confirm_open">Delete</a></li>
+                                                <li><a href="#">View</a></li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                }
                             </tbody>
                         </table>
-@{ await Html.RenderPartialAsync("_PaginationPartial2"); }
+                        @{ await Html.RenderPartialAsync("_PaginationPartial2"); }
                     }
-<!-- /end Content: CRM -->
+                    <!-- /end Content: CRM -->
