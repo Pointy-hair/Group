@@ -25,13 +25,12 @@
         <div class="col-sm-12">
             <div class="panel container-internal large-padding" id="login-container">
                 <form form asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" id="form-login">
-                    <div asp-validation-summary="All" class="text-danger"></div>
                     <div class="group form-row">
                         <input type="text" asp-for="Email" class="form-text" required tabindex=1/>
                         <span class="highlight"></span>
                         <span class="bar"></span>
                         <label asp-for="Email" class="material"></label>
-                        <span asp-validation-for="Email" class="text-danger"></span>
+                        <span asp-validation-for="Email" class="error-msg"></span>
                     </div>
 
                     <div class="group form-row">
@@ -39,7 +38,7 @@
                         <span class="highlight"></span>
                         <span class="bar"></span>
                         <label asp-for="Password" class="material"></label>
-                        <span asp-validation-for="Password" class="text-danger"></span>
+                        <span asp-validation-for="Password" class="error-msg"></span>
                     </div>
 
                     <div class="form-row">

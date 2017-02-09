@@ -11,26 +11,22 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="form-row">
-                    <label>Text Input</label>
-                    <input class="form-control">
-                </div>
-                <div class="form-row">
                     <label asp-for="Contact.ContactType"></label>
                     <input asp-for="Contact.ContactType" class="form-control" readonly="readonly" />
                     <span asp-validation-for="Contact.ContactType" class="text-danger" />
                 </div>
                 <div class="form-row">
-                    <label asp-for="Contact.PrimaryEmail"></label>
+                    <label asp-for="Contact.PrimaryEmail" ></label>
                     <input asp-for="Contact.PrimaryEmail" class="form-control"/>
                     <span asp-validation-for="Contact.PrimaryEmail" class="text-danger"/>
                 </div>
                 <div class="form-row">
-                    <label asp-for="Contact.FullName"></label>
+                    <label asp-for="Contact.FullName" ></label>
                     <input asp-for="Contact.FullName" class="form-control"/>
                     <span asp-validation-for="Contact.FullName" class="text-danger"/>
                 </div>
                 <div class="form-row">
-                    <label asp-for="Contact.ContactDetails.Tags"></label>
+                    <label asp-for="Contact.ContactDetails.Tags" ></label>
                     @await Html.PartialAsync("_TagEditorPartial", Model.Contact.ContactDetails.Tags, z => z.Contact)
                 </div>
                 <div class="form-row">
@@ -39,14 +35,14 @@
                     {
                         foreach (var a in Model.Contact.ContactDetails.Addresses)
                         {
-                            <div>
+                            <p>
                                 @a.Address1<br/>
                                 @if (String.IsNullOrEmpty(@a.Address2) == false)
                                 {
                                     @a.Address2
                                 }
                                 @a.City, @a.State @a.PostalCode<br/>
-                            </div>
+                            </p>
                         }
                     }
                 </div>
@@ -56,7 +52,7 @@
                     {
                         foreach (var a in Model.Contact.ContactDetails.PhoneNumbers)
                         {
-                            <div>@String.Format("{0:(###) ###-####}", long.Parse(a.PhoneNumber))</div>
+                            <p>@String.Format("{0:(###) ###-####}", long.Parse(a.PhoneNumber))</p>
                         }
                     }
                 </div>

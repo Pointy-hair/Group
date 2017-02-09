@@ -600,6 +600,13 @@ label {
   transition: all 0.2s ease-in-out;
   background: #fefefe;
 }
+
+.form-row > p {
+    color: #666;
+    display: inline-block !important;
+    font-size: 14px;
+    margin-bottom: 0;
+}
 input[type="radio"] {
   vertical-align: middle !important;
   margin: 0 4px 0 0;
@@ -910,10 +917,12 @@ h3 {
   display: inline-block;
 }
 .inline-form label {
-  margin-right: 20px;
-  font-weight: normal;
   font-size: 16px;
+  font-weight: normal;
+  margin-right: 20px;
+  text-align: right;
   vertical-align: top;
+    width: 200px;
 }
 .inline-form .form-control {
   width: 300px; 
@@ -973,9 +982,16 @@ h3 {
 .dl-horizontal {
     width: 75%;
     display:inline-block;
+    font-size: 16px;
+    font-weight: normal;
+    margin-right: 20px;
 }
 .dl-horizontal dd,dt {
-    margin-bottom: 20px;
+    margin-bottom: 5px;
+}
+
+.dl-horizontal dd {
+    color: #666;
 }
 
 .error-msg {

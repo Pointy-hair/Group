@@ -10,14 +10,12 @@
     if (tsv is SiteViewFolderResource && tn.HasChildren)
     {
         var folder = tsv as SiteViewFolderResource;
-        <h2 id="@folder.Name">@folder.Name</h2>
-            <div class="row">
-                <div class="panel small-padding">
+        <h2 data-toggle="@folder.Id" class="section-toggle"><i class="fa fa-minus primary-color" aria-hidden="true"></i> @folder.Name</h2>
+            <div class="row @folder.Id">
                     @if (tn.HasChildren)
                     {
                         await Html.RenderPartialAsync("_TableauViewResourceTreeNodePartial2", tn.Children);
                     }
-                </div>
             </div>
     }
     else if (tsv is SiteView)

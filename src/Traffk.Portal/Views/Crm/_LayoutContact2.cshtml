@@ -38,10 +38,10 @@
     <div class="row border-bottom">
         <div class="col-sm-10" id="filter-tags-container">
             <ul id="personal-page-nav">
-                <li><a href="javascript:void(0)" class="@(pageKey==CrmController.PageKeys.Background?"active":"")" data-section="personal-edit-form-container">Personal</a></li>
-                @*<li><a href="javascript:void(0)" id="personal-page-nav-notes" data-section="personal-notes-container">Notes</a></li>*@
+                <li><a asp-controller="@CrmController.Name" asp-action="ContactBackground" asp-for-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey==CrmController.PageKeys.Background?"active":"")" data-section="personal-edit-form-container">Personal</a></li>
+                @*<li><a href="#" id="personal-page-nav-notes" data-section="personal-notes-container">Notes</a></li>*@
                 <li><a asp-action="@ActionNames.ContactNotes" asp-route-id="@entityId">Notes</a></li>
-                <li><a href="javascript:void(0)" class="@(pageKey==CrmController.PageKeys.Messages?"active":"") popup-messages_open">Messages</a></li>
+                <li><a href="#" class="@(pageKey==CrmController.PageKeys.Messages?"active":"") popup-messages_open">Messages</a></li>
                 @if (isPerson)
                 {
                     <li>

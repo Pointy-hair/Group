@@ -18,9 +18,11 @@
             @RenderSection("listingActionButtons", required: false)
         </div>
     </div>
-    <div class="row">
+    <div class="row" id="reports-container">
         <div class="col-xs-12">
-            @RenderSection("listingTable", required: true)
+            <div class="panel small-padding">
+                @RenderSection("listingTable", required: true)
+            </div>
         </div>
     </div>
 

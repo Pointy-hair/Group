@@ -82,7 +82,27 @@
 <body onload="setUI();">
 <div id="wrapper">
     <!-- Modal -->
-    <div class="modal fade" tabindex="-1" role="dialog" id="inactivityWarningModal">
+    <div id="inactivityWarningModal" class="popup">
+        <a data-dismiss="modal" class="popup-help_close"><i class="fa fa-2x fa-times popup-close-btn"></i></a>
+        <div class="popup-content-container">
+            <h3>InactivityWarning</h3>
+            <p class="subheading">
+                You have been inactive too long. If you don't reactivate, you will be logged out in <span id="secondsTillLogout"></span> seconds.
+            </p>
+            @if (@R.SupportMessage.Value != null)
+            {
+
+            }
+            else
+            {
+                <p class="subheading">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            }
+
+            <button type="button" class="btn btn-primary" onclick="idleReactivate()">Reactivate</button>
+        </div>
+    </div>
+
+    @*<div class="modal fade" tabindex="-1" role="dialog" id="inactivityWarningModal">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -99,7 +119,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div>*@
 
     <!--Navbar-->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -405,11 +425,11 @@
             jQuery('.section-toggle').click(function () {
                 var toggle_selector = jQuery(this).attr('data-toggle');
                 if (jQuery('.' + toggle_selector).is(':visible')) {
-                    jQuery('.' + toggle_selector).fadeOut(300);
+                    jQuery('.' + toggle_selector).fadeOut(0);
                     jQuery(this).children('.fa').removeClass('fa-minus');
                     jQuery(this).children('.fa').addClass('fa-plus');
                 } else {
-                    jQuery('.' + toggle_selector).fadeIn(300);
+                    jQuery('.' + toggle_selector).fadeIn(0);
                     jQuery(this).children('.fa').addClass('fa-minus');
                     jQuery(this).children('.fa').removeClass('fa-plus');
                 }
