@@ -20,6 +20,16 @@ namespace TraffkPortal.Controllers
     {
         public const string Name = "Roles";
 
+        public static class ActionNames
+        {
+            public const string Index = "Index";
+        }
+
+        private static class ViewNames
+        {
+            public const string Index = "Roles";
+        }
+
         public RolesController(
             TraffkRdbContext db,
             CurrentContextServices current,
@@ -28,28 +38,12 @@ namespace TraffkPortal.Controllers
             : base(AspHelpers.MainNavigationPageKeys.Setup, db, current, loggerFactory)
         { }
 
-        // GET: Roles
+        [ActionName(ActionNames.Index)]
         public async Task<IActionResult> Index(string sortCol, string sortDir, int? page, int? pageSize)
         {
             var roles = Rdb.Roles.Where(z => z.TenantId == TenantId);
             roles = ApplyBrowse(roles, sortCol??nameof(ApplicationRole.Name), sortDir, page, pageSize);
-            return View(await roles.ToListAsync());
-        }
-
-        // GET: Roles/Details/5
-        public async Task<IActionResult> Details(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var applicationRole = await Rdb.Roles.Include(lo => lo.Claims).SingleOrDefaultAsync(lo => lo.Id == id && lo.TenantId == TenantId);
-            if (applicationRole == null)
-            {
-                return NotFound();
-            }
-            return View(new RoleDetailViewModel(applicationRole));
+            return View(ViewNames.Index, await roles.ToListAsync());
         }
 
         // GET: Roles/Create
@@ -155,20 +149,32 @@ namespace TraffkPortal.Controllers
             return View(new RoleDetailViewModel(applicationRole));
         }
 
-        // POST: Roles/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
-        {
-            var applicationRole = await Rdb.Roles.SingleOrDefaultAsync(m => m.Id == id);
-            Rdb.Roles.Remove(applicationRole);
-            await Rdb.SaveChangesAsync();
-            return RedirectToIndex();
-        }
 
         private bool ApplicationRoleExists(string id)
         {
             return Rdb.Roles.Any(e => e.Id == id);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete()
+        {
+            var ids = Request.BodyAsJsonObject<string[]>();
+            if (ids != null)
+            {
+                int numDeleted = 0;
+                foreach (var id in ids)
+                {
+                    var item = await Rdb.Roles.SingleOrDefaultAsync(m => m.Id == id);
+                    if (item == null) continue;
+                    ++numDeleted;
+                    Rdb.Roles.Remove(item);
+                }
+                if (numDeleted > 0)
+                {
+                    await Rdb.SaveChangesAsync();
+                }
+            }
+            return NoContent();
         }
     }
 }

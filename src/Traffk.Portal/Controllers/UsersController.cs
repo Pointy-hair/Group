@@ -295,33 +295,6 @@ namespace TraffkPortal.Controllers
             return View(model);
         }
 
-        // GET: Users/Delete/5
-        [ActionName(ActionNames.UserDelete)]
-        [Route("Users/{id}/Delete")]
-        public async Task<IActionResult> Delete(string id)
-        {
-            var user = await GetUserByIdAsync(id);
-            if (user == null) return NotFound();
-
-            var rolesById = await GetRolesById();
-            var p = await UserClaimsPrincipalFactory.CreateAsync(user);
-            var model = new UserModel(user, rolesById, await p.GetCanAccessProtectedHealthInformationAsync(AuthorizationService));
-            return View(model);
-        }
-
-        // POST: Users/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        [Route("Users/{id}/DeleteConfirmed")]
-        public async Task<IActionResult> DeleteConfirmed(string id)
-        {
-            var user = await GetUserByIdAsync(id);
-            if (user==null) return NotFound();
-            Rdb.Users.Remove(user);
-            await Rdb.SaveChangesAsync();
-            return RedirectToIndex();
-        }
-
         private bool ApplicationUserExists(string id)
         {
             return Rdb.Users.Any(z => z.Id == id && z.TenantId == this.TenantId);
@@ -331,6 +304,28 @@ namespace TraffkPortal.Controllers
         {
             if (string.IsNullOrEmpty(id)) return null;
             return await Rdb.Users.Include(z=>z.Roles).FirstOrDefaultAsync(z => z.Id == id && z.TenantId==this.TenantId);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete()
+        {
+            var ids = Request.BodyAsJsonObject<string[]>();
+            if (ids != null)
+            {
+                int numDeleted = 0;
+                foreach (var id in ids)
+                {
+                    var item = await GetUserByIdAsync(id);
+                    if (item == null) continue;
+                    ++numDeleted;
+                    Rdb.Users.Remove(item);
+                }
+                if (numDeleted > 0)
+                {
+                    await Rdb.SaveChangesAsync();
+                }
+            }
+            return NoContent();
         }
     }
 }

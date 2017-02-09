@@ -10,7 +10,9 @@
 @section pageActionItems
 {
     <li><a asp-action="@ActionNames.UserCreate">Create</a></li>
-    <li class="multiselect-action"><a href="#" class="popup-confirm_open">Delete</a></li>
+    <li class="multiselect-action">
+        <a onclick="deleteUsers()" class="confirm-on-click" confirmMessageFunction="deleteSelectedItemsMessage()">Delete</a>
+    </li>
 }
 @section listingTable
 {
@@ -42,8 +44,8 @@
         <tbody>
             @foreach (var item in Model)
             {
-                <tr>
-                    <td><input type="checkbox" class="item-selector" /></td>
+                <tr contextId="@item.Id" >
+                    <td><input type="checkbox" class="item-selector" contextId="@item.Id" /></td>
                     <td>
                         <a asp-action="@ActionNames.UserBackground" asp-route-id="@item.Id">
                             @Html.DisplayFor(modelItem => item.UserName)
@@ -70,7 +72,7 @@
                             @if (Current.User.Id != item.Id)
                             {
                                 <li>
-                                    <a asp-action="@ActionNames.UserDelete" asp-route-id="@item.Id" onclick="deleteUser(this, @item.Id)" class="confirm-on-click" confirmHeading="Are you sure?" confirmMessage="Are you sure you want to delete @item.UserName?">Delete</a>
+                                    <a onclick="deleteUser('@item.Id')" class="confirm-on-click" confirmMessage="Are you sure you want to delete user: @item.UserName?">Delete</a>
                                 </li>
                             }
                         </ul>

@@ -1,6 +1,18 @@
 @model TraffkPortal.Models.RoleModels.RoleDetailViewModel
+@using static TraffkPortal.Controllers.RolesController
 @{
-    ViewData.SetTitleAndHeading("Edit Role", Model.RoleName);
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
+    ViewData.HasBreadcrumbItems(true);
+    ViewData.HasPageMenuItems(true);
+    ViewData.HasPageActions(true);
+    ViewData.SetTitleAndHeading(Model.RoleName);
+}
+@section breadcrumbItems
+{
+    <li><a asp-controller="@Name" asp-action="@ActionNames.Index" id="IndexLink">Roles</a> <span>></span> </li>
+}
+@section pageActionItems {
+    <li><a onclick="deleteRole('@Model.Id', function(){location=$('#IndexLink').attr('href');})" class="confirm-on-click" confirmHeading="Are you sure?" confirmMessage="Are you sure you want to delete role: @Model.RoleName?">Delete</a></li>
 }
 
 <form asp-action="Edit">
@@ -23,16 +35,8 @@
         </div>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+                <input type="submit" value="Save" class="btn btn-default btn-primary btn-large" />
             </div>
         </div>
     </div>
 </form>
-
-<div>
-    <button type="button" class="btn btn-default" asp-action="Index">Back to List</button>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}

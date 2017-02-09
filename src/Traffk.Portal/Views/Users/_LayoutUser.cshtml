@@ -16,7 +16,7 @@
 }
 @section breadcrumbItems
 {
-    <li><a asp-controller="@Name" asp-action="@ActionNames.UserList">Users</a> <span>></span> </li>
+    <li><a asp-controller="@Name" asp-action="@ActionNames.UserList" id="IndexLink">Users</a> <span>></span> </li>
 }
 @section pageNavItems {
     <li><a asp-action="@ActionNames.UserBackground" asp-route-id="@entityId" class="@(pageKey==PageKeys.UserBackground?"current-section":"")">Basics</a></li>

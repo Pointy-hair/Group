@@ -330,5 +330,11 @@ namespace TraffkPortal
                 page.IgnoreSection(sectionName);
             }
         }
+
+        public static T BodyAsJsonObject<T>(this HttpRequest req)
+        {
+            var json = req.Body.ReadToEnd();
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json);
+        }
     }
 }

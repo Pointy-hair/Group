@@ -45,8 +45,8 @@ else
         @if (showPageActions)
         {
             <div class="col-sm-2 text-right">
-                <button class="btn btn-large btn-white toggle" data-toggle="actions-filter3">Actions</button>
-                <ul id="actions-filter3" class="floated-filter list-right">
+                <button class="btn btn-large btn-white toggle" data-toggle="actions-container-page" onclick="updateSelectionMessaging()">Actions</button>
+                <ul class="floated-filter list-right actions-container" id="actions-container-page">
                     @RenderSection("pageActionItems", false)
                 </ul>
             </div>
@@ -87,8 +87,8 @@ else
                 <div class="col-sm-2 text-right">
                     @if (showListingActions)
                     {
-                        <button class="btn btn-large btn-white toggle" data-toggle="actions-filter3">Actions</button>
-                        <ul id="actions-filter3" class="floated-filter list-right">
+                        <button class="btn btn-large btn-white toggle" data-toggle="actions-container-list" onclick="updateSelectionMessaging()">Actions</button>
+                        <ul class="floated-filter list-right actions-container" id="actions-container-list">
                             @RenderSection("pageActionItems", required: false)
                         </ul>
                     }
@@ -126,15 +126,40 @@ else if (isContentPage)
     @if (isListingPage)
     {
         <script>
+            function deleteRowsWithContextIds(contextIds, contextIdAttrName)
+            {
+                if (contextIdAttrName == null) {
+                    contextIdAttrName = "contextId";
+                }
+                for (n in contextIds)
+                {
+                    var contextId = contextIds[n];
+                    $("tr[" + contextIdAttrName + "='" + contextId + "']").remove();
+                }
+            }
+            function getSelectionContextIds(contextIdAttrName)
+            {
+                if (contextIdAttrName == null) {
+                    contextIdAttrName = "contextId";
+                }
+                var ids = [];
+                var boxes = document.querySelectorAll('input[type="checkbox"].item-selector:checked');
+                for (var n = 0; n < boxes.length; ++n)
+                {
+                    var box = boxes[n];
+                    ids[ids.length] = $(box).attr(contextIdAttrName);
+                }
+                return ids;
+            }
             var hasSelectableItems = document.querySelectorAll('input[type="checkbox"].item-selector').length > 0;
             $("#all-items-selector").click(function () {
                 $('input[type="checkbox"].item-selector').prop('checked', this.checked);
-                UpdateSelectionMessaging();
+                updateSelectionMessaging();
             });
             $('input[type=checkbox].item-selector').click(function () {
-                UpdateSelectionMessaging();
+                updateSelectionMessaging();
             });
-            function UpdateSelectionMessaging()
+            function updateSelectionMessaging()
             {
                 var numberOfCheckedBoxes = document.querySelectorAll('input[type="checkbox"].item-selector:checked').length;
                 $(".item-selected-status").addClass("hidden");
@@ -148,12 +173,29 @@ else if (isContentPage)
                     $("#selectedItemCount").text(numberOfCheckedBoxes);
                     $("#multipleItemsSelected").removeClass("hidden");
                 }
-                //alert("numberOfCheckedBoxes: " + numberOfCheckedBoxes);
-                if (numberOfCheckedBoxes > 1) {
-                    $("ul.floated-filter.list-right li:not(.multiselect-action)").hide();
-                } else {
-                    $("ul.floated-filter.list-right li:not(.multiselect-action)").show();
+                //alert("updateSelectionMessaging.numberOfCheckedBoxes: " + numberOfCheckedBoxes);
+                if (numberOfCheckedBoxes == 0) {
+                    $(".actions-container li.multiselect-action").hide();
                 }
+                else {
+                    $(".actions-container li.multiselect-action").show();
+                }
+                if (numberOfCheckedBoxes > 0) {
+                    $(".actions-container li:not(.multiselect-action)").hide();
+                }
+                else {
+                    $(".actions-container li:not(.multiselect-action)").show();
+                }
+                return true;
+            }
+            function deleteSelectedItemsMessage(itemType) {
+                var ids = getSelectionContextIds();
+                var cnt = ids.length;
+                if (itemType == null)
+                {
+                    itemType = "items";
+                }
+                return "Are you sure you want to delete these " + cnt + " selected "+itemType+"?"
             }
         </script>
     }

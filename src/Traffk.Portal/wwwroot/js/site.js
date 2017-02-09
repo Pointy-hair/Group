@@ -230,8 +230,18 @@ $(document).ready(function () {
         var oldEvents = this.onclick;
         this.onclick = null;
         $(this).click(function (event) {
-            var heading = $(this).attr("confirmHeading");
-            var message = $(this).attr("confirmMessage");
+            var j = $(this);
+            var heading = j.attr("confirmHeading");
+            if (heading == null)
+            {
+                heading = "Are you sure?";
+            }
+            var message = j.attr("confirmMessage");
+            var messageFn = j.attr("confirmMessageFunction");
+            if (messageFn != null)
+            {
+                message = eval(messageFn)
+            }
             if (!confirm(message)) {
                 event.preventDefault();
                 event.stopImmediatePropagation();
@@ -244,6 +254,8 @@ $(document).ready(function () {
         }
     });
 });
+
+// AJAX helpers vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 
 function removeCreativeAttachment(el, creativeId, assetKey) {
     var url = "Creatives/" + creativeId + "/DeleteAttachment?assetKey=" + assetKey;
@@ -265,3 +277,75 @@ function removeCreativeAttachment(el, creativeId, assetKey) {
         }
     });
 }
+
+function callAjaxFunction(url, data, verb, onSuccess, onError)
+{
+    $.ajax({
+        url: url,
+        dataType: "json",
+        type: verb,
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify(data),
+        async: true,
+        processData: false,
+        cache: false,
+        success: function (data) {
+            if (onSuccess != null) {
+                onSuccess();
+            }
+            else {
+                alert("success");
+            }
+        },
+        error: function (xhr) {
+            if (onError != null) {
+                onError();
+            }
+            else {
+                alert("error:\n" + JSON.stringify(xhr));
+            }
+        }
+    });
+}
+
+function callAjaxDelete(url, data, onSuccess, onError)
+{
+    return callAjaxFunction(url, data, "DELETE", onSuccess, onError);
+}
+
+function deleteByIds(url, ids, onSuccess) {
+    if (ids == null) {
+        ids = getSelectionContextIds();
+    }
+    alert('deleteByIds("' + url + '", ' + ids + ')');
+    callAjaxDelete(url, ids, function () {
+        if (onSuccess == null) {
+            deleteRowsWithContextIds(ids);
+            updateSelectionMessaging();
+        }
+        else {
+            onSuccess(ids);
+        }
+    });
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    return false;
+}
+
+function deleteRole(roleId, onSuccess) {
+    deleteRoles([roleId], onSuccess);
+}
+
+function deleteRoles(ids, onSuccess) {
+    return deleteByIds("/roles/delete", ids, onSuccess);
+}
+
+function deleteUser(userId, onSuccess) {
+    deleteRoles([userId], onSuccess);
+}
+
+function deleteUsers(ids, onSuccess) {
+    return deleteByIds("/users/delete", ids, onSuccess);
+}
+
+// AJAX helpers ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
