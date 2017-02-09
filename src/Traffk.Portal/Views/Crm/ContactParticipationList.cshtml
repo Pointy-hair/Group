@@ -11,12 +11,6 @@
     <thead>
         <tr>
             <th>
-                @Html.SortableHeaderFor(z => z.program_type)
-            </th>
-            <th>
-                @Html.SortableHeaderFor(z => z.program_code)
-            </th>
-            <th>
                 @Html.SortableHeaderFor(z => z.program_name)
             </th>
             <th>
@@ -36,13 +30,7 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.program_type)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.program_code)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.program_name)
+                    <a asp-action="@ActionNames.Health.Participation" asp-route-id="@ViewContext.GetRouteValue()" asp-route-recordId="@item.dw_record_id">@item.program_name</a>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.program_status)
@@ -52,9 +40,6 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.program_end_date)
-                </td>
-                <td>
-                    <a asp-action="@ActionNames.Health.Participation" asp-route-id="@ViewContext.GetRouteValue()" asp-route-recordId="@item.dw_record_id">Details</a>
                 </td>
             </tr>
         }

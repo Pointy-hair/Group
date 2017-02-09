@@ -13,9 +13,23 @@
                 @Html.SortableHeaderFor(z => z.svc_filled_date)
             </th>
             <th>
+                @Html.SortableHeaderFor(z => z.svc_ndc_desc)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.svc_rx_class_desc)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.rev_coinsurance_amt)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.rev_copay_amt)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.rev_deductible_amt)
+            </th>
+            <th>
                 @Html.SortableHeaderFor(z => z.rev_paid_amt)
             </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -23,13 +37,25 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.svc_filled_date)
+                    <a asp-action="@ActionNames.Health.Pharmacy" asp-route-id="@ViewContext.GetRouteValue()" asp-route-pharmacyItemId="@item.rev_transaction_num">@item.svc_filled_date</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.svc_ndc_desc)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.svc_rx_class_desc)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.rev_coinsurance_amt)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.rev_copay_amt)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.rev_deductible_amt)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.rev_paid_amt)
-                </td>
-                <td>
-                    <a asp-action="@ActionNames.Health.Pharmacy" asp-route-id="@ViewContext.GetRouteValue()" asp-route-pharmacyItemId="@item.rev_transaction_num">Details</a>
                 </td>
             </tr>
         }

@@ -10,9 +10,6 @@
     <thead>
         <tr>
             <th>
-                @Html.SortableHeaderFor(z => z.score_type)
-            </th>
-            <th>
                 @Html.SortableHeaderFor(z => z.score_start_date)
             </th>
             <th>
@@ -29,9 +26,6 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.score_type)
-                </td>
-                <td>
                     @Html.DisplayFor(modelItem => item.score_start_date)
                 </td>
                 <td>
@@ -40,9 +34,9 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.total_score)
                 </td>
-                <td>
-                    <a asp-action="@ActionNames.Health.HistoricalScore" asp-route-id="@ViewContext.GetRouteValue()" asp-route-recordId="@item.dw_record_id">Details</a>
-                </td>
+                @*<td>
+                    <a asp-action="@ActionNames.Health.HistoricalScore" asp-route-id="@ViewContext.GetRouteValue()" asp-route-recordId="@item.dw_record_id">@item.total_score</a>
+                </td>*@
             </tr>
         }
     </tbody>

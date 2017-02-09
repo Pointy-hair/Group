@@ -13,16 +13,25 @@
                 @Html.SortableHeaderFor(z => z.mbr_id)
             </th>
             <th>
-                @Html.SortableHeaderFor(z => z.mbr_gender)
+                @Html.SortableHeaderFor(z => z.mbr_first_name)
             </th>
             <th>
-                @Html.SortableHeaderFor(z => z.mbr_dob)
+                @Html.SortableHeaderFor(z => z.mbr_last_name)
             </th>
             <th>
-                @Html.SortableHeaderFor(z => z.ins_med_eff_date)
+                @Html.SortableHeaderFor(z => z.mbr_current_status)
             </th>
             <th>
-                @Html.SortableHeaderFor(z => z.ins_med_term_date)
+                @Html.SortableHeaderFor(z => z.mbr_relationship_desc)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.mbr_phone)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.ins_emp_group_name)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.mbr_state)
             </th>
         </tr>
     </thead>
@@ -34,16 +43,25 @@
                     <a asp-action="@ActionNames.Health.Eligibility" asp-route-id="@ViewContext.GetRouteValue()">@item.mbr_id</a>
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.mbr_gender)
+                    @Html.DisplayFor(modelItem => item.mbr_first_name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.mbr_dob)
+                    @Html.DisplayFor(modelItem => item.mbr_last_name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ins_med_eff_date)
+                    @Html.DisplayFor(modelItem => item.mbr_current_status)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ins_med_term_date)
+                    @Html.DisplayFor(modelItem => item.mbr_relationship_desc)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.mbr_phone)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ins_emp_group_name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.mbr_state)
                 </td>
             </tr>
         }

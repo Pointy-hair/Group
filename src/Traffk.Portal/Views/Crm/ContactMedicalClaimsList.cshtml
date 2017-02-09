@@ -11,33 +11,26 @@
     <thead>
         <tr>
             <th>
-                @Html.SortableHeaderFor(z => z.rev_claim_id)
+                @Html.SortableHeaderFor(z => z.svc_pos_desc)
+            </th>
+            @*<th>
+                @Html.SortableHeaderFor(z => z.prv_in_network_flag)
+            </th>*@
+            <th>
+                @Html.SortableHeaderFor(z => z.svc_diag_1_desc)
             </th>
             <th>
-                @Html.SortableHeaderFor(z => z.mbr_id)
+                @Html.SortableHeaderFor(z => z.rev_allowed_amt)
             </th>
             <th>
-                @Html.SortableHeaderFor(z => z.mbr_gender)
+                @Html.SortableHeaderFor(z => z.rev_coinsurance_amt)
             </th>
             <th>
-                @Html.SortableHeaderFor(z => z.mbr_dob)
+                @Html.SortableHeaderFor(z => z.rev_copay_amt)
             </th>
             <th>
-                @Html.SortableHeaderFor(z => z.svc_pos_code)
+                @Html.SortableHeaderFor(z => z.rev_paid_amt)
             </th>
-            <th>
-                @Html.SortableHeaderFor(z => z.svc_diag_1_code)
-            </th>
-            <th>
-                @Html.SortableHeaderFor(z => z.svc_procedure_code)
-            </th>
-            <th>
-                @Html.SortableHeaderFor(z => z.svc_service_frm_date)
-            </th>
-            <th>
-                @Html.SortableHeaderFor(z => z.svc_service_frm_date)
-            </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -45,31 +38,25 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.svc_service_frm_date)
+                    <a asp-action="@ActionNames.Health.MedicalClaim" asp-route-id="@ViewContext.GetRouteValue()" asp-route-medicalClaimId="@item.rev_claim_id">item.svc_pos_desc</a>
+                </td>
+                @*<td>
+                    @Html.DisplayFor(modelItem => item.prv_in_network_flag)
+                </td>*@
+                <td>
+                    @Html.DisplayFor(modelItem => item.svc_diag_1_desc)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.svc_service_to_date)
+                    @Html.DisplayFor(modelItem => item.rev_allowed_amt)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.rev_claim_line_id)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.rev_claim_type)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.prv_type_desc)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.prv_first_name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.rev_billed_amt)
+                    @Html.DisplayFor(modelItem => item.rev_coinsurance_amt)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.rev_copay_amt)
                 </td>
                 <td>
-                    <a asp-action="@ActionNames.Health.MedicalClaim" asp-route-id="@ViewContext.GetRouteValue()" asp-route-medicalClaimId="@item.rev_claim_id">Details</a>
+                    @Html.DisplayFor(modelItem => item.rev_paid_amt)
                 </td>
             </tr>
         }
