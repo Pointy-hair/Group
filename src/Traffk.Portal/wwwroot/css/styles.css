@@ -551,7 +551,7 @@ ul ul ul {
   box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.3);
   border-radius: 0;
   border: none;
-  min-height: 200px;
+  min-height: 400px;
 }
 .panel.small-padding {
   overflow: auto;    

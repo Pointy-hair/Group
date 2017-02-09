@@ -1,7 +1,7 @@
 ﻿function initViz(workbook, view) {
     var trustedTicket = getCookie("trustedTicket");
     var containerDiv = document.getElementById("reportContainer"),
-        url = "http://traffk-dev-tab.eastus.cloudapp.azure.com/trusted/" + trustedTicket + "/views/" + workbook + "/" + view,
+        url = "http://tableau-dev.traffk.com/trusted/" + trustedTicket + "/views/" + workbook + "/" + view,
         options = {
             hideTabs: true,
             onFirstInteractive: function () {
