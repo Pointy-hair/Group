@@ -15,7 +15,6 @@ namespace Traffk.Bal.Email
     {
         public static class HeaderNames
         {
-            public const string UserIdHeader = "x-Traffk-UserId";
             public const string ContactIdHeader = "x-Traffk-ContactId";
             public const string TopicHeader = "x-Traffk-Topic";
             public const string CampaignHeader = "x-Traffk-Campaign";
@@ -24,8 +23,6 @@ namespace Traffk.Bal.Email
 
         #region Header Helpers
 
-        public static string UserId(this MimeMessage m) => m.Headers[HeaderNames.UserIdHeader];
-        public static void UserId(this MimeMessage m, string userId) => m.Headers[HeaderNames.UserIdHeader] = userId;
         public static Int64? ContactId(this MimeMessage m) => Parse.ParseNullableInt64(m.Headers[HeaderNames.ContactIdHeader]);
         public static void ContactId(this MimeMessage m, Int64 contactId) => m.Headers[HeaderNames.ContactIdHeader] = contactId.ToString();
         public static string Topic(this MimeMessage m) => m.Headers[HeaderNames.TopicHeader];
@@ -52,13 +49,13 @@ namespace Traffk.Bal.Email
 
             var filler = new CommunicationsFiller(finder, reusableValues);
 
-            if (u != null)
-            {
-                message.UserId(u.Id);
-            }
             if (c != null)
             {
                 message.ContactId(c.ContactId);
+            }
+            else if (u != null)
+            {
+                message.ContactId(u.ContactId);
             }
 
 

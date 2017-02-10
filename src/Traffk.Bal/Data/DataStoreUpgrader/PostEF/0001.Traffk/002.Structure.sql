@@ -154,8 +154,11 @@ exec db.ColumnPropertySet 'Contacts', 'CreatedAtUtc', 'Datetime when this entity
 exec db.ColumnPropertySet 'Contacts', 'ContactRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
 exec db.ColumnPropertySet 'Contacts', 'ContactRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
 
+exec db.ColumnPropertySet 'Contacts', 'ContactType', 'ContactTypes', @propertyName='EnumType'
+
 exec db.ColumnPropertySet 'Contacts', 'PrimaryEmail', 'EmailAddress', @propertyName='DataAnnotation'
 
+exec db.TablePropertySet  'Contacts', 'User', @propertyName='InheritanceClass:UserContact,UserContacts'
 exec db.TablePropertySet  'Contacts', 'Carrier', @propertyName='InheritanceClass:Carrier,Carriers'
 exec db.TablePropertySet  'Contacts', 'Organization', @propertyName='InheritanceClass:Organization,Organizations'
 exec db.TablePropertySet  'Contacts', 'Person', @propertyName='InheritanceClass:Person,People'
@@ -173,6 +176,84 @@ exec db.ColumnPropertySet 'Contacts', 'CarrierId', '1', @propertyName='Inheritan
 exec db.ColumnPropertySet 'Contacts', 'SocialSecurityNumber', '1', @propertyName='InheritanceField:Person'
 exec db.ColumnPropertySet 'Contacts', 'ForeignId', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
 
+GO
+
+alter table AspNetUsers add ContactId bigint null references Contacts(ContactId);
+
+GO
+
+CREATE TRIGGER AspNetUsersCreateRelatedContact
+ON dbo.AspNetUsers
+INSTEAD OF INSERT
+AS
+BEGIN
+
+	declare @contactId bigint
+
+	select top(10) * from contacts
+
+	create table #ids
+	(
+		ContactId bigint not null,
+		ForeignId nvarchar(50) not null
+	)
+
+	insert into Contacts
+	(TenantId, ContactType, PrimaryEmail, ForeignId, FullName)
+	OUTPUT inserted.ContactId, inserted.ForeignId into #ids  
+	select TenantId, 'User', Email, left(Id, 50), Username
+	from inserted i
+	where i.ContactId is null
+
+	insert into AspnetUsers
+	(
+		AccessFailedCount
+		,ConcurrencyStamp
+		,Email
+		,EmailConfirmed
+		,LockoutEnabled
+		,LockoutEnd
+		,NormalizedEmail
+		,NormalizedUserName
+		,PasswordHash
+		,PhoneNumber
+		,PhoneNumberConfirmed
+		,SecurityStamp
+		,TwoFactorEnabled
+		,UserName
+		,TenantId
+		,UserSettings
+		,CreatedAtUtc
+		,UserRowStatus
+		,ContactId	
+	)
+	select
+		i.AccessFailedCount
+		,i.ConcurrencyStamp
+		,i.Email
+		,i.EmailConfirmed
+		,i.LockoutEnabled
+		,i.LockoutEnd
+		,i.NormalizedEmail
+		,i.NormalizedUserName
+		,i.PasswordHash
+		,i.PhoneNumber
+		,i.PhoneNumberConfirmed
+		,i.SecurityStamp
+		,i.TwoFactorEnabled
+		,i.UserName
+		,i.TenantId
+		,i.UserSettings
+		,i.CreatedAtUtc
+		,i.UserRowStatus
+		,coalesce(ids.ContactId, i.ContactId)	
+	from
+		inserted i
+			left join
+		#ids ids
+			on left(i.Id,50)=ids.ForeignId
+
+END
 
 GO
 
@@ -233,76 +314,6 @@ exec db.ColumnPropertySet 'Applications', 'ApplicationType', 'ApplicationTypes',
 
 GO
 
---kill me
-create table Templates
-(
-	TemplateId int not null identity primary key,
-	TenantId int not null references Tenants(TenantId) on delete cascade,
-	CreatedAtUtc datetime not null default (getutcdate()),
-	TemplateName dbo.developername null,
-	ModelType dbo.DeveloperName NULL,
-	TemplateEngineType dbo.developername not null,
-	IsLayout bit not null default(0),
-	Code nvarchar(max)
-)
-
-GO
-
-create unique index UX_Templates_Name on Templates (TenantId, TemplateName) where TemplateName is not null
-
-GO
-
-exec db.TablePropertySet  'Templates', '1', @propertyName='AddToDbContext'
-exec db.TablePropertySet  'Templates', '1', @propertyName='GeneratePoco'
-exec db.TablePropertySet  'Templates', 'ITraffkTenanted', @propertyName='Implements'
-exec db.ColumnPropertySet 'Templates', 'CreatedAtUtc', 'Datetime when this entity was created.'
-
-GO
-
---kill me
-create table MessageTemplates
-(
-	MessageTemplateId int not null identity primary key,
-	TenantId int not null references Tenants(TenantId) on delete cascade,
-	CreatedAtUtc datetime not null default (getutcdate()),
-	MessageTemplateTitle dbo.Title not null,
-	SubjectTemplateId int null references Templates(TemplateId),
-	HtmlBodyTemplateId int null references Templates(TemplateId),
-	TextBodyTemplateId int null references Templates(TemplateId)
-)
-
-GO
-
-exec db.TablePropertySet  'MessageTemplates', '1', @propertyName='AddToDbContext'
-exec db.TablePropertySet  'MessageTemplates', '1', @propertyName='GeneratePoco'
-exec db.TablePropertySet  'MessageTemplates', 'ITraffkTenanted', @propertyName='Implements'
-exec db.ColumnPropertySet 'MessageTemplates', 'CreatedAtUtc', 'Datetime when this entity was created.'
-
-GO
-
---kill me
-create table SystemCommunications
-(
-	SystemCommunicationId int not null identity primary key,
-	TenantId int not null references Tenants(TenantId),
-	ApplicationId int null references Applications(ApplicationId),
-	CommunicationPurpose dbo.developername not null,
-	CommunicationMedium dbo.developername not null,
-	MessageTemplateId int not null references MessageTemplates(MessageTemplateId)
-)
-
-GO
-
-create unique index UX_SystemCommunications on SystemCommunications(TenantId, ApplicationId, CommunicationPurpose, CommunicationMedium)
-
-GO
-
-exec db.TablePropertySet  'SystemCommunications', '1', @propertyName='AddToDbContext'
-exec db.TablePropertySet  'SystemCommunications', '1', @propertyName='GeneratePoco'
-exec db.TablePropertySet  'SystemCommunications', 'ITraffkTenanted', @propertyName='Implements'
-
-GO
-
 exec db.TablePropertySet  'AspNetRoles', 'ApplicationRole', @propertyName='ClassName'
 exec db.TablePropertySet  'AspNetRoleClaims', 'RoleClaim', @propertyName='ClassName'
 exec db.TablePropertySet  'AspNetUserClaims', 'UserClaim', @propertyName='ClassName'
@@ -310,36 +321,6 @@ exec db.TablePropertySet  'AspNetUserLogins', 'UserLogin', @propertyName='ClassN
 exec db.TablePropertySet  'AspNetUserRoles', 'ApplicationUserRole', @propertyName='ClassName'
 exec db.TablePropertySet  'AspNetUsers', 'ApplicationUser', @propertyName='ClassName'
 exec db.TablePropertySet  'AspNetUserTokens', 'UserToken', @propertyName='ClassName'
-
-GO
-
---kill me
-create table CommunicationBlasts
-(
-	CommunicationBlastId int not null identity primary key,
-	ParentCommunicationBlastId int references CommunicationBlasts(CommunicationBlastId),
-	TenantId int not null references Tenants(TenantId),
-	CommunicationBlastRowStatus dbo.RowStatus not null default '1',
-	CreatedAtUtc datetime not null default (getutcdate()),
-	JobId int references Jobs(JobId),
-	CommunicationBlastTitle dbo.Title not null,
-	CommunicationMedium dbo.DeveloperName not null,
-	TopicName dbo.Title,
-	CampaignName dbo.Title,
-	MessageTemplateId int not null references MessageTemplates(MessageTemplateId),
-	CommunicationBlastSettings dbo.JsonObject
---	Audience...
-)
-
-GO
-
-exec db.TablePropertySet  'CommunicationBlasts', '1', @propertyName='AddToDbContext'
-exec db.TablePropertySet  'CommunicationBlasts', '1', @propertyName='GeneratePoco'
-exec db.TablePropertySet  'CommunicationBlasts', 'ITraffkTenanted', @propertyName='Implements'
-exec db.ColumnPropertySet 'CommunicationBlasts', 'CreatedAtUtc', 'Datetime when this entity was created.'
-exec db.ColumnPropertySet 'CommunicationBlasts', 'CommunicationBlastSettings', 'Bal.Settings.CommunicationSettings', @propertyName='JsonSettingsClass'
-exec db.ColumnPropertySet 'CommunicationBlasts', 'CommunicationBlastRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
-exec db.ColumnPropertySet 'CommunicationBlasts', 'CommunicationBlastRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
 
 GO
 
@@ -537,7 +518,6 @@ create table CommunicationPieces
 	CommunicationPieceUid uniqueidentifier not null,
 	CommunicationBlastId int not null references CommunicationBlasts(CommunicationBlastId),
 	ContactId bigint null references Contacts(ContactId),
-	UserId dbo.AspNetId null references AspNetUsers(Id),
 	Data dbo.JsonObject
 )
 

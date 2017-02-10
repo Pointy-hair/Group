@@ -12,8 +12,8 @@ create table NationalDrugCode.Labelers
 GO
 
 exec db.TablePropertySet  'Labelers', 'IDontCreate', @propertyName='Implements', @tableSchema='NationalDrugCode'
-exec db.TablePropertySet  'Labelers', '1', @propertyName='AddToDbContext', @tableSchema='NationalDrugCode'
-exec db.TablePropertySet  'Labelers', '1', @propertyName='GeneratePoco', @tableSchema='NationalDrugCode'
+exec db.TablePropertySet  'Labelers', '0', @propertyName='AddToDbContext', @tableSchema='NationalDrugCode'
+exec db.TablePropertySet  'Labelers', '0', @propertyName='GeneratePoco', @tableSchema='NationalDrugCode'
 
 GO
 

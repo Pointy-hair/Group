@@ -26,7 +26,7 @@
           <SSIS:Property SSIS:Name="CreatorComputerName">BACKTABLE</SSIS:Property>
           <SSIS:Property SSIS:Name="Description">
           </SSIS:Property>
-          <SSIS:Property SSIS:Name="PasswordVerifier" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAL/67uR0WEUWm7+lh31qR9QAAAAACAAAAAAAQZgAAAAEAACAAAAC2k/X9W8q1tFEicrUU//y51mQUVV+DlqIiHnas8VQAowAAAAAOgAAAAAIAACAAAABFOE2Jdv1YF/IfZvjTqO5CBkey+wKAPbONj/cyJDdi8pAAAACdkox6M8fwvNHnCKJwAFakgMNifIir6kiGqbgYTxiFMjFTQuxVI8d7Nm/LIAznbO+9SF3CBfTz86dCixOR4p0Ulob8dwPMBDimK7VSD4s7vtwnorYONZwC/pfOMeSa5VtCZ2hwM+J8dyAgt49pgmGGDayuflObO27b/OZAANaAMEAGIy76vMYYlIK7AB9LZA1AAAAAIclfPgirk9RStjj8CjUrmrIX5rl7WbzmFKrj1qEvz5gLt62aAguCJTxxid06WFIinIxTgYTgEQx/Qjt8MLe7Hw==</SSIS:Property>
+          <SSIS:Property SSIS:Name="PasswordVerifier" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAkEOnv00+2EyaABZnHklzIwAAAAACAAAAAAAQZgAAAAEAACAAAADwJJm6Q/1CBD7kqXCYwsGYTcs2J0uiC/fsbmafK9zi/AAAAAAOgAAAAAIAACAAAACZOGOMv6MASN3ev/4G5UmwdIwaMXhJqS41qEIL9Knr9pAAAABPuxypJ4+mL9FxSu2OpLQJ0TbRXjSbqNnIJ0L/8KOrdj8vztjcDDOUYEUA/7lmsS/b6seToxJ23j7cLAB2P15xo3hidxeA2lcO/y/nFrlb4bKqM6seG87oTtXvKOI4fO+Uk5fQq7j7ZY3PE1bSbhz+cLOCSiHZlUv0jqfgowF6ytsoevhjlnPsC+F+L8i7YlVAAAAAeemwPnukuoLoFp11cl3/7WuFA1UAanjhLlS30jYFFOz7+KQsbbIUyF85vVses6ACZgJE4bFs0Xxjy9rGQRSlvA==</SSIS:Property>
           <SSIS:Property SSIS:Name="FormatVersion">1</SSIS:Property>
         </SSIS:Properties>
         <SSIS:Packages>
@@ -49,7 +49,7 @@
                 <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                 <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                 <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
-                <SSIS:Property SSIS:Name="Value">Data Source=traffkrdb-dev.database.windows.net;User ID=EtlGuy;Initial Catalog=TraffkHip2;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;</SSIS:Property>
+                <SSIS:Property SSIS:Name="Value">Data Source=traffkrdb-dev.database.windows.net;User ID=EtlGuy;Initial Catalog=TraffkHip2tenant1;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;</SSIS:Property>
                 <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
               </SSIS:Properties>
             </SSIS:Parameter>
@@ -64,7 +64,7 @@
                 <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                 <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                 <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
-                <SSIS:Property SSIS:Name="Value">TraffkHip2</SSIS:Property>
+                <SSIS:Property SSIS:Name="Value">TraffkHip2tenant1</SSIS:Property>
                 <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
               </SSIS:Properties>
             </SSIS:Parameter>
@@ -135,10 +135,10 @@
                 <SSIS:Property SSIS:Name="Name">Deerwalk</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMajor">1</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMinor">0</SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionBuild">297</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionBuild">299</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionComments">
                 </SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionGUID">{6F939995-4B04-4A26-80BF-0DD1DEB2454F}</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionGUID">{D427199B-796A-479E-A3FC-B5D9E859C833}</SSIS:Property>
                 <SSIS:Property SSIS:Name="PackageFormatVersion">8</SSIS:Property>
                 <SSIS:Property SSIS:Name="Description">
                 </SSIS:Property>
@@ -167,10 +167,10 @@
                 <SSIS:Property SSIS:Name="Name">NationalDrugCode</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMajor">1</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMinor">0</SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionBuild">38</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionBuild">40</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionComments">
                 </SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionGUID">{53EAEA6A-A57E-4970-8D5F-DBFE788ADE83}</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionGUID">{93DCE745-60A0-4064-8C9A-5A1BDEC05A8F}</SSIS:Property>
                 <SSIS:Property SSIS:Name="PackageFormatVersion">8</SSIS:Property>
                 <SSIS:Property SSIS:Name="Description">
                 </SSIS:Property>

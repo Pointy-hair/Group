@@ -5,10 +5,10 @@
   DTS:CreationName="OLEDB">
   <DTS:ObjectData>
     <DTS:ConnectionManager
-      DTS:ConnectionString="Data Source=traffkrdb-dev.database.windows.net;User ID=EtlGuy;Initial Catalog=TraffkHip2;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;">
+      DTS:ConnectionString="Data Source=traffkrdb-dev.database.windows.net;User ID=EtlGuy;Initial Catalog=TraffkHip2tenant1;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;">
       <DTS:Password
         DTS:Name="Password"
-        Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAL/67uR0WEUWm7+lh31qR9QAAAAACAAAAAAAQZgAAAAEAACAAAABMU1i/2ELioJxlC+vgCUxMVCuKpzFMMmMaXQPrMK8zVAAAAAAOgAAAAAIAACAAAABKobrf2XikpuTADA9ctHS6hqV13EB/+7lnWvaw1JXLHYAAAABh3HNTg+9ZU27Mg6EGkksu1r7p+n7ml/Z9hmM7IAtOsXCgkjtKdyO1Inwe9+D4Ch3Rw75JC5rO7RWJ09HDN7hYLpU/AO8ovOiGeO693J4AoQVpMkGvabZqQF0tGegbiv1hK3f2cF4B668xr+dXyWlrk6xWh/MTlNBKMrXqYRWJckAAAABiCU+d0sLiibiH/bPUBxHIuwXKzL3gBvMCmgX/xdXQM8I3uN2Fg0Y39os3OOcBUp9IUJSSl9nEbT9Ka6aHwKgj</DTS:Password>
+        Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAkEOnv00+2EyaABZnHklzIwAAAAACAAAAAAAQZgAAAAEAACAAAACBM5rTNDpw8k2s8cYtSkeb/3ylXN+SVW3IUTgo/zrbUgAAAAAOgAAAAAIAACAAAADMTCm8sMu5QP1O01a4kDDvT+O7Oh1LliDI6GbPsBLr/4AAAAAQN1jDvsnplFcFTHFxGKRYPMxLyIlC6gprog54B0k5SdT8s57m9HkkZTZCsur6UtY1YQhw7QoLwENffhNe0W7Ji4NWVH3HqCRyIXC9imvPwFyehQbBghBM69LyCn3cLgcP53myekr/XCWb/iInXJmoK+KycrITa94LEXDYu8b35UAAAACh/p4xUVlZ9K9ALzROsMecQyLMSqeeFWw5QkzX7MxtJrjj2DIhuGXTU2Hs+aQztNtgioxZ3L4c9hjbb9zWpXS4</DTS:Password>
     </DTS:ConnectionManager>
   </DTS:ObjectData>
 </DTS:ConnectionManager>

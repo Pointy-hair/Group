@@ -109,8 +109,7 @@ namespace Traffk.Bal.Email
                 {
                     CommunicationBlast = blast,
                     CommunicationPieceUid = Guid.NewGuid(),
-                    ContactId = m.ContactId(),
-                    UserId = m.UserId(),                
+                    ContactId = m.ContactId()
                 };
                 piece.Data.DeliveryEndpoint = m.To[0].ToString();
                 piecesByMessageId[m.MessageId] = piece;

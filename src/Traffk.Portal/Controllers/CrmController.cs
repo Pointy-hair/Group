@@ -176,21 +176,7 @@ namespace TraffkPortal.Controllers
         [Route("Contacts/Create/{contactTypeTemplate}")]
         public IActionResult Create(string contactTypeTemplate)
         {
-            Contact contact;
-            switch (contactTypeTemplate)
-            {
-                case Contact.ContactTypes.Person:
-                case null:
-                case "":
-                    contact = new Person();
-                    break;
-                case Contact.ContactTypes.Organization:
-                    contact = new Organization();
-                    break;
-                default:
-                    throw new UnexpectedSwitchValueException(contactTypeTemplate);
-            }
-//            var contact = new Contact { ContactType = contactType };
+            var contact = Contact.Create(Parse.ParseEnum<ContactTypes>(contactTypeTemplate));
             return View(nameof(ContactBackground), new ContactModel(contact));
         }
 
@@ -307,7 +293,7 @@ namespace TraffkPortal.Controllers
             var model = new ContactModel(contact);
             if (contact.ContactId == 0)
             {
-                ViewData.SetTitleAndHeading($"Create {model.Contact.ContactType.RightOf("/", true)}");
+                ViewData.SetTitleAndHeading($"Create {model.Contact.ContactType}");
             }
             preView?.Invoke(model);
             await SetViewBagEmailTemplateItems();

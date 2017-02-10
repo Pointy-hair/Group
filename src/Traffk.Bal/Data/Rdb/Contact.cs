@@ -8,31 +8,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Traffk.Bal.Data.Rdb
 {
+    public enum ContactTypes
+    {
+        User,
+        Provider,
+        Person,
+        Carrier,
+        Organization,
+    }
+
     public partial class Contact
     {
-        public static class ContactTypes
-        {
-            public const string Person = "Person";
-            public const string Organization = "Organization";
-
-            public static readonly ICollection<string> All = new List<string> { Person, Organization }.AsReadOnly();
-
-            public static bool IsPerson(string contactType)
-            {
-                return contactType == Person || contactType.StartsWith(Person + "/");
-            }
-            public static bool IsOrganization(string contactType)
-            {
-                return contactType == Organization || contactType.StartsWith(Organization + "/");
-            }
-
-            public static void RequiresPredefined(string contactType, string argName)
-            {
-                Requires.SetMembership(All, nameof(ContactTypes) + "." + nameof(All), contactType, argName);
-            }
-        }
-
-        public static Contact Create(string contactType)
+        public static Contact Create(ContactTypes contactType)
         {
             switch (contactType)
             {
@@ -40,6 +27,12 @@ namespace Traffk.Bal.Data.Rdb
                     return new Organization();
                 case ContactTypes.Person:
                     return new Person();
+                case ContactTypes.User:
+                    return new UserContact();
+                case ContactTypes.Carrier:
+                    return new Carrier();
+                case ContactTypes.Provider:
+                    return new Provider();
                 default:
                     throw new UnexpectedSwitchValueException(contactType);
             }

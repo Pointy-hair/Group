@@ -23,6 +23,14 @@ namespace Traffk.Bal.Data.Rdb
         [IgnoreDataMember]
         public Tenant Tenant { get; set; }
 
+        [Column("ContactId")]
+        public long ContactId { get; set; }
+
+        [ForeignKey("ContactId")]
+        [JsonIgnore]
+        [IgnoreDataMember]
+        public Contact Contact { get; set; }
+
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreatedAtUtc { get; set; }
 
