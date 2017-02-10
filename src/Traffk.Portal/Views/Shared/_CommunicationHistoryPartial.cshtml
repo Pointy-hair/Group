@@ -1,0 +1,52 @@
+﻿@model IEnumerable<CommunicationHistory>
+<table class="table table-bordered table-hover table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.SortableHeaderFor(z => z.CommunicationPieceId)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.CreatedAt)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.FirstVisitAt)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.CreativeTitle)
+            </th>
+            <th>
+                @Html.DisplayNameFor(z => z.TopicName)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.CampaignName)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CommunicationPieceId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstVisitAt)
+                </td>
+                <td>
+                    <a asp-controller="@CommunicationsController.Name" asp-action="@CommunicationsController.ActionNames.CreativeDetails" asp-route-id="@item.CreativeId">
+                        @Html.DisplayFor(modelItem => item.CreativeTitle)
+                    </a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TopicName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CampaignName)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using Traffk.Bal;
 using Traffk.Bal.Data.Rdb;
 
@@ -8,19 +9,25 @@ namespace TraffkPortal.Models.TenantModels
     {
         [Required]
         [DataType(DataType.EmailAddress)]
+        [DisplayName("Sender Address")]
         public string SenderAddress { get; set; }
 
         [Required]
+        [DisplayName("Sender Name")]
         public string SenderName { get; set; }
 
         [Required]
+        [DisplayName("Login Domain")]
         public string LoginDomain { get; set; }
 
         [Required]
+        [DisplayName("Tenant Name")]
         public string TenantName { get; set; }
 
+        [DisplayName("Requires Email Validation")]
         public bool RequiresEmailAccountValidation { get; set; }
 
+        [DisplayName("Requires 2 Factor Authentication")]
         public bool RequiresTwoFactorAuthentication { get; set; }
 
         public string ProtectedHealthInformationViewableByEmailAddressHostnamesString { get; set; }
@@ -37,8 +44,10 @@ namespace TraffkPortal.Models.TenantModels
             }
         }
 
+        [DisplayName("Parent ID")]
         public int? ParentTenantId { get; set; }
 
+        [DisplayName("Tenant ID")]
         public int TenantId { get; set; }
 
         public TenantSettingsModel() { }

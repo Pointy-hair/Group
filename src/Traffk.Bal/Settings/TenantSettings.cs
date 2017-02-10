@@ -1,5 +1,6 @@
 ﻿using RevolutionaryStuff.Core;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Runtime.Serialization;
@@ -89,21 +90,27 @@ namespace Traffk.Bal.Settings
                 PasswordUnallowedWordList = other.PasswordUnallowedWordList?.Xerox();
             }
 
+            [DisplayName("Requires a Digit")]
             [DataMember(Name = "RequireDigit")]
             public bool RequireDigit { get; set; } = true;
 
+            [DisplayName("Minimum Length")]
             [DataMember(Name = "RequiredLength")]
             public int RequiredLength { get; set; } = 8;
 
+            [DisplayName("Requires a Lowercase Character")]
             [DataMember(Name = "RequireLowercase")]
             public bool RequireLowercase { get; set; } = true;
 
+            [DisplayName("Requires Special Character")]
             [DataMember(Name = "RequireNonAlphanumeric")]
             public bool RequireNonAlphanumeric { get; set; } = true;
 
+            [DisplayName("Requires an Uppercase Character")]
             [DataMember(Name = "RequireUppercase")]
             public bool RequireUppercase { get; set; } = true;
 
+            [DisplayName("Use the default prohibited password list")]
             [DataMember(Name = "UseDefaultProhibitedPasswordList")]
             public bool UseDefaultProhibitedPasswordList { get; set; } = true;
 
@@ -111,6 +118,7 @@ namespace Traffk.Bal.Settings
             public string[] ProhibitedPasswords { get; set; }
 
             [DataMember(Name = "UseDefaultPasswordUnallowedWordList")]
+            [DisplayName("Use Default Password Unallowed Term List")]
             public bool UseDefaultPasswordUnallowedWordList { get; set; } = true;
 
             [DataMember(Name = "PasswordUnallowedWordList")]
