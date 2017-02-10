@@ -6,7 +6,7 @@
 @section Scripts {
     <script type="text/javascript">
         $(document).ready(function () {
-            initViz("Superstore", "Overview");
+            initViz("4ClaimsCost_Test", "4ClaimsCostwithForecast");
         });
     </script>
 }
@@ -16,7 +16,7 @@
         <h1>@R.HomeMessage</h1>
     </div>
 </div>
-<div class="row">
+@*<div class="row">
     <div class="col-sm-6">
         <div class="panel small-padding">
             <h2>Recently Viewed Reports</h2>
@@ -27,7 +27,7 @@
             <h2>New Messages</h2>
         </div>
     </div>
-</div>
+</div>*@
 <div class="row">
     @{ await Html.RenderPartialAsync("_ReportFramePartial"); }
 </div>
@@ -35,6 +35,28 @@
     <div class="col-xs-12">
         <div class="panel medium-padding">
             <h2>News and Blog</h2>
+
+            <ul>
+                <li><a href="http://finance.yahoo.com/news/life-health-insurance-global-market-200800077.html" target="_blank">Life & Health Insurance Global Market Briefing 2017</a></li>
+                <li>
+                    <a href="http://www.einnews.com/pr_news/364394747/big-data-market-embracing-data-to-transform-healthcare-by-key-trends-technologies-and-increase-in-business-performance" target="_blank">
+                        Big Data Market: Embracing Data to Transform Healthcare By Key Trends,Technologies,and Increase in Business Performance
+                    </a>
+                </li>
+                <li>
+                    <a href="http://healthstandards.com/blog/2017/01/12/2017-growth-areas/ " target="_blank">
+                        Four growth areas for digital health in 2017                    
+                    </a>
+                </li>
+                <li>
+                    <a href="http://www.informationweek.com/big-data/why-healthcare-is-behind-the-data-curve/a/d-id/1327817" target="_blank">
+                        Why Healthcare is Behind the Data Curve                    </a>
+                </li>
+                <li>
+                    <a href="http://revcycleintelligence.com/news/predictive-analytics-top-healthcare-supply-chain-priorities" target="_blank">
+                        Predictive Analytics Top Healthcare Supply Chain Priorities                    </a>
+                </li>
+            </ul>
         </div>
     </div>
 </div>

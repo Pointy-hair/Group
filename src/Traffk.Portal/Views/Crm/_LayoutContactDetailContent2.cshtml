@@ -47,19 +47,16 @@
         });
 
         jQuery('#personal-page-nav-notes').click(function () {
-            debugger;
             showTabContent(this);
             setActiveTab(this);
         });
 
         var setActiveTab = function (elementName) {
-            debugger;
             jQuery('#personal-page-nav li a').removeClass('active');
             jQuery(elementName).addClass('active');
         }
         
         var showTabContent = function (elementName) {
-            debugger;
             if (jQuery(elementName).attr('data-section') !== undefined) {
                 var id = jQuery(elementName).attr('data-section');
                 jQuery('.personal-section:not(#' + id + ')').hide(300);

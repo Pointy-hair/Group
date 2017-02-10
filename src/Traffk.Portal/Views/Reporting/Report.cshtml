@@ -21,15 +21,19 @@
         <div class="col-sm-2 text-right">
             <button class="btn btn-large btn-white toggle" data-toggle="actions-filter3">Actions</button>
             <ul id="actions-filter3" class="floated-filter list-right">
-                <li><a href="#">Export</a></li>
+                <li><a href="#" class="popup-export-report_open">Export</a></li>
                 <li><a href="#">Send Message</a></li>
-                <li><a href="#">Create Note</a></li>
-                <li><a href="#" class="popup-confirm_open">Delete</a></li>
+                @*<li><a href="#">Create Note</a></li>
+                <li><a href="#" class="popup-confirm_open">Delete</a></li>*@
             </ul>
         </div>
     </div>
 
 </div>
+
+@await Html.PartialAsync("_ExportReportPartial")
+
+
 @{ await Html.RenderPartialAsync("_ReportFramePartial"); }
 @section Scripts {
     <script type="text/javascript">

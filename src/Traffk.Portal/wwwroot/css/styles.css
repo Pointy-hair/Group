@@ -436,7 +436,7 @@ a, a:hover {
   line-height: 60px;
 }
 .navbar {
-  background: url('http://i.imgur.com/MgMOfxe.png') no-repeat top center; 
+  background: url(/images/traffk/TraffkLogo.png) no-repeat center; 
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.176);
 }
 #primary-subnav .dropdown-menu {
@@ -551,7 +551,7 @@ ul ul ul {
   box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.3);
   border-radius: 0;
   border: none;
-  min-height: 400px;
+  min-height: 100%;
 }
 .panel.small-padding {
   overflow: auto;    
@@ -1020,6 +1020,9 @@ h3 {
   left: 15px;
 }
 
+#step-2 {
+    display: none;
+}
 
 @media (min-width: 1200px) {
         .container {

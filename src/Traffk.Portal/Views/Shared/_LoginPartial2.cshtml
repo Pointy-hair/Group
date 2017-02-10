@@ -5,7 +5,7 @@
 @if (SignInManager.IsSignedIn(User))
 {
     <ul class="nav navbar-right top-nav">
-        <li>
+        @*<li>
             <a href="#" id="nav-help" class="popup-help_open">
                 <i class="fa fa-2x fa-question-circle-o" aria-hidden="true"></i>
             </a>
@@ -90,7 +90,7 @@
                     <a href="#">View All</a>
                 </li>
             </ul>
-        </li>
+        </li>*@
         <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> @UserManager.GetUserName(User)<b class="caret"></b></a>
             <form asp-area="" asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm">

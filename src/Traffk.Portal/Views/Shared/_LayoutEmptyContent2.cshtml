@@ -81,45 +81,6 @@
 
 <body onload="setUI();">
 <div id="wrapper">
-    <!-- Modal -->
-    <div id="inactivityWarningModal" class="popup">
-        <a data-dismiss="modal" class="popup-help_close"><i class="fa fa-2x fa-times popup-close-btn"></i></a>
-        <div class="popup-content-container">
-            <h3>InactivityWarning</h3>
-            <p class="subheading">
-                You have been inactive too long. If you don't reactivate, you will be logged out in <span id="secondsTillLogout"></span> seconds.
-            </p>
-            @if (@R.SupportMessage.Value != null)
-            {
-
-            }
-            else
-            {
-                <p class="subheading">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-            }
-
-            <button type="button" class="btn btn-primary" onclick="idleReactivate()">Reactivate</button>
-        </div>
-    </div>
-
-    @*<div class="modal fade" tabindex="-1" role="dialog" id="inactivityWarningModal">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Inactivity Warning</h4>
-                </div>
-                <div class="modal-body">
-                    <p>
-                        You have been inactive too long. If you don't reactivate, you will be logged out in <span id="secondsTillLogout"></span> seconds.
-                    </p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="idleReactivate()">Reactivate</button>
-                </div>
-            </div>
-        </div>
-    </div>*@
 
     <!--Navbar-->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -237,7 +198,7 @@
                         }
                         else
                         {
-                            <img src="@R.LogoLink" alt="@Current.Tenant.TenantName logo" height="50" />
+                            <img src="@R.LogoLink" alt="@Current.Tenant.TenantName logo" id="client-logo" />
                         }
                     </li>
                 }
@@ -300,7 +261,18 @@
     <a href="#" id="back-to-top" title="Back to top"><i class="fa fa-arrow-up" aria-hidden="true"></i></a>
 
 <!-- popups -->
-    <div id="popup-confirm" class="popup">
+<div id="inactivityWarningModal" class="popup">
+    @*<a data-dismiss="modal" class="inactivityWarningModal_close" onclick="idleReactivate()"><i class="fa fa-2x fa-times popup-close-btn"></i></a>*@
+    <div class="popup-content-container">
+        <h3>Inactivity Warning</h3>
+        <p class="subheading">
+            You have been inactive too long. If you don't reactivate, you will be logged out in <span id="secondsTillLogout"></span> seconds.
+        </p>
+        <button type="button" class="btn btn-primary btn-large" onclick="idleReactivate()">Reactivate</button>
+    </div>
+</div>
+
+<div id="popup-confirm" class="popup">
         <a class="popup-confirm_close"><i class="fa fa-2x fa-times popup-close-btn"></i></a>
         <div class="popup-content-container">
             <p>Are you sure you want to delete <b>Laura Price?</b></p>
@@ -368,7 +340,7 @@
             <script src="~/js/dataVisualization.js" asp-append-version="true"></script>
             <script src="~/js/jquery.popupoverlay.js"></script>
         </environment>
-        <script>
+    <script>
             function setUI() {
                 jQuery('#primary-subnav .dropdown-menu').width(window.innerWidth + 20); /* offset by 20, has a -20px left margin */
                 jQuery('#primary-subnav .dropdown-menu .dropdown-submenu').width("auto"); /* offset by 20, has a -20px left margin */
@@ -380,7 +352,7 @@
                     focusdelay: 400,
                     outline: true
                 });
-                
+
                 setUI();
 
                 // id parent if using an img logo
@@ -495,6 +467,24 @@
                     }, 700);
                 });
             }
+
+        jQuery('.export-report-button').click(function () {
+            if (jQuery(this).attr('data-section') !== undefined) {
+                var id = jQuery(this).attr('data-section');
+                //jQuery('#export-report-step1').hide();
+                jQuery('.export-report-step:not(#' + id + ')').hide();
+                jQuery('#' + id).fadeIn(300);
+            }
+        });
+
+        //jQuery('#export-report-button-previous').click(function () {
+        //    if (jQuery(this).attr('data-section') !== undefined) {
+        //        var id = jQuery(this).attr('data-section');
+        //        jQuery('#export-report-step2').hide();
+        //        //jQuery('.export-report-step-container:not(#' + id + ')').hide(300);
+        //        jQuery('#' + id).fadeIn(300);
+        //    }
+        //});
 
         </script>
         <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>

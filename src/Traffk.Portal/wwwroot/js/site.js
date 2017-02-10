@@ -184,14 +184,16 @@ if (loggedInAtLoad=="true")
                         location = "/Account/InactivityLogOff";
                     }
                 }, 500);
-                $("#inactivityWarningModal").modal({show: true});
+                $("#inactivityWarningModal").popup('show');
+                //$("#inactivityWarningModal").modal({show: true});
             }
         }
         else if (timeLeftInterval!=null)
         {
-            debugAlert("FSDFADSFSDAF");
+            //debugAlert("FSDFADSFSDAF");
             //$("#t2").text("CLEAR");
-            $("#inactivityWarningModal").modal('hide');
+            //$("#inactivityWarningModal").modal('hide');
+            $("#inactivityWarningModal").popup('hide');
             window.clearInterval(timeLeftInterval);
             timeLeftInterval = null;
         }
@@ -201,7 +203,8 @@ if (loggedInAtLoad=="true")
 function idleReactivate() {
     window.clearInterval(timeLeftInterval);
     timeLeftInterval = getTimeTillAutoLogoff();
-    $("#inactivityWarningModal").modal('hide');
+    $("#inactivityWarningModal").popup('hide');
+    //$("#inactivityWarningModal").modal('hide');
     $.ajax({
         url: "/Account/KeepAlive",
         contentType: 'application/json; charset=utf-8',
