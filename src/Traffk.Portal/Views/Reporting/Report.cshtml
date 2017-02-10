@@ -5,37 +5,75 @@
 @using Traffk.Tableau.REST.Models
 @model Traffk.Tableau.REST.Models.SiteViewEmbeddableResource
 @{
-    ViewData.SetTitle(@Model.Name);
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
+    ViewData.SetTitleAndHeading(@Model.Name, "This is the report description.");
+    ViewData.HasBreadcrumbItems(true);
+    ViewData.HasPageActions(true);
+    ViewData.HasPageMenuItems(true);
 }
 
-<div class="row">
-    <div class="col-xs-12">
-        <ul class="breadcrumbs">
-            <li><a asp-controller="@ReportingController.Name" asp-action="Index">Reports</a> <span>></span> </li>
-            <li><a asp-controller="@ReportingController.Name" asp-action="Index" asp-fragment="@Model.WorkbookName">@Model.WorkbookName</a> <span>></span> </li>
-            <li>@Model.Name</li>
-        </ul>
-        <h1>@Model.Name</h1>
-        <p class="subheading">Report description would appear here.</p>
-        <div class="col-sm-10"></div>
-        <div class="col-sm-2 text-right">
-            <button class="btn btn-large btn-white toggle" data-toggle="actions-filter3">Actions</button>
-            <ul id="actions-filter3" class="floated-filter list-right">
-                <li><a href="#" class="popup-export-report_open">Export</a></li>
-                <li><a href="#">Send Message</a></li>
-                @*<li><a href="#">Create Note</a></li>
-                <li><a href="#" class="popup-confirm_open">Delete</a></li>*@
-            </ul>
-        </div>
+@section pageAlerts {
+    <div class="alert alert-info alert-dismissable" id="message-exported-alert" style="display: none">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <i class="fa fa-check" aria-hidden="true"></i> You exported report @Model.ViewName
     </div>
+    <div class="alert alert-info alert-dismissable" id="MessageSentAlert" style="display: none">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <i class="fa fa-check" aria-hidden="true"></i> Your message has been sent to 143 recipients.
+    </div>
+}
 
-</div>
+@section breadCrumbItems {
+    <li><a asp-controller="@ReportingController.Name" asp-action="Index">Reports</a> <span>></span> </li>
+<li><a asp-controller="@ReportingController.Name" asp-action="Index" asp-fragment="@Model.WorkbookName">@Model.WorkbookName</a> <span>></span> </li>
+}
 
-@await Html.PartialAsync("_ExportReportPartial")
+@section pageActionItems {
+    <li><a href="#" class="popup-export-report_open">Export</a></li>
+    <li><a href="#" class="popup-send-report-message_open">Send Message</a></li>
+}
 
 
-@{ await Html.RenderPartialAsync("_ReportFramePartial"); }
+@await Html.PartialAsync("_ExportReportPartial", @Model)
+@await Html.PartialAsync("_SendReportPartial", @Model)
+
+
+
+@{     await Html.RenderPartialAsync("_ReportFramePartial"); }
+
+
 @section Scripts {
+    <script>
+        jQuery('.export-report-button').click(function () {
+            if (jQuery(this).attr('data-section') !== undefined) {
+                var id = jQuery(this).attr('data-section');
+                jQuery('.export-report-step:not(#' + id + ')').hide();
+                jQuery('#' + id).fadeIn(300);
+            }
+        });
+
+        jQuery('.send-report-message-button').click(function () {
+            if (jQuery(this).attr('data-section') !== undefined) {
+                var id = jQuery(this).attr('data-section');
+                jQuery('.send-report-message-step:not(#' + id + ')').hide();
+                jQuery('#' + id).fadeIn(300);
+            }
+        });
+    </script>
+    
+    <script type="text/javascript">
+        function exportReport() {
+            $("#message-exported-alert").fadeIn(500).delay(4000).hide(500);
+            jQuery('.export-report-step:not(#export-report-step-1)').hide();
+        }
+
+        function sendReportMessage() {
+            $("#MessageSentAlert").fadeIn(500).delay(4000).hide(500);
+            jQuery('.send-report-message-step:not(#send-report-message-step-1)').hide();
+
+        }
+    </script>
+
     <script type="text/javascript">
         $(document).ready(function () {
             initViz("@Model.WorkbookName", "@Model.ViewName");

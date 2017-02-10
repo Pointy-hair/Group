@@ -1,43 +1,49 @@
-﻿<div id="popup-export-report" class="popup">
+﻿@model Traffk.Tableau.REST.Models.SiteViewEmbeddableResource
+
+<div id="popup-export-report" class="popup steps">
     <div class="popup-content-container">
         <a class="popup-export-report_close"><i class="fa fa-2x fa-times popup-close-btn"></i></a>
         <h3>Export Report</h3>
-        <div class="export-report-step" id="step-1">
+        <div class="export-report-step" id="export-report-step-1">
             <ul class="step-indicator">
-                <li class="active"><span class="step">1</span> <span class="step-description">Who will receive the report?</span></li>
+                <li class="active"><span class="step">1</span> <span class="step-description">Who else will receive the report?</span></li>
                 @*<li class="complete"><span class="step"><i class="fa fa-check" aria-hidden="true"></i></span></li>*@
                 <li class="active"><span class="step">2</span></li>
             </ul>
 
             <form role="form" class="inline-form">
                 <div class="form-row">
-                    @*<label>Recipient Email:</label>*@
+                    <label>Email Addresses (comma separated):</label>
                     <input class="form-control">
                 </div>
 
                 <ul class="step-buttons">
                     <li><a href="#" class="btn btn-large btn-grey">Previous</a></li>
-                    <li><a href="#" class="btn btn-primary btn-large export-report-button" data-section="step-2">Next</a></li>
+                    <li><a href="#" class="btn btn-primary btn-large export-report-button" data-section="export-report-step-2">Next</a></li>
                 </ul>
             </form>
         </div>
-        <div class="export-report-step" id="step-2">
+        <div class="export-report-step" id="export-report-step-2">
             <ul class="step-indicator">
                 <li class="complete"><span class="step"><i class="fa fa-check" aria-hidden="true"></i></span></li>
-                <li class="active"><span class="step">2</span> <span class="step-description">Email Subject</span></li>
+                <li class="active"><span class="step">2</span> <span class="step-description">How often?</span></li>
             </ul>
 
             <form role="form" class="inline-form">
                 <div class="form-row">
-                    @*<label>Email Subject:</label>*@
-                    <input class="form-control">
+                    <select>
+                        <option>Now, Just Once</option>
+                        <option>Weekly</option>
+                        <option>Monthly</option>
+                    </select>
                 </div>
 
                 <ul class="step-buttons">
-                    <li><a href="#" class="btn btn-primary btn-large export-report-button" data-section="step-1">Previous</a></li>
-                    <li><a href="#" class="btn btn-primary btn-large popup-export-report_close">Export</a></li>
+                    <li><a href="#" class="btn btn-primary btn-large export-report-button" data-section="export-report-step-1">Previous</a></li>
+                    <li><a href="#" class="btn btn-primary btn-large export-report-button popup-export-report_close" onclick="exportReport()" data-section="export-report-step-1">Export</a></li>
                 </ul>
             </form>
         </div>
     </div>
 </div>
+

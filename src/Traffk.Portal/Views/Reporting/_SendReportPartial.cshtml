@@ -1,0 +1,52 @@
+﻿@model Traffk.Tableau.REST.Models.SiteViewEmbeddableResource
+
+<div id="popup-send-report-message" class="popup steps">
+    <div class="popup-content-container">
+        <a class="popup-send-report-message_close"><i class="fa fa-2x fa-times popup-close-btn"></i></a>
+        <h3>Send Message To Group</h3>
+        <div class="send-report-message-step" id="send-report-message-step-1">
+            <ul class="step-indicator">
+                <li class="active"><span class="step">1</span> <span class="step-description">Create your message</span></li>
+                <li class="active"><span class="step">2</span></li>
+            </ul>
+
+            <form role="form" class="inline-form">
+                <div class="form-row">
+                    <label>To:</label>
+                    <input class="form-control" readonly="readonly" value="Selected Group (143 recipients)">
+                </div>
+                
+                <div class="form-row">
+                    <label>Subject:</label>
+                    <input class="form-control"/>
+                </div>
+
+                <ul class="step-buttons">
+                    <li><a href="#" class="btn btn-large btn-grey">Previous</a></li>
+                    <li><a href="#" class="btn btn-primary btn-large send-report-message-button" data-section="send-report-message-step-2">Next</a></li>
+                </ul>
+            </form>
+        </div>
+        <div class="send-report-message-step" id="send-report-message-step-2">
+            <ul class="step-indicator">
+                <li class="complete"><span class="step"><i class="fa fa-check" aria-hidden="true"></i></span></li>
+                <li class="active"><span class="step">2</span> <span class="step-description">When do you want it sent?</span></li>
+            </ul>
+
+            <form role="form" class="inline-form">
+                <div class="form-row">
+                    <select>
+                        <option>Now</option>
+                        <option>Gradually over the next week</option>
+                        <option>Gradually over the next month</option>
+                    </select>
+                </div>
+
+                <ul class="step-buttons">
+                    <li><a href="#" class="btn btn-primary btn-large send-report-message-button" data-section="send-report-message-step-1">Previous</a></li>
+                    <li><a href="#" class="btn btn-primary btn-large send-report-message-button popup-send-report-message_close" onclick="sendReportMessage()" data-section="send-report-message-step-1">Send</a></li>
+                </ul>
+            </form>
+        </div>
+    </div>
+</div>

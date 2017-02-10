@@ -1020,8 +1020,16 @@ h3 {
   left: 15px;
 }
 
-#step-2 {
+#export-report-step-2 {
     display: none;
+}
+
+#send-report-message-step-2 {
+    display: none;
+}
+
+.popup.steps {
+    width: auto;
 }
 
 @media (min-width: 1200px) {

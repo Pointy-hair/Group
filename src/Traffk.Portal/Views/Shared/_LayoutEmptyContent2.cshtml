@@ -210,20 +210,6 @@
     <!--Body Content-->
     <div id="page-wrapper">
         <div class="container body-content @(ViewData["BodyContainerClass"] as string)">
-            <!-- alert-->
-            <div class="row" style="display:none">
-                <div class="col-sm-12">
-                    <div class="alert alert-info alert-dismissable" id="MessageSentAlert" style="display: none">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                        <i class="fa fa-check" aria-hidden="true"></i> Message has been sent.
-                    </div>
-                    <div class="alert alert-info alert-dismissable" id="NoteCreatedAlert" style="display: none">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                        <i class="fa fa-check" aria-hidden="true"></i> Note was created.
-                    </div>
-                </div>
-            </div>
-            <!--end alert-->
 
             @RenderBody()
 
@@ -467,24 +453,6 @@
                     }, 700);
                 });
             }
-
-        jQuery('.export-report-button').click(function () {
-            if (jQuery(this).attr('data-section') !== undefined) {
-                var id = jQuery(this).attr('data-section');
-                //jQuery('#export-report-step1').hide();
-                jQuery('.export-report-step:not(#' + id + ')').hide();
-                jQuery('#' + id).fadeIn(300);
-            }
-        });
-
-        //jQuery('#export-report-button-previous').click(function () {
-        //    if (jQuery(this).attr('data-section') !== undefined) {
-        //        var id = jQuery(this).attr('data-section');
-        //        jQuery('#export-report-step2').hide();
-        //        //jQuery('.export-report-step-container:not(#' + id + ')').hide(300);
-        //        jQuery('#' + id).fadeIn(300);
-        //    }
-        //});
 
         </script>
         <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
