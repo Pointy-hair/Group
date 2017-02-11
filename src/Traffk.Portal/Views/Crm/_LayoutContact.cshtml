@@ -5,7 +5,7 @@
     var entityName = ViewData[ViewDataKeys.EntityTitle].ToString();
     var entityId = ViewData[ViewDataKeys.EntityId].ToString();
     var isNewEntity = string.IsNullOrEmpty(entityId);
-    var isPerson = Contact.ContactTypes.IsPerson(ViewData["ContactType"] as string);
+    var isPerson = ContactTypes.Person == (ContactTypes)ViewData["ContactType"];
     var contactEmailAddress = ViewData["ContactEmailAddress"] as string;
     if (isNewEntity)
     {

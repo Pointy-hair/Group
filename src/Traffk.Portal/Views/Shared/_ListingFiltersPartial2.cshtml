@@ -10,7 +10,11 @@
                 {
                     var filterTitle = filter.Title.RightOf("/", true);
                     var filterId = $"listingFilter_{filterSection.SectionName}_{filter.FieldName}_{filter.Value}";
-                    <li><a href="#">@filter.Value <span>@filter.Count</span></a></li>
+                    <li>
+                        <a href="#">
+                            <input style="display: inline" type="checkbox" value="@(filter.FieldName):@(filter.Value)" name="filters" id="@filterId" @if (filter.IsChecked) { <text> checked="checked" </text>   } onchange="location='@filter.OnSubmittedUrl'" />
+                            @filter.Value <span>@filter.Count</span></a>
+                    </li>
                 }
             </ul>
         </li>
