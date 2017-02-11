@@ -119,6 +119,10 @@ namespace TraffkPortal.Controllers
             ViewData["ContactName"] = contact.FullName;
             ViewData["ContactType"] = contact.ContactType;
             ViewData["ContactEmailAddress"] = contact.PrimaryEmail;
+            if (contact.ContactType == ContactTypes.Person)
+            {
+                ViewData["ContactGender"] = contact.AsPerson.Gender;
+            }
             SetHeroLayoutViewData(contact.ContactId, contact.FullName, pageKey, contact.ContactType);
         }
 

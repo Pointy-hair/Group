@@ -17,11 +17,7 @@ namespace Traffk.Tableau.Tests.REST
 
         public TableauRestServiceTests()
         {
-            var optionsMock = new Mock<IOptions<TableauSignInOptions>>();
-            Options = optionsMock.Object;
-            optionsMock.Setup(x => x.Value)
-                .Returns(new TableauSignInOptions("http://traffk-dev-tab.eastus.cloudapp.azure.com/#/projects",
-                    "Test", "TraffkTestTableau"));
+            Options = MockEnvironment.TableauSignInOptions().Object;
         }
 
         [TestClass]

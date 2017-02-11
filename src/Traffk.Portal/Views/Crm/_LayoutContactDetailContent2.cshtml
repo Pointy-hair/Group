@@ -2,10 +2,34 @@
     Layout = "~/Views/Crm/_LayoutContact2.cshtml";
     var filters = ViewBag.ListingFilters as ListingFilters;
     var hasFilters = filters != null;
+    string contactType = ViewData["ContactType"].ToString();
+    string profileImageBaseUrl = "/images/profile/";
+    string profileImage = "unidentified.jpg";
+    if (contactType == ContactTypes.Person.ToString())
+    {
+        var gender = ViewData["ContactGender"].ToString();
+        switch (gender.ToLower())
+        {
+            case "male":
+            case "female":
+                profileImage = $"{gender}.jpg";
+                break;
+            default:
+                break;
+        }
+    }
+    if (contactType == ContactTypes.Organization.ToString())
+    {
+        profileImage = "organization.jpg";
+    }
+    string profileUrl = profileImageBaseUrl + profileImage;
 }
 
 <div id="personal-edit-form-container" class="personal-section medium-padding">
-    <img class="mobile-block-centered" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Placeholder_no_text.svg/1024px-Placeholder_no_text.svg.png" id="personal-page-img" alt="" />
+    <img class="mobile-block-centered" 
+         src="@profileUrl" 
+         id="personal-page-img"
+         alt="" />
     <div col-sm-8>
         @RenderBody()
     </div>
@@ -22,7 +46,6 @@
 }
 <!--SPAish sections for CRM Contact-->
 @await Html.PartialAsync("_CreateNotePartial")
-@*@await Html.PartialAsync("_NotesPartial2", Model.Contact.ContactDetails.Notes, z => z.Contact.ContactDetails.Notes)*@
 
 @section Scripts {
     <script type="text/javascript">
@@ -55,7 +78,7 @@
             jQuery('#personal-page-nav li a').removeClass('active');
             jQuery(elementName).addClass('active');
         }
-        
+
         var showTabContent = function (elementName) {
             if (jQuery(elementName).attr('data-section') !== undefined) {
                 var id = jQuery(elementName).attr('data-section');
