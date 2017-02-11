@@ -153,26 +153,7 @@ namespace TraffkPortal.Controllers
 
         [Route("Contacts/Delete")]
         [HttpDelete]
-        public async Task<IActionResult> Delete()
-        {
-            var ids = Request.BodyAsJsonObject<string[]>();
-            if (ids != null)
-            {
-                int numDeleted = 0;
-                foreach (var id in ids)
-                {
-                    var item = await Rdb.Contacts.FindAsync(id);
-                    if (item == null) continue;
-                    ++numDeleted;
-                    Rdb.Contacts.Remove(item);
-                }
-                if (numDeleted > 0)
-                {
-                    await Rdb.SaveChangesAsync();
-                }
-            }
-            return NoContent();
-        }
+        public Task<IActionResult> Delete() => JsonDeleteFromRdbAsync<Contact, int>(Rdb.Contacts);
 
 
         [ActionName(ActionNames.ContactCreate)]

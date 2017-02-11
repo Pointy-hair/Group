@@ -9,6 +9,8 @@
     ViewData.HasPageActions(true);
     var canAccessPhi = await User.GetCanAccessProtectedHealthInformationAsync(AuthorizationService);
 }
+@await Html.PartialAsync("_ExportReportPartial", @Model)
+
 @section pageActionItems
 {
     <li class="multiselect-action">

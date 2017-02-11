@@ -1,8 +1,10 @@
 ﻿@using static TraffkPortal.Controllers.CrmController
 @model IEnumerable<Visit>
 @{
-    Layout = "~/Views/Crm/_LayoutContactListingContent2.cshtml";
+    Layout = "~/Views/Crm/_LayoutContact.cshtml";
+    ViewData.IsListingPage(true);
     ViewData.SetTitleAndHeading(CrmController.ViewNames.Health.VisitList.ToCrmHeading());
+    ViewData.HasPageMenuItems(false);
 
 }
 @section listingTable

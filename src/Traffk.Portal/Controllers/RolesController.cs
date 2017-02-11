@@ -132,23 +132,6 @@ namespace TraffkPortal.Controllers
             return View(m);
         }
 
-        // GET: Roles/Delete/5
-        public async Task<IActionResult> Delete(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var applicationRole = await Rdb.Roles.SingleOrDefaultAsync(m => m.Id == id);
-            if (applicationRole == null)
-            {
-                return NotFound();
-            }
-
-            return View(new RoleDetailViewModel(applicationRole));
-        }
-
 
         private bool ApplicationRoleExists(string id)
         {
@@ -156,26 +139,7 @@ namespace TraffkPortal.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete()
-        {
-            var ids = Request.BodyAsJsonObject<string[]>();
-            if (ids != null)
-            {
-                int numDeleted = 0;
-                foreach (var id in ids)
-                {
-                    var item = await Rdb.Roles.SingleOrDefaultAsync(m => m.Id == id);
-                    if (item == null) continue;
-                    ++numDeleted;
-                    Rdb.Roles.Remove(item);
-                }
-                if (numDeleted > 0)
-                {
-                    await Rdb.SaveChangesAsync();
-                }
-            }
-            return NoContent();
-        }
+        public Task<IActionResult> Delete() => JsonDeleteFromRdbAsync<ApplicationRole, string>(Rdb.Roles);
     }
 }
 

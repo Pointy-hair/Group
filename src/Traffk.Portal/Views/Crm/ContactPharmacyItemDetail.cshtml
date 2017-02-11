@@ -1,8 +1,7 @@
 ﻿@model Pharmacy
 @{
-    Layout = "~/Views/Crm/_LayoutContactDetailContent2.cshtml";
+    Layout = "~/Views/Crm/_LayoutContact.cshtml";
     ViewData.SetTitleAndHeading(CrmController.ViewNames.Health.Pharmacy.ToCrmHeading());
-
 }
 <dl class="dl-horizontal">
     @Html.DescriptionListElement(model => model.svc_filled_date)

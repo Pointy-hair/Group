@@ -866,6 +866,9 @@ h3 {
 .table {
   margin-bottom: 0;
 }
+.table-responsive {
+    overflow-x: hidden;
+}
 .table-controls {
   list-style-type: none;
   margin-bottom: 0;

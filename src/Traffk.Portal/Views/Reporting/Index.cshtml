@@ -4,32 +4,46 @@
 @using Traffk.Tableau.REST.Models
 @model TreeNode<Traffk.Tableau.REST.Models.SiteViewResource>
 @{
-    Layout = "~/Views/Shared/_LayoutReportListing2.cshtml";
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
     ViewData.SetTitleAndHeading("Reporting", "This is the reports subheading.");
+    ViewData.IsListingPage(true);
     var filters = ViewBag.ListingFilters as ListingFilters;
     var hasFilters = filters != null;
+    ViewData.HasPageActions(true);
 }
 
-<!-- Content: Reports -->
-@section listingFilters
-{
-    @await Html.PartialAsync("_ReportFiltersPartial2", filters)
+@section pageAlerts {
+<div class="alert alert-info alert-dismissable" id="message-exported-alert" style="display: none">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    <i class="fa fa-check" aria-hidden="true"></i> All reports have been exported.
+</div>}
 
+@section pageActionItems {
+    <li class="multiselect-action"><a href="#" class="popup-export-report_open">Export</a></li>
 }
+
 @section listingTable
 {
     @{ await Html.RenderPartialAsync("_TableauViewResourceTreeNodePartial2", Model.Children); }
-}
-@section listingActionButtons
-{
-    <button class="btn btn-large btn-white toggle" data-toggle="actions-filter">Actions</button>
-    <ul id="actions-filter" class="floated-filter list-right">
-        <li class="multiselect-action"><a href="#" class="popup-confirm_open">Export</a></li>
-        <li><a href="#">Delete</a></li>
-        <li><a href="#">View</a></li>
-    </ul>
+    @{await Html.RenderPartialAsync("_ExportReportPartial"); }
 }
 
-<!-- /end Content: Reports -->
+@section Scripts {
+    <script>
+        jQuery('.export-report-button').click(function () {
+            if (jQuery(this).attr('data-section') !== undefined) {
+                var id = jQuery(this).attr('data-section');
+                jQuery('.export-report-step:not(#' + id + ')').hide();
+                jQuery('#' + id).fadeIn(300);
+            }
+        });
+    </script>
 
+    <script type="text/javascript">
+        function exportReport() {
+            $("#message-exported-alert").fadeIn(500).delay(4000).hide(500);
+            jQuery('.export-report-step:not(#export-report-step-1)').hide();
+        }
+    </script>
+}
 

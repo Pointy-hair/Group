@@ -1,9 +1,6 @@
 ﻿@model Visit
-@*@{
-    @{ await Html.RenderPartialAsync("_PaginationPartial"); }
-}*@
 @{
-    Layout = "~/Views/Crm/_LayoutContactDetailContent2.cshtml";
+    Layout = "~/Views/Crm/_LayoutContact.cshtml";
     ViewData.SetTitleAndHeading(CrmController.ViewNames.Health.Visit.ToCrmHeading());
 }
 <dl class="dl-horizontal">

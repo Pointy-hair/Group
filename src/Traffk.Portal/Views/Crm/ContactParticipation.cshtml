@@ -1,8 +1,7 @@
 ﻿@model Participation
 @{
-    Layout = "~/Views/Crm/_LayoutContactDetailContent2.cshtml";
+    Layout = "~/Views/Crm/_LayoutContact.cshtml";
     ViewData.SetTitleAndHeading(CrmController.ViewNames.Health.Participation.ToCrmHeading());
-
 }
 <dl class="dl-horizontal">
     @Html.DescriptionListElement(model => model.program_type)

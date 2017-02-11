@@ -16,6 +16,7 @@ using RevolutionaryStuff.Core.Caching;
 using System.Diagnostics;
 using Serilog;
 using ILogger = Serilog.ILogger;
+using Traffk.Bal;
 
 namespace TraffkPortal.Controllers
 {
@@ -152,6 +153,29 @@ namespace TraffkPortal.Controllers
             ViewData[ViewDataKeys.EntityTitle] = entityTitle;
             ViewData[ViewDataKeys.EntityType] = entityType;
             ViewData[ViewDataKeys.PageKey] = pageKey;
+        }
+
+        protected async Task<IActionResult> JsonDeleteFromRdbAsync<TEntity, TId>(DbSet<TEntity> col) where TEntity : class
+        {
+            var ids = Request.BodyAsJsonObject<TId[]>();
+            if (ids != null)
+            {
+                int numDeleted = 0;
+                foreach (var id in ids)
+                {
+                    var item = await col.FindAsync(id);
+                    if (item == null) continue;
+                    var tt = item as ITraffkTenanted;
+                    if (tt != null && tt.TenantId != this.TenantId) continue;
+                    ++numDeleted;
+                    col.Remove(item);
+                }
+                if (numDeleted > 0)
+                {
+                    await Rdb.SaveChangesAsync();
+                }
+            }
+            return NoContent();
         }
 
         public override Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)

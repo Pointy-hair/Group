@@ -225,6 +225,10 @@ namespace TraffkPortal.Controllers
         [Route("/Reporting/PreviewImage/{workbookId}/{viewId}")]
         public FileContentResult PreviewImage(string workbookId, string viewId)
         {
+#if DEBUG
+            return null;
+#endif
+
             try
             {
                 return Cacher.FindOrCreate(workbookId + viewId, key =>

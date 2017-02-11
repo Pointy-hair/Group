@@ -305,9 +305,9 @@ namespace TraffkPortal.Controllers
         [Route("Creatives")]
         public IActionResult Creatives(string sortCol, string sortDir, int? page, int? pageSize)
         {
-            var items = from z in Rdb.Creatives
-                            where z.TenantId == TenantId && z.CreativeTitle != null
-                            select z;
+            var items = from cr in Rdb.Creatives
+                        where cr.TenantId == TenantId && cr.CreativeTitle != null && cr.CreativeCommunicationBlasts.Count==0
+                        select cr;
             items = ApplyBrowse(
                 items, sortCol ?? nameof(Creative.CreativeTitle), sortDir,
                 page, pageSize);
@@ -408,5 +408,9 @@ namespace TraffkPortal.Controllers
             await Rdb.SaveChangesAsync();
             return NoContent();
         }
+
+        [HttpDelete]
+        [Route("Creatives/delete")]
+        public Task<IActionResult> Delete() => JsonDeleteFromRdbAsync<Creative, int>(Rdb.Creatives);
     }
 }

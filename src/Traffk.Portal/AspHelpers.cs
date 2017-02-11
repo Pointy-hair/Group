@@ -249,7 +249,7 @@ namespace TraffkPortal
 
         public static bool GetOrSetThenGet(this ViewDataDictionary v, string key, bool? newVal = null)
         {
-            if (newVal.HasValue)
+            if (newVal.HasValue && !v.ContainsKey(key))
             {
                 v[key] = newVal.Value;
             }

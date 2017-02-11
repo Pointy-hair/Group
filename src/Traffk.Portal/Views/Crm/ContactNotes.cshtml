@@ -1,44 +1,12 @@
 @using TraffkPortal.Models.CrmModels
 @model ContactModel
 @{
-    Layout = "~/Views/Crm/_LayoutContactListingContent2.cshtml";
+    Layout = "~/Views/Crm/_LayoutContact.cshtml";
     ViewData.SetTitleAndHeading("Notes");
-    var entityId = ViewData[AspHelpers.ViewDataKeys.EntityId].ToString();
-
+    ViewData.IsListingPage(true);
+    ViewData.HasPageMenuItems(false);
 }
 @section listingTable
 {
     @await Html.PartialAsync("_NotesPartial2", Model.Contact.ContactDetails.Notes, z => z.Contact.ContactDetails.Notes)
-}
-
-@section Scripts {
-    <script type="text/javascript">
-        function sendDirectMessage() {
-            var postData = {
-                templateId: $("#MessageTemplate").val(),
-                subject: $("#DirectMessageSubject").val(),
-                body: $("#DirectMessageBody").val()
-            };
-            $.post(
-                "/Crm/Contacts/@entityId/SendDirectMessage",
-                postData,
-                function() {
-                    $("#MessageSentAlert").html("Message [" + postData.subject + "] was successfully sent.");
-                    $("#MessageSentAlert").show();
-                });
-        }
-
-        function createNote() {
-            var postData = {
-                content: $("#NewNoteContent").val(),
-                parentNoteId: null
-            };
-            $.post(
-                "/Crm/Contacts/@entityId/CreateNote",
-                postData,
-                function() {
-                    $("#note-created-alert").fadeIn(500).delay(4000).hide(500);
-                });
-        }
-    </script>
 }

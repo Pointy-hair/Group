@@ -5,7 +5,6 @@
 
 @foreach (var tn in Model)
 {
-    @*<h2>Budget Vs Actual (7)</h2>*@
     var tsv = tn.Data;
     if (tsv is SiteViewFolderResource && tn.HasChildren)
     {
@@ -25,9 +24,9 @@
         <div class="col-md-3 col-sm-4">
             <div class="mini-panel">
                 <div class="mini-panel-top">
-                    <input type="checkbox" name="radios" class="" id="radio1" />
+                    <input type="checkbox" name="radios" class="item-selector" id="radio1" />
                     <label for="radio1">
-                        <a style="cursor:pointer" asp-route-id="@view.Id" asp-route-anchorName="@urlName" asp-action="@ReportingController.ActionNames.Report"><img class="img-responsive portfolio-item" src="/Reporting/PreviewImage/@view.WorkbookId/@view.Id" alt=""></a>
+                        <a style="cursor:pointer" asp-route-id="@view.Id" asp-route-anchorName="@urlName" asp-action="@ReportingController.ActionNames.Report"><img class="img-responsive portfolio-item" src="" alt=""></a>
                     </label>
                 </div>
                 <div class="mini-panel-bottom">
