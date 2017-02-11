@@ -639,7 +639,8 @@ from
 
 GO
 
-exec db.TablePropertySet  'CommunicationHistory', '1', @propertyName='AddToDbContext'
-exec db.TablePropertySet  'CommunicationHistory', '1', @propertyName='GeneratePoco'
+exec db.ViewPropertySet  'CommunicationHistory', '1', @propertyName='AddToDbContext'
+exec db.ViewPropertySet  'CommunicationHistory', '1', @propertyName='GeneratePoco'
+exec db.ViewColumnPropertySet 'CommunicationHistory', 'CommunicationPieceId', 'Key', @propertyName='CustomAttribute'
 
 GO

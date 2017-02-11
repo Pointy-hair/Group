@@ -21,6 +21,8 @@ namespace RevolutionaryStuff.Core
             return !dt.IsWeekday();
         }
 
+        public static string ToRfc7231(this DateTime dt) => dt.ToUniversalTime().ToString("r");
+
         public static int Age(this DateTime dt)
         {
             DateTime now = DateTime.Now;

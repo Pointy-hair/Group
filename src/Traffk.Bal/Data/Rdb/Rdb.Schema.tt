@@ -368,7 +368,7 @@ foreach (var f in z.XPathSelectElements("Columns/Column"))
 			dataType = "long" + (isNullable ? "?" : "");
 			break;
 		case "char":
-			dataType = "char" + (isNullable ? "?" : "");
+			dataType = isNullable ? "string" : "char";
 			break;
 		case "bit":
 			dataType = "bool" + (isNullable ? "?" : "");

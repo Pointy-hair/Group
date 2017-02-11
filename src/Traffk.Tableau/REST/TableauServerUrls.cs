@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RevolutionaryStuff.Core.Caching;
+using System;
 using Traffk.Tableau.REST.RestRequests;
 
 namespace Traffk.Tableau.REST
@@ -71,6 +72,9 @@ namespace Traffk.Tableau.REST
 
         public readonly int PageSize = 1000;
         public const int UploadFileChunkSize = 8000000; //8MB
+
+        public readonly string CacheKey;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -80,6 +84,8 @@ namespace Traffk.Tableau.REST
         {
             //Cannonicalize the protocol
             protocol = protocol.ToLower();
+
+            CacheKey = Cache.CreateKey(protocol, serverName, siteUrlSegment, pageSize, serverVersion);
 
             this.ServerProtocol = protocol;
 

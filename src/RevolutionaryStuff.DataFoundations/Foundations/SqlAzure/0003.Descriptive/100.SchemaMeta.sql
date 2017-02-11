@@ -54,14 +54,30 @@ from
 						ref.TABLE_NAME '@refTable',
 						(
 							select 
-								p.PropertyName '@name',
-								p.PropertyValue '@value'
+								PropertyName '@name',
+								PropertyValue '@value'
 							from 
-								db.ColumnProperties p with (nolock)
-							where
-								p.SchemaName = c.table_schema and
-								p.TableName = c.table_name and
-								p.ColumnName = c.column_name
+							(
+								select p.PropertyName, p.PropertyValue
+								from
+									db.ColumnProperties p with (nolock)
+								where
+									p.SchemaName = c.table_schema and
+									p.TableName = c.table_name and
+									p.ColumnName = c.column_name and
+									t.table_type='BASE TABLE'
+
+								union all
+							
+								select p.PropertyName, p.PropertyValue
+								from
+									db.ViewColumnProperties p with (nolock)
+								where
+									p.SchemaName = c.table_schema and
+									p.ViewName = c.table_name and
+									p.ColumnName = c.column_name and
+									t.table_type='VIEW'
+							) a
 							for xml path ('Property'), type
 						) Properties
 					from 
@@ -199,7 +215,4 @@ from
 	for xml path('SchemaMeta'), type
 ) x(SchemaMeta)
 
-
 GO
-
-

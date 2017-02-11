@@ -1285,3 +1285,8 @@ h3 {
 	}
 }
 
+.report-preview-image-container {
+    height: 300px;
+    background-repeat: no-repeat;
+    background-position: center; 
+}

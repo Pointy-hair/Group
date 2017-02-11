@@ -66,6 +66,15 @@
         <Column name="PropertyValue" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" />
       </Columns>
     </Table>
+    <Table schema="db" name="ViewColumnProperties" tableType="VIEW">
+      <Columns>
+        <Column name="SchemaName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="ViewName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="ColumnName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyName" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyValue" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" />
+      </Columns>
+    </Table>
     <Table schema="db" name="ViewProperties" tableType="VIEW">
       <Columns>
         <Column name="SchemaName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
@@ -335,7 +344,11 @@
       <Columns>
         <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
         <Column name="ContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
-        <Column name="CommunicationPieceId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bigint" />
+        <Column name="CommunicationPieceId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bigint">
+          <Properties>
+            <Property name="CustomAttribute" value="Key" />
+          </Properties>
+        </Column>
         <Column name="CreatedAtUtc" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" />
         <Column name="FirstVisitAtUtc" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="datetime" />
         <Column name="CommunicationId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
@@ -6469,6 +6482,30 @@
         <Column name="Member_Relationship" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
       </Columns>
     </Table>
+    <Table schema="reporting" name="Contact_AVG_RISK" tableType="BASE TABLE">
+      <Columns>
+        <Column name="Contactid" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
+        <Column name="Relationship_to_Member" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="average_risk_score" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+        <Column name="program_type" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="program_name" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="mbr_city" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
+        <Column name="mbr_state" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
+        <Column name="mbr_zip" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
+      </Columns>
+    </Table>
+    <Table schema="reporting" name="contacts_by_avg_risk_score" tableType="BASE TABLE">
+      <Columns>
+        <Column name="Contactid" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
+        <Column name="Relationship_to_Member" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="average_risk_score" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+        <Column name="program_type" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="program_name" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="mbr_city" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
+        <Column name="mbr_state" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
+        <Column name="mbr_zip" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
+      </Columns>
+    </Table>
     <Table schema="reporting" name="Contacts_By_Primary_Diag" tableType="VIEW">
       <Columns>
         <Column name="ContactId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
@@ -6958,6 +6995,15 @@
         <Arg position="3" mode="IN" name="@tableSchema" sqlType="nvarchar" maxLen="128" />
         <Arg position="4" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
         <Arg position="5" mode="IN" name="@remove" sqlType="bit" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="ViewColumnPropertySet">
+      <Args>
+        <Arg position="1" mode="IN" name="@viewName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@columnName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="3" mode="IN" name="@propertyVal" sqlType="nvarchar" maxLen="3750" />
+        <Arg position="4" mode="IN" name="@viewSchema" sqlType="nvarchar" maxLen="128" />
+        <Arg position="5" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
       </Args>
     </Sproc>
     <Sproc schema="db" name="ViewPropertySet">
