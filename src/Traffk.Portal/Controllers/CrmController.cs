@@ -80,7 +80,6 @@ namespace TraffkPortal.Controllers
         public static class ActionNames
         {
             public const string ContactList = "Index";
-            public const string ContactDelete = "Delete";
             public const string ContactCreate = "Create";
             public const string ContactBackground = "ContactBackground";
             public const string ContactNotes = "ContactNotes";
@@ -148,29 +147,29 @@ namespace TraffkPortal.Controllers
             return View(contacts);
         }
 
-        // GET: Users/Delete/5
-        [Route("Contacts/{id}/Delete")]
-        public async Task<IActionResult> Delete(long id)
+        [Route("Contacts/Delete")]
+        [HttpDelete]
+        public async Task<IActionResult> Delete()
         {
-            var contact = await FindContactByIdAsync(id);
-            if (contact == null) return NotFound();
-
-            return View(contact);
+            var ids = Request.BodyAsJsonObject<string[]>();
+            if (ids != null)
+            {
+                int numDeleted = 0;
+                foreach (var id in ids)
+                {
+                    var item = await Rdb.Contacts.FindAsync(id);
+                    if (item == null) continue;
+                    ++numDeleted;
+                    Rdb.Contacts.Remove(item);
+                }
+                if (numDeleted > 0)
+                {
+                    await Rdb.SaveChangesAsync();
+                }
+            }
+            return NoContent();
         }
 
-        // POST: Users/Delete/5
-        [HttpPost]
-        [ActionName(ActionNames.ContactDelete)]
-        [ValidateAntiForgeryToken]
-        [Route("Contacts/{id}/Delete")]
-        public async Task<IActionResult> DeleteConfirmed(long id)
-        {
-            var contact = await FindContactByIdAsync(id);
-            if (contact == null) return NotFound();
-            Rdb.Contacts.Remove(contact);
-            await Rdb.SaveChangesAsync();
-            return RedirectToIndex();
-        }
 
         [ActionName(ActionNames.ContactCreate)]
         [Route("Contacts/Create/{contactTypeTemplate}")]
@@ -271,18 +270,18 @@ namespace TraffkPortal.Controllers
 
         [ActionName(ActionNames.ContactMessages)]
         [Route("Contacts/{id}/Messages")]
-        public Task<IActionResult> ContactMessages(long id, string sortCol, string sortDir, int? page, int? pageSize)
+        public async Task<IActionResult> ContactMessages(long id, string sortCol, string sortDir, int? page, int? pageSize)
         {
-            return RawContactRecordInfo(id, PageKeys.Messages, nameof(ContactMessages), m =>
-            {
-                var communicationLogs = Rdb.CommunicationPieces.
-                    Include(z=>z.CommunicationBlast).
-                    Include(z=>z.CommunicationBlast.Creative).
-                    Include(z=>z.CommunicationBlast.Communication).
-                    Where(z => z.TenantId == TenantId && z.ContactId == id);
-                communicationLogs = ApplyBrowse(communicationLogs, sortCol ?? nameof(CommunicationPiece.CreatedAtUtc), sortDir, page, pageSize);
-                m.CommunicationPieces = communicationLogs.ToArray();
-            });
+            var contact = await FindContactByIdAsync(id);
+            if (contact == null) return NotFound();
+            SetHeroLayoutViewData(contact, PageKeys.Messages);
+
+            var items = Rdb.CommunicationHistory.Where(z => z.ContactId == contact.ContactId && z.TenantId == this.TenantId);
+            items = ApplyBrowse(
+                items, sortCol ?? nameof(CommunicationPiece.CreatedAt), sortDir,
+                page, pageSize);
+
+            return View(items);
         }
 
         private async Task<IActionResult> RawContactRecordInfo(long id, PageKeys pageKey, string viewName, Action<ContactModel> preView = null)

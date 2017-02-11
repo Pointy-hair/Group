@@ -351,4 +351,12 @@ function deleteUsers(ids, onSuccess) {
     return deleteByIds("/users/delete", ids, onSuccess);
 }
 
+function deleteContact(contactId, onSuccess) {
+    deleteContacts([contactId], onSuccess);
+}
+
+function deleteContacts(ids, onSuccess) {
+    return deleteByIds("/crm/contacts/delete", ids, onSuccess);
+}
+
 // AJAX helpers ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

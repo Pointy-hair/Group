@@ -1,16 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using RevolutionaryStuff.Core;
-using RevolutionaryStuff.Core.ApplicationParts;
+using Traffk.Tableau.REST.RestRequests;
+using Microsoft.Extensions.Options;
 
 namespace Traffk.Tableau
 {
     public class TrustedTicketGetter : ITrustedTicketGetter
     {
+        private readonly TableauSignInOptions TableauSignInOptions;
+
+        public TrustedTicketGetter(IOptions<TableauSignInOptions> tableauSignInOptions)
+        {
+            Requires.NonNull(tableauSignInOptions, nameof(tableauSignInOptions));
+
+            TableauSignInOptions = tableauSignInOptions.Value;
+        }
+
         [DataContract]
         public class TrustedTicketResult
         {
@@ -23,7 +32,7 @@ namespace Traffk.Tableau
             var client = new HttpClient();
 
             //TODO: Change to use app settings
-            var uri = new Uri("http://traffk-dev-tab.eastus.cloudapp.azure.com/trusted/");
+            var uri = new Uri(TableauSignInOptions.TrustedUrl);
 
             var datas = new FormUrlEncodedContent(new[]
             {
