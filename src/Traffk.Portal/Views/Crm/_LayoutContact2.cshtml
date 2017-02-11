@@ -34,6 +34,7 @@
             break;
     }
 }
+
 @section navItems {
     <div class="row border-bottom">
         <div class="col-sm-10" id="filter-tags-container">
@@ -67,13 +68,19 @@
         <div class="col-sm-2 text-right">
             <button class="btn btn-large btn-white toggle" data-toggle="actions-filter3">Actions</button>
             <ul id="actions-filter3" class="floated-filter list-right">
-                <li><a id="create-note-button" data-section="create-note-container">Create Note</a></li>
-                <li><a href="#">Send Message</a></li>
+                <li><a id="create-note-button" class="popup-create-note_open" data-section="create-note-container">Create Note</a></li>
                 <li><a href="#" class="popup-confirm_open">Delete Person</a></li>
             </ul>
         </div>
     </div>
 }
+@*@section pageAlerts{
+    <div class="alert alert-info alert-dismissable" id="note-created-alert" style="display: none">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <i class="fa fa-check" aria-hidden="true"></i> Note was created
+    </div>
+}*@
+
 @section breadcrumbs {
     @RenderSection("breadcrumbs", required: true)
 }
@@ -145,8 +152,7 @@
             "/Crm/Contacts/@entityId/CreateNote",
             postData,
             function () {
-                $("#NoteCreatedAlert").show();
-                $("personal-page-nav-notes").click();
+                $("#note-created-alert").fadeIn(500).delay(4000).hide(500);
             });
         }
     </script>

@@ -34,6 +34,8 @@
         @RenderBody()
     </div>
 </div>
+@RenderSection("pageAlerts", required: false)
+
 @section breadcrumbs {
     <ul class="breadcrumbs">
         <li><a asp-controller="@CrmController.Name" asp-action="Index">CRM</a> <span>></span> </li>
@@ -44,8 +46,7 @@
         <li>@ViewData[ViewDataKeys.Heading]</li>
     </ul>
 }
-<!--SPAish sections for CRM Contact-->
-@await Html.PartialAsync("_CreateNotePartial")
+
 
 @section Scripts {
     <script type="text/javascript">
@@ -56,16 +57,6 @@
                 jQuery('#' + id).fadeIn(300);
                 jQuery('#personal-page-nav li a').removeClass('active');
                 jQuery(this).addClass('active');
-            }
-        });
-
-        jQuery('#create-note-button').click(function () {
-            if (jQuery(this).attr('data-section') !== undefined) {
-                var id = jQuery(this).attr('data-section');
-                jQuery('.personal-section:not(#' + id + ')').hide(300);
-                jQuery('#' + id).fadeIn(300);
-                jQuery('#personal-page-nav li a').removeClass('active');
-                jQuery('#personal-page-nav-notes').addClass('active');
             }
         });
 
