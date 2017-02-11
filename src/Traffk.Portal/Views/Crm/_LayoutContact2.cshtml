@@ -5,7 +5,7 @@
     var entityName = ViewData[AspHelpers.ViewDataKeys.EntityTitle].ToString();
     var entityId = ViewData[AspHelpers.ViewDataKeys.EntityId].ToString();
     var isNewEntity = string.IsNullOrEmpty(entityId);
-    var isPerson = Contact.ContactTypes.IsPerson(ViewData["ContactType"] as string);
+    var isPerson = ContactTypes.Person == (ContactTypes)ViewData["ContactType"];
     var contactEmailAddress = ViewData["ContactEmailAddress"] as string;
     if (isNewEntity)
     {
@@ -41,7 +41,7 @@
                 <li><a asp-controller="@CrmController.Name" asp-action="ContactBackground" asp-for-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey==CrmController.PageKeys.Background?"active":"")" data-section="personal-edit-form-container">Personal</a></li>
                 @*<li><a href="#" id="personal-page-nav-notes" data-section="personal-notes-container">Notes</a></li>*@
                 <li><a asp-action="@ActionNames.ContactNotes" asp-route-id="@entityId">Notes</a></li>
-                <li><a href="#" class="@(pageKey==CrmController.PageKeys.Messages?"active":"") popup-messages_open">Messages</a></li>
+                <li><a asp-action="@ActionNames.ContactMessages" asp-route-id="@entityId">Messages</a></li>
                 @if (isPerson)
                 {
                     <li>
