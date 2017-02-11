@@ -1,6 +1,6 @@
 ﻿<SchemaMeta>
   <Tables>
-    <Table schema="db" name="ChangeLog">
+    <Table schema="db" name="ChangeLog" tableType="BASE TABLE">
       <Columns>
         <Column name="ChangeLogId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
         <Column name="EventType" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" />
@@ -16,7 +16,7 @@
         <Collection schema="db" table="SchemaUpgraderLog" column="PostChangeLogId" />
       </Collections>
     </Table>
-    <Table schema="db" name="ColumnProperties">
+    <Table schema="db" name="ColumnProperties" tableType="VIEW">
       <Columns>
         <Column name="SchemaName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
         <Column name="TableName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
@@ -25,12 +25,12 @@
         <Column name="PropertyValue" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" />
       </Columns>
     </Table>
-    <Table schema="db" name="SchemaMeta">
+    <Table schema="db" name="SchemaMeta" tableType="VIEW">
       <Columns>
         <Column name="SchemaMeta" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="xml" maxLen="-1" />
       </Columns>
     </Table>
-    <Table schema="db" name="SchemaUpgraderLog">
+    <Table schema="db" name="SchemaUpgraderLog" tableType="BASE TABLE">
       <Columns>
         <Column name="SchemaUpgraderLogId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
         <Column name="CreatedAt" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())" />
@@ -41,7 +41,7 @@
         <Column name="PostChangeLogId" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="db" refTable="ChangeLog" />
       </Columns>
     </Table>
-    <Table schema="db" name="SprocParameterProperties">
+    <Table schema="db" name="SprocParameterProperties" tableType="VIEW">
       <Columns>
         <Column name="SchemaName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
         <Column name="SprocName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
@@ -50,7 +50,7 @@
         <Column name="PropertyValue" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" />
       </Columns>
     </Table>
-    <Table schema="db" name="SprocProperties">
+    <Table schema="db" name="SprocProperties" tableType="VIEW">
       <Columns>
         <Column name="SchemaName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
         <Column name="SprocName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
@@ -58,7 +58,7 @@
         <Column name="PropertyValue" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" />
       </Columns>
     </Table>
-    <Table schema="db" name="TableProperties">
+    <Table schema="db" name="TableProperties" tableType="VIEW">
       <Columns>
         <Column name="SchemaName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
         <Column name="TableName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
@@ -66,7 +66,15 @@
         <Column name="PropertyValue" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" />
       </Columns>
     </Table>
-    <Table schema="dbo" name="Addresses">
+    <Table schema="db" name="ViewProperties" tableType="VIEW">
+      <Columns>
+        <Column name="SchemaName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="ViewName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyValue" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" />
+      </Columns>
+    </Table>
+    <Table schema="dbo" name="Addresses" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="ClassName" value="Address" />
@@ -91,7 +99,7 @@
         <Collection schema="health" table="Eligibility" column="MemberAddressId" />
       </Collections>
     </Table>
-    <Table schema="dbo" name="Applications">
+    <Table schema="dbo" name="Applications" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="Comment" value="Type of application that runs this system" />
@@ -128,7 +136,7 @@
         </Column>
       </Columns>
     </Table>
-    <Table schema="dbo" name="AspNetRoleClaims">
+    <Table schema="dbo" name="AspNetRoleClaims" tableType="BASE TABLE">
       <Properties>
         <Property name="ClassName" value="RoleClaim" />
       </Properties>
@@ -139,7 +147,7 @@
         <Column name="RoleId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="450" refSchema="dbo" refTable="AspNetRoles" />
       </Columns>
     </Table>
-    <Table schema="dbo" name="AspNetRoles">
+    <Table schema="dbo" name="AspNetRoles" tableType="BASE TABLE">
       <Properties>
         <Property name="ClassName" value="ApplicationRole" />
         <Property name="Implements" value="ITraffkTenanted" />
@@ -156,7 +164,7 @@
         <Collection schema="dbo" table="AspNetUserRoles" column="RoleId" />
       </Collections>
     </Table>
-    <Table schema="dbo" name="AspNetUserClaims">
+    <Table schema="dbo" name="AspNetUserClaims" tableType="BASE TABLE">
       <Properties>
         <Property name="ClassName" value="UserClaim" />
       </Properties>
@@ -167,7 +175,7 @@
         <Column name="UserId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="450" refSchema="dbo" refTable="AspNetUsers" />
       </Columns>
     </Table>
-    <Table schema="dbo" name="AspNetUserLogins">
+    <Table schema="dbo" name="AspNetUserLogins" tableType="BASE TABLE">
       <Properties>
         <Property name="ClassName" value="UserLogin" />
       </Properties>
@@ -178,7 +186,7 @@
         <Column name="UserId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="450" refSchema="dbo" refTable="AspNetUsers" />
       </Columns>
     </Table>
-    <Table schema="dbo" name="AspNetUserRoles">
+    <Table schema="dbo" name="AspNetUserRoles" tableType="BASE TABLE">
       <Properties>
         <Property name="ClassName" value="ApplicationUserRole" />
       </Properties>
@@ -187,7 +195,7 @@
         <Column name="RoleId" position="2" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="450" refSchema="dbo" refTable="AspNetRoles" />
       </Columns>
     </Table>
-    <Table schema="dbo" name="AspNetUsers">
+    <Table schema="dbo" name="AspNetUsers" tableType="BASE TABLE">
       <Properties>
         <Property name="ClassName" value="ApplicationUser" />
         <Property name="Implements" value="ITraffkTenanted" />
@@ -230,7 +238,7 @@
         <Collection schema="dbo" table="AspNetUserRoles" column="UserId" />
       </Collections>
     </Table>
-    <Table schema="dbo" name="AspNetUserTokens">
+    <Table schema="dbo" name="AspNetUserTokens" tableType="BASE TABLE">
       <Properties>
         <Property name="ClassName" value="UserToken" />
       </Properties>
@@ -241,7 +249,7 @@
         <Column name="Value" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
       </Columns>
     </Table>
-    <Table schema="dbo" name="ClaimsByDay2_T1_2013_2015">
+    <Table schema="dbo" name="ClaimsByDay2_T1_2013_2015" tableType="BASE TABLE">
       <Columns>
         <Column name="AgeIntYears" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
         <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
@@ -255,7 +263,7 @@
         <Column name="CalendarDate" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="date" />
       </Columns>
     </Table>
-    <Table schema="dbo" name="CommunicationBlasts">
+    <Table schema="dbo" name="CommunicationBlasts" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="Comment" value="An instance of a communication." />
@@ -280,7 +288,7 @@
         <Collection schema="dbo" table="CommunicationBlastTrackers" column="CommunicationBlastId" />
       </Collections>
     </Table>
-    <Table schema="dbo" name="CommunicationBlastTrackers">
+    <Table schema="dbo" name="CommunicationBlastTrackers" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="Comment" value="Assets referenced by a creative whose hyperlinks have been munged to support tracking" />
@@ -319,7 +327,26 @@
         <Collection schema="dbo" table="CommunicationPieceVisits" column="CommunicationBlastTrackerId" />
       </Collections>
     </Table>
-    <Table schema="dbo" name="CommunicationPieces">
+    <Table schema="dbo" name="CommunicationHistory" tableType="VIEW">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+      </Properties>
+      <Columns>
+        <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="ContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
+        <Column name="CommunicationPieceId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bigint" />
+        <Column name="CreatedAtUtc" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" />
+        <Column name="FirstVisitAtUtc" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="datetime" />
+        <Column name="CommunicationId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="CommunicationTitle" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" />
+        <Column name="TopicName" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" />
+        <Column name="CampaignName" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" />
+        <Column name="CreativeId" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="CreativeTitle" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" />
+      </Columns>
+    </Table>
+    <Table schema="dbo" name="CommunicationPieces" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="Comment" value="Instance of a communication piece that has been queued for delivery" />
@@ -347,7 +374,7 @@
         <Collection schema="dbo" table="CommunicationPieceVisits" column="CommunicationPieceId" />
       </Collections>
     </Table>
-    <Table schema="dbo" name="CommunicationPieceVisits">
+    <Table schema="dbo" name="CommunicationPieceVisits" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="Comment" value="Record that a creator tracker has been seen relative to communication piece" />
@@ -362,7 +389,7 @@
         <Column name="CommunicationBlastTrackerId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="CommunicationBlastTrackers" />
       </Columns>
     </Table>
-    <Table schema="dbo" name="Communications">
+    <Table schema="dbo" name="Communications" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="Comment" value="A communication outreach piece." />
@@ -393,7 +420,7 @@
         <Collection schema="dbo" table="CommunicationBlasts" column="CommunicationId" />
       </Collections>
     </Table>
-    <Table schema="dbo" name="Contacts">
+    <Table schema="dbo" name="Contacts" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="GeneratePoco" value="1" />
@@ -517,7 +544,7 @@
         <Collection schema="health" table="Members" column="CarrierContactId" />
       </Collections>
     </Table>
-    <Table schema="dbo" name="Countries">
+    <Table schema="dbo" name="Countries" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="ClassName" value="Country" />
@@ -535,7 +562,7 @@
         <Collection schema="dbo" table="Addresses" column="CountryId" />
       </Collections>
     </Table>
-    <Table schema="dbo" name="Creatives">
+    <Table schema="dbo" name="Creatives" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="Comment" value="Assets that are used in a communication piece" />
@@ -582,7 +609,7 @@
         <Collection schema="dbo" table="CommunicationBlasts" column="CreativeId" />
       </Collections>
     </Table>
-    <Table schema="dbo" name="CustomInsurancePlanEconomics">
+    <Table schema="dbo" name="CustomInsurancePlanEconomics" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="GeneratePoco" value="1" />
@@ -606,7 +633,7 @@
         <Column name="Amount" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="money" />
       </Columns>
     </Table>
-    <Table schema="dbo" name="CustomInsurancePlans">
+    <Table schema="dbo" name="CustomInsurancePlans" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="GeneratePoco" value="1" />
@@ -633,7 +660,7 @@
         <Collection schema="dbo" table="CustomInsurancePlanEconomics" column="CustomInsurancePlanId" />
       </Collections>
     </Table>
-    <Table schema="dbo" name="DateDimensions">
+    <Table schema="dbo" name="DateDimensions" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="GeneratePoco" value="1" />
@@ -717,7 +744,7 @@
         <Collection schema="deerwalk" table="Eligibility" column="InsVisTermDateDateDimId" />
       </Collections>
     </Table>
-    <Table schema="dbo" name="InflationRates">
+    <Table schema="dbo" name="InflationRates" tableType="BASE TABLE">
       <Columns>
         <Column name="DateDimensionId" position="1" isPrimaryKey="0" isIdentity="1" isNullable="0" sqlType="int" />
         <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
@@ -735,7 +762,7 @@
         <Column name="Inflation_Rate" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="decimal" />
       </Columns>
     </Table>
-    <Table schema="dbo" name="InsurancePlans">
+    <Table schema="dbo" name="InsurancePlans" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="GeneratePoco" value="1" />
@@ -759,7 +786,7 @@
         <Collection schema="dbo" table="CustomInsurancePlans" column="InsurancePlanId" />
       </Collections>
     </Table>
-    <Table schema="dbo" name="Jobs">
+    <Table schema="dbo" name="Jobs" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="GeneratePoco" value="1" />
@@ -806,7 +833,7 @@
         <Collection schema="dbo" table="CommunicationBlasts" column="JobId" />
       </Collections>
     </Table>
-    <Table schema="dbo" name="LastYearsClaims">
+    <Table schema="dbo" name="LastYearsClaims" tableType="VIEW">
       <Columns>
         <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
         <Column name="ContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
@@ -816,7 +843,7 @@
         <Column name="CntRevClaims" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
       </Columns>
     </Table>
-    <Table schema="dbo" name="Lookups">
+    <Table schema="dbo" name="Lookups" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="GeneratePoco" value="1" />
@@ -848,7 +875,22 @@
         <Collection schema="health" table="Eligibility" column="CobraLid" />
       </Collections>
     </Table>
-    <Table schema="dbo" name="ReleaseChanges">
+    <Table schema="dbo" name="MessageHistory" tableType="VIEW">
+      <Columns>
+        <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="ContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
+        <Column name="CommunicationPieceId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bigint" />
+        <Column name="CreatedAtUtc" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" />
+        <Column name="FirstVisitAtUtc" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="datetime" />
+        <Column name="CommunicationId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="CommunicationTitle" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" />
+        <Column name="TopicName" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" />
+        <Column name="CampaignName" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" />
+        <Column name="CreativeId" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="CreativeTitle" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" />
+      </Columns>
+    </Table>
+    <Table schema="dbo" name="ReleaseChanges" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="GeneratePoco" value="1" />
@@ -861,7 +903,7 @@
         <Column name="Order" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" default="(NULL)" />
       </Columns>
     </Table>
-    <Table schema="dbo" name="Releases">
+    <Table schema="dbo" name="Releases" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="GeneratePoco" value="1" />
@@ -877,7 +919,7 @@
         <Collection schema="dbo" table="ReleaseChanges" column="ReleaseId" />
       </Collections>
     </Table>
-    <Table schema="dbo" name="sysdiagrams">
+    <Table schema="dbo" name="sysdiagrams" tableType="BASE TABLE">
       <Properties>
         <Property name="microsoft_database_tools_support" value="1" />
       </Properties>
@@ -889,7 +931,7 @@
         <Column name="definition" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varbinary" maxLen="-1" />
       </Columns>
     </Table>
-    <Table schema="dbo" name="Tenants">
+    <Table schema="dbo" name="Tenants" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="GeneratePoco" value="1" />
@@ -955,7 +997,7 @@
         <Collection schema="health" table="Members" column="TenantId" />
       </Collections>
     </Table>
-    <Table schema="dbo" name="top_10_conditions_tenant1">
+    <Table schema="dbo" name="top_10_conditions_tenant1" tableType="VIEW">
       <Columns>
         <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
         <Column name="Relationship_to_Member" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
@@ -963,7 +1005,7 @@
         <Column name="svc_diag_1_desc" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
       </Columns>
     </Table>
-    <Table schema="dbo" name="UserActivities">
+    <Table schema="dbo" name="UserActivities" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="GeneratePoco" value="1" />
@@ -982,7 +1024,7 @@
         <Column name="ActivityResult" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="80" />
       </Columns>
     </Table>
-    <Table schema="deerwalk" name="CareAlerts">
+    <Table schema="deerwalk" name="CareAlerts" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="GeneratePoco" value="1" />
@@ -1124,7 +1166,7 @@
         <Column name="DateDimensionsLinked" position="25" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" default="((0))" />
       </Columns>
     </Table>
-    <Table schema="deerwalk" name="Demographics">
+    <Table schema="deerwalk" name="Demographics" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="GeneratePoco" value="1" />
@@ -1319,7 +1361,7 @@
         <Column name="DateDimensionsLinked" position="32" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" default="((0))" />
       </Columns>
     </Table>
-    <Table schema="deerwalk" name="Eligibility">
+    <Table schema="deerwalk" name="Eligibility" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="GeneratePoco" value="1" />
@@ -2042,7 +2084,7 @@
         <Column name="CustomInsurancePlanId" position="112" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="CustomInsurancePlans" />
       </Columns>
     </Table>
-    <Table schema="deerwalk" name="HighCostDiagnosis">
+    <Table schema="deerwalk" name="HighCostDiagnosis" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="GeneratePoco" value="1" />
@@ -2117,7 +2159,7 @@
         <Column name="DateDimensionsLinked" position="14" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" default="((0))" />
       </Columns>
     </Table>
-    <Table schema="deerwalk" name="HistoricalScores">
+    <Table schema="deerwalk" name="HistoricalScores" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="Comment" value="Milliman Advanced Risk Adjuster Scores" />
@@ -2223,7 +2265,7 @@
         <Column name="DateDimensionsLinked" position="32" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" default="((0))" />
       </Columns>
     </Table>
-    <Table schema="deerwalk" name="MedicalClaims">
+    <Table schema="deerwalk" name="MedicalClaims" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="GeneratePoco" value="1" />
@@ -3746,7 +3788,7 @@
         <Column name="CustomInsurancePlanId" position="288" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="CustomInsurancePlans" />
       </Columns>
     </Table>
-    <Table schema="deerwalk" name="MemberPCP">
+    <Table schema="deerwalk" name="MemberPCP" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="Comment" value="Beneficiary Provider --- Switching of a member from one provider to next and the next in different point of time. Also need to apply patient attribution logic." />
@@ -3829,7 +3871,7 @@
         <Column name="DateDimensionsLinked" position="16" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" default="((0))" />
       </Columns>
     </Table>
-    <Table schema="deerwalk" name="Participation">
+    <Table schema="deerwalk" name="Participation" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="GeneratePoco" value="1" />
@@ -3928,7 +3970,7 @@
         <Column name="DateDimensionsLinked" position="18" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" default="((0))" />
       </Columns>
     </Table>
-    <Table schema="deerwalk" name="Pharmacy">
+    <Table schema="deerwalk" name="Pharmacy" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="GeneratePoco" value="1" />
@@ -4735,7 +4777,7 @@
         <Column name="CustomInsurancePlanId" position="123" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="CustomInsurancePlans" />
       </Columns>
     </Table>
-    <Table schema="deerwalk" name="QualityMetrics">
+    <Table schema="deerwalk" name="QualityMetrics" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="GeneratePoco" value="1" />
@@ -4839,7 +4881,7 @@
         <Column name="DateDimensionsLinked" position="22" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" default="((0))" />
       </Columns>
     </Table>
-    <Table schema="deerwalk" name="Scores">
+    <Table schema="deerwalk" name="Scores" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="Comment" value="Milliman Advanced Risk Adjuster Scores" />
@@ -4945,7 +4987,7 @@
         <Column name="DateDimensionsLinked" position="32" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" default="((0))" />
       </Columns>
     </Table>
-    <Table schema="deerwalk" name="Visits">
+    <Table schema="deerwalk" name="Visits" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="GeneratePoco" value="1" />
@@ -5050,7 +5092,7 @@
         <Column name="DateDimensionsLinked" position="19" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" default="((0))" />
       </Columns>
     </Table>
-    <Table schema="health" name="Eligibility">
+    <Table schema="health" name="Eligibility" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="0" />
         <Property name="GeneratePoco" value="0" />
@@ -5170,7 +5212,7 @@
         <Column name="EligibilityDetails" position="26" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
       </Columns>
     </Table>
-    <Table schema="health" name="MedicalClaims">
+    <Table schema="health" name="MedicalClaims" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="0" />
         <Property name="GeneratePoco" value="0" />
@@ -5205,7 +5247,7 @@
         <Column name="MedicalClaimDetails" position="17" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
       </Columns>
     </Table>
-    <Table schema="health" name="MemberMap">
+    <Table schema="health" name="MemberMap" tableType="VIEW">
       <Columns>
         <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
         <Column name="PersonContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bigint" />
@@ -5215,7 +5257,7 @@
         <Column name="ForeignId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="50" />
       </Columns>
     </Table>
-    <Table schema="health" name="Members">
+    <Table schema="health" name="Members" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="0" />
         <Property name="GeneratePoco" value="0" />
@@ -5247,7 +5289,7 @@
         <Collection schema="health" table="Visits" column="MemberId" />
       </Collections>
     </Table>
-    <Table schema="health" name="Pharmacy">
+    <Table schema="health" name="Pharmacy" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="0" />
         <Property name="GeneratePoco" value="0" />
@@ -5344,7 +5386,7 @@
         <Column name="PharmacyDetails" position="23" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
       </Columns>
     </Table>
-    <Table schema="health" name="Visits">
+    <Table schema="health" name="Visits" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="0" />
         <Property name="GeneratePoco" value="0" />
@@ -5375,7 +5417,7 @@
         <Column name="ForeignId" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="50" />
       </Columns>
     </Table>
-    <Table schema="i" name="Carealerts">
+    <Table schema="i" name="Carealerts" tableType="BASE TABLE">
       <Columns>
         <Column name="dw_record_id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
         <Column name="dw_member_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="34" />
@@ -5397,7 +5439,7 @@
         <Column name="metric_name" position="18" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="15" />
       </Columns>
     </Table>
-    <Table schema="i" name="Demographics">
+    <Table schema="i" name="Demographics" tableType="BASE TABLE">
       <Columns>
         <Column name="dw_record_id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
         <Column name="dw_account_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
@@ -5427,7 +5469,7 @@
         <Column name="dw_vendor_name" position="26" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="6" />
       </Columns>
     </Table>
-    <Table schema="i" name="Eligibility">
+    <Table schema="i" name="Eligibility" tableType="BASE TABLE">
       <Columns>
         <Column name="mbr_id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="12" />
         <Column name="ins_policy_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="6" />
@@ -5524,7 +5566,7 @@
         <Column name="udf40" position="93" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
       </Columns>
     </Table>
-    <Table schema="i" name="Highcost">
+    <Table schema="i" name="Highcost" tableType="BASE TABLE">
       <Columns>
         <Column name="dw_record_id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
         <Column name="dw_account_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
@@ -5537,7 +5579,7 @@
         <Column name="grouperDescription" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="40" />
       </Columns>
     </Table>
-    <Table schema="i" name="Historicalscores">
+    <Table schema="i" name="Historicalscores" tableType="BASE TABLE">
       <Columns>
         <Column name="dw_record_id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
         <Column name="dw_account_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
@@ -5566,7 +5608,7 @@
         <Column name="concurrentPhyNormalizedToGroup" position="25" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
       </Columns>
     </Table>
-    <Table schema="i" name="Medical">
+    <Table schema="i" name="Medical" tableType="BASE TABLE">
       <Columns>
         <Column name="rev_claim_id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="23" />
         <Column name="rev_claim_line_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="9" />
@@ -5845,7 +5887,7 @@
         <Column name="udf40" position="275" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
       </Columns>
     </Table>
-    <Table schema="i" name="Package">
+    <Table schema="i" name="Package" tableType="BASE TABLE">
       <Columns>
         <Column name="PRODUCTID" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="47" />
         <Column name="PRODUCTNDC" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
@@ -5853,7 +5895,7 @@
         <Column name="PACKAGEDESCRIPTION" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="779" />
       </Columns>
     </Table>
-    <Table schema="i" name="Participation">
+    <Table schema="i" name="Participation" tableType="BASE TABLE">
       <Columns>
         <Column name="dw_record_id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
         <Column name="dw_account_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
@@ -5868,7 +5910,7 @@
         <Column name="program_end_date" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="10" />
       </Columns>
     </Table>
-    <Table schema="i" name="Pcp">
+    <Table schema="i" name="Pcp" tableType="BASE TABLE">
       <Columns>
         <Column name="dw_record_id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
         <Column name="dw_account_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
@@ -5881,7 +5923,7 @@
         <Column name="end_date" position="9" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
       </Columns>
     </Table>
-    <Table schema="i" name="Pharmacy">
+    <Table schema="i" name="Pharmacy" tableType="BASE TABLE">
       <Columns>
         <Column name="rev_transaction_num" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="13" />
         <Column name="ins_plan_type_code" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="4" />
@@ -5997,7 +6039,7 @@
         <Column name="udf40" position="112" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
       </Columns>
     </Table>
-    <Table schema="i" name="Product">
+    <Table schema="i" name="Product" tableType="BASE TABLE">
       <Columns>
         <Column name="PRODUCTID" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="47" />
         <Column name="PRODUCTNDC" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
@@ -6019,7 +6061,7 @@
         <Column name="DEASCHEDULE" position="18" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="4" />
       </Columns>
     </Table>
-    <Table schema="i" name="Qualitymetrics">
+    <Table schema="i" name="Qualitymetrics" tableType="BASE TABLE">
       <Columns>
         <Column name="dw_record_id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
         <Column name="dw_member_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="34" />
@@ -6037,7 +6079,7 @@
         <Column name="denomenator" position="14" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
       </Columns>
     </Table>
-    <Table schema="i" name="Scores">
+    <Table schema="i" name="Scores" tableType="BASE TABLE">
       <Columns>
         <Column name="dw_record_id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
         <Column name="dw_account_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
@@ -6066,7 +6108,7 @@
         <Column name="concurrentPhyNormalizedToGroup" position="25" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="5" />
       </Columns>
     </Table>
-    <Table schema="i" name="Visits">
+    <Table schema="i" name="Visits" tableType="BASE TABLE">
       <Columns>
         <Column name="dw_record_id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="6" />
         <Column name="dw_account_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
@@ -6082,7 +6124,7 @@
         <Column name="admissionFromEr" position="12" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
       </Columns>
     </Table>
-    <Table schema="jbt" name="claimsbyday">
+    <Table schema="jbt" name="claimsbyday" tableType="BASE TABLE">
       <Columns>
         <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
         <Column name="ContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
@@ -6092,7 +6134,7 @@
         <Column name="CntRevClaims" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
       </Columns>
     </Table>
-    <Table schema="migrate" name="CustomInsurancePlanMap">
+    <Table schema="migrate" name="CustomInsurancePlanMap" tableType="VIEW">
       <Columns>
         <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
         <Column name="CarrierContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bigint" />
@@ -6105,7 +6147,7 @@
         <Column name="CustomInsurancePlanDescription" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
       </Columns>
     </Table>
-    <Table schema="migrate" name="MemberMap">
+    <Table schema="migrate" name="MemberMap" tableType="VIEW">
       <Columns>
         <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
         <Column name="MemberId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
@@ -6115,7 +6157,7 @@
         <Column name="CarrierId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
       </Columns>
     </Table>
-    <Table schema="migrate" name="Members">
+    <Table schema="migrate" name="Members" tableType="VIEW">
       <Columns>
         <Column name="ins_carrier_id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="13" />
         <Column name="mbr_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="19" />
@@ -6130,7 +6172,7 @@
         <Column name="priority" position="11" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
       </Columns>
     </Table>
-    <Table schema="NationalDrugCode" name="Labelers">
+    <Table schema="NationalDrugCode" name="Labelers" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="0" />
         <Property name="GeneratePoco" value="0" />
@@ -6145,7 +6187,7 @@
         <Collection schema="NationalDrugCode" table="Products" column="LabelerId" />
       </Collections>
     </Table>
-    <Table schema="NationalDrugCode" name="Packages">
+    <Table schema="NationalDrugCode" name="Packages" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="0" />
         <Property name="GeneratePoco" value="0" />
@@ -6176,7 +6218,7 @@
         <Collection schema="health" table="Pharmacy" column="NationalDrugCodePackageId" />
       </Collections>
     </Table>
-    <Table schema="NationalDrugCode" name="Products">
+    <Table schema="NationalDrugCode" name="Products" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="0" />
         <Property name="GeneratePoco" value="0" />
@@ -6276,7 +6318,7 @@
         <Collection schema="NationalDrugCode" table="Packages" column="Productid" />
       </Collections>
     </Table>
-    <Table schema="reporting" name="AdeeshMedicalClaimsPMPM">
+    <Table schema="reporting" name="AdeeshMedicalClaimsPMPM" tableType="VIEW">
       <Columns>
         <Column name="Date" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="date" />
         <Column name="ContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
@@ -6292,7 +6334,7 @@
         <Column name="DeductibleAmtAvg" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="average_risk_by_care_alerts">
+    <Table schema="reporting" name="average_risk_by_care_alerts" tableType="BASE TABLE">
       <Columns>
         <Column name="contactid" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
         <Column name="average_risk_score" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
@@ -6300,7 +6342,7 @@
         <Column name="total_claims" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="AverageRisk">
+    <Table schema="reporting" name="AverageRisk" tableType="VIEW">
       <Columns>
         <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
         <Column name="ContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
@@ -6318,7 +6360,7 @@
         <Column name="svc_drug_name" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="200" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="AverageRisk2">
+    <Table schema="reporting" name="AverageRisk2" tableType="VIEW">
       <Columns>
         <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
         <Column name="ContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
@@ -6334,7 +6376,7 @@
         <Column name="svc_drug_name" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="200" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="AverageRisk2_T1">
+    <Table schema="reporting" name="AverageRisk2_T1" tableType="BASE TABLE">
       <Columns>
         <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
         <Column name="ContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
@@ -6348,7 +6390,7 @@
         <Column name="svc_drug_name" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="200" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="AverageRisk3_tbl">
+    <Table schema="reporting" name="AverageRisk3_tbl" tableType="BASE TABLE">
       <Columns>
         <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
         <Column name="ContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
@@ -6364,7 +6406,7 @@
         <Column name="svc_drug_name" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="200" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="ClaimsByDay">
+    <Table schema="reporting" name="ClaimsByDay" tableType="VIEW">
       <Columns>
         <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
         <Column name="ContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
@@ -6374,7 +6416,7 @@
         <Column name="CntRevClaims" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="ClaimsByDay2">
+    <Table schema="reporting" name="ClaimsByDay2" tableType="BASE TABLE">
       <Columns>
         <Column name="AgeIntYears" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
         <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
@@ -6388,7 +6430,7 @@
         <Column name="CalendarDate" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="date" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="ClaimsBYDAY2_original_view">
+    <Table schema="reporting" name="ClaimsBYDAY2_original_view" tableType="VIEW">
       <Columns>
         <Column name="AgeIntYears" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
         <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
@@ -6401,7 +6443,7 @@
         <Column name="Member_Relationship" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="ClaimsByDay2T1">
+    <Table schema="reporting" name="ClaimsByDay2T1" tableType="BASE TABLE">
       <Columns>
         <Column name="AgeIntYears" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
         <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
@@ -6414,7 +6456,7 @@
         <Column name="Member_Relationship" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="ClaimsByDay3_tbl">
+    <Table schema="reporting" name="ClaimsByDay3_tbl" tableType="BASE TABLE">
       <Columns>
         <Column name="AgeIntYears" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
         <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
@@ -6427,21 +6469,21 @@
         <Column name="Member_Relationship" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="Contacts_By_Primary_Diag">
+    <Table schema="reporting" name="Contacts_By_Primary_Diag" tableType="VIEW">
       <Columns>
         <Column name="ContactId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
         <Column name="Svc_Diag_1_desc" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
         <Column name="count_diagnosis" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="Contacts_By_Secondary_Diag">
+    <Table schema="reporting" name="Contacts_By_Secondary_Diag" tableType="VIEW">
       <Columns>
         <Column name="ContactId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
         <Column name="Svc_Diag_2_desc" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
         <Column name="count_diagnosis" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="Eligibility">
+    <Table schema="reporting" name="Eligibility" tableType="VIEW">
       <Columns>
         <Column name="Tenantid" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
         <Column name="ContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
@@ -6458,7 +6500,7 @@
         <Column name="program_end_date" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="date" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="eligibility_tbl">
+    <Table schema="reporting" name="eligibility_tbl" tableType="BASE TABLE">
       <Columns>
         <Column name="Tenantid" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
         <Column name="ContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
@@ -6475,7 +6517,7 @@
         <Column name="program_end_date" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="date" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="LargeC_Top10PrimaryDiagnoses">
+    <Table schema="reporting" name="LargeC_Top10PrimaryDiagnoses" tableType="VIEW">
       <Columns>
         <Column name="ContactId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
         <Column name="totalclaims" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
@@ -6483,7 +6525,7 @@
         <Column name="svc_diag_2_desc" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="LastYearsClaims">
+    <Table schema="reporting" name="LastYearsClaims" tableType="VIEW">
       <Columns>
         <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
         <Column name="ContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
@@ -6493,7 +6535,7 @@
         <Column name="CntRevClaims" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="LC_TopDiagnoses">
+    <Table schema="reporting" name="LC_TopDiagnoses" tableType="BASE TABLE">
       <Columns>
         <Column name="ContactId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
         <Column name="totalclaims" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
@@ -6501,7 +6543,7 @@
         <Column name="svc_diag_2_desc" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="MedicalClaimsByMonth">
+    <Table schema="reporting" name="MedicalClaimsByMonth" tableType="VIEW">
       <Columns>
         <Column name="Date" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="date" />
         <Column name="NumClaims" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
@@ -6523,7 +6565,7 @@
         <Column name="AvgPaidPerClaim" position="18" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="MedicalClaimsPerMonth">
+    <Table schema="reporting" name="MedicalClaimsPerMonth" tableType="VIEW">
       <Columns>
         <Column name="Date" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="date" />
         <Column name="NumClaims" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
@@ -6539,7 +6581,7 @@
         <Column name="DeductibleAmtAvg" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="MedicalClaimsPMPM">
+    <Table schema="reporting" name="MedicalClaimsPMPM" tableType="VIEW">
       <Columns>
         <Column name="Date" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="date" />
         <Column name="ContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
@@ -6555,28 +6597,28 @@
         <Column name="DeductibleAmtAvg" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="most_freq_prim_diag">
+    <Table schema="reporting" name="most_freq_prim_diag" tableType="VIEW">
       <Columns>
         <Column name="count_diagnosis" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
         <Column name="Tenantid" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
         <Column name="svc_diag_1_desc" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="most_freq_prim_diag_T24">
+    <Table schema="reporting" name="most_freq_prim_diag_T24" tableType="VIEW">
       <Columns>
         <Column name="count_diagnosis" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
         <Column name="Tenantid" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
         <Column name="svc_diag_1_desc" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="most_frequent_primary_diag">
+    <Table schema="reporting" name="most_frequent_primary_diag" tableType="BASE TABLE">
       <Columns>
         <Column name="count_diagnosis" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
         <Column name="Tenantid" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
         <Column name="svc_diag_1_desc" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="PharmacyClaimsByMonth">
+    <Table schema="reporting" name="PharmacyClaimsByMonth" tableType="VIEW">
       <Columns>
         <Column name="Date" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="date" />
         <Column name="NumClaims" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
@@ -6595,7 +6637,7 @@
         <Column name="AvgPaidPerClaim" position="15" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="reduced_care_alert_table">
+    <Table schema="reporting" name="reduced_care_alert_table" tableType="BASE TABLE">
       <Columns>
         <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
         <Column name="ContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
@@ -6610,7 +6652,7 @@
         <Column name="Metric_T" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="Risk_Score_$_values">
+    <Table schema="reporting" name="Risk_Score_$_values" tableType="BASE TABLE">
       <Columns>
         <Column name="tenantid" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
         <Column name="avg_risk_score" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
@@ -6619,7 +6661,7 @@
         <Column name="avg_MARA_$_value_per_month" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="riskscores_GT_by_tenant">
+    <Table schema="reporting" name="riskscores_GT_by_tenant" tableType="VIEW">
       <Columns>
         <Column name="tenantid" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
         <Column name="avg_risk_score" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
@@ -6629,7 +6671,7 @@
         <Column name="CalendarYear" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="riskscores_monthly_view">
+    <Table schema="reporting" name="riskscores_monthly_view" tableType="BASE TABLE">
       <Columns>
         <Column name="tenantid" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
         <Column name="contactid" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
@@ -6639,7 +6681,7 @@
         <Column name="CalendarYear" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="riskscores_monthly_view_original">
+    <Table schema="reporting" name="riskscores_monthly_view_original" tableType="VIEW">
       <Columns>
         <Column name="tenantid" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
         <Column name="contactid" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
@@ -6649,14 +6691,14 @@
         <Column name="CalendarYear" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="riskscores_simpleview">
+    <Table schema="reporting" name="riskscores_simpleview" tableType="VIEW">
       <Columns>
         <Column name="tenantid" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
         <Column name="contactid" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
         <Column name="average_risk_score" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="svc_diagnoses">
+    <Table schema="reporting" name="svc_diagnoses" tableType="VIEW">
       <Columns>
         <Column name="ContactId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
         <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
@@ -6668,13 +6710,13 @@
         <Column name="ClaimType" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="1" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="Tenant_avg_MARA_$_values">
+    <Table schema="reporting" name="Tenant_avg_MARA_$_values" tableType="BASE TABLE">
       <Columns>
         <Column name="tenantid" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
         <Column name="per_point_$_val" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="ThisYearsClaims">
+    <Table schema="reporting" name="ThisYearsClaims" tableType="VIEW">
       <Columns>
         <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
         <Column name="ContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
@@ -6684,7 +6726,7 @@
         <Column name="CntRevClaims" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="top_10_conditions_tenant1">
+    <Table schema="reporting" name="top_10_conditions_tenant1" tableType="VIEW">
       <Columns>
         <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
         <Column name="Relationship_to_Member" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
@@ -6692,7 +6734,7 @@
         <Column name="svc_diag_1_desc" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="top_10_conditions_tenant24">
+    <Table schema="reporting" name="top_10_conditions_tenant24" tableType="VIEW">
       <Columns>
         <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
         <Column name="Relationship_to_Member" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
@@ -6700,14 +6742,14 @@
         <Column name="svc_diag_1_desc" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="TOP_10_Contacts_By_TotalClaims">
+    <Table schema="reporting" name="TOP_10_Contacts_By_TotalClaims" tableType="VIEW">
       <Columns>
         <Column name="RowNumber" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
         <Column name="ContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
         <Column name="TotalClaims" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="Top_Primary_and_Secondary_Diag_T1">
+    <Table schema="reporting" name="Top_Primary_and_Secondary_Diag_T1" tableType="BASE TABLE">
       <Columns>
         <Column name="count_diagnosis" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
         <Column name="count_diagnosis_secondary" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
@@ -6717,7 +6759,7 @@
         <Column name="svc_diag_2_desc" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="Top_Primary_and_Secondary_Diag_T1and24">
+    <Table schema="reporting" name="Top_Primary_and_Secondary_Diag_T1and24" tableType="BASE TABLE">
       <Columns>
         <Column name="count_diagnosis" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
         <Column name="count_diagnosis_secondary" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
@@ -6727,7 +6769,7 @@
         <Column name="svc_diag_2_desc" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="Top100primary_and_secondary_diagnosisT1">
+    <Table schema="reporting" name="Top100primary_and_secondary_diagnosisT1" tableType="BASE TABLE">
       <Columns>
         <Column name="contactid" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
         <Column name="svc_diag_1_desc" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
@@ -6735,7 +6777,7 @@
         <Column name="count_diagnosis" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="Top10Contacts_By_Secondary_Diag">
+    <Table schema="reporting" name="Top10Contacts_By_Secondary_Diag" tableType="VIEW">
       <Columns>
         <Column name="Rownumber" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
         <Column name="ContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
@@ -6743,14 +6785,14 @@
         <Column name="Svc_Diag_2_desc" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
       </Columns>
     </Table>
-    <Table schema="reporting" name="yearly_sum_rev_paid">
+    <Table schema="reporting" name="yearly_sum_rev_paid" tableType="VIEW">
       <Columns>
         <Column name="ContactId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
         <Column name="Annual_Claims_Paid" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
         <Column name="CalendarYear" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
       </Columns>
     </Table>
-    <Table schema="sys" name="database_firewall_rules">
+    <Table schema="sys" name="database_firewall_rules" tableType="VIEW">
       <Columns>
         <Column name="id" position="1" isPrimaryKey="0" isIdentity="1" isNullable="0" sqlType="int" />
         <Column name="name" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
@@ -6914,6 +6956,15 @@
         <Arg position="1" mode="IN" name="@tableName" sqlType="nvarchar" maxLen="128" />
         <Arg position="2" mode="IN" name="@propertyVal" sqlType="sql_variant" maxLen="0" />
         <Arg position="3" mode="IN" name="@tableSchema" sqlType="nvarchar" maxLen="128" />
+        <Arg position="4" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="5" mode="IN" name="@remove" sqlType="bit" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="ViewPropertySet">
+      <Args>
+        <Arg position="1" mode="IN" name="@viewName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@propertyVal" sqlType="sql_variant" maxLen="0" />
+        <Arg position="3" mode="IN" name="@viewSchema" sqlType="nvarchar" maxLen="128" />
         <Arg position="4" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
         <Arg position="5" mode="IN" name="@remove" sqlType="bit" />
       </Args>

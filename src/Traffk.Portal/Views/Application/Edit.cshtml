@@ -1,4 +1,5 @@
 @model TraffkPortal.Models.ApplicationModels.EditModel
+@using static TraffkPortal.Controllers.ApplicationController
 @{
     Layout = "_LayoutApplication.cshtml";
     ViewData.SetTitleAndHeading(Model.ApplicationName);
@@ -38,7 +39,7 @@
         </div>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+                <input type="submit" value="Save" class="btn btn-default btn-primary btn-large" />
             </div>
         </div>
     </div>

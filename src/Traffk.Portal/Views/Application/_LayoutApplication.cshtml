@@ -1,11 +1,22 @@
 ﻿@using static TraffkPortal.Controllers.ApplicationController
 @{
-    Layout = "~/Views/Shared/_LayoutHeroEntity.cshtml";
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
+    ViewData.HasBreadcrumbItems(true);
+    ViewData.HasPageMenuItems(true);
     var pageKey = (PageKeys)ViewData[ViewDataKeys.PageKey];
     var entityId = (int)ViewData[ViewDataKeys.EntityId];
     var entityType = (ApplicationTypes) ViewData[ViewDataKeys.EntityType];
 }
-@section navItems {
+@section listingTable
+{
+    @RenderSection("listingTable", false)
+}
+@section breadcrumbItems
+{
+    <li><a asp-controller="@Name" asp-action="@ActionNames.Index" id="IndexLink">Applications</a> <span>></span> </li>
+    @RenderSection("breadcrumbItems", false)
+}
+@section pageNavItems {
     <li><a asp-action="Edit" asp-route-id="@entityId" class="@(pageKey==PageKeys.Basics?"current-section":"")">Main</a></li>
     @if (entityType == ApplicationTypes.Portal)
     {
@@ -13,17 +24,19 @@
     }
     <li><a asp-action="@ActionNames.SystemCommunications" asp-route-id="@entityId" class="@(pageKey==PageKeys.SystemCommunications? "current-section" : "")">System Communications</a></li>
     <li><a asp-action="RegistrationSettings" asp-route-id="@entityId" class="@(pageKey==PageKeys.RegistrationSettings?"current-section":"")">Registration Settings</a></li>
-    @RenderSection("navItems", required: false)
+    @RenderSection("pageNavItems", false)
 }
 @section pageAlerts {
-    @RenderSection("pageAlerts", required: false)
+    @RenderSection("pageAlerts", false)
 }
-@section pageActionButtons {
-    <button type="button" class="btn btn-default" asp-action="Index">Applications List</button>
-    @RenderSection("pageActionButtons", required: false)
+@section pageActionItems {
+    @RenderSection("pageActionItems", false)
 }
 @section Scripts {
-    @RenderSection("scripts", required: false)
+    @RenderSection("scripts", false)
+}
+@section pageDialogs {
+    @RenderSection("pageDialogs", false)
 }
 @RenderBody()
 

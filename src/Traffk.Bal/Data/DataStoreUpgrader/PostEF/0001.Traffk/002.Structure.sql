@@ -617,3 +617,29 @@ exec db.ColumnPropertySet 'CustomInsurancePlanEconomics', 'RowStatus', '1', @pro
 exec db.ColumnPropertySet 'CustomInsurancePlanEconomics', 'RowStatus', 'missing', @propertyName='AccessModifier'
 exec db.TablePropertySet  'CustomInsurancePlanEconomics', 'ITraffkTenanted', @propertyName='Implements'
 
+GO
+
+create view CommunicationHistory
+AS
+
+select c.TenantId, cp.ContactId, cp.CommunicationPieceId, cp.CreatedAtUtc, v.FirstVisitAtUtc, c.CommunicationId, c.CommunicationTitle, c.TopicName, c.CampaignName, cr.CreativeId, cr.CreativeTitle
+from 
+	communicationpieces cp (nolock)
+		inner join
+	CommunicationBlasts b (nolock)
+		on b.communicationblastid=cp.communicationblastid
+		inner join
+	Communications c (nolock)
+		on c.communicationid=b.communicationid
+		inner join
+	creatives cr (nolock)
+		on cr.creativeid=b.creativeid
+		outer apply
+	(select top(1) CreatedAtUtc FirstVisitAtUtc from communicationpiecevisits v  (nolock) where v.CommunicationPieceId=cp.CommunicationPieceId) v
+
+GO
+
+exec db.TablePropertySet  'CommunicationHistory', '1', @propertyName='AddToDbContext'
+exec db.TablePropertySet  'CommunicationHistory', '1', @propertyName='GeneratePoco'
+
+GO

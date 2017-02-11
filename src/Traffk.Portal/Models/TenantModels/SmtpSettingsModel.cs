@@ -1,10 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using Traffk.Bal.Settings;
 
 namespace TraffkPortal.Models.TenantModels
 {
     public class SmtpSettingsModel : SmtpOptions
     {
+        [DisplayName("Confirm SMTP Password")]
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
         [Compare(nameof(SmtpPassword), ErrorMessage = "The password and confirmation password do not match.")]

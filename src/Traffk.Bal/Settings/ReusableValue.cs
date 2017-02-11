@@ -1,4 +1,5 @@
 ﻿using RevolutionaryStuff.Core.ApplicationParts;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
@@ -8,6 +9,7 @@ namespace Traffk.Bal.Settings
     {
         public static readonly ReusableValue[] None = new ReusableValue[0];
 
+        [DisplayName("Resource Type")]
         [DataMember(Name = "ResourceType")]
         public ReusableValueTypes ResourceType { get; set; }
 

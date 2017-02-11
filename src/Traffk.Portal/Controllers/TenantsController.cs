@@ -87,9 +87,10 @@ namespace TraffkPortal.Controllers
         }
 
         [ActionName(ActionNames.TenantsList)]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(ViewNames.TenantList, await Rdb.Tenants.Where(t=>t.TenantId==TenantId || t.ParentTenantId==TenantId).OrderBy(t=>t.ParentTenantId).ThenBy(t=>t.TenantName).ToListAsync());
+            return RedirectToAction(ActionNames.TenantEdit, new { tenantId = Current.TenantId });
+//            return View(ViewNames.TenantList, await Rdb.Tenants.Where(t=>t.TenantId==TenantId || t.ParentTenantId==TenantId).OrderBy(t=>t.ParentTenantId).ThenBy(t=>t.TenantName).ToListAsync());
         }
 
         [Route("{tenantId}/Details")]

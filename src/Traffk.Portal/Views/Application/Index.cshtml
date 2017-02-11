@@ -1,33 +1,10 @@
 ﻿@model IEnumerable<Application>
+@using static TraffkPortal.Controllers.ApplicationController
 @{
-    Layout = "~/Views/Shared/_LayoutListing2.cshtml";
-    ViewData.SetTitleAndHeading("Applications", "This is the applications subheading.");
-}
-@section listingFilters
-{
-    <div class="col-sm-2">
-        <button class="btn btn-large btn-white toggle" data-toggle="reports-filter">Filters</button>
-        <ul id="reports-filter" class="floated-filter list-left">
-            <li>
-                <a href="#">PHI</a>
-                <ul class="filter-subnav">
-                    <li><a href="#">PHI <span>4</span></a></li>
-                    <li><a href="#">No Phi <span>3</span></a></li>
-                </ul>
-            </li>
-            <li><a href="#">Budget Vs Actual <span>4</span></a></li>
-            <li><a href="#">Risk Report <span>3</span></a></li>
-            <li><a href="#">Medical Claims <span>3</span></a></li>
-        </ul>
-    </div>
-}
-@section listingActionButtons
-{
-    <button class="btn btn-large btn-white toggle" data-toggle="actions-filter2">Actions</button>
-    <ul id="actions-filter2" class="floated-filter list-right">
-        <li><a asp-action="Create">Create</a></li>
-        <li class="multiselect-action"><a href="#" class="popup-confirm_open">Delete</a></li>
-    </ul>
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
+    ViewData.SetTitleAndHeading("Applications");
+    ViewData.IsListingPage(true);
+    ViewData.HasPageActions(false);
 }
 @section listingTable
 {
@@ -64,7 +41,4 @@
             }
         </tbody>
     </table>
-
-    @{ await Html.RenderPartialAsync("_PaginationPartial2"); }
-
 }

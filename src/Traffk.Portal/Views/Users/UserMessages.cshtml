@@ -1,6 +1,10 @@
 @using static TraffkPortal.Controllers.UsersController
-@model IEnumerable<CommunicationPiece>
+@model IEnumerable<CommunicationHistory>
 @{
     Layout = "_LayoutUser.cshtml";
+    ViewData.IsListingPage(true);
 }
-    @await Html.PartialAsync("_CommunicationPiecesPartial", Model)
+@section listingTable
+{
+    @await Html.PartialAsync("_CommunicationHistoryPartial", Model)
+}

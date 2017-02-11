@@ -14,9 +14,14 @@
         ViewData.SetTitleAndHeading("Create " + ViewData["ContactType"]);
     }
 }
+@section listingTable
+{
+    @RenderSection("listingTable", false)    
+}
 @section breadcrumbItems
 {
     <li><a asp-controller="@Name" asp-action="@ActionNames.UserList" id="IndexLink">Users</a> <span>></span> </li>
+    @RenderSection("breadcrumbItems", false)
 }
 @section pageNavItems {
     <li><a asp-action="@ActionNames.UserBackground" asp-route-id="@entityId" class="@(pageKey==PageKeys.UserBackground?"current-section":"")">Basics</a></li>
@@ -40,7 +45,7 @@
     @RenderSection("pageActionItems", false)
 }
 @section pageDialogs {
-    @RenderSection("pageDialogs", required: false)
+    @RenderSection("pageDialogs", false)
     <div id="createNoteModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <!-- Modal content-->
@@ -135,6 +140,6 @@
             });
         }
     </script>
-    @RenderSection("scripts", required: false)
+    @RenderSection("scripts", false)
 }
 @RenderBody()

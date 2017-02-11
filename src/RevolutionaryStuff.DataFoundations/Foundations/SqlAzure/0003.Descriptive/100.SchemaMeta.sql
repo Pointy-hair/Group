@@ -1,4 +1,4 @@
-﻿create view [db].[SchemaMeta]
+﻿CREATE view [db].[SchemaMeta]
 as
 select *
 from
@@ -11,15 +11,33 @@ from
 			select
 				t.table_Schema '@schema',
 				t.table_name '@name',
+				t.table_type '@tableType',
 				(
-					select 
-						p.PropertyName '@name',
-						p.PropertyValue '@value'
-					from 
-						db.TableProperties p with (nolock)
-					where
-						p.SchemaName = t.table_schema and
-						p.TableName = t.table_name
+					select 	PropertyName '@name', PropertyValue '@value'
+					from
+					(
+						select 
+							p.PropertyName,
+							p.PropertyValue
+						from 
+							db.TableProperties p with (nolock)
+						where
+							p.SchemaName = t.table_schema and
+							p.TableName = t.table_name and
+							t.table_type='BASE TABLE'
+
+						union all 
+
+						select 
+							p.PropertyName,
+							p.PropertyValue
+						from 
+							db.ViewProperties p with (nolock)
+						where
+							p.SchemaName = t.table_schema and
+							p.ViewName = t.table_name and
+							t.table_type='VIEW'
+					) a
 					for xml path ('Property'), type
 				) Properties,
 				(
@@ -180,6 +198,7 @@ from
 	) b
 	for xml path('SchemaMeta'), type
 ) x(SchemaMeta)
+
 
 GO
 

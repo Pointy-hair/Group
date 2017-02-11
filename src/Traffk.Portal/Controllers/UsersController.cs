@@ -192,7 +192,7 @@ namespace TraffkPortal.Controllers
             var user = await GetUserByIdAsync(id);
             if (user == null) return NotFound();
 
-            var items = Rdb.CommunicationPieces.Where(z => z.ContactId == user.ContactId && z.TenantId == this.TenantId);
+            var items = Rdb.CommunicationHistory.Where(z => z.ContactId == user.ContactId && z.TenantId == this.TenantId);
             items = ApplyBrowse(
                 items, sortCol ?? nameof(CommunicationPiece.CreatedAt), sortDir,
                 page, pageSize);

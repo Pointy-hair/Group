@@ -1,25 +1,32 @@
 ﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Traffk.Bal.Settings
 {
     public class PortalOptions
-    {        
+    {
+        [DisplayName("Register Page Message")]
         [DataType(DataType.Html)]
         public string RegisterMessage { get; set; }
 
+        [DisplayName("Login Page Message")]
         [DataType(DataType.Html)]
         public string LoginMessage { get; set; }
 
+        [DisplayName("Home Page Message")]
         [DataType(DataType.Html)]
         public string HomeMessage { get; set; }
 
+        [DisplayName("Copyright Message")]
         [DataType(DataType.Html)]
         public string CopyrightMessage { get; set; }
 
+        [DisplayName("About Page Message")]
         [DataType(DataType.Html)]
         public string AboutMessage { get; set; }
 
+        [DisplayName("Support Page Message")]
         [DataType(DataType.Html)]
         public string SupportMessage { get; set; }
 
@@ -35,9 +42,11 @@ namespace Traffk.Bal.Settings
         [DataType(DataType.ImageUrl)]
         public Uri FaviconLink { get; set; }
 
+        [DisplayName("Primary Color")]
         [DataType(TraffkHelpers.CustomDataTypes.HtmlColor)]
         public string PrimaryColor { get; set; }
 
+        [DisplayName("Secondary Color")]
         [DataType(TraffkHelpers.CustomDataTypes.HtmlColor)]
         public string SecondaryColor { get; set; }
 

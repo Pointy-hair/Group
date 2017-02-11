@@ -31,6 +31,7 @@ namespace TraffkPortal.Controllers
 
         public class ActionNames
         {
+            public const string Index = "Index";
             public const string ApplicationBasics = "Edit";
             public const string SystemCommunications = "SystemCommunications";
             public const string SystemCommunicationsSave = "SystemCommunicationsSave";
@@ -68,6 +69,7 @@ namespace TraffkPortal.Controllers
             Blobs = blobs;
         }
 
+        [ActionName(ActionNames.Index)]
         public async Task<ActionResult> Index()
         {
             return View(await Rdb.Applications.Where(a => a.TenantId == Current.TenantId).ToListAsync());
