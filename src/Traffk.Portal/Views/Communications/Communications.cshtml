@@ -1,46 +1,25 @@
 ﻿@model IEnumerable<Communication>
 @using static TraffkPortal.Controllers.CommunicationsController
 @{
-    Layout = "~/Views/Shared/_LayoutListing2.cshtml";
-    ViewData.SetTitleAndHeading("Communications", "Your active communications.");
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
+    ViewData.SetTitleAndHeading("Communications");
+    ViewData.IsListingPage(true);
+    ViewData.HasSelectableItems(true);
+    ViewData.HasPageActions(true);
 }
-@*@section listingActionButtons
+@section pageActionItems
 {
-    <button type="button" class="btn btn-default" asp-action="@ActionNames.CommunicationCreate">Create</button>
-}*@
-@section listingFilters
-{
-    <div class="col-sm-2">
-        <button class="btn btn-large btn-white toggle" data-toggle="reports-filter">Filters</button>
-        <ul id="reports-filter" class="floated-filter list-left">
-            <li>
-                <a href="#">PHI</a>
-                <ul class="filter-subnav">
-                    <li><a href="#">PHI <span>4</span></a></li>
-                    <li><a href="#">No Phi <span>3</span></a></li>
-                </ul>
-            </li>
-            <li><a href="#">Budget Vs Actual <span>4</span></a></li>
-            <li><a href="#">Risk Report <span>3</span></a></li>
-            <li><a href="#">Medical Claims <span>3</span></a></li>
-        </ul>
-    </div>
-}
-@section listingActionButtons
-{
-    <button class="btn btn-large btn-white toggle" data-toggle="actions-filter2">Actions</button>
-    <ul id="actions-filter2" class="floated-filter list-right">
-        <li><a href="#">Export</a></li>
-        <li><a href="#">Create Note</a></li>
-        <li class="multiselect-action"><a href="#" class="popup-confirm_open">Delete</a></li>
-        <li><a href="#">View</a></li>
-    </ul>
+    <li><a asp-action="@ActionNames.CommunicationCreate">Create</a></li>
+    <li class="multiselect-action">
+        <a onclick="deleteCommunications()" class="confirm-on-click" confirmMessageFunction="deleteSelectedItemsMessage()">Delete</a>
+    </li>
 }
 @section listingTable
 {
     <table class="table table-bordered table-hover table-striped">
         <thead>
         <tr>
+            <th><input type="checkbox" id="all-items-selector" /></th>
             <th>
                 @Html.SortableHeaderFor(model => model.CommunicationId)
             </th>
@@ -56,12 +35,14 @@
             <th>
                 @Html.SortableHeaderFor(model => model.CampaignName)
             </th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
         @foreach (var item in Model)
         {
-            <tr>
+            <tr contextId="@item.CommunicationId">
+                <td><input type="checkbox" class="item-selector" contextId="@item.CommunicationId" /></td>
                 <td>
                     @Html.DisplayFor(modelItem => item.CommunicationId)
                 </td>
@@ -79,12 +60,16 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.CampaignName)
                 </td>
+                <td class="text-center">
+                    <i class="fa fa-ellipsis-h toggle" aria-hidden="true" data-toggle="row-action-@item.CommunicationId"></i>
+                    <ul id="row-action-@item.CommunicationId" class="floated-filter list-right">
+                        <li>
+                            <a onclick="deleteCommunication(@item.CommunicationId)" class="confirm-on-click" confirmMessage="Are you sure you want to delete communication: @item.CommunicationTitle?">Delete</a>
+                        </li>
+                    </ul>
+                </td>
             </tr>
         }
         </tbody>
     </table>
-    
-@{ await Html.RenderPartialAsync("_PaginationPartial2"); }
-
-
 }

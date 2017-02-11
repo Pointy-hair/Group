@@ -1,11 +1,37 @@
 ﻿@using static TraffkPortal.Controllers.CrmController
 @{
-    Layout = "~/Views/Shared/_LayoutHeroEntity.cshtml";
-    var pageKey = (PageKeys)ViewData[ViewDataKeys.PageKey];
-    var entityName = ViewData[ViewDataKeys.EntityTitle].ToString();
-    var entityId = ViewData[ViewDataKeys.EntityId].ToString();
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
+    ViewData.HasBreadcrumbItems(true);
+    ViewData.HasPageMenuItems(true);
+    ViewData.HasPageActions(true);
+    var pageKey = (CrmController.PageKeys)ViewData[AspHelpers.ViewDataKeys.PageKey];
+    var entityName = ViewData[AspHelpers.ViewDataKeys.EntityTitle].ToString();
+    var entityId = ViewData[AspHelpers.ViewDataKeys.EntityId].ToString();
     var isNewEntity = string.IsNullOrEmpty(entityId);
     var isPerson = ContactTypes.Person == (ContactTypes)ViewData["ContactType"];
+    var isOrg = ContactTypes.Organization == (ContactTypes)ViewData["ContactType"];
+
+    string profileImageBaseUrl = "/images/profile/";
+    string profileImage = "unidentified.jpg";
+    if (isOrg)
+    {
+        profileImage = "organization.jpg";
+    }
+    else
+    {
+        var gender = ViewData["ContactGender"] as string;
+        if (Traffk.Bal.Data.Genders.IsMale(gender))
+        {
+            profileImage = $"male.jpg";
+        }
+        else if (Traffk.Bal.Data.Genders.IsFemale(gender))
+        {
+            profileImage = $"female.jpg";
+        }
+    }
+    string profileUrl = profileImageBaseUrl + profileImage;
+
+
     var contactEmailAddress = ViewData["ContactEmailAddress"] as string;
     if (isNewEntity)
     {
@@ -14,18 +40,19 @@
     bool isHealthSection;
     switch (pageKey)
     {
-        case PageKeys.CareAlerts:
-        case PageKeys.Demographics:
-        case PageKeys.Eligibility:
-        case PageKeys.HighCostDiagnosis:
-        case PageKeys.HistoricalScores:
-        case PageKeys.MedicalClaims:
-        case PageKeys.MemberPCP:
-        case PageKeys.Participation:
-        case PageKeys.Pharmacy:
-        case PageKeys.QualityMetrics:
-        case PageKeys.Scores:
-        case PageKeys.Visit:
+        case CrmController.PageKeys.CareAlerts:
+        case CrmController.PageKeys.Demographics:
+        case CrmController.PageKeys.Eligibility:
+        case CrmController.PageKeys.EligibilityList:
+        case CrmController.PageKeys.HighCostDiagnosis:
+        case CrmController.PageKeys.HistoricalScores:
+        case CrmController.PageKeys.MedicalClaims:
+        case CrmController.PageKeys.MemberPCP:
+        case CrmController.PageKeys.Participation:
+        case CrmController.PageKeys.Pharmacy:
+        case CrmController.PageKeys.QualityMetrics:
+        case CrmController.PageKeys.Scores:
+        case CrmController.PageKeys.Visit:
             isHealthSection = true;
             break;
         default:
@@ -33,82 +60,53 @@
             break;
     }
 }
-@section navItems {
-    <li><a asp-action="@ActionNames.ContactBackground" asp-route-id="@entityId" class="@(pageKey==PageKeys.Background?"current-section":"")">Personal</a></li>
-    <li><a asp-action="@ActionNames.ContactMessages" asp-route-id="@entityId" class="@(pageKey==PageKeys.Messages?"current-section":"")">Messages</a></li>
-    <li><a asp-action="@ActionNames.ContactNotes" asp-route-id="@entityId" class="@(pageKey==PageKeys.Notes?"current-section":"")">Notes</a></li>
-    @*
-    <li><a asp-action="@ActionNames.ContactRelationships" asp-route-id="@entityId" class="@(pageKey==PageKeys.Relationships?"current-section":"")">Relationships</a></li>
-    *@
+@section pageNavItems {
+    <li><a asp-controller="@CrmController.Name" asp-action="ContactBackground" asp-for-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey==CrmController.PageKeys.Background?"active":"")" data-section="personal-edit-form-container">Personal</a></li>
+    <li><a asp-action="@ActionNames.ContactNotes" asp-route-id="@entityId"  class="@(pageKey==CrmController.PageKeys.Notes?"active":"")">Notes</a></li>
+    <li><a asp-action="@ActionNames.ContactMessages" asp-route-id="@entityId" class="@(pageKey==CrmController.PageKeys.Messages?"active":"")">Messages</a></li>
     @if (isPerson)
-        {
-        <li class="dropdown @(isHealthSection?"current-section":"")" role="presentation">
-            <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle" href="#">
-                Health
-                <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
-                <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.CareAlertsList" class="@(pageKey==PageKeys.CareAlerts?"current-section":"")">Care Alerts</a></li>
-                <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.Demographic" class="@(pageKey==PageKeys.Demographics?"current-section":"")">Demographics</a></li>
-                <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.EligibilityList" class="@(pageKey==PageKeys.Eligibility?"current-section":"")">Eligibility</a></li>
-                <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.HighCostDiagnosis" class="@(pageKey==PageKeys.HighCostDiagnosis?"current-section":"")">HighCostDiagnosis</a></li>
-                <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.MedicalClaimsList" class="@(pageKey==PageKeys.MedicalClaims?"current-section":"")">Medical Claims</a></li>
-                <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.MemberPcp" class="@(pageKey==PageKeys.MemberPCP?"current-section":"")">MemberPCP</a></li>
-                <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.ParticipationList" class="@(pageKey==PageKeys.Participation?"current-section":"")">Participation</a></li>
-                <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.PharmacyList" class="@(pageKey==PageKeys.Pharmacy?"current-section":"")">Pharmacy</a></li>
-                <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.Score" class="@(pageKey==PageKeys.Scores?"current-section":"")">Score</a></li>
-                <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.HistoricalScoreList" class="@(pageKey==PageKeys.HistoricalScores?"current-section":"")">Scores (historical)</a></li>
-                <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.QualityMetricsList" class="@(pageKey==PageKeys.QualityMetrics?"current-section":"")">Quality Metrics</a></li>
-                <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.VisitList" class="@(pageKey==PageKeys.Visit?"current-section":"")">Visits</a></li>
+    {
+        <li>
+            <a href="javascript:void(0)" class="toggle @(isHealthSection?"active":"")" data-toggle="personal-health">Health <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+            <ul id="personal-health" class="floated-filter">
+                <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.CareAlertsList" class="@(pageKey==CrmController.PageKeys.CareAlerts?"active":"")">Care Alerts</a></li>
+                <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.Demographic" class="@(pageKey==CrmController.PageKeys.Demographics?"active":"")">Demographics</a></li>
+                <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.EligibilityList" class="@(pageKey==CrmController.PageKeys.Eligibility?"active":"")">Eligibility</a></li>
+                <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.HighCostDiagnosis" class="@(pageKey==CrmController.PageKeys.HighCostDiagnosis?"active":"")">High Cost Diagnosis</a></li>
+                <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.MedicalClaimsList" class="@(pageKey==CrmController.PageKeys.MedicalClaims?"active":"")">Medical Claims</a></li>
+                <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.MemberPcp" class="@(pageKey==CrmController.PageKeys.MemberPCP?"active":"")">MemberPCP</a></li>
+                <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.ParticipationList" class="@(pageKey==CrmController.PageKeys.Participation?"active":"")">Participation</a></li>
+                <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.PharmacyList" class="@(pageKey==CrmController.PageKeys.Pharmacy?"active":"")">Pharmacy</a></li>
+                <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.Score" class="@(pageKey==CrmController.PageKeys.Scores?"active":"")">Score</a></li>
+                <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.HistoricalScoreList" class="@(pageKey==CrmController.PageKeys.HistoricalScores?"active":"")">Scores (Historical)</a></li>
+                <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.QualityMetricsList" class="@(pageKey==CrmController.PageKeys.QualityMetrics?"active":"")">Quality Metrics</a></li>
+                <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.VisitList" class="@(pageKey==CrmController.PageKeys.Visit?"active":"")">Visits</a></li>
             </ul>
         </li>
     }
-    @RenderSection("navItems", required: false)
+    @RenderSection("pageNavItems", false)
 }
-@section pageAlerts {
-    <div class="alert alert-success" role="alert" id="MessageSentAlert" style="display:none">Message has been sent.</div>
-    <div class="alert alert-success" role="alert" id="NoteCreatedAlert" style="display:none">Note was created.</div>
-    @RenderSection("pageAlerts", required: false)
+
+@section pageActionItems {
+    <li><a id="create-note-button" data-section="create-note-container">Create Note</a></li>
+    <li><a href="#">Send Message</a></li>
+    <li><a href="#" class="popup-confirm_open">Delete Person</a></li>
+    @RenderSection("pageActionItems", false)
 }
-@section pageActionButtons {
-    <button type="button" class="btn btn-default" asp-action="@ActionNames.ContactList">Contacts List</button>
-    @if (!isNewEntity)
-    {
-        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#createNoteModal">Create Note</button>
-        if (contactEmailAddress != null && await User.HasPermission(AuthorizationService, PermissionNames.DirectMessaging))
-        {
-            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#sendMessageModal">Send Message</button>
-        }
-    }
-    @RenderSection("pageActionButtons", required: false)
+
+@section breadcrumbItems
+{
+    <li><a asp-controller="@Name" asp-action="@ActionNames.ContactList" id="IndexLink">Contacts</a> <span>></span> </li>
+    @RenderSection("breadcrumbItems", false)
 }
+
+@section listingTable
+{
+    @RenderSection("listingTable", false)
+}
+
 @section pageDialogs {
-    @RenderSection("pageDialogs", required: false)
-    <div id="createNoteModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Create note regarding @entityName</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="form-horizontal">
-                        <div class="form-group">
-                            <label class="col-md-2 control-label" for="NewNoteContent">Content</label>
-                            <div class="col-md-10">
-                                <textarea name="NewNoteContent" class="form-control" id="NewNoteContent"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="createNote()">Create</button>
-                    <button type="button" class="btn" data-dismiss="modal">Cancel</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    @RenderSection("pageDialogs", false)
 
     <div id="sendMessageModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -175,9 +173,22 @@
             postData,
             function () {
                 $("#NoteCreatedAlert").show();
+                $("personal-page-nav-notes").click();
             });
         }
     </script>
-    @RenderSection("scripts", required: false)
+    @RenderSection("scripts", false)
+}
+@if (!ViewData.IsListingPage())
+{
+    <div id="personal-edit-form-container" class="personal-section medium-padding">
+        <img class="mobile-block-centered"
+             src="@profileUrl"
+             id="personal-page-img"
+             alt="" />
+        <div col-sm-8>
+            @RenderBody()
+        </div>
+    </div>
 }
 @RenderBody()

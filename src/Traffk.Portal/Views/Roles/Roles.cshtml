@@ -11,7 +11,7 @@
 {
     <li><a asp-action="Create">Create</a></li>
     <li class="multiselect-action">
-        <a onclick="deleteRoles()" class="confirm-on-click" confirmMessageFunction="deleteSelectedItemsMessage('')">Delete</a>
+        <a onclick="deleteUsers()" class="confirm-on-click" confirmMessageFunction="deleteSelectedItemsMessage('')">Delete</a>
     </li>
 }
 @section listingTable
@@ -41,7 +41,7 @@
                         <ul id="row-action-@item.Id" class="floated-filter list-right">
                             <li><a asp-action="Edit" asp-route-id="@item.Id">Edit</a></li>
                             <li>
-                                <a onclick="deleteRole('@item.Id')" class="confirm-on-click" confirmMessage="Are you sure you want to delete role: @item.Name?">Delete</a>
+                                <a onclick="deleteUser('@item.Id')" class="confirm-on-click" confirmMessage="Are you sure you want to delete role: @item.Name?">Delete</a>
                             </li>
                         </ul>
                     </td>

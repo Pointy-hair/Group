@@ -1,7 +1,8 @@
 ﻿@using static TraffkPortal.Controllers.CrmController
 @model IEnumerable<Eligibility>
 @{
-    Layout = "~/Views/Crm/_LayoutContactListingContent2.cshtml";
+    Layout = "~/Views/Crm/_LayoutContact.cshtml";
+    ViewData.IsListingPage(true);
     ViewData.SetTitleAndHeading(CrmController.ViewNames.Health.EligibilityList.ToCrmHeading());
 }
 @section listingTable

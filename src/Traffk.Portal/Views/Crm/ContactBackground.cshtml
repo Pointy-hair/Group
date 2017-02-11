@@ -1,66 +1,66 @@
-@using TraffkPortal.Models.CrmModels
-@model ContactModel
+@model TraffkPortal.Models.CrmModels.ContactModel
+@using static TraffkPortal.Controllers.CrmController
 @{
-    Layout = "~/Views/Crm/_LayoutContactDetailContent2.cshtml";
+    Layout = "_LayoutContact";
     ViewData.SetTitleAndHeading(ViewData["EntityTitle"] as string);
 }
 
-    <form asp-action="ContactBackground" role="form" class="inline-form">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <input type="hidden" asp-for="Contact.ContactId" />
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="form-row">
-                    <label asp-for="Contact.ContactType"></label>
-                    <input asp-for="Contact.ContactType" class="form-control" readonly="readonly" />
-                    <span asp-validation-for="Contact.ContactType" class="text-danger" />
-                </div>
-                <div class="form-row">
-                    <label asp-for="Contact.PrimaryEmail" ></label>
-                    <input asp-for="Contact.PrimaryEmail" class="form-control"/>
-                    <span asp-validation-for="Contact.PrimaryEmail" class="text-danger"/>
-                </div>
-                <div class="form-row">
-                    <label asp-for="Contact.FullName" ></label>
-                    <input asp-for="Contact.FullName" class="form-control"/>
-                    <span asp-validation-for="Contact.FullName" class="text-danger"/>
-                </div>
-                <div class="form-row">
-                    <label asp-for="Contact.ContactDetails.Tags" ></label>
-                    @await Html.PartialAsync("_TagEditorPartial", Model.Contact.ContactDetails.Tags, z => z.Contact)
-                </div>
-                <div class="form-row">
-                    <label asp-for="Contact.ContactDetails.Addresses"></label>
-                    @if (Model.Contact.ContactDetails.Addresses != null)
+<form asp-action="ContactBackground" role="form" class="inline-form">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="Contact.ContactId" />
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-row">
+                <label asp-for="Contact.ContactType"></label>
+                <input asp-for="Contact.ContactType" class="form-control" readonly="readonly" />
+                <span asp-validation-for="Contact.ContactType" class="text-danger" />
+            </div>
+            <div class="form-row">
+                <label asp-for="Contact.PrimaryEmail" ></label>
+                <input asp-for="Contact.PrimaryEmail" class="form-control"/>
+                <span asp-validation-for="Contact.PrimaryEmail" class="text-danger"/>
+            </div>
+            <div class="form-row">
+                <label asp-for="Contact.FullName" ></label>
+                <input asp-for="Contact.FullName" class="form-control"/>
+                <span asp-validation-for="Contact.FullName" class="text-danger"/>
+            </div>
+            <div class="form-row">
+                <label asp-for="Contact.ContactDetails.Tags" ></label>
+                @await Html.PartialAsync("_TagEditorPartial", Model.Contact.ContactDetails.Tags, z => z.Contact)
+            </div>
+            <div class="form-row">
+                <label asp-for="Contact.ContactDetails.Addresses"></label>
+                @if (Model.Contact.ContactDetails.Addresses != null)
+                {
+                    foreach (var a in Model.Contact.ContactDetails.Addresses)
                     {
-                        foreach (var a in Model.Contact.ContactDetails.Addresses)
-                        {
-                            <p>
-                                @a.Address1<br/>
-                                @if (String.IsNullOrEmpty(@a.Address2) == false)
-                                {
-                                    @a.Address2
-                                }
-                                @a.City, @a.State @a.PostalCode<br/>
-                            </p>
-                        }
+                        <p>
+                            @a.Address1<br/>
+                            @if (String.IsNullOrEmpty(@a.Address2) == false)
+                            {
+                                @a.Address2
+                            }
+                            @a.City, @a.State @a.PostalCode<br/>
+                        </p>
                     }
-                </div>
-                <div class="form-row">
-                    <label asp-for="Contact.ContactDetails.PhoneNumbers"></label>
-                    @if (Model.Contact.ContactDetails.PhoneNumbers != null)
+                }
+            </div>
+            <div class="form-row">
+                <label asp-for="Contact.ContactDetails.PhoneNumbers"></label>
+                @if (Model.Contact.ContactDetails.PhoneNumbers != null)
+                {
+                    foreach (var a in Model.Contact.ContactDetails.PhoneNumbers)
                     {
-                        foreach (var a in Model.Contact.ContactDetails.PhoneNumbers)
-                        {
-                            <p>@String.Format("{0:(###) ###-####}", long.Parse(a.PhoneNumber))</p>
-                        }
+                        <p>@String.Format("{0:(###) ###-####}", long.Parse(a.PhoneNumber))</p>
                     }
-                </div>
+                }
             </div>
         </div>
-        <div class="row">
-            <div class="col-xs-12 text-right">
-                <input type="submit" value="Save" class="btn btn-primary btn-large"/>
-            </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 text-right">
+            <input type="submit" value="Save" class="btn btn-default btn-primary btn-large"/>
         </div>
-    </form>
+    </div>
+</form>

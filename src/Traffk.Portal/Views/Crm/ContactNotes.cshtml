@@ -1,9 +1,9 @@
 @using TraffkPortal.Models.CrmModels
 @model ContactModel
 @{
-    Layout = "~/Views/Crm/_LayoutContactListingContent2.cshtml";
+    Layout = "~/Views/Crm/_LayoutContact.cshtml";
     ViewData.SetTitleAndHeading("Notes");
-
+    ViewData.IsListingPage(true);
 }
 @section listingTable
 {

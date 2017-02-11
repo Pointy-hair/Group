@@ -335,28 +335,44 @@ function deleteByIds(url, ids, onSuccess) {
     return false;
 }
 
-function deleteRole(roleId, onSuccess) {
-    deleteRoles([roleId], onSuccess);
+function deleteRole(id, onSuccess) {
+    deleteRoles([id], onSuccess);
 }
 
 function deleteRoles(ids, onSuccess) {
     return deleteByIds("/roles/delete", ids, onSuccess);
 }
 
-function deleteUser(userId, onSuccess) {
-    deleteRoles([userId], onSuccess);
+function deleteUser(id, onSuccess) {
+    deleteRoles([id], onSuccess);
 }
 
 function deleteUsers(ids, onSuccess) {
     return deleteByIds("/users/delete", ids, onSuccess);
 }
 
-function deleteContact(contactId, onSuccess) {
-    deleteContacts([contactId], onSuccess);
+function deleteContact(id, onSuccess) {
+    deleteContacts([id], onSuccess);
 }
 
 function deleteContacts(ids, onSuccess) {
     return deleteByIds("/crm/contacts/delete", ids, onSuccess);
+}
+
+function deleteCreative(id, onSuccess) {
+    deleteCreatives([id], onSuccess);
+}
+
+function deleteCreatives(ids, onSuccess) {
+    return deleteByIds("/communications/creatives/delete", ids, onSuccess);
+}
+
+function deleteCommunication(id, onSuccess) {
+    deleteCommunications([id], onSuccess);
+}
+
+function deleteCommunications(ids, onSuccess) {
+    return deleteByIds("/communications/communications/delete", ids, onSuccess);
 }
 
 // AJAX helpers ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -1,21 +1,25 @@
 ﻿@model IEnumerable<Creative>
 @using static TraffkPortal.Controllers.CommunicationsController
 @{
-    Layout = "~/Views/Shared/_LayoutListing2.cshtml";
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
     ViewData.SetTitleAndHeading("Creatives");
+    ViewData.IsListingPage(true);
+    ViewData.HasSelectableItems(true);
+    ViewData.HasPageActions(true);
 }
-@section listingActionButtons
+@section pageActionItems
 {
-    <button class="btn btn-large btn-white toggle" data-toggle="actions-filter2">Actions</button>
-    <ul id="actions-filter2" class="floated-filter list-right">
-        <li><a asp-action="@ActionNames.CreativeCreate">Create</a></li>
-    </ul>
+    <li><a asp-action="@ActionNames.CreativeCreate">Create</a></li>
+    <li class="multiselect-action">
+        <a onclick="deleteCreatives()" class="confirm-on-click" confirmMessageFunction="deleteSelectedItemsMessage()">Delete</a>
+    </li>
 }
 @section listingTable
 {
     <table class="table">
         <thead>
             <tr>
+                <th><input type="checkbox" id="all-items-selector" /></th>
                 <th>
                     @Html.SortableHeaderFor(model => model.CreativeId)
                 </th>
@@ -31,12 +35,14 @@
                 <th>
                     @Html.SortableHeaderFor(model => model.ModelType)
                 </th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in Model)
             {
-                <tr>
+                <tr contextId="@item.CreativeId">
+                    <td><input type="checkbox" class="item-selector" contextId="@item.CreativeId" /></td>
                     <td>
                         @Html.DisplayFor(modelItem => item.CreativeId)
                     </td>
@@ -60,11 +66,16 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.ModelType)
                     </td>
+                    <td class="text-center">
+                        <i class="fa fa-ellipsis-h toggle" aria-hidden="true" data-toggle="row-action-@item.CreativeId"></i>
+                        <ul id="row-action-@item.CreativeId" class="floated-filter list-right">
+                            <li>
+                                <a onclick="deleteCreative(@item.CreativeId)" class="confirm-on-click" confirmMessage="Are you sure you want to delete creative: @item.CreativeTitle?">Delete</a>
+                            </li>
+                        </ul>
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
-
-    @{ await Html.RenderPartialAsync("_PaginationPartial2"); }
-
 }

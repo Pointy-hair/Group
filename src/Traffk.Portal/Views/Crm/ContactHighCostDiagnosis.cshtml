@@ -1,6 +1,7 @@
 ﻿@model HighCostDiagnosi
 @{
-    Layout = "~/Views/Crm/_LayoutContactDetailContent2.cshtml";
+    Layout = "~/Views/Crm/_LayoutContact.cshtml";
+    ViewData.IsListingPage(true);
     ViewData.SetTitleAndHeading(CrmController.ViewNames.Health.HighCostDiagnosis.ToCrmHeading());
 
 }
