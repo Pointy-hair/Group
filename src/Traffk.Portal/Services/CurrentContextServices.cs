@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
@@ -9,6 +10,7 @@ using System.Linq;
 using Traffk.Bal;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Services;
+using Traffk.Tableau.REST.RestRequests;
 
 namespace TraffkPortal.Services
 {
@@ -16,6 +18,8 @@ namespace TraffkPortal.Services
     {
         private const string PowerBiUsernameKey = "PowerBiUsername";
         private const string PowerBiPasswordKey = "PowerBiPassword";
+
+
 
         private readonly IHostingEnvironment Env;
         private readonly ITraffkTenantFinder TenantFinder;
@@ -76,6 +80,8 @@ namespace TraffkPortal.Services
 
         private readonly ConfigStringFormatter Stringer;
 
+        public TableauSignInOptions TableauSignInOptions { get; private set; }
+
         public CurrentContextServices(
             ConfigStringFormatter stringer,
             ITraffkTenantFinder tenantFinder,
@@ -83,10 +89,12 @@ namespace TraffkPortal.Services
             IHttpContextAccessor httpContextAccessor, 
             UserManager<ApplicationUser> userManager,
             IOptions<PowerBiWebApplicationOptions> powerBiWebAppOptions, 
-            IOptions<PowerBiEndpointOptions> powerBiEndpointOptions
+            IOptions<PowerBiEndpointOptions> powerBiEndpointOptions,
+            IOptions<TableauSignInOptions> tableauSigninOptions
             )
             : base(tenantFinder, rdb)
         {
+            TableauSignInOptions = tableauSigninOptions.Value;
             Stringer = stringer;
             TenantFinder = tenantFinder;
             Rdb = rdb;

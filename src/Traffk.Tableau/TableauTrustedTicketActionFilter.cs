@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using RevolutionaryStuff.Core;
 
 namespace Traffk.Tableau
 {
@@ -31,7 +28,15 @@ namespace Traffk.Tableau
             ActionExecutionDelegate next)
         {
             await next();
-            var trustedTicket = await TableauServices.GetTrustedTicket();
+            string trustedTicket = null;
+            try
+            {
+                trustedTicket = await TableauServices.GetTrustedTicket();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.WriteLine(ex);
+            }
             if (trustedTicket == null)
             {
                 context.HttpContext.Response.Cookies.Delete(TrustedTicketCookieName);

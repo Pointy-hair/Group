@@ -1,9 +1,9 @@
-@using TraffkPortal.Models.CrmModels
-@model ContactModel
+@model IEnumerable<CommunicationHistory>
+@using static TraffkPortal.Controllers.CrmController
 @{
-    Layout = "_LayoutContactListingContent.cshtml";
+    Layout = "_LayoutContactUniversal.cshtml";
 }
 @section listingTable
 {
-    @await Html.PartialAsync("_CommunicationPiecesPartial", Model.CommunicationPieces, z => z.CommunicationPieces)
+    @await Html.PartialAsync("_CommunicationHistoryPartial", Model)
 }
