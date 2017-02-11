@@ -68,17 +68,16 @@ namespace Traffk.Tableau.Tests.REST
         [TestClass]
         public class DownloadPreviewImageForViewMethodTests
         {
-            [Ignore]
             [TestMethod]
             public void WhenSignedInDownloadPreviewImage()
             {
                 var testService = new TableauRestService();
                 var testUrls = TableauServerUrls.FromContentUrl("http://traffk-dev-tab.eastus.cloudapp.azure.com/#/projects/1/", 50);
                 var signIn = testService.SignIn(testUrls, "Test", "TraffkTestTableau");
-                var imageUrl = testService.DownloadPreviewImageForView(testUrls, "a8a65fe1-4cdc-48df-8773-d681bdfe0c2b",
+                var testImageBytes = testService.DownloadPreviewImageForView(testUrls, "a8a65fe1-4cdc-48df-8773-d681bdfe0c2b",
                     "8c808e2f-b381-4e87-b549-e8a1eabd3663", signIn);
 
-                Assert.IsFalse(String.IsNullOrEmpty(imageUrl));
+                Assert.IsNotNull(testImageBytes);
             }
         }
     }

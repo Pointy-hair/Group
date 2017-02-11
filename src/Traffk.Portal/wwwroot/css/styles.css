@@ -721,6 +721,17 @@ h3 {
   top: 10px;
   left: 12px !important;
 }
+
+.mini-panel-top > label {
+    display: block;
+}
+
+.mini-panel-top .img-responsive.portfolio-item {
+    margin: auto;
+    max-width: 500px;
+    max-height: 300px;    
+}
+
 .mini-panel-bottom {
   padding: 8px 15px;
 }

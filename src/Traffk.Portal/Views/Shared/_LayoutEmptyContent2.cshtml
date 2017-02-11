@@ -460,7 +460,7 @@
             function initViz(workbook, view) {
                 var trustedTicket = getCookie("trustedTicket");
                 var containerDiv = document.getElementById("reportContainer"),
-                    url = @Current.TableauSignInOptions.TrustedUrl + trustedTicket + "/views/" + workbook + "/" + view,
+                    url = "@Current.TableauSignInOptions.TrustedUrl" + trustedTicket + "/views/" + workbook + "/" + view,
                     options = {
                         hideTabs: true,
                         onFirstInteractive: function () {

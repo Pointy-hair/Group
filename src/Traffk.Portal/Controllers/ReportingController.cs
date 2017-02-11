@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -219,6 +220,32 @@ namespace TraffkPortal.Controllers
         {
             var root = GetReportFolderTreeRoot();
             return View(root);
+        }
+
+        [Route("/Reporting/PreviewImage/{workbookId}/{viewId}")]
+        public FileContentResult PreviewImage(string workbookId, string viewId)
+        {
+            try
+            {
+                return Cacher.FindOrCreate(workbookId + viewId, key =>
+                {
+                    byte[] previewImagesBytes = TableauRestService.DownloadPreviewImageForView(workbookId, viewId);
+                    if (previewImagesBytes != null)
+                    {
+                        var fileResult = new FileContentResult(previewImagesBytes, "image/png");
+                        return new CacheEntry<FileContentResult>(fileResult);
+                    }
+                    else
+                    {
+                        return new CacheEntry<FileContentResult>(null);
+                    }
+                }).Value;
+            }
+            catch (Exception e)
+            {
+                return null;
+                throw;
+            }
         }
     }
 }

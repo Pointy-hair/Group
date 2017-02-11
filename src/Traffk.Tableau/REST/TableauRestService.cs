@@ -22,7 +22,7 @@ namespace Traffk.Tableau.REST
         public TableauRestService(IOptions<TableauSignInOptions> options)
         {
             Options = options.Value;
-            Urls = TableauServerUrls.FromContentUrl(Options.Url, 10);
+            Urls = TableauServerUrls.FromContentUrl(Options.RestApiUrl, 10);
             Login = new TableauServerSignIn(Urls, Options.Username, Options.Password);
             Login.ExecuteRequest();
         }
@@ -142,13 +142,26 @@ namespace Traffk.Tableau.REST
             }
         }
 
-        public string DownloadPreviewImageForView(TableauServerUrls onlineUrls, string workbookId, string viewId, TableauServerSignIn onlineLogin = null)
+        public byte[] DownloadPreviewImageForView(string workbookId, string viewId)
+        {
+            try
+            {
+                return DownloadPreviewImageForView(Urls, workbookId, viewId, Login);
+            }
+            catch (Exception e)
+            {
+                //TODO: Serilog
+                throw;
+            }
+        }
+
+        public byte[] DownloadPreviewImageForView(TableauServerUrls onlineUrls, string workbookId, string viewId, TableauServerSignIn onlineLogin = null)
         {
             try
             {
                 var downloadPreviewImage = new DownloadPreviewImageForView(onlineUrls, onlineLogin);
                 downloadPreviewImage.ExecuteRequest(workbookId, viewId);
-                return downloadPreviewImage.ImageUrl;
+                return downloadPreviewImage.PreviewImage;
             }
             catch (Exception e)
             {

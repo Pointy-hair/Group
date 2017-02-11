@@ -11,5 +11,8 @@ namespace Traffk.Tableau.REST
         DownloadViewsForSite DownloadViewsForSite();
         DownloadWorkbooksList DownloadWorkbooksList();
         DownloadWorkbooksList DownloadWorkbooksList(TableauServerUrls onlineUrls, TableauServerSignIn onlineLogin = null);
+        byte[] DownloadPreviewImageForView(string workbookId, string viewId);
+        byte[] DownloadPreviewImageForView(TableauServerUrls onlineUrls, string workbookId, string viewId,
+            TableauServerSignIn onlineLogin = null);
     }
 }

@@ -18,6 +18,8 @@ namespace Traffk.Tableau.REST.RestRequests
         }
 
         public string TrustedUrl => Url + "/trusted/";
+        public string RestApiUrl => Url + "/#/";
+        public string RestApiTrustedUrl => Url + "/#/trusted/";
         public string Url { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }

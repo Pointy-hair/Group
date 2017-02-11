@@ -25,7 +25,7 @@
 
 @section breadCrumbItems {
     <li><a asp-controller="@ReportingController.Name" asp-action="Index">Reports</a> <span>></span> </li>
-<li><a asp-controller="@ReportingController.Name" asp-action="Index" asp-fragment="@Model.WorkbookName">@Model.WorkbookName</a> <span>></span> </li>
+    <li><a asp-controller="@ReportingController.Name" asp-action="Index" asp-fragment="@Model.WorkbookName">@Model.WorkbookName.ToTitleFriendlyString()</a> <span>></span> </li>
 }
 
 @section pageActionItems {

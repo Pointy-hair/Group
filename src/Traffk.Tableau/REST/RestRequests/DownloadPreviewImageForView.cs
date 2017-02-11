@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,13 +8,13 @@ namespace Traffk.Tableau.REST.RestRequests
 {
     public class DownloadPreviewImageForView : TableauServerSignedInRequestBase
     {
-        public string ImageUrl {
-            get { return imageUrl; }
+        public byte[] PreviewImage {
+            get { return _previewImage; }
         }
 
         private readonly TableauServerUrls urls;
         private readonly string xmlNamespace;
-        private string imageUrl;
+        private byte[] _previewImage;
 
         public DownloadPreviewImageForView(TableauServerUrls onlineUrls, TableauServerSignIn login)
             : base(login)
@@ -32,9 +33,13 @@ namespace Traffk.Tableau.REST.RestRequests
 
             onlineSession.StatusLog.AddStatus("Web request: " + urlQuery, -10);
             var response = GetWebReponseLogErrors(webRequest, "get preview image for view");
-            var xmlDoc = GetWebResponseAsXml(response);
+            var responseStream = response.GetResponseStream();
 
-            imageUrl = xmlDoc.ToString();
+            using (MemoryStream ms = new MemoryStream())
+            {
+                responseStream.CopyTo(ms);
+                _previewImage = ms.ToArray();
+            }
         }
     }
 }
