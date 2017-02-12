@@ -1,4 +1,4 @@
-﻿
+﻿@model IEnumerable<TreeNode<SiteViewResource>>
 @using RevolutionaryStuff.Core.Collections
 @using Traffk.Tableau.REST.Models
 @using static TraffkPortal.Controllers.ReportingController
@@ -23,14 +23,13 @@
         <div class="col-md-3 col-sm-4">
             <div class="mini-panel">
                 <div class="mini-panel-top">
-                    <input type="checkbox" name="radios" class="item-selector" id="radio1" />
-                    </label>
-</div>
+                    <input type="checkbox" name="radios" class="" id="radio1" />
                         <a style="cursor:pointer" asp-route-id="@view.Id" asp-route-anchorName="@urlName" asp-action="@ActionNames.Report">
                             <div class="report-preview-image-container" style="background-image: url('/Reporting/PreviewImage/@view.WorkbookId/@view.Id')">
                                 &nbsp;
                             </div>
                         </a>
+                </div>
                 <div class="mini-panel-bottom">
                     <p class="mini-title"><a style="cursor:pointer" asp-route-id="@view.Id" asp-route-anchorName="@urlName" asp-action="@ActionNames.Report">@view.Name</a></p>
                     <p>@view.Description</p>
