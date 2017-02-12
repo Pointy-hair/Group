@@ -41,6 +41,7 @@
       "Data\\DataStoreUpgrader\\Releases\\0002.Notes\\008.HGame.sql",
       "Data\\DataStoreUpgrader\\Releases\\0002.Notes\\009.IGame.sql",
       "Data\\DataStoreUpgrader\\Releases\\0002.Notes\\010.JGame.sql",
+      "Data\\DataStoreUpgrader\\Releases\\0002.Notes\\011.KGame.sql",
       "Data\\DefaultPasswordUnallowedWordList.txt",
       "Data\\DefaultProhibitedPasswordList.txt"
     ]
