@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using TraffkPortal.Services;
 using Microsoft.AspNetCore.Authorization;
 using TraffkPortal.Permissions;
-using RevolutionaryStuff.PowerBiToys.Objects;
 using RevolutionaryStuff.Core.Collections;
 using Traffk.Bal.Permissions;
 using Traffk.Bal.Data.Rdb;
@@ -26,9 +25,9 @@ namespace TraffkPortal.Controllers
     public class ReportingController : BasePageController
     {
         public const string Name = "Reporting";
+
         public ITableauRestService TableauRestService { get; set; }
 
-        public static string CreateAnchorName(PowerBiEmbeddableResource er) => NameHelpers.GetName(er)?.Trim()?.ToUpperCamelCase() ?? "";
         public static string CreateAnchorName(SiteViewResource view) => NameHelpers.GetName(view)?.Trim()?.ToUpperCamelCase()?.RemoveSpecialCharacters() ?? "";
 
         public static class ActionNames
@@ -51,98 +50,43 @@ namespace TraffkPortal.Controllers
             AttachLogContextProperty("EventType", LoggingEventTypes.Report.ToString());
         }
 
-        public class FolderResource : PowerBiResource, IName
-        {
-            string IName.Name 
-            {
-                get
-                {
-                    return Id;
-                }
-            }
-
-            public override string ToString() => Id;
-
-            public FolderResource(string name)
-            {
-                Id = name;
-            }
-        }
-
-        private TreeNode<PowerBiResource> GetRoot()
-        {
-            return Cacher.FindOrCreate("root", async key =>
-            {
-                var root = new TreeNode<PowerBiResource>(new FolderResource("Root"));
-                var dashboards = (await Current.PowerBi.GetDatasets()).Values.OrderBy(d => d.Name).ToList();
-                if (dashboards.Count > 0)
-                {
-                    var dashboardFolder = new TreeNode<PowerBiResource>(new FolderResource("Dashboards"));
-                    foreach (var d in dashboards)
-                    {
-                        var tiles = (await Current.PowerBi.GetTiles(d.Id)).Values;
-                        if (tiles != null)
-                        {
-                            var dn = dashboardFolder.Add(d);
-                            dn.AddChildren(tiles);
-                        }
-                    }
-                    if (dashboardFolder.HasChildren)
-                    {
-                        root.Add(dashboardFolder);
-                    }
-                }
-                var reports = (await Current.PowerBi.GetReports()).Values.OrderBy(r => r.Name).ToList();
-                if (reports.Count > 0)
-                {
-                    var reportsFolder = new TreeNode<PowerBiResource>(new FolderResource("Reports"));
-                    reportsFolder.AddChildren(reports);
-                    root.Add(reportsFolder);
-                }
-                /*
-                            m.Root.Children.Add(Create("Datasets", await Current.PowerBi.GetDatasets()));
-                            m.Root.Children.Add(Create("Groups", await Current.PowerBi.GetGroups()));
-                */
-                return new CacheEntry<TreeNode<PowerBiResource>>(root);
-            }).Value;
-        }
-
         private TreeNode<SiteViewResource> GetReportFolderTreeRoot()
         {
-            var root = new TreeNode<SiteViewResource>(new SiteViewFolderResource("Root"));
-            var views = TableauRestService.DownloadViewsForSite().Views;
+            return Cacher.FindOrCreate("root", key=>{
+                var root = new TreeNode<SiteViewResource>(new SiteViewFolderResource("Root"));
+                var views = TableauRestService.DownloadViewsForSite().Views;
 
-            if (views.Count() > 0)
-            {
-                views = views.OrderBy(r => r.Name);
-                var workbookFolders = GetWorkbookFolders();
-
-                foreach (var view in views)
+                if (views.Count() > 0)
                 {
-                    var workbookName = view.WorkbookName;
-                    var workbookId = view.WorkbookId;
-                    var parentWorkbookFolder =
-                        workbookFolders.Find(x => x.Data.Id == workbookId);
+                    views = views.OrderBy(r => r.Name);
+                    var workbookFolders = GetWorkbookFolders();
 
-                    if (parentWorkbookFolder == null)
+                    foreach (var view in views)
                     {
-                        var newWorkbookFolder = new TreeNode<SiteViewResource>(new SiteViewFolderResource(workbookName, workbookId));
-                        newWorkbookFolder.AddChildren(view);
-                        workbookFolders.Add(newWorkbookFolder);
+                        var workbookName = view.WorkbookName;
+                        var workbookId = view.WorkbookId;
+                        var parentWorkbookFolder =
+                            workbookFolders.Find(x => x.Data.Id == workbookId);
+
+                        if (parentWorkbookFolder == null)
+                        {
+                            var newWorkbookFolder = new TreeNode<SiteViewResource>(new SiteViewFolderResource(workbookName, workbookId));
+                            newWorkbookFolder.AddChildren(view);
+                            workbookFolders.Add(newWorkbookFolder);
+                        }
+                        else
+                        {
+                            parentWorkbookFolder.AddChildren(view);
+                        }
                     }
-                    else
+
+                    foreach (var folder in workbookFolders)
                     {
-                        parentWorkbookFolder.AddChildren(view);
+                        root.Add(folder);
                     }
                 }
-
-                foreach (var folder in workbookFolders)
-                {
-                    root.Add(folder);
-                }
-            }
-
-            return Cacher.FindOrCreate("root", async key => new CacheEntry<TreeNode<SiteViewResource>>(root)).Value;
+                return new CacheEntry<TreeNode<SiteViewResource>>(root);
+            }).Value;
         }
 
         private List<TreeNode<SiteViewResource>> GetWorkbookFolders()
@@ -156,26 +100,6 @@ namespace TraffkPortal.Controllers
             }
 
             return workbookFolders;
-        }
-
-        [SetPowerBiBearer]
-        [Route("/Reporting/{anchorName}")]
-        [ActionName(ActionNames.ShowReport)]
-        public IActionResult ShowReport(string anchorName)
-        {
-            var root = GetRoot();
-            PowerBiEmbeddableResource e = null;
-            root.Walk((node, depth) => {
-                var pbi = node.Data as PowerBiEmbeddableResource;
-                if (pbi == null) return;
-                var urlFriendlyReportName = CreateAnchorName(pbi);
-                if (anchorName == urlFriendlyReportName || pbi.Id == anchorName)
-                {
-                    e = pbi as PowerBiEmbeddableResource;
-                }
-            });
-            if (e == null) return NotFound();
-            return View(e);
         }
 
         [SetTableauTrustedTicket]
@@ -213,7 +137,6 @@ namespace TraffkPortal.Controllers
             return View(viewModel);
         }
 
-        [SetPowerBiBearer]
         [Route("/Reporting")]
         [ActionName(ActionNames.Index)]
         public IActionResult Index()
@@ -222,12 +145,36 @@ namespace TraffkPortal.Controllers
             return View(root);
         }
 
+        private static readonly DateTime StartedAtUtc = DateTime.UtcNow;
+
         [Route("/Reporting/PreviewImage/{workbookId}/{viewId}")]
-        public FileContentResult PreviewImage(string workbookId, string viewId)
+        public IActionResult PreviewImage(string workbookId, string viewId)
         {
-            try
+            var etag = $"\"{TenantId}.{workbookId}.{viewId}\"";
+            var stringValues = this.Request.Headers.FindOrDefault(WebHelpers.HeaderStrings.IfNoneMatch);
+            if (stringValues.Count == 1 && stringValues[0] == etag)
             {
-                return Cacher.FindOrCreate(workbookId + viewId, key =>
+                return StatusCode(System.Net.HttpStatusCode.NotModified);
+            }
+            stringValues = this.Request.Headers.FindOrDefault(WebHelpers.HeaderStrings.IfModifiedSince);
+            if (stringValues.Count == 1 && stringValues[0] == etag)
+            {
+                DateTime dt;
+                if (DateTime.TryParse(stringValues[0], out dt) && dt >= StartedAtUtc)
+                {
+                    return StatusCode(System.Net.HttpStatusCode.NotModified);
+                }
+            }
+            Response.Headers.Add(WebHelpers.HeaderStrings.ETag, etag);
+            if (Response.Headers.ContainsKey(WebHelpers.HeaderStrings.CacheControl))
+            {
+                Response.Headers.Remove(WebHelpers.HeaderStrings.CacheControl);
+            }
+            Response.Headers.Add(WebHelpers.HeaderStrings.LastModified, StartedAtUtc.ToRfc7231());
+            Response.Headers.Add(WebHelpers.HeaderStrings.CacheControl, "public");
+            return Cacher.FindOrCreate(Cache.CreateKey(workbookId, viewId), key =>
+            {                
+                try
                 {
                     byte[] previewImagesBytes = TableauRestService.DownloadPreviewImageForView(workbookId, viewId);
                     if (previewImagesBytes != null)
@@ -235,17 +182,10 @@ namespace TraffkPortal.Controllers
                         var fileResult = new FileContentResult(previewImagesBytes, "image/png");
                         return new CacheEntry<FileContentResult>(fileResult);
                     }
-                    else
-                    {
-                        return new CacheEntry<FileContentResult>(null);
-                    }
-                }).Value;
-            }
-            catch (Exception e)
-            {
-                return null;
-                throw;
-            }
+                }
+                catch (Exception) { }
+                return new CacheEntry<FileContentResult>(null);
+            }).Value;
         }
     }
 }

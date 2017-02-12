@@ -20,6 +20,7 @@ namespace Traffk.Tableau.REST.Models
         public readonly string ContentUrl;
         public readonly string WorkbookId;
         public readonly string OwnerId;
+        public readonly string Description = "";//"No desc, Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
 
         public SiteView()
         {

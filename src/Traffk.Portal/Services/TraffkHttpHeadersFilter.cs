@@ -33,7 +33,10 @@ namespace TraffkPortal.Services
         {
             var o = Options.Value;
             var headers = context.HttpContext.Response.Headers;
-            headers[WebHelpers.HeaderStrings.CacheControl] = "no-cache, no-store";
+            if (!headers.ContainsKey(WebHelpers.HeaderStrings.CacheControl))
+            {
+                headers[WebHelpers.HeaderStrings.CacheControl] = "no-cache, no-store";
+            }
             if (o.IncludeMachineName)
             {
                 headers["x-MachineName"] = Environment.MachineName;

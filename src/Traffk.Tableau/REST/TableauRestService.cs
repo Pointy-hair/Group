@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Traffk.Tableau.REST.RestRequests;
+using RevolutionaryStuff.Core.Caching;
 
 namespace Traffk.Tableau.REST
 {
@@ -13,42 +14,46 @@ namespace Traffk.Tableau.REST
 
         private readonly TableauSignInOptions Options;
         private readonly TableauServerUrls Urls;
+        private readonly ICacher Cacher;
 
-        public TableauRestService()
+        #region Constructors
+
+        private TableauRestService(ICacher cacher)
         {
-            
+            Cacher = cacher ?? Cache.Passthrough;
         }
 
-        public TableauRestService(IOptions<TableauSignInOptions> options)
+        public TableauRestService()
+            : this((ICacher)null)
+        { }
+
+        public TableauRestService(IOptions<TableauSignInOptions> options, ICacher cacher=null)
+            : this(cacher)
         {
             Options = options.Value;
             Urls = TableauServerUrls.FromContentUrl(Options.RestApiUrl, 10);
-            Login = new TableauServerSignIn(Urls, Options.Username, Options.Password);
-            Login.ExecuteRequest();
+            Login = SignIn(Urls, Options.Username, Options.Password);
         }
 
         public TableauRestService(string url, string userName, string password)
+            : this ()
         {
             var urls = TableauServerUrls.FromContentUrl(url, 10);
-            Login = new TableauServerSignIn(urls, userName, password);
+            Login = SignIn(urls, userName, password);
         }
+
+        #endregion
 
         public TableauServerSignIn SignIn(TableauServerUrls onlineUrls, string userName, string password, TaskStatusLogs statusLog = null)
         {
-            //========================================================================================
-            //Log into Tableau Online
-            //========================================================================================
-            var serverLogin = new TableauServerSignIn(onlineUrls, userName, password, statusLog);
-            try
-            {
-                serverLogin.ExecuteRequest();
-            }
-            catch (Exception exLogin)
-            {
-                //TODO: Serilog
-            }
-
-            return serverLogin;
+            return Cacher.FindOrCreate(
+                Cache.CreateKey(onlineUrls.CacheKey, Options.Username, Options.Password),
+                key =>
+                {
+                    var l = new TableauServerSignIn(Urls, Options.Username, Options.Password, statusLog);
+                    l.ExecuteRequest();
+                    return new CacheEntry<TableauServerSignIn>(l);
+                }).Value;
         }
 
         public DownloadProjectsList DownloadProjectsList(TableauServerUrls onlineUrls, TableauServerSignIn onlineLogin = null)
