@@ -83,7 +83,7 @@
 
         function setExistingRowsPerPage() {
             var rowsPerPageValue = 10;
-            var existingRowsPerPageValue = @ViewBag.PageSize;
+            var existingRowsPerPageValue = '@ViewBag.PageSize';
             if (existingRowsPerPageValue) {
                 rowsPerPageValue = existingRowsPerPageValue;
             }

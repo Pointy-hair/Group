@@ -4,7 +4,12 @@
     ViewData.SetIfMissing("Heading", ViewData["EntityTitle"] as string);
     var entityId = ViewData[ViewDataKeys.EntityId].ToString();
 }
-    <div class="row">
+<div class="row">
+    <div class="col-sm-12">
+        @RenderSection("pageAlerts", false)
+    </div>
+</div>
+<div class="row">
         <div class="col-xs-12">
             @RenderSection("breadcrumbs", required: true)
             <h1>@ViewData[ViewDataKeys.Heading]</h1>

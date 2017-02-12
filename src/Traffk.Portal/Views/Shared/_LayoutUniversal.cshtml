@@ -8,11 +8,7 @@
     var showListingActions = ViewData.HasPageActions() && isListingPage;
 }
 <!-- alert-->
-<div class="row">
-    <div class="col-sm-12">
-        @RenderSection("pageAlerts", false)
-    </div>
-</div>
+@RenderSection("pageAlerts", false)
 <!--end alert-->
 
 @if (ViewData.HasBreadcrumbItems())
