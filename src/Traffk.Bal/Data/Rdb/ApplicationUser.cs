@@ -32,6 +32,7 @@ namespace Traffk.Bal.Data.Rdb
         public Contact Contact { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        [Column("CreatedAtUtc")]
         public DateTime CreatedAtUtc { get; set; }
 
         [NotMapped]
@@ -67,6 +68,14 @@ namespace Traffk.Bal.Data.Rdb
                 if (UserSettingsJson != json)
                 {
                     UserSettingsJson = json;
+                };
+            }
+            if (this.ContactId < 1)
+            {
+                this.Contact = new UserContact
+                {
+                    PrimaryEmail = this.Email,
+                    FullName = this.UserName
                 };
             }
         }

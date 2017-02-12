@@ -9,7 +9,7 @@
 {
     <li><a asp-controller="@Name" asp-action="@ActionNames.UserList">Users</a> <span>></span> </li>
 }
-<form asp-action="Create">
+<form asp-action="@ActionNames.UserCreateSave">
     <div class="form-horizontal">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group">

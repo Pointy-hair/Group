@@ -10,9 +10,9 @@
     }
 }
 @section pageActionItems {
-    <li><a onclick="deleteUser('@Model.Id', function(){location=$('#IndexLink').attr('href');})" class="confirm-on-click" confirmHeading="Are you sure?" confirmMessage="Are you sure you want to delete role: @Model.UserName?">Delete</a></li>
+    <li><a onclick="deleteUser('@Model.Id', function(){location=$('#IndexLink').attr('href');})" class="confirm-on-click" confirmHeading="Are you sure?" confirmMessage="Are you sure you want to delete user: @Model.UserName?">Delete</a></li>
 }
-<form asp-action="@ActionNames.UserBackground">
+<form asp-action="@ActionNames.UserBackgroundSave">
     <div class="form-horizontal">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="Id" />

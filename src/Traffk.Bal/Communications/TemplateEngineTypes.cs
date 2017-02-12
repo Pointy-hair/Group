@@ -3,7 +3,7 @@
     public enum TemplateEngineTypes
     {
         Undefined = 0,
-        TraffkDollarString,
+        DollarString,
         Razor,
     }
 }

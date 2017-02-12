@@ -107,7 +107,7 @@ namespace Traffk.Bal.Communications
 
             var c = context.Config;
 
-            Requires.Equals(creative.TemplateEngineType, TemplateEngineTypes.TraffkDollarString);
+            Requires.Equals(creative.TemplateEngineType, TemplateEngineTypes.DollarString);
 
             var s = extractor(creative.CreativeSettings) ?? "";
             s = Flatten(s, extractor);

@@ -267,7 +267,7 @@ namespace TraffkPortal.Controllers
         {
             creative.CreativeTitle = model.CreativeTitle;
             creative.ModelType = model.ModelType;
-            creative.TemplateEngineType = model.TemplateEngineType == TemplateEngineTypes.Undefined ? TemplateEngineTypes.TraffkDollarString : model.TemplateEngineType;
+            creative.TemplateEngineType = model.TemplateEngineType == TemplateEngineTypes.Undefined ? TemplateEngineTypes.DollarString : model.TemplateEngineType;
             creative.CreativeSettings.EmailSubject = model.CreativeSettings.EmailSubject;
             creative.CreativeSettings.EmailHtmlBody = model.CreativeSettings.EmailHtmlBody;
             creative.CreativeSettings.EmailTextBody = model.CreativeSettings.EmailTextBody;

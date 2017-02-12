@@ -21,6 +21,7 @@ namespace Traffk.Bal.Email
         private readonly TraffkRdbContext Rdb;
         private readonly ITraffkTenantFinder TenantFinder;
         private readonly ICommunicationBlastFinder BlastFinder;
+        private readonly int TenantId;
 
         public TrackingEmailer(IEmailer emailer, TraffkRdbContext rdb, ITraffkTenantFinder tenantFinder, ICommunicationBlastFinder blastFinder)
         {
@@ -28,6 +29,7 @@ namespace Traffk.Bal.Email
             Rdb = rdb;
             TenantFinder = tenantFinder;
             BlastFinder = blastFinder;
+            TenantId = tenantFinder.GetTenantIdAsync().ExecuteSynchronously();
         }
 
         public static Guid ConvertPieceSegmentToPieceUid(string part)
@@ -62,7 +64,7 @@ namespace Traffk.Bal.Email
                         Rdb.CommunicationBlastTrackers.Add(tracker);
                         trackersByUrl.Add(tracker.RedirectUrl, tracker);
                     }
-                    return new Uri($"https://{hostname}/e/{pieceSegment}/{Base32.Encode(tracker.TrackerUid.ToByteArray())}");
+                    return new Uri($"https://{hostname}/e/{TenantId}/{pieceSegment}/{Base32.Encode(tracker.TrackerUid.ToByteArray())}");
                 });
         }
 

@@ -297,7 +297,7 @@ function callAjaxFunction(url, data, verb, onSuccess, onError)
                 onSuccess();
             }
             else {
-                alert("success");
+                debugAlert("success");
             }
         },
         error: function (xhr) {
@@ -320,7 +320,7 @@ function deleteByIds(url, ids, onSuccess) {
     if (ids == null) {
         ids = getSelectionContextIds();
     }
-    alert('deleteByIds("' + url + '", ' + ids + ')');
+    debugAlert('deleteByIds("' + url + '", ' + JSON.stringify(ids) + ')');
     callAjaxDelete(url, ids, function () {
         if (onSuccess == null) {
             deleteRowsWithContextIds(ids);
@@ -344,7 +344,7 @@ function deleteRoles(ids, onSuccess) {
 }
 
 function deleteUser(id, onSuccess) {
-    deleteRoles([id], onSuccess);
+    deleteUsers([id], onSuccess);
 }
 
 function deleteUsers(ids, onSuccess) {

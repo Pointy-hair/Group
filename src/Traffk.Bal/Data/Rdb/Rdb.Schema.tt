@@ -255,6 +255,7 @@ foreach (var z in doc.XPathSelectElements("/SchemaMeta/Tables/Table[Properties/P
 		superclass = classNames[0];
 	}
 	var copyConstructorFieldNames = new List<string>();
+	string primaryKeyPropertyName = null;
 	var keyPropertyNames = new List<string>();
 	var implements = GetPropertyValue(z, "Implements");
 	var validators = new List<string>();
@@ -341,6 +342,10 @@ foreach (var f in z.XPathSelectElements("Columns/Column"))
 	bool isNullable = GetAttrValAsBool(f, "isNullable");
 	bool isPrimaryKey = GetAttrValAsBool(f, "isPrimaryKey");
 	var addToCopyConstructor = !isPrimaryKey;
+	if (isPrimaryKey)
+	{
+		primaryKeyPropertyName = propertyName;
+	}
 	string jsonSettingsClass = null;
 	string dataType;
 	switch (GetAttrVal(f, "sqlType"))
@@ -551,11 +556,18 @@ foreach (var kpn in keyPropertyNames)
 			: this(null)
 		{}
 
-		<#=constructorAccessModifier#> <#=className#>(<#=className#> other)<#=superclass==null?"":"\n\t\t\t: base(other)"#>
+		<#=constructorAccessModifier#> <#=className#>(<#=className#> other, bool copyKey=false)<#=superclass==null?"":"\n\t\t\t: base(other)"#>
 		{
 			if (other!=null)
 			{
+			<#if(primaryKeyPropertyName!=null){
+#>
+				if (copyKey)
+				{
+					<#=primaryKeyPropertyName#> = other.<#=primaryKeyPropertyName#>;
+				}
 <#
+}
 foreach (var ccfn in copyConstructorFieldNames)
 {
 #>

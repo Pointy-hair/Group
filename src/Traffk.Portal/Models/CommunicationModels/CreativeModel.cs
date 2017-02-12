@@ -17,7 +17,7 @@ namespace TraffkPortal.Models.CommunicationModels
         public CreativeModel() { }
 
         public CreativeModel(Creative creative, int? communicationId=null, string deleteScriptName=null)
-            : base(creative)
+            : base(creative, true)
         {
             CommunicationId = communicationId;
             foreach (var a in this.CreativeSettings.Attachments)

@@ -37,6 +37,7 @@ namespace TraffkPortal.Controllers
             public const string UserBackgroundSave = "UserBackgroundSave";
             public const string UserMessages = "UserMessages";
             public const string UserCreate = "Create";
+            public const string UserCreateSave = "CreateSave";
             public const string UserDelete = "Delete";
         }
 
@@ -119,6 +120,7 @@ namespace TraffkPortal.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ActionName(ActionNames.UserCreateSave)]
         [Route("Users/CreateSave")]
         public async Task<IActionResult> Create(
             [Bind(
@@ -165,7 +167,8 @@ namespace TraffkPortal.Controllers
                         await EmailSender.SendEmailCommunicationAsync(
                             SystemCommunicationPurposes.UserAcceptInvitation,
                             CommunicationModelFactory.CreateCallbackUrlModel(callbackUrl, model.InvitationText),
-                            email);
+                            email, null,
+                            user.ContactId);
                     }
                 }
                 if (!hasFatalErrors)
@@ -307,6 +310,7 @@ namespace TraffkPortal.Controllers
         }
 
         [HttpDelete]
+        [Route("/users/delete")]
         public Task<IActionResult> Delete() => JsonDeleteFromRdbAsync<ApplicationUser, string>(Rdb.Users);
     }
 }

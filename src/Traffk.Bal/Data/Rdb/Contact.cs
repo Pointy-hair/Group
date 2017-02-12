@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
 
 namespace Traffk.Bal.Data.Rdb
 {
@@ -53,6 +54,12 @@ namespace Traffk.Bal.Data.Rdb
         [NotMapped]
         [JsonIgnore]
         public Organization AsOrganization => this as Organization;
+
+        [InverseProperty("Contact")]
+        [JsonIgnore]
+        [IgnoreDataMember]
+        public List<ApplicationUser> Users { get; set; } = new List<ApplicationUser>();
+
 
         public Note FindNoteById(string noteId)
         {

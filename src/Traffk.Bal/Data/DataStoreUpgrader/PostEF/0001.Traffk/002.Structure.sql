@@ -149,6 +149,7 @@ create unique index UX_MemberId on Contacts(TenantId, MemberId) where MemberId i
 create unique index UX_DeerwalkMemberId on Contacts(TenantId, DeerwalkMemberId) where DeerwalkMemberId is not null and ContactRowStatus <> 'p' and ContactRowStatus <> 'd'
 exec db.TablePropertySet  'Contacts', '1', @propertyName='AddToDbContext'
 exec db.TablePropertySet  'Contacts', '1', @propertyName='GeneratePoco'
+exec db.TablePropertySet  'Contacts', 'ITraffkTenanted', @propertyName='Implements'
 exec db.ColumnPropertySet 'Contacts', 'ContactDetails', 'Traffk.Bal.Data.Rdb.ContactDetails', @propertyName='JsonSettingsClass'
 exec db.ColumnPropertySet 'Contacts', 'CreatedAtUtc', 'Datetime when this entity was created.'
 exec db.ColumnPropertySet 'Contacts', 'ContactRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
@@ -179,81 +180,6 @@ exec db.ColumnPropertySet 'Contacts', 'ForeignId', 'missing', @propertyName='Acc
 GO
 
 alter table AspNetUsers add ContactId bigint null references Contacts(ContactId);
-
-GO
-
-CREATE TRIGGER AspNetUsersCreateRelatedContact
-ON dbo.AspNetUsers
-INSTEAD OF INSERT
-AS
-BEGIN
-
-	declare @contactId bigint
-
-	select top(10) * from contacts
-
-	create table #ids
-	(
-		ContactId bigint not null,
-		ForeignId nvarchar(50) not null
-	)
-
-	insert into Contacts
-	(TenantId, ContactType, PrimaryEmail, ForeignId, FullName)
-	OUTPUT inserted.ContactId, inserted.ForeignId into #ids  
-	select TenantId, 'User', Email, left(Id, 50), Username
-	from inserted i
-	where i.ContactId is null
-
-	insert into AspnetUsers
-	(
-		AccessFailedCount
-		,ConcurrencyStamp
-		,Email
-		,EmailConfirmed
-		,LockoutEnabled
-		,LockoutEnd
-		,NormalizedEmail
-		,NormalizedUserName
-		,PasswordHash
-		,PhoneNumber
-		,PhoneNumberConfirmed
-		,SecurityStamp
-		,TwoFactorEnabled
-		,UserName
-		,TenantId
-		,UserSettings
-		,CreatedAtUtc
-		,UserRowStatus
-		,ContactId	
-	)
-	select
-		i.AccessFailedCount
-		,i.ConcurrencyStamp
-		,i.Email
-		,i.EmailConfirmed
-		,i.LockoutEnabled
-		,i.LockoutEnd
-		,i.NormalizedEmail
-		,i.NormalizedUserName
-		,i.PasswordHash
-		,i.PhoneNumber
-		,i.PhoneNumberConfirmed
-		,i.SecurityStamp
-		,i.TwoFactorEnabled
-		,i.UserName
-		,i.TenantId
-		,i.UserSettings
-		,i.CreatedAtUtc
-		,i.UserRowStatus
-		,coalesce(ids.ContactId, i.ContactId)	
-	from
-		inserted i
-			left join
-		#ids ids
-			on left(i.Id,50)=ids.ForeignId
-
-END
 
 GO
 

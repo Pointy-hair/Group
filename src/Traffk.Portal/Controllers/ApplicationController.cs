@@ -84,7 +84,11 @@ namespace TraffkPortal.Controllers
         {
             var m = new MultipleValueDictionary<CommunicationModelTypes, SelectListItem>();
             Stuff.GetEnumValues<CommunicationModelTypes>().ForEach(cm => m.Add(cm, new SelectListItem { Text = AspHelpers.NoneDropdownItemText, Value = AspHelpers.NoneDropdownItemValue }));
-            foreach (var creative in Rdb.Creatives.Where(c => c.TenantId == tenantId))
+
+            var creatives = from cr in Rdb.Creatives.Include(z=>z.CreativeCommunicationBlasts)
+                        where cr.TenantId == TenantId && cr.CreativeTitle != null && cr.CreativeCommunicationBlasts.Count == 0
+                        select cr;
+            foreach (var creative in creatives)
             {
                 m.Add(creative.ModelType, new SelectListItem { Text = $"{creative.CreativeTitle} ({creative.CreativeId})", Value = creative.CreativeId.ToString() });
             }

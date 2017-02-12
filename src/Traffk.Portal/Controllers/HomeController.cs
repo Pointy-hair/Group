@@ -64,7 +64,7 @@ namespace TraffkPortal.Controllers
         public async Task<IActionResult> Releases(string sortCol, string sortDir, int? startAt)
         {
             var releases = (IQueryable<Release>) Rdb.Releases.Include(r => r.ReleaseReleaseChanges);
-            releases = ApplySort(releases, sortCol ?? nameof(Release.ReleaseDate), sortDir);
+            releases = ApplySort(releases, sortCol ?? nameof(Release.ReleaseDate), sortDir??AspHelpers.SortDirDescending);
             return View(await releases.ToListAsync());
         }
     }
