@@ -459,10 +459,14 @@
         <script>tinymce.init({ selector: '.htmleditor', plugins: "code" });</script>
 
         <script>
-            function initViz(workbook, view) {
+            function initViz(workbook, view, parameterString) {
                 var trustedTicket = getCookie("trustedTicket");
+                var viewUrl = "@Current.TableauSignInOptions.TrustedUrl" + trustedTicket + "/views/" + workbook + "/" + view;
+                if (parameterString) {
+                    viewUrl = viewUrl + parameterString;
+                }
                 var containerDiv = document.getElementById("reportContainer"),
-                    url = "@Current.TableauSignInOptions.TrustedUrl" + trustedTicket + "/views/" + workbook + "/" + view,
+                    url = viewUrl,
                     options = {
                         hideTabs: true,
                         onFirstInteractive: function () {

@@ -24,8 +24,19 @@
     }
 
 @section breadCrumbItems {
-    <li><a asp-controller="@ReportingController.Name" asp-action="Index">Reports</a> <span>></span> </li>
-    <li><a asp-controller="@ReportingController.Name" asp-action="Index" asp-fragment="@Model.WorkbookName">@Model.WorkbookName.ToTitleFriendlyString()</a> <span>></span> </li>
+    @if (Model is SiteViewContactEmbeddableResource)
+    {
+        var contactResource = Model as SiteViewContactEmbeddableResource;
+        var contactId = contactResource.ContactId;
+        <li><a asp-controller="@CrmController.Name" asp-action="Index" id="IndexLink">Contacts</a> <span>></span> </li>
+        <li><a asp-controller="Crm" asp-action="ContactBackground" asp-for-id="@contactId">@ViewData["ContactName"]</a> <span>></span> </li>
+    }
+    else
+    {
+        <li><a asp-controller="@ReportingController.Name" asp-action="Index">Reports</a> <span>></span> </li>
+        <li><a asp-controller="@ReportingController.Name" asp-action="Index" asp-fragment="@Model.WorkbookName">@Model.WorkbookName.ToTitleFriendlyString()</a> <span>></span> </li>
+    }
+
 }
 
 @section pageActionItems {
@@ -34,12 +45,12 @@
 }
 
 
-@await Html.PartialAsync("_ExportReportPartial")
-@await Html.PartialAsync("_SendReportPartial", @Model)
+@await Html.PartialAsync("~/Views/Reporting/_ExportReportPartial.cshtml")
+@await Html.PartialAsync("~/Views/Reporting/_SendReportPartial.cshtml", @Model)
 
 
 
-@{     await Html.RenderPartialAsync("_ReportFramePartial"); }
+@{     await Html.RenderPartialAsync("~/Views/Shared/_ReportFramePartial.cshtml"); }
 
 
 @section Scripts {
@@ -74,9 +85,24 @@
         }
     </script>
 
-    <script type="text/javascript">
-        $(document).ready(function () {
-            initViz("@Model.WorkbookName", "@Model.ViewName");
-        });
-    </script>
+        @if (Model is SiteViewContactEmbeddableResource)
+        {
+            var contactResource = Model as SiteViewContactEmbeddableResource;
+            var contactId = contactResource.ContactId;
+             <script type="text/javascript">
+                $(document).ready(function () {
+                    var parameterString = "?ContactId=" + "@contactId";
+                    initViz("@Model.WorkbookName", "@Model.ViewName", parameterString);
+                });
+            </script>
+        }
+        else
+        {
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    initViz("@Model.WorkbookName", "@Model.ViewName");
+                });
+            </script>
+        }
+
 }

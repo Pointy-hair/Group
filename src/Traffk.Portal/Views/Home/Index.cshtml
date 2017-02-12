@@ -12,22 +12,9 @@
 }
 <div class="row">
     <div class="col-xs-12">
-        @*<h1>Welcome <br class="visible-xs" />@UserManager.GetUserName(User)!</h1>*@
         <h1>@R.HomeMessage</h1>
     </div>
 </div>
-@*<div class="row">
-    <div class="col-sm-6">
-        <div class="panel small-padding">
-            <h2>Recently Viewed Reports</h2>
-        </div>
-    </div>
-    <div class="col-sm-6">
-        <div class="panel small-padding">
-            <h2>New Messages</h2>
-        </div>
-    </div>
-</div>*@
 <div class="row">
     @{ await Html.RenderPartialAsync("_ReportFramePartial"); }
 </div>

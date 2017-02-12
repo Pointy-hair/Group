@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -71,6 +72,11 @@ namespace Traffk.Tableau.REST.Models
     {
         public string WorkbookName { get; set; }
         public string ViewName { get; set; }
+    }
+
+    public class SiteViewContactEmbeddableResource : SiteViewEmbeddableResource
+    {
+        public string ContactId { get; set; }
     }
 
     public class SiteViewFolderResource : SiteViewResource, IName

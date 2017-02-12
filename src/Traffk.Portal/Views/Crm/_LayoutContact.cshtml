@@ -85,6 +85,7 @@
                     <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.VisitList" class="@(pageKey==CrmController.PageKeys.Visit?"active":"")">Visits</a></li>
                 </ul>
             </li>
+            <li><a asp-controller="Reporting" asp-action="MemberDashboard" asp-route-id="@entityId" class="@(pageKey==CrmController.PageKeys.Reports?"active":"")">Reports</a></li>
         }
 
         @RenderSection("pageNavItems", false)

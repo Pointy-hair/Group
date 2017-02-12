@@ -17,6 +17,8 @@ using Traffk.Bal.Data;
 using System.Collections.Generic;
 using Traffk.Bal;
 using Traffk.Bal.Communications;
+using Traffk.Tableau;
+using Traffk.Tableau.REST.Models;
 
 namespace TraffkPortal.Controllers
 {
@@ -48,6 +50,7 @@ namespace TraffkPortal.Controllers
             Scores,
             Visit,
             #endregion
+            Reports
         }
 
         public static class ViewNames
@@ -491,6 +494,25 @@ namespace TraffkPortal.Controllers
         [Route("Contacts/{id}/Pharmacy/{pharmacyItemId}")]
         public Task<IActionResult> ContactPharmacyItemDetail(long id, string pharmacyItemId)
             => ContactHealthItemDetail(id, PageKeys.Pharmacy, ViewNames.Health.Pharmacy, mid => Rdb.Pharmacy.Where(z => z.ContactId == mid && z.rev_transaction_num == pharmacyItemId));
+
+        [SetTableauTrustedTicket]
+        [Route("/Reporting/MemberDashboard/{contactId}")]
+        public IActionResult MemberReport(string contactId)
+        {
+            var contact = FindContactByIdAsync(Convert.ToInt64(contactId)).Result;
+            SetHeroLayoutViewData(contact, PageKeys.Messages);
+            const string workbookName = "MemberClaims";
+            const string viewName = "Claims-Breakdown";
+            var viewModel = new SiteViewContactEmbeddableResource
+            {
+                WorkbookName = workbookName,
+                ViewName = viewName,
+                Name = workbookName.ToTitleFriendlyString(),
+                ContactId = contactId
+            };
+            return View("~/Views/Reporting/Report.cshtml", viewModel);
+        }
+
 
         private async Task<Contact> FindContactByIdAsync(long id)
         {
