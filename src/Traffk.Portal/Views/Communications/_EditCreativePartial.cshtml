@@ -9,29 +9,46 @@
     </div>
 </div>
 <div class="form-group">
-    <div class="row">
-        <label asp-for="ModelTypeStringValue" class="control-label"></label>
-    </div>
-    <div class="row">
+    <label asp-for="ModelTypeStringValue" class="col-md-2 control-label"></label>
+    <div class="col-md-10">
         <select asp-for="ModelTypeStringValue" asp-items="ViewBag.ModelListItems"></select>
     </div>
-    <div class="row">
+</div>
+<div class="form-group">
+    <label asp-for="CreativeSettings.EmailSubject" class="col-md-2 control-label"></label>
+    <div class="col-md-10">
         <input asp-for="CreativeSettings.EmailSubject" class="form-control" />
+    </div>
+</div>
+<div class="form-group">
+    <label asp-for="CreativeSettings.EmailHtmlBody" class="col-md-2 control-label"></label>
+    <div class="col-md-10">
         <textarea asp-for="CreativeSettings.EmailHtmlBody" class="form-control htmleditor"></textarea>
         <span asp-validation-for="CreativeSettings.EmailHtmlBody" class="text-danger" />
+    </div>
+</div>
+<div class="form-group">
+    <label asp-for="CreativeSettings.EmailTextBody" class="col-md-2 control-label"></label>
+    <div class="col-md-10">
         <textarea asp-for="CreativeSettings.EmailTextBody" class="form-control"></textarea>
+    </div>
+</div>
+<div class="form-group">
+    <label asp-for="CreativeSettings.TextMessageBody" class="col-md-2 control-label"></label>
+    <div class="col-md-10">
         <textarea asp-for="CreativeSettings.TextMessageBody" class="form-control"></textarea>
     </div>
-    <div class="form-group">
-        <label class="col-md-2 control-label">Attachments</label>
-        <div class="col-md-10">
-            @foreach (var attachmentAsset in Model.AttachmentAssets)
+</div>
+<div class="form-group">
+    <label class="col-md-2 control-label">Attachments</label>
+    <div class="col-md-10">
+        @foreach (var attachmentAsset in Model.AttachmentAssets)
             {
-                @await Html.PartialAsync("_AssetPreviewPartial", attachmentAsset)
-            }
-            <div>
-                <input asp-for="NewAttachments" class="form-control" multiple="multiple" />
-            </div>
+            @await Html.PartialAsync("_AssetPreviewPartial", attachmentAsset)
+        }
+        <div>
+            <input asp-for="NewAttachments" class="form-control" multiple="multiple" />
         </div>
     </div>
 </div>
+

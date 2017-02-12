@@ -247,11 +247,14 @@ namespace TraffkPortal
             }
         }
 
-        public static bool GetOrSetThenGet(this ViewDataDictionary v, string key, bool? newVal = null)
+        public static bool GetOrSetThenGet(this ViewDataDictionary v, string key, bool? newVal = null, bool force=false)
         {
             if (newVal.HasValue && !v.ContainsKey(key))
             {
-                v[key] = newVal.Value;
+                if (force || !v.ContainsKey(key))
+                {
+                    v[key] = newVal.Value;
+                }
             }
             return v.Get<bool>(key);
         }

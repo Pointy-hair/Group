@@ -3,12 +3,6 @@
 @{
     Layout = "_LayoutCommunication.cshtml";
 }
-@section breadcrumbs {
-    <ul class="breadcrumbs">
-        <li><a asp-controller="@CommunicationsController.Name" asp-action="Index">Communications</a> <span>></span> </li>
-        <li>@ViewData[ViewDataKeys.Heading]</li>
-    </ul>
-}
 <form asp-action="@ActionNames.CommunicationCreativeSave" asp-route-id="@Model.CommunicationId" enctype="multipart/form-data">
     <div class="form-horizontal">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -17,7 +11,7 @@
         </div>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+                <input type="submit" value="Save" class="btn btn-default btn-primary btn-large" />
             </div>
         </div>
     </div>

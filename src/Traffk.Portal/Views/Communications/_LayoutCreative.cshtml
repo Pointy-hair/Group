@@ -1,0 +1,29 @@
+﻿@using static TraffkPortal.Controllers.CommunicationsController
+@{
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
+    ViewData.HasBreadcrumbItems(true);
+    var pageKey = (CreativePageKeys)ViewData[ViewDataKeys.PageKey];
+    var entityId = (int)ViewData[ViewDataKeys.EntityId];
+    var jobStatus = Parse.ParseEnum<JobStatuses>(ViewData["JobStatus"] as string, JobStatuses.NonYetQueued);
+    var parentEntityId = (int?)ViewData[ViewDataKeys.ParentEntityId];
+}
+@section pageActionItems {
+    @RenderSection("pageActionItems", false)
+}
+@section pageAlerts {
+    @RenderSection("pageAlerts", false)
+}
+@section pageDialogs {
+    @RenderSection("pageDialogs", false)
+}
+@section Scripts {
+    @RenderSection("scripts", false)
+}
+@section breadcrumbItems {
+    <li><a asp-controller="@Name" asp-action="@ActionNames.CreativesList" id="IndexLink">Creatives</a> <span>></span> </li>
+    @RenderSection("breadcrumbItems", false)
+}
+@section listingTable {
+    @RenderSection("listingTable", required: false)
+}
+@RenderBody()
