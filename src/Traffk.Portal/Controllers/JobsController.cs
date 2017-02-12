@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using TraffkPortal.Services;
 using Traffk.Bal.Data.Rdb;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace TraffkPortal.Controllers
 {
@@ -17,6 +18,7 @@ namespace TraffkPortal.Controllers
         public static class ActionNames
         {
             public const string Jobs = "Jobs";
+            public const string Job = "Job";
             public const string JobDetails = "JobDetails";
             public const string JobCancel = "JobCancel";
         }
@@ -42,6 +44,15 @@ namespace TraffkPortal.Controllers
             var items = Rdb.Jobs.Where(z => z.TenantId == TenantId);
             items = ApplyBrowse(items, sortCol ?? nameof(Job.CreatedAtUtc), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
             return View(ViewNames.JobList, await items.ToListAsync());
+        }
+
+        [ActionName(ActionNames.Job)]
+        [Route("/Jobs/{id}")]
+        public async Task<IActionResult> JobDetails(int id)
+        {
+            var item = await Rdb.Jobs.FindAsync(id);
+            if (item == null) return NotFound();
+            return View(ViewNames.JobDetails, item);
         }
 
         [ActionName(ActionNames.JobCancel)]

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Traffk.Bal.Services;
 
@@ -19,16 +20,20 @@ namespace Traffk.Bal.Settings
         public List<CloudFilePointer> Attachments { get; set; } = new List<CloudFilePointer>();
 
         [JsonProperty("emailSubject")]
+        [DisplayName("Email Subject")]
         public string EmailSubject { get; set; }
 
         [DataType(DataType.Html)]
         [JsonProperty("emailHtmlBody")]
+        [DisplayName("Email Body HTML")]
         public string EmailHtmlBody { get; set; }
 
         [JsonProperty("emailTextBody")]
+        [DisplayName("Email Body Text")]
         public string EmailTextBody { get; set; }
 
         [JsonProperty("textMessageBody")]
+        [DisplayName("Text Message Body")]
         public string TextMessageBody { get; set; }
 
         [JsonIgnore]

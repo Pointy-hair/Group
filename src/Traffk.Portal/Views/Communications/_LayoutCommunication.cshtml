@@ -1,7 +1,8 @@
 ﻿@using static TraffkPortal.Controllers.CommunicationsController
 @{
-    Layout = "~/Views/Shared/_LayoutHeroEntity2.cshtml";
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
     ViewData.HasPageMenuItems(true);
+    ViewData.HasBreadcrumbItems(true);
     var pageKey = (CommunicationPageKeys)ViewData[ViewDataKeys.PageKey];
     var entityId = (int)ViewData[ViewDataKeys.EntityId];
     var isNewEntity = entityId < 1;
@@ -27,6 +28,13 @@
 }
 @section pageActionItems {
     @RenderSection("pageActionItems", required: false)
+}
+@section pageAlerts {
+    @if (ViewBag.ShowAlertCommunicationSaved == true)
+    {
+        <div class="alert alert-success" role="alert">This communication has been saved.</div>
+    }
+    @RenderSection("pageAlerts", required: false)
 }
 @*
     @section pageAlerts {
@@ -63,6 +71,8 @@
 @section breadcrumbItems {
     @RenderSection("breadcrumbItems", required: false)
 }
-
+@section listingTable {
+    @RenderSection("listingTable", required: false)
+}
 @RenderBody()
 

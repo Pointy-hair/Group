@@ -56,6 +56,7 @@ namespace TraffkPortal.Controllers
         public static class ViewNames
         {
             public const string CommunicationBlasts = "CommunicationBlasts";
+            public const string CommunicationBlast = "CommunicationBlast";
             public const string CommunicationsList = "Communications";
             public const string CommunicationDetails = "CommunicationDetails";
             public const string CommunicationSchedule = "CommunicationSchedule";
@@ -316,12 +317,24 @@ namespace TraffkPortal.Controllers
 
         private Task<Creative> FindCreativeByIdAsync(int id) => Rdb.Creatives.FindAsync(id);
 
+        public enum CreativePageKeys
+        {
+            Background,
+        }
+
+        private void SetHeroLayoutViewData(Creative creative, CreativePageKeys pageKey)
+        {
+            PopulateViewBagWithTemplateModelSelectListItems();
+            SetHeroLayoutViewData(creative.CreativeId, creative.CreativeTitle, pageKey);
+        }
+
         [Route("Creatives/Create")]
         [ActionName(ActionNames.CreativeCreate)]
         public IActionResult CreativeCreate()
         {
-            PopulateViewBagWithTemplateModelSelectListItems();
-            return View(ViewNames.CreativeDetails, new CreativeModel(new Creative(), null, RemoveAttachmentScriptName));
+            var creative = new Creative();
+            SetHeroLayoutViewData(creative, CreativePageKeys.Background);
+            return View(ViewNames.CreativeDetails, new CreativeModel(creative, null, RemoveAttachmentScriptName));
         }
 
         [Route("Creatives/{id}")]
@@ -330,7 +343,7 @@ namespace TraffkPortal.Controllers
         {
             var creative = await FindCreativeByIdAsync(id);
             if (creative == null) return NotFound();
-            PopulateViewBagWithTemplateModelSelectListItems();
+            SetHeroLayoutViewData(creative, CreativePageKeys.Background);
             return View(ViewNames.CreativeDetails, new CreativeModel(creative, null, RemoveAttachmentScriptName));
         }
 
@@ -356,7 +369,7 @@ namespace TraffkPortal.Controllers
         {
             if (ModelState.IsValid)
             {
-                Creative creative = await FindCreativeByIdAsync(id);
+                var creative = await FindCreativeByIdAsync(id);
                 if (creative==null)
                 {
                     creative = new Creative();
@@ -365,7 +378,7 @@ namespace TraffkPortal.Controllers
                 await CreativeModelSaveAsync(model, creative);
                 return RedirectToAction(ActionNames.CreativesList);
             }
-            PopulateViewBagWithTemplateModelSelectListItems();
+            SetHeroLayoutViewData(model, CreativePageKeys.Background);
             return View(ViewNames.CreativeDetails, model);
         }
 
@@ -375,22 +388,31 @@ namespace TraffkPortal.Controllers
 
         [ActionName(ActionNames.CommunicationBlasts)]
         [Route("Communications/{communicationId}/Blasts")]
-        public IActionResult CommunicationBlasts(int communicationId, string sortCol, string sortDir, int? page, int? pageSize)
+        public async Task<IActionResult> CommunicationBlasts(int communicationId, string sortCol, string sortDir, int? page, int? pageSize)
         {
+            var communication = await FindCommunicationByIdAsync(communicationId);
+            if (communication == null) return NotFound();
+
             var items = from z in Rdb.CommunicationBlasts.Include(z => z.Job).Include(z => z.Creative)
                         where z.TenantId == TenantId && z.CommunicationId == communicationId                        
                         select z;
             items = ApplyBrowse(
-                items, sortCol ?? nameof(Communication.CommunicationTitle), sortDir,
+                items, sortCol ?? nameof(Traffk.Bal.Data.Rdb.CommunicationBlast.CommunicationBlastId), sortDir,
                 page, pageSize);
+            SetHeroLayoutViewData(communication, CommunicationPageKeys.Blasts);
             return View(ViewNames.CommunicationBlasts, items);
         }
 
         [ActionName(ActionNames.CommunicationBlast)]
         [Route("Communications/{communicationId}/Blasts/{communicationBlastId}")]
-        public IActionResult CommunicationBlast(int communicationId, int communicationBlastId)
+        public async Task<IActionResult> CommunicationBlast(int communicationId, int communicationBlastId)
         {
-            throw new NotImplementedException();
+            var communication = await FindCommunicationByIdAsync(communicationId);
+            if (communication == null) return NotFound();
+            var item = await Rdb.CommunicationBlasts.FindAsync(communicationBlastId);
+            if (item == null) return NotFound();
+            SetHeroLayoutViewData(communication, CommunicationPageKeys.Blasts);
+            return View(ViewNames.CommunicationBlast, item);
         }
 
         #endregion
@@ -411,6 +433,10 @@ namespace TraffkPortal.Controllers
 
         [HttpDelete]
         [Route("Creatives/delete")]
-        public Task<IActionResult> Delete() => JsonDeleteFromRdbAsync<Creative, int>(Rdb.Creatives);
+        public Task<IActionResult> DeleteCreatives() => JsonDeleteFromRdbAsync<Creative, int>(Rdb.Creatives);
+
+        [HttpDelete]
+        [Route("Communications/delete")]
+        public Task<IActionResult> DeleteCommunications() => JsonDeleteFromRdbAsync<Communication, int>(Rdb.Communications);
     }
 }

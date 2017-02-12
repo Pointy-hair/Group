@@ -8,128 +8,156 @@
         showDuration = (bool)ViewData["RecurrenceSettingsShowDuration"];
     }
 }
+
 <div class="form-group">
-    <fieldset>
-        <legend>Appointment time</legend>
-        <div class="form-group">
+    <label class="col-md-2 control-label">First Occurrence</label>
+    <div class="col-md-10">
+        <div class="row">
             <label asp-for="StartDate" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
+            <div class="col-md-8">
                 <input asp-for="StartDate" class="form-control" type="date" />
                 <span asp-validation-for="StartDate" class="text-danger" />
             </div>
         </div>
-        <div class="form-group">
+        <div class="row">
             <label asp-for="StartTimeUtc" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
+            <div class="col-md-8">
                 <input asp-for="StartTimeUtc" class="form-control" type="time" />
                 <span asp-validation-for="StartTimeUtc" class="text-danger" />
             </div>
         </div>
-        @if (showDuration)
+        @if (showDuration || true)
         {
-            <div class="form-group">
+            <div class="row">
                 <label asp-for="AllDay" class="col-md-2 control-label"></label>
-                <div class="col-md-10">
+                <div class="col-md-8">
                     <input asp-for="AllDay" class="form-control" id="all-day-input" />
                     <span asp-validation-for="AllDay" class="text-danger" />
                 </div>
             </div>
-            <div class="form-group">
+            <div class="row">
                 <label asp-for="Duration" class="col-md-2 control-label"></label>
-                <div class="col-md-10">
-                    <input asp-for="Duration" class="form-control"  disabled="@(!Model.AllDay ? "enabled" : "disabled")" id="duration-input" />
+                <div class="col-md-8">
+                    <input asp-for="Duration" class="form-control" disabled="@(!Model.AllDay ? "enabled" : "disabled")" id="duration-input" />
                     <span asp-validation-for="Duration" class="text-danger" />
                 </div>
             </div>
         }
-    </fieldset>
-    <fieldset>
-        <legend>Recurrence pattern</legend>
-        <div class="col-md-2">
-            <input type="radio" class="radio-inline" id="PatternTypeDaily" name="PatternType" value="Daily" @(Model.PatternType==PatternTypes.Daily ? "checked='checked'":"") /> <label for="PatternTypeDaily">Daily</label> <br />
-            <input type="radio" class="radio-inline" id="PatternTypeWeekly" name="PatternType" value="Weekly" @(Model.PatternType == PatternTypes.Weekly ? "checked='checked'":"") /> <label for="PatternTypeWeekly">Weekly</label> <br />
-<!--
-    
-            <input type="radio" class="radio-inline" id="PatternTypeMonthly" name="PatternType" value="Monthly" @(Model.PatternType == PatternTypes.Monthly ? "checked='checked'":"") /> <label for="PatternTypeMonthly">Monthly</label> <br />
-            <input type="radio" class="radio-inline" id="PatternTypeYearly" name="PatternType" value="Yearly" @(Model.PatternType == PatternTypes.Yearly ? "checked='checked'":"") /> <label for="PatternTypeYearly">Yearly</label> <br />
--->
-                </div>
-        <div class="col-md-10">
-            <div class="pattern-section"  id="pattern-section-daily" style="@(Model.PatternType==PatternTypes.Daily ? "":"display:none")">
-                <div class="form-group">
-                    <input type="radio" name="dailyPatternType" value="EveryNDays"  @(Model.DailyPattern.EveryWeekday ? "" : "checked='checked'")  />
-                    <label asp-for="DailyPattern.EveryNDays" class="control-label"></label>
-                    <input asp-for="DailyPattern.EveryNDays" class="form-control inline-block" type="number"/>
-                    <span asp-validation-for="DailyPattern.EveryNDays" class="text-danger" />
-                </div>
-                <div class="form-group">
-                    <input type="radio" name="dailyPatternType" value="EveryWeekday" @(Model.DailyPattern.EveryWeekday ? "checked='checked'" : "")  />
-                    <label asp-for="DailyPattern.EveryWeekday" class="control-label"></label>
-                </div>
-            </div>
-            <div class="pattern-section" id="pattern-section-weekly" style="@(Model.PatternType==PatternTypes.Weekly ? "":"display:none")">
-                <div>
-                    <label asp-for="WeeklyPattern.RecurEveryNWeeksOn"></label>
-                    <input asp-for="WeeklyPattern.RecurEveryNWeeksOn" class="form-control" />
-                </div>
-                <div>
-                    <input asp-for="WeeklyPattern.Sunday" class="form-control checkbox-inline"/>
-                    <label asp-for="WeeklyPattern.Sunday"></label>
-                </div>
-                <div>
-                    <input asp-for="WeeklyPattern.Monday" class="form-control checkbox-inline" />
-                    <label asp-for="WeeklyPattern.Monday"></label>
-                </div>
-                <div>
-                    <input asp-for="WeeklyPattern.Tuesday" class="form-control checkbox-inline" />
-                    <label asp-for="WeeklyPattern.Tuesday"></label>
-                </div>
-                <div>
-                    <input asp-for="WeeklyPattern.Wednesday" class="form-control checkbox-inline" />
-                    <label asp-for="WeeklyPattern.Wednesday"></label>
-                </div>
-                <div>
-                    <input asp-for="WeeklyPattern.Thursday" class="form-control checkbox-inline" />
-                    <label asp-for="WeeklyPattern.Thursday"></label>
-                </div>
-                <div>
-                    <input asp-for="WeeklyPattern.Friday" class="form-control checkbox-inline" />
-                    <label asp-for="WeeklyPattern.Friday"></label>
-                </div>
-                <div>
-                    <input asp-for="WeeklyPattern.Saturday" class="form-control checkbox-inline" />
-                    <label asp-for="WeeklyPattern.Saturday"></label>
-                </div>
-            </div>
-            <div class="pattern-section" id="pattern-section-monthly" style="@(Model.PatternType==PatternTypes.Monthly ? "":"display:none")">
-                MONTHLY
-            </div>
-            <div class="pattern-section" id="pattern-section-yearly" style="@(Model.PatternType==PatternTypes.Yearly ? "":"display:none")">
-                YEARLY
-            </div>
-        </div>
-    </fieldset>
-    <fieldset>
-        <legend>Range of recurrence</legend>
-        <div class="form-group">
-            <input type="radio" name="endAfterType" value="Perpetual" @(Model.IsPerpetual ? "checked='checked'" : "") />
-            <label>Perpetual</label>
-        </div>
-        <div class="form-group">
-            <input type="radio" name="endAfterType" value="EndAfterNOccurrences" @(Model.EndAfterNOccurrences > 0  ? "checked='checked'" : "") />
-            <label asp-for="EndAfterNOccurrences"></label>
-            <input asp-for="EndAfterNOccurrences" class="form-control inline-block" disabled="@(Model.EndAfterNOccurrences > 0 ? "enabled" : "disabled")" />
-            <span asp-validation-for="EndAfterNOccurrences" class="text-danger" />
-        </div>
-        <div class="form-group">
-            <input type="radio" name="endAfterType" value="EndBeforeDate" @(Model.EndBeforeDate != null ? "checked='checked'" : "") />
-            <label asp-for="EndBeforeDate"></label>
-            <input asp-for="EndBeforeDate" class="form-control inline-block" type="date" disabled="@(Model.EndBeforeDate != null ? "enabled" : "disabled")" />
-            <span asp-validation-for="EndBeforeDate" class="text-danger" />
-        </div>
-    </fieldset>
+    </div>
 </div>
+<div class="form-group">
+    <label class="col-md-2 control-label">Recurrence pattern</label>
+    <div class="col-md-10">
+        <div class="row">
+            <div class="col-md-2">
+                <div class="row">
+                    <input type="radio" class="radio-inline" id="PatternTypeDaily" name="PatternType" value="Daily" @(Model.PatternType == PatternTypes.Daily ? "checked='checked'" : "") /> 
+                    <label for="PatternTypeDaily">Daily</label>
+                </div>
+                <div class="row">
+                    <input type="radio" class="radio-inline" id="PatternTypeWeekly" name="PatternType" value="Weekly" @(Model.PatternType == PatternTypes.Weekly ? "checked='checked'" : "") />
+                    <label for="PatternTypeWeekly">Weekly</label>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="row pattern-section" id="pattern-section-daily" style="@(Model.PatternType==PatternTypes.Daily ? "":"display:none")">
+                    <div class="form-group">
+                        <input type="radio" name="dailyPatternType" value="EveryNDays" @(Model.DailyPattern.EveryWeekday ? "" : "checked='checked'") />
+                        <label asp-for="DailyPattern.EveryNDays" class="control-label"></label>
+                        <input asp-for="DailyPattern.EveryNDays" class="form-control inline-block" type="number" />
+                        <span asp-validation-for="DailyPattern.EveryNDays" class="text-danger" />
+                    </div>
+                    <div class="form-group">
+                        <input type="radio" name="dailyPatternType" value="EveryWeekday" @(Model.DailyPattern.EveryWeekday ? "checked='checked'" : "") />
+                        <label asp-for="DailyPattern.EveryWeekday" class="control-label"></label>
+                    </div>
+                </div>
+                <div class="row pattern-section" id="pattern-section-weekly" style="@(Model.PatternType==PatternTypes.Weekly ? "":"display:none")">
+                    <div>
+                        <label asp-for="WeeklyPattern.RecurEveryNWeeksOn"></label>
+                        <input asp-for="WeeklyPattern.RecurEveryNWeeksOn" class="form-control" />
+                    </div>
+                    <div>
+                        <input asp-for="WeeklyPattern.Sunday" class="form-control checkbox-inline" />
+                        <label asp-for="WeeklyPattern.Sunday"></label>
+                    </div>
+                    <div>
+                        <input asp-for="WeeklyPattern.Monday" class="form-control checkbox-inline" />
+                        <label asp-for="WeeklyPattern.Monday"></label>
+                    </div>
+                    <div>
+                        <input asp-for="WeeklyPattern.Tuesday" class="form-control checkbox-inline" />
+                        <label asp-for="WeeklyPattern.Tuesday"></label>
+                    </div>
+                    <div>
+                        <input asp-for="WeeklyPattern.Wednesday" class="form-control checkbox-inline" />
+                        <label asp-for="WeeklyPattern.Wednesday"></label>
+                    </div>
+                    <div>
+                        <input asp-for="WeeklyPattern.Thursday" class="form-control checkbox-inline" />
+                        <label asp-for="WeeklyPattern.Thursday"></label>
+                    </div>
+                    <div>
+                        <input asp-for="WeeklyPattern.Friday" class="form-control checkbox-inline" />
+                        <label asp-for="WeeklyPattern.Friday"></label>
+                    </div>
+                    <div>
+                        <input asp-for="WeeklyPattern.Saturday" class="form-control checkbox-inline" />
+                        <label asp-for="WeeklyPattern.Saturday"></label>
+                    </div>
+                </div>
+                <div class="row pattern-section" id="pattern-section-monthly" style="@(Model.PatternType==PatternTypes.Monthly ? "":"display:none")">
+                    MONTHLY
+                </div>
+                <div class="row pattern-section" id="pattern-section-yearly" style="@(Model.PatternType==PatternTypes.Yearly ? "":"display:none")">
+                    YEARLY
+                </div>
 
+            </div>
+        </div>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-md-2 control-label">Range of recurrence</label>
+    <div class="col-md-10">
+        <div class="row">
+            <label asp-for="StartTimeUtc" class="col-md-2 control-label"></label>
+            <div class="col-md-8">
+                <input asp-for="StartTimeUtc" class="form-control" type="time" />
+                <span asp-validation-for="StartTimeUtc" class="text-danger" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                <div class="row">
+                    <input type="radio" name="endAfterType" value="Perpetual" id="endAfterTypePerpetual" @(Model.IsPerpetual ? "checked='checked'" : "")  />
+                    <label for="endAfterTypePerpetual">Perpetual</label>
+                </div>
+                <div class="row">
+                    <input type="radio" name="endAfterType" value="EndAfterNOccurrences" id="endAfterTypeEndAfterNOccurrences" @(Model.EndAfterNOccurrences > 0 ? "checked='checked'" : "") />
+                    <label for="endAfterTypeEndAfterNOccurrences">End After</label>
+                </div>
+                <div class="row">
+                    <input type="radio" name="endAfterType" value="EndBeforeDate" id="endAfterTypeEndBeforeDate" @(Model.EndBeforeDate != null ? "checked='checked'" : "") />
+                    <label for="endAfterTypeEndBeforeDate">End By</label>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="row form-group" id="rorPerpetual">
+
+                </div>
+                <div class="row form-group" id="rorEndAfterNOccurrences">
+                    <input asp-for="EndAfterNOccurrences" class="form-control" disabled="@(Model.EndAfterNOccurrences > 0 ? "enabled" : "disabled")" />
+                    <span asp-validation-for="EndAfterNOccurrences" class="text-danger" />
+                </div>
+                <div class="row form-group" id="rorEndBeforeDate">
+                    <input asp-for="EndBeforeDate" class="form-control" type="date" disabled="@(Model.EndBeforeDate != null ? "enabled" : "disabled")" />
+                    <span asp-validation-for="EndBeforeDate" class="text-danger" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @Html.Script(@<script type="text/javascript">
     $(document).ready(function () {
         $("input[name='PatternType']").change(function () {

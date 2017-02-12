@@ -1,7 +1,7 @@
 ﻿@model TraffkPortal.Models.CommunicationModels.CreativeModel
 @using static TraffkPortal.Controllers.CommunicationsController
 @{
-    Layout = "_LayoutCommunication.cshtml";
+    Layout = "_LayoutCreative.cshtml";
     if (Model.CreativeId <= 0)
     {
         ViewData.SetTitleAndHeading("Create New Creative");
@@ -20,16 +20,8 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+                <input type="submit" value="Save" class="btn btn-default btn-primary btn-large" />
             </div>
         </div>
     </div>
 </form>
-
-<div>
-    <a asp-action="Templates">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
