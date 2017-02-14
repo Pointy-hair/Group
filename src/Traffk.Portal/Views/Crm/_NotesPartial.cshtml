@@ -1,7 +1,7 @@
 ﻿@using Traffk.Bal.Data
 @model IEnumerable<Note>
 
-<table class="table">
+<table class="table table-bordered table-hover table-striped">
     <thead>
         <tr>
             <th>
@@ -14,7 +14,7 @@
     </thead>
     <tbody>
         @foreach (var item in Model)
-            {
+        {
             <tr>
                 <td>
                     @Html.DisplayFor(modelItem => item.CreatedAt)
@@ -26,5 +26,3 @@
         }
     </tbody>
 </table>
-
-@{ await Html.RenderPartialAsync("_PaginationPartial"); }
