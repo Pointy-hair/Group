@@ -105,7 +105,7 @@
     <li><a asp-controller="@Name" asp-action="@ActionNames.ContactList" id="IndexLink">Contacts</a> <span>></span> </li>
     @if (@ViewData[AspHelpers.ViewDataKeys.EntityTitle] != @ViewData[AspHelpers.ViewDataKeys.Heading])
     {
-        <li><a asp-controller="@CrmController.Name" asp-action="ContactBackground" asp-for-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]">@ViewData[AspHelpers.ViewDataKeys.EntityTitle]</a> <span>></span> </li>
+        <li><a asp-controller="@CrmController.Name" asp-action="ContactBackground" asp-route-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]">@ViewData[AspHelpers.ViewDataKeys.EntityTitle]</a> <span>></span> </li>
     }
     @RenderSection("breadcrumbItems", false)
 }

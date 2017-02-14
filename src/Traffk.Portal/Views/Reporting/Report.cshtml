@@ -1,8 +1,5 @@
-﻿@using RevolutionaryStuff.PowerBiToys.Objects
-@using RevolutionaryStuff.Core.Collections
-@using RevolutionaryStuff.Core.ApplicationParts
-@using Traffk.Tableau.REST
-@using Traffk.Tableau.REST.Models
+﻿@using Traffk.Tableau.REST.Models
+@using static TraffkPortal.Controllers.CrmController
 @model Traffk.Tableau.REST.Models.SiteViewEmbeddableResource
 @{
     Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
@@ -27,9 +24,9 @@
     @if (Model is SiteViewContactEmbeddableResource)
     {
         var contactResource = Model as SiteViewContactEmbeddableResource;
-        var contactId = contactResource.ContactId;
+        long contactId = Convert.ToInt64(contactResource.ContactId);
         <li><a asp-controller="@CrmController.Name" asp-action="Index" id="IndexLink">Contacts</a> <span>></span> </li>
-        <li><a asp-controller="Crm" asp-action="ContactBackground" asp-for-id="@contactId">@ViewData["ContactName"]</a> <span>></span> </li>
+        <li><a asp-controller="@CrmController.Name" asp-action="ContactBackground" asp-route-id="@contactId">@ViewData["ContactName"]</a> <span>></span> </li>
     }
     else
     {
