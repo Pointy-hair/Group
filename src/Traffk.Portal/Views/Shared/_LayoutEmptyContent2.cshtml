@@ -192,14 +192,16 @@
                 else
                 { 
                     <li class="dropdown" id="primary-subnav">
-                        @if (R.LogoLink == null)
-                        {
-                            <text>TraffkPortal for @Current.Tenant.TenantName</text>
-                        }
-                        else
-                        {
-                            <img src="@R.LogoLink" alt="@Current.Tenant.TenantName logo" id="client-logo" />
-                        }
+                        <a asp-area="" asp-controller="Account" asp-action="Login" class="navbar-brand">
+                            @if (R.LogoLink == null)
+                            {
+                                <text>TraffkPortal for @Current.Tenant.TenantName</text>
+                            }
+                            else
+                            {
+                                <img src="@R.LogoLink" alt="@Current.Tenant.TenantName logo" id="client-logo" />
+                            }
+                        </a>
                     </li>
                 }
             </ul>
@@ -393,15 +395,8 @@
                 }
             });
 
-            jQuery('.nav.navbar-left.top-nav').click(function () {
-                if (jQuery('#page-wrapper').hasClass('nav-open')) {
-                    jQuery('#page-wrapper').removeClass('nav-open');
-                } else {
-                    jQuery('#page-wrapper').addClass('nav-open');
-                }
-            });
-
-            //Main Navbar Expand/Collapse Script
+        
+           //Mobile specific
             jQuery('.navbar-toggle').click(function () {
                 if (window.innerWidth < 768) {
                     if (jQuery('.navbar-right').is(':visible')) {
@@ -409,6 +404,24 @@
                     } else {
                         jQuery('.navbar-right').slideDown(300);
                     }
+                }
+            });
+
+            //Shift contents down or up based on navbar
+            jQuery('.nav.navbar-left.top-nav').click(function () {
+                var isUserLoggedIn = !jQuery('.account-nav')[0];
+                if (jQuery('#page-wrapper').hasClass('nav-open')) {
+                    jQuery('#page-wrapper').removeClass('nav-open');
+                } else if (isUserLoggedIn) {
+                    jQuery('#page-wrapper').addClass('nav-open');
+                    }
+            });
+
+            //If clicking outside navbar it will collapse and script shift contents up
+            jQuery(document).mouseup(function (e) {
+                var container = jQuery('.nav.navbar-left.top-nav');
+                if (!container.is(e.target) && container.has(e.target).length === 0) {
+                    jQuery('#page-wrapper').removeClass('nav-open');
                 }
             });
 

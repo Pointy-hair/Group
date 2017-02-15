@@ -151,7 +151,7 @@ function getTimeTillAutoLogoff() {
     var lastSeenAt = new Date(store.get("lastSeenAtWhileLoggedIn"));
     var delta = new Date() - lastSeenAt;
     delta = Math.floor(delta/1000);
-    return autoLogoutLogoffSeconds - delta - 10; //add some slop
+    return autoLogoutLogoffSeconds - delta;
 }
 
 function setLastSeenAtWhileLoggedIn() {
