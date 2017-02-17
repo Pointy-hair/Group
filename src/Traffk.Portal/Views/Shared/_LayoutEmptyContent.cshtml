@@ -5,14 +5,16 @@
 <html>
 <head>
     <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - TraffkPortal for @Current.Tenant.TenantName</title>
 
     <link href="https://fonts.googleapis.com/css?family=Roboto:900" rel="stylesheet" />
-     
+    <script src="https://use.fontawesome.com/628ef57095.js"></script>
+
     <environment names="Development,Staging,Production">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-        <link rel="stylesheet" href="~/css/site.css" />
+        <link rel="stylesheet" href="~/css/styles.css" />
     </environment>
     <environment names="zStaging,zProduction">
         <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/css/bootstrap.min.css"
@@ -20,21 +22,52 @@
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
     </environment>
-    @if (R.HasBasicColors)
-    {
-        <style>
-h1, .body-content a {
-  color: @R.PrimaryColor;
-}
-.filterSection h3, .btn, .btn:hover {
-  background: @R.PrimaryColor;
-  border-color: @R.PrimaryColor;
-}
-.listingSection, .panel-default .panel-heading, .hero-heading-container, .current-section {
-  background-color: @R.SecondaryColor;
-}
-        </style>
+    @{
+        var primaryColor = "#0c77a1";
+        var secondaryColor = "#539900";
+        if (R.HasBasicColors)
+        {
+            primaryColor = @R.PrimaryColor;
+            secondaryColor = @R.SecondaryColor;
+        }
     }
+    <style>
+        /*Set primary color for theming below*/
+        .navbar, .popup-close-btn, .btn-primary, .step-indicator li.complete span.step, .step-indicator li.active span.step {
+            background-color: @primaryColor !important;
+            border: none !important;
+        }
+
+        .primary-color, 
+        .primary-color a, 
+        #primary-subnav .dropdown-menu li.active a, 
+        #personal-page-nav li a.active, 
+        #personal-page-nav li a .fa-chevron-down, 
+        #personal-page-nav li a .fa-chevron-up, 
+        #primary-subnav .dropdown-menu li.dropdown a.dropdown-toggle.active,
+        #primary-subnav .dropdown-menu li a.active {
+            color: @primaryColor !important;
+        }
+
+        .form-text:focus, .form-dropdown:focus, .btn-bordered, .form-control:focus {
+            border-color: @primaryColor !important;
+        }
+
+        a, a:hover {
+          color: @primaryColor;
+        }
+
+        /*Set secondary color*/
+
+        input.form-text:focus ~ label, input.form-text:valid ~ label {
+          color: @secondaryColor;
+        }
+
+        .bar:before, .bar:after {
+            background: @secondaryColor;
+        }
+    </style>
+
     @if (R.CssLink != null)
     {
         <link rel="stylesheet" href="@R.CssLink" />
@@ -45,174 +78,414 @@ h1, .body-content a {
     }
     @Html.ApplicationInsightsJavaScript(TelemetryConfiguration)
 </head>
-<body>
-    <div class="modal fade" tabindex="-1" role="dialog" id="inactivityWarningModal">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Inactivity Warning</h4>
-                </div>
-                <div class="modal-body">
-                    <p>You have been inactive too long.  If you don't reactivate, you will be logged out in <span id="secondsTillLogout"></span> seconds.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="idleReactivate()">Reactivate</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        @{ 
-            var mainNavPageKey = ViewData[ViewDataKeys.MainNavPageKey] is MainNavigationPageKeys ? (MainNavigationPageKeys) ViewData[ViewDataKeys.MainNavPageKey] : MainNavigationPageKeys.NotSpecified;
+
+<body onload="setUI();">
+<div id="wrapper">
+
+    <!--Navbar-->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        @{
+            var mainNavPageKey = ViewData[AspHelpers.ViewDataKeys.MainNavPageKey] is AspHelpers.MainNavigationPageKeys ? (AspHelpers.MainNavigationPageKeys)ViewData[AspHelpers.ViewDataKeys.MainNavPageKey] : AspHelpers.MainNavigationPageKeys.NotSpecified;
         }
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">
-                    @if (R.LogoLink == null)
-                    {
-                        <text>TraffkPortal for @Current.Tenant.TenantName</text>
-                    }
-                    else
-                    {
-                        <img src="@R.LogoLink" alt="@Current.Tenant.TenantName logo" height="50" />
-                    }
-                </a>
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav" id="primary-site-nav">
-                    @if (SignInManager.IsSignedIn(User))
-                    {
-                    @*<li role="presentation" class="menu-heading">BLAAAAHHHHHH</li>*@
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <ul class="nav navbar-left top-nav">
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <!--Set Variables-->
                     var manageJobs = await User.HasPermission(AuthorizationService, PermissionNames.ManageJobs);
                     var manageTenants = await User.HasPermission(AuthorizationService, PermissionNames.ManageTenants);
                     var manageRoles = await User.HasPermission(AuthorizationService, PermissionNames.ManageRoles);
                     var manageUsers = await User.HasPermission(AuthorizationService, PermissionNames.ManageUsers);
                     var manageProtectedHealthInformation = await User.HasPermission(AuthorizationService, PermissionNames.ProtectedHealthInformation);
                     var canAccessPhi = await User.GetCanAccessProtectedHealthInformationAsync(AuthorizationService);
-                    <li class="dropdown @(mainNavPageKey==MainNavigationPageKeys.Main?"current-section":"")" role="presentation">
-                        <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle" href="#">
-                            Main
-                            <span class="caret"></span>
+                    <!--End Set Variables-->
+
+                    <li class="dropdown" id="primary-subnav">
+                        <a asp-area="" asp-controller="Home" asp-action="Index" class="dropdown-toggle navbar-brand" data-toggle="dropdown">
+                            @if (R.LogoLink == null)
+                            {
+                                <text>TraffkPortal for @Current.Tenant.TenantName</text>
+                            }
+                            else
+                            {
+                                <img src="@R.LogoLink" alt="@Current.Tenant.TenantName logo" id="client-logo" />
+                            }
+                            <b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a asp-area="" asp-controller="@HomeController.Name" asp-action="Index">Home</a></li>
-                            <li><a asp-area="" asp-controller="@HomeController.Name" asp-action="About">About</a></li>
-                            <li><a asp-area="" asp-controller="@HomeController.Name" asp-action="Contact">Contact</a></li>
-                            @if (await User.HasPermission(AuthorizationService, PermissionNames.ReleaseLog))
+                            <li class="dropdown" role="presentation">
+                                <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle @(mainNavPageKey == AspHelpers.MainNavigationPageKeys.Main ? "active" : "")" href="#">
+                                    Main
+                                    <b class="caret"></b>
+                                </a>
+                                <ul class="dropdown-menu dropdown-submenu">
+                                    <li><a asp-area="" asp-controller="@HomeController.Name" asp-action="Index">Home</a></li>
+                                    <li><a asp-area="" asp-controller="@HomeController.Name" asp-action="About">About</a></li>
+                                    <li><a asp-area="" asp-controller="@HomeController.Name" asp-action="Contact">Contact</a></li>
+                                    @if (await User.HasPermission(AuthorizationService, PermissionNames.ReleaseLog))
+                                    {
+                                        <li><a asp-controller="Home" asp-action="Releases">Releases</a></li>
+                                    }
+                                </ul>
+                            </li>
+                            @if (await User.HasPermission(AuthorizationService, PermissionNames.CustomerRelationshipData))
                             {
-                                <li><a asp-controller="Home" asp-action="Releases">Releases</a></li>
+                                <li><a asp-controller="@CrmController.Name" asp-action="Index" class="@(mainNavPageKey == AspHelpers.MainNavigationPageKeys.CRM ? "active" : "")">CRM</a></li>
+                            }
+                            @if (await User.HasPermission(AuthorizationService, PermissionNames.BasicReporting))
+                            {
+                                <li><a asp-controller="@ReportingController.Name" asp-action="Index" class="@(mainNavPageKey == AspHelpers.MainNavigationPageKeys.Reporting ? "active" : "")">Reports</a></li>
+                            }
+                            @if (await User.HasPermission(AuthorizationService, PermissionNames.Messaging))
+                            {
+                                <li class="dropdown" role="presentation">
+                                    <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle @(mainNavPageKey == AspHelpers.MainNavigationPageKeys.Messaging ? "active" : "")" href="#">
+                                        Communications
+                                        <b class="caret"></b>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-submenu">
+                                        <li><a asp-controller="@CommunicationsController.Name" asp-action="@CommunicationsController.ActionNames.CommunicationsList">Communications</a></li>
+                                        <li><a asp-controller="@CommunicationsController.Name" asp-action="@CommunicationsController.ActionNames.CreativesList">Creatives</a></li>
+                                    </ul>
+                                </li>
+                            }
+                            @if (manageJobs || manageTenants || manageRoles || manageUsers || manageProtectedHealthInformation || canAccessPhi)
+                            {
+                                <li class="dropdown" role="presentation">
+                                    <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle @(mainNavPageKey == AspHelpers.MainNavigationPageKeys.Setup ? "active" : "")" href="#">
+                                        Admin
+                                        <b class="caret"></b>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-submenu">
+                                        @if (manageJobs)
+                                        {
+                                            <li><a asp-controller="@JobsController.Name" asp-action="Index">Jobs</a></li>
+                                        }
+                                        <li class="divider" role="separator"></li>
+                                        @if (manageUsers)
+                                        {
+                                            <li><a asp-controller="@UsersController.Name" asp-action="Index">Users</a></li>
+                                        }
+                                        @if (manageRoles)
+                                        {
+                                            <li><a asp-controller="@RolesController.Name" asp-action="Index">Roles</a></li>
+                                        }
+                                        <li class="divider" role="separator"></li>
+                                        @if (manageTenants)
+                                        {
+                                            <li><a asp-controller="@ApplicationController.Name" asp-action="Index">Applications</a></li>
+                                            <li><a asp-controller="@TenantsController.Name" asp-action="Index">Tenants</a></li>
+                                        }
+                                    </ul>
+                                </li>
                             }
                         </ul>
                     </li>
-                        @if (await User.HasPermission(AuthorizationService, PermissionNames.Messaging))
-                        {
-                            <li class="dropdown @(mainNavPageKey==MainNavigationPageKeys.Messaging?"current-section":"")" role="presentation">
-                                <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle" href="#">
-                                    Communications
-                                    <span class="caret"></span>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li><a asp-controller="@CommunicationsController.Name" asp-action="@CommunicationsController.ActionNames.CommunicationsList">Communications</a></li>
-                                    <li><a asp-controller="@CommunicationsController.Name" asp-action="@CommunicationsController.ActionNames.CreativesList">Creatives</a></li>
-                                </ul>
-                            </li>
-                        }
-                        @if (await User.HasPermission(AuthorizationService, PermissionNames.BasicReporting))
-                        {
-                            <li><a asp-controller="@ReportingController.Name" asp-action="Index" class="@(mainNavPageKey==MainNavigationPageKeys.Reporting?"current-section":"")">Reporting</a></li>
-                        }
-                        @if (await User.HasPermission(AuthorizationService, PermissionNames.CustomerRelationshipData))
-                        {
-                            <li><a asp-controller="@CrmController.Name" asp-action="Index" class="@(mainNavPageKey==MainNavigationPageKeys.CRM?"current-section":"")">CRM</a></li>
-                        }
-                        @if (manageJobs || manageTenants || manageRoles || manageUsers || manageProtectedHealthInformation || canAccessPhi)
-                        {
-                            <li class="dropdown @(mainNavPageKey==MainNavigationPageKeys.Setup?"current-section":"")" role="presentation">
-                                <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle" href="#">
-                                    Administer
-                                    <span class="caret"></span>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    @if (manageJobs)
-                                    {
-                                        <li><a asp-controller="@JobsController.Name" asp-action="Index">Jobs</a></li>
-                                    }
-                                    @if (manageUsers)
-                                    {
-                                        <li><a asp-controller="@UsersController.Name" asp-action="Index">Users</a></li>
-                                    }
-                                    <li class="divider" role="separator"></li>
-                                    @if (manageTenants)
-                                    {
-                                        <li><a asp-controller="@ApplicationController.Name" asp-action="Index">Applications</a></li>
-                                        <li><a asp-controller="@TenantsController.Name" asp-action="Index">Tenants</a></li>
-                                    }
-                                    @if (manageRoles)
-                                    {
-                                        <li><a asp-controller="@RolesController.Name" asp-action="Index">Roles</a></li>
-                                    }
-                                    <li class="divider" role="separator"></li>
-                                    @if (manageProtectedHealthInformation)
-                                    {
-                                        <li><a>PHI permission</a></li>
-                                    }
-                                    @if (canAccessPhi)
-                                    {
-                                        <li><a>PHI policy</a></li>
-                                    }
-                                </ul>
-                            </li>
-                        }
-                    }
-                    @await Html.PartialAsync("_LoginPartial")
-                </ul>
+                }
+                else
+                { 
+                    <li class="dropdown" id="primary-subnav">
+                        <a asp-area="" asp-controller="Account" asp-action="Login" class="navbar-brand">
+                            @if (R.LogoLink == null)
+                            {
+                                <text>TraffkPortal for @Current.Tenant.TenantName</text>
+                            }
+                            else
+                            {
+                                <img src="@R.LogoLink" alt="@Current.Tenant.TenantName logo" id="client-logo" />
+                            }
+                        </a>
+                    </li>
+
+                }
+            </ul>
+            <div class="nav navbar-right top-nav" id="primary-subnav-logo">
+                <a asp-controller="Home" asp-action="Index" class="text-hide">
+                    Traffk
+                </a>
             </div>
         </div>
-    </div>
-    <div class="container body-content @(ViewData["BodyContainerClass"] as string)">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>@R.CopyrightMessage</p>
-            <p id="idleTicker" style="display:none"></p>
-        </footer>
-    </div>
+        @await Html.PartialAsync("_LoginPartial")
+    </nav>
 
-    <environment names="Development,Staging,Production">
-        <script src="~/lib/jquery/dist/jquery.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
-        <script src="~/lib/store-js/json.js"></script>
-        <script src="~/lib/store-js/store.js"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>
-        <script type="text/javascript"src="https://public.tableau.com/javascripts/api/tableau-2.js"></script>
-    </environment>
-    <environment names="zStaging,zProduction">
-        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
-                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
-                asp-fallback-test="window.jQuery">
-        </script>
-        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/bootstrap.min.js"
-                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
-                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
-        </script>
-        <script src="~/lib/store-js/store+json2.min.js"></script>
-        <script src="~/js/site.min.js" asp-append-version="true"></script>
-        <script type="text/javascript" src="https://public.tableau.com/javascripts/api/tableau-2.js"></script>
-    </environment>
-    <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
-    <script>tinymce.init({ selector: '.htmleditor', plugins: "code" });</script>
+    <!--Body Content-->
+    <div id="page-wrapper">
+        <div class="container body-content @(ViewData["BodyContainerClass"] as string)">
+            <div class="row">
+                <div class="col-sm-12">
+                    @RenderSection("pageAlerts", false)
+                </div>
+            </div>
+            @RenderBody()
+
+            <footer>
+                <!-- footer -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="footer">
+                            <ul id="footer-menu" class="text-center">
+                                <li><a href="#">Privacy Policy</a></li>
+                                <li><a href="#">Terms and Conditions</a></li>
+                                <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact Us</a></li>
+                                <li><a href="http://www.traffk.com/">Traffk Website</a></li>
+                            </ul>
+                            <p class="copyright text-center">
+                                @*@if (R.CopyrightMessage.Value != null)
+                                    {
+                                        @R.CopyrightMessage
+                                    }
+                                    else
+                                    {
+                                        <span>Copyright</span>
+                                    }*@
+                                &copy; @DateTime.Now.Year Traffk
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- /end footer -->
+            </footer>
+        </div>
+    </div>
+</div>
+    
+    <a href="#" id="back-to-top" title="Back to top"><i class="fa fa-arrow-up" aria-hidden="true"></i></a>
+
+<!-- popups -->
+<div id="inactivityWarningModal" class="popup">
+    @*<a data-dismiss="modal" class="inactivityWarningModal_close" onclick="idleReactivate()"><i class="fa fa-2x fa-times popup-close-btn"></i></a>*@
+    <div class="popup-content-container">
+        <h3>Inactivity Warning</h3>
+        <p class="subheading">
+            You have been inactive too long. If you don't reactivate, you will be logged out in <span id="secondsTillLogout"></span> seconds.
+        </p>
+        <button type="button" class="btn btn-primary btn-large" onclick="idleReactivate()">Reactivate</button>
+    </div>
+</div>
+
+<div id="popup-confirm" class="popup">
+        <a class="popup-confirm_close"><i class="fa fa-2x fa-times popup-close-btn"></i></a>
+        <div class="popup-content-container">
+            <p>Are you sure you want to delete <b>Laura Price?</b></p>
+            <ul class="confirm-btns text-right">
+                <li><button class="btn btn-bordered popup-confirm_close">Cancel</button></li>
+                <li><button class="btn btn-bordered">Delete</button></li>
+            </ul>
+        </div>
+    </div>
+    <div id="popup-messages" class="popup">
+        <a class="popup-messages_close"><i class="fa fa-2x fa-times popup-close-btn"></i></a>
+        <div class="popup-content-container">
+            <h3>View / Send Messages</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        </div>
+    </div>
+<div id="popup-help" class="popup">
+    <a class="popup-help_close"><i class="fa fa-2x fa-times popup-close-btn"></i></a>
+    <div class="popup-content-container">
+        <h3>Need Help?</h3>
+        @if (@R.SupportMessage.Value != null)
+        {
+            <p class="subheading">@R.SupportMessage</p>
+        }
+        else
+        {
+            <p class="subheading">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        }
+
+        <ul id="help-menu">
+            <li><a href="#">FAQ</a></li>
+            <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact Us</a></li>
+            <li><a href="#">Feature Requests</a></li>
+            <li><a href="#">Feedback/Bug</a></li>
+        </ul>
+    </div>
+</div>
+
+
+<!--Scripts-->
+        <environment names="Development,Staging,Production">
+            <script src="~/lib/jquery/dist/jquery.js"></script>
+            <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+            <script src="~/lib/store-js/json.js"></script>
+            <script src="~/lib/store-js/store.js"></script>
+            <script src="~/js/site.js" asp-append-version="true"></script>
+            <script type="text/javascript" src="https://public.tableau.com/javascripts/api/tableau-2.js"></script>
+            <script src="~/js/jquery.popupoverlay.js"></script>
+        </environment>
+        <environment names="zStaging,zProduction">
+            <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
+                    asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                    asp-fallback-test="window.jQuery">
+            </script>
+            <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/bootstrap.min.js"
+                    asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
+                    asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
+            </script>
+            <script src="~/lib/store-js/store+json2.min.js"></script>
+            <script src="~/js/site.min.js" asp-append-version="true"></script>
+            <script type="text/javascript" src="https://public.tableau.com/javascripts/api/tableau-2.js"></script>
+            <script src="~/js/jquery.popupoverlay.js"></script>
+        </environment>
     <script>
-            function initViz(workbook, view) {
+            function setUI() {
+                jQuery('#primary-subnav .dropdown-menu').width(window.innerWidth + 20); /* offset by 20, has a -20px left margin */
+                jQuery('#primary-subnav .dropdown-menu .dropdown-submenu').width("auto"); /* offset by 20, has a -20px left margin */
+            }
+
+            jQuery(document).ready(function () {
+                // init popups
+                jQuery('.popup').popup({
+                    focusdelay: 400,
+                    outline: true
+                });
+
+                setUI();
+
+                // id parent if using an img logo
+                jQuery('#client-logo').parent().addClass('img-logo');
+
+                //normalizeHeight('#reports-container .row .mini-panel-bottom');
+                jQuery('#reports-container .row').each(function () {
+                    var max_height = 0;
+                    jQuery(this).children('.col-sm-4').children('.mini-panel').children('.mini-panel-bottom').each(function () {
+                        if (jQuery(this).height() > max_height) {
+                            max_height = jQuery(this).height();
+                        }
+                    });
+                    jQuery(this).children('.col-sm-4').children('.mini-panel').children('.mini-panel-bottom').height(max_height + 'px');
+                });
+            });
+
+            jQuery('.filter-tags li a').click(function() {
+                jQuery(this).parent().remove();
+            });
+
+            // click function to hide filters when visible+clicked outside
+            jQuery(document).mouseup(function (e) {
+                var container = jQuery('.floated-filter');
+                if (!container.is(e.target) && container.has(e.target).length === 0) {
+
+                    container.hide();
+                }
+            });
+
+            function normalizeHeight(selector) {
+                var max_height = 0;
+                jQuery(selector).each(function () {
+                    if (jQuery(this).height() > max_height) {
+                        max_height = jQuery(this).height();
+                    }
+                });
+                alert(max_height);
+                jQuery(selector).height(max_height + 'px');
+            }
+
+            jQuery('.section-toggle').click(function () {
+                var toggle_selector = jQuery(this).attr('data-toggle');
+                if (jQuery('.' + toggle_selector).is(':visible')) {
+                    jQuery('.' + toggle_selector).fadeOut(0);
+                    jQuery(this).children('.fa').removeClass('fa-minus');
+                    jQuery(this).children('.fa').addClass('fa-plus');
+                } else {
+                    jQuery('.' + toggle_selector).fadeIn(0);
+                    jQuery(this).children('.fa').addClass('fa-minus');
+                    jQuery(this).children('.fa').removeClass('fa-plus');
+                }
+            });
+
+        
+           //Mobile specific
+            jQuery('.navbar-toggle').click(function () {
+                if (window.innerWidth < 768) {
+                    if (jQuery('.navbar-right').is(':visible')) {
+                        jQuery('.navbar-right').slideUp(300);
+                    } else {
+                        jQuery('.navbar-right').slideDown(300);
+                    }
+                }
+            });
+
+            //Shift contents down or up based on navbar
+            jQuery('.nav.navbar-left.top-nav').click(function () {
+                var isUserLoggedIn = !jQuery('.account-nav')[0];
+                if (jQuery('#page-wrapper').hasClass('nav-open')) {
+                    jQuery('#page-wrapper').removeClass('nav-open');
+                } else if (isUserLoggedIn) {
+                    jQuery('#page-wrapper').addClass('nav-open');
+                    }
+            });
+
+            //If clicking outside navbar it will collapse and script shift contents up
+            jQuery(document).mouseup(function (e) {
+                var container = jQuery('.nav.navbar-left.top-nav');
+                if (!container.is(e.target) && container.has(e.target).length === 0) {
+                    jQuery('#page-wrapper').removeClass('nav-open');
+                }
+            });
+
+            //Generic Toggle Script
+            jQuery('.toggle').click(function () {
+                var id = jQuery(this).attr('data-toggle');
+                //jQuery('#'+id).toggle('fast');
+                if (jQuery('#' + id).is(':visible')) {
+                    jQuery('#' + id).fadeOut(300);
+                } else {
+                    jQuery('#' + id).fadeIn(300);
+                }
+
+                if (jQuery(this).children('.fa-chevron-down').length > 0) {
+                    jQuery(this).children('.fa').removeClass('fa-chevron-down');
+                    jQuery(this).children('.fa').addClass('fa-chevron-up');
+                } else {
+                    jQuery(this).children('.fa').removeClass('fa-chevron-up');
+                    jQuery(this).children('.fa').addClass('fa-chevron-down');
+                }
+            });
+
+            //Back To Top Button Script
+            if (jQuery('#back-to-top').length) {
+                var scrollTrigger = 100, // px
+                    backToTop = function () {
+                        var scrollTop = jQuery(window).scrollTop();
+                        if (scrollTop > scrollTrigger) {
+                            jQuery('#back-to-top').addClass('show');
+                        } else {
+                            jQuery('#back-to-top').removeClass('show');
+                        }
+                    };
+                backToTop();
+                jQuery(window).on('scroll', function () {
+                    backToTop();
+                });
+                jQuery('#back-to-top').on('click', function (e) {
+                    e.preventDefault();
+                    jQuery('html,body').animate({
+                        scrollTop: 0
+                    }, 700);
+                });
+            }
+
+        </script>
+        <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+        <script>tinymce.init({ selector: '.htmleditor', plugins: "code" });</script>
+
+        <script>
+            function initViz(workbook, view, parameterString) {
                 var trustedTicket = getCookie("trustedTicket");
+                var viewUrl = "@Current.TableauSignInOptions.TrustedUrl" + trustedTicket + "/views/" + workbook + "/" + view;
+                if (parameterString) {
+                    viewUrl = viewUrl + parameterString;
+                }
                 var containerDiv = document.getElementById("reportContainer"),
-                    url = @Current.TableauSignInOptions.TrustedUrl + trustedTicket + "/views/" + workbook + "/" + view,
+                    url = viewUrl,
                     options = {
                         hideTabs: true,
                         onFirstInteractive: function () {
@@ -223,12 +496,13 @@ h1, .body-content a {
                 var viz = new tableau.Viz(containerDiv, url, options);
                 // Create a viz object and embed it in the container div.
             }
-    </script>
-    @RenderSection("scripts", required: false)
-    @if (R.JavascriptLink != null)
-    {
-        <script src="@R.JavascriptLink"></script>
-    }
-    @Html.RenderPartialViewScripts();
+        </script>
+
+        @RenderSection("scripts", required: false)
+        @if (R.JavascriptLink != null)
+        {
+            <script src="@R.JavascriptLink"></script>
+        }
+        @Html.RenderPartialViewScripts();
 </body>
 </html>

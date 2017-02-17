@@ -51,6 +51,7 @@ namespace TraffkPortal
             public const string HasSelectableItems = "HasSelectableItems";
             public const string HasBreadcrumbItems = "HasBreadcrumbItems";
             public const string IsListingPage = "IsListingPage";
+            public const string IsFormPage = "IsFormPage";
         }
 
         public static SelectListItem CreateNoneSelectedSelectListItem(bool preSelected=true) 
@@ -261,6 +262,9 @@ namespace TraffkPortal
 
         public static bool IsListingPage(this ViewDataDictionary v, bool? newVal = null)
             => v.GetOrSetThenGet(ViewDataKeys.IsListingPage, newVal);
+
+        public static bool IsFormPage(this ViewDataDictionary v, bool? newVal = null)
+            => v.GetOrSetThenGet(ViewDataKeys.IsFormPage, newVal);
 
         public static bool HasBreadcrumbItems(this ViewDataDictionary v, bool? newVal = null)
             => v.GetOrSetThenGet(ViewDataKeys.HasBreadcrumbItems, newVal);

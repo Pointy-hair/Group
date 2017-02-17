@@ -2,6 +2,8 @@
 @{
     Layout = "_LayoutApplication.cshtml";
     ViewData.SetTitleAndHeading("Portal Settings");
+    ViewData.HasPageMenuItems(true);
+    ViewData.IsFormPage(true);
 }
 @section pageAlerts {
     <div class="alert alert-success" role="alert" id="AssetRemovedAlert" style="display:none">The asset was removed.</div>

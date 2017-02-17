@@ -34,7 +34,7 @@
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.ReleaseDate)
+                        @item.ReleaseDate.Value.ToString("MM/dd/yyyy")
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.ReleaseName)
@@ -42,12 +42,7 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.ApplicationType)
                     </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ReleaseNotes)
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="4" style="border:0">
+                    <td colspan="4">
                         <ul>
                             @foreach (var change in item.ReleaseReleaseChanges)
                             {
@@ -55,6 +50,9 @@
                             }
                         </ul>
                     </td>
+                    @*<td>
+                        @Html.DisplayFor(modelItem => item.ReleaseNotes)
+                    </td>*@
                 </tr>
             }
         </tbody>

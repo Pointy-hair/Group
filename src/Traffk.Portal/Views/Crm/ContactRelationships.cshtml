@@ -1,7 +1,10 @@
 ﻿@using TraffkPortal.Models.CrmModels
 @model IEnumerable<RelatedContactModel>
 @{
-    Layout = "_LayoutContactListingContent.cshtml";
+    Layout = "~/Views/Crm/_LayoutContact.cshtml";
+    ViewData.IsListingPage(true);
+    ViewData.HasPageMenuItems(false);
+
 }
 @section listingTable
 {

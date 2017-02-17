@@ -1,21 +1,22 @@
 ﻿@model ListingFilters
-
-@foreach (var filterSection in Model.Sections)
-            {
-    <div class="panel panel-default">
-        <div class="panel-heading">@filterSection.SectionName</div>
-        <div class="panel-body">
-            <div class="form">
+<button class="btn btn-large btn-white toggle" data-toggle="reports-filter">Filters</button>
+<ul id="reports-filter" class="floated-filter list-left">
+    @foreach (var filterSection in Model.Sections)
+    {
+        <li>
+            <a href="#">@filterSection.SectionTitle</a>
+            <ul class="filter-subnav">
                 @foreach (var filter in filterSection.Filters)
                 {
                     var filterTitle = filter.Title.RightOf("/", true);
                     var filterId = $"listingFilter_{filterSection.SectionName}_{filter.FieldName}_{filter.Value}";
-                    <div class="form-group">
-                        <input type="checkbox" value="@(filter.FieldName):@(filter.Value)" name="filters" id="@filterId" @if (filter.IsChecked) { <text>checked="checked"</text> } onchange="location='@filter.OnSubmittedUrl'"  />
-                        <label for="@filterId">@filterTitle</label>
-                    </div>
+                    <li>
+                        <a href="#">
+                            <input style="display: inline" type="checkbox" value="@(filter.FieldName):@(filter.Value)" name="filters" id="@filterId" @if (filter.IsChecked) { <text> checked="checked" </text>   } onchange="location='@filter.OnSubmittedUrl'" />
+                            @filter.Value <span>@filter.Count</span></a>
+                    </li>
                 }
-            </div>
-        </div>
-    </div>
-}
+            </ul>
+        </li>
+    }
+</ul>

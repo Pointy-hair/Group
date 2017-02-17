@@ -10,7 +10,7 @@
     var isNewEntity = string.IsNullOrEmpty(entityId);
     var isPerson = ContactTypes.Person == (ContactTypes)ViewData["ContactType"];
     var isOrg = ContactTypes.Organization == (ContactTypes)ViewData["ContactType"];
-
+    ViewData.IsFormPage(!ViewData.IsListingPage());
     string profileImageBaseUrl = "/images/profile/";
     string profileImage = "unidentified.jpg";
     if (isOrg)
@@ -172,6 +172,7 @@
             </form>
         </div>
     </div>
+
 }
 @section Scripts {
     <script type="text/javascript">
@@ -206,14 +207,14 @@
 }
 @if (!ViewData.IsListingPage())
 {
-    <div id="personal-edit-form-container" class="personal-section medium-padding">
-        <img class="mobile-block-centered"
-             src="@profileUrl"
-             id="personal-page-img"
-             alt="" />
-        <div col-sm-8>
-            @RenderBody()
+        <div id="personal-edit-form-container" class="personal-section medium-padding">
+            <img class="mobile-block-centered"
+                 src="@profileUrl"
+                 id="personal-page-img"
+                 alt="" />
+            <div col-sm-8>
+                @RenderBody()
+            </div>
         </div>
-    </div>
 }
-@RenderBody()
+        @RenderBody()

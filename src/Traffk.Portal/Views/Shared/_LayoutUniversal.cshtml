@@ -1,10 +1,11 @@
 ﻿@{
-    Layout = "~/Views/Shared/_LayoutEmptyContent2.cshtml";
+    Layout = "~/Views/Shared/_LayoutEmptyContent.cshtml";
     ViewData["BodyContainerClass"] = "container-full-width no-side-padding";
     ViewData.SetIfMissing("Heading", ViewData["EntityTitle"] as string);
     var isListingPage = ViewData.IsListingPage();
-    var isContentPage = !isListingPage;
-    var showPageActions = ViewData.HasPageActions() && isContentPage;
+    var isFormPage = ViewData.IsFormPage();
+    var isContentPage = !isListingPage || isFormPage;
+    var showPageActions = ViewData.HasPageActions() && isFormPage;
     var showListingActions = ViewData.HasPageActions() && isListingPage;
 }
 <!-- alert-->
@@ -34,41 +35,21 @@ else
         </div>
     </div>
 }
-@if (ViewData.HasPageMenuItems() || showPageActions)
-{
-    <div class="row border-bottom">
-        @if (ViewData.HasPageMenuItems())
-        {
-            <div class="col-sm-10" id="filter-tags-container">
-                <ul id="personal-page-nav">
-                    @RenderSection("pageNavItems", false)
-                </ul>
-            </div>
-        }
-        @if (showPageActions)
-        {
-            <div class="col-sm-2 text-right">
-                <button class="btn btn-large btn-white toggle" data-toggle="actions-container-page" onclick="updateSelectionMessaging()">Actions</button>
-                <ul class="floated-filter list-right actions-container" id="actions-container-page">
-                    @RenderSection("pageActionItems", false)
-                </ul>
-            </div>
-        }
-    </div>
-}
-@if (isListingPage)
+
+@if (isListingPage || isFormPage)
 {
     var filters = ViewBag.ListingFilters as ListingFilters;
     var hasFilters = filters != null;
     <div class="panel smallest-padding">
+        
         @if (hasFilters || showListingActions || ViewData.HasSelectableItems())
         {
             <div class="row border-bottom">
                 <div class="col-sm-2">
-                @if (hasFilters)
-                {
-                    @await Html.PartialAsync("_ListingFiltersPartial2", filters)
-                }
+                    @if (hasFilters)
+                    {
+                        @await Html.PartialAsync("_ListingFiltersPartial", filters)
+                    }
                 </div>
                 <div class="col-sm-8" id="filter-tags-container">
                     @if (ViewData.HasSelectableItems())
@@ -98,18 +79,55 @@ else
                 </div>
             </div>
         }
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="table-responsive">
-                    @RenderSection("listingTable", true)
-                    @{ await Html.RenderPartialAsync("_PaginationPartial"); }
+        @if (isListingPage)
+        {
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="table-responsive">
+                        @RenderSection("listingTable", true)
+                        @await Html.PartialAsync("_PaginationPartial")
+                    </div>
                 </div>
             </div>
-        </div>
+
+            IgnoreBody();
+
+        }
+        @if (isFormPage)
+        {
+            if (ViewData.HasPageMenuItems() || showPageActions)
+            {
+                <div class="row border-bottom">
+                    @if (ViewData.HasPageMenuItems())
+                    {
+                        <div class="col-sm-10" id="filter-tags-container">
+                            <ul id="personal-page-nav">
+                                @RenderSection("pageNavItems", false)
+                            </ul>
+                        </div>
+                    }
+                    @if (showPageActions)
+                    {
+                        <div class="col-sm-2 text-right">
+                            <button class="btn btn-large btn-white toggle" data-toggle="actions-container-page" onclick="updateSelectionMessaging()">Actions</button>
+                            <ul class="floated-filter list-right actions-container" id="actions-container-page">
+                                @RenderSection("pageActionItems", false)
+                            </ul>
+                        </div>
+                    }
+                </div>
+            }
+            <div class="row">
+                <div class="col-xs-12">
+                    @RenderBody()
+                </div>
+            </div>
+            this.IgnoreSectionIfDefined("listingTable");
+        }
+
     </div>
-    IgnoreBody();
-}
-else if (isContentPage)
+}                  
+else
 {
     <div class="row">
         <div class="col-xs-12">
@@ -118,6 +136,7 @@ else if (isContentPage)
     </div>
     this.IgnoreSectionIfDefined("listingTable");
 }
+
 @{ 
     if (!ViewData.HasPageMenuItems()) { this.IgnoreSectionIfDefined("pageNavItems"); }
     if (!showListingActions && !showPageActions) { this.IgnoreSectionIfDefined("pageActionItems"); }
