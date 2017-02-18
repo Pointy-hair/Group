@@ -10,6 +10,7 @@
     {
         ViewData.SetTitleAndHeading($"{Model.CreativeTitle} ({Model.CreativeId})");
     }
+    ViewData.IsFormPage(true);
 }
 
 <form asp-action="@ActionNames.CreativeSave" asp-route-id="@Model.CreativeId" enctype="multipart/form-data">

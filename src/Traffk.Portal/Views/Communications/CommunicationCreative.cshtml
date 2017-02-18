@@ -1,7 +1,8 @@
 ﻿@model TraffkPortal.Models.CommunicationModels.CreativeModel
 @using static TraffkPortal.Controllers.CommunicationsController
 @{
-    Layout = "_LayoutCommunication.cshtml";
+    Layout = "~/Views/Communications/_LayoutCommunication.cshtml";
+    ViewData.IsFormPage(true);
 }
 <form asp-action="@ActionNames.CommunicationCreativeSave" asp-route-id="@Model.CommunicationId" enctype="multipart/form-data">
     <div class="form-horizontal">

@@ -272,21 +272,22 @@
 
 <div id="popup-confirm" class="popup">
         <a class="popup-confirm_close"><i class="fa fa-2x fa-times popup-close-btn"></i></a>
-        <div class="popup-content-container">
-            <p>Are you sure you want to delete <b>Laura Price?</b></p>
-            <ul class="confirm-btns text-right">
-                <li><button class="btn btn-bordered popup-confirm_close">Cancel</button></li>
-                <li><button class="btn btn-bordered">Delete</button></li>
-            </ul>
-        </div>
+    <div class="popup-content-container">
+        <h3>Confirm Action</h3>
+        <p id="popup-confirm-message"></p>
+        <ul class="confirm-btns text-right">
+            <li><button class="btn btn-default btn-large btn-grey popup-confirm_close">Cancel</button></li>
+            <li><button class="btn btn-default btn-primary btn-large" id="popup-confirm-action-button" onclick="location.reload()"></button></li>
+        </ul>
     </div>
-    <div id="popup-messages" class="popup">
-        <a class="popup-messages_close"><i class="fa fa-2x fa-times popup-close-btn"></i></a>
-        <div class="popup-content-container">
-            <h3>View / Send Messages</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        </div>
     </div>
+<div id="popup-messages" class="popup">
+    <a class="popup-messages_close"><i class="fa fa-2x fa-times popup-close-btn"></i></a>
+    <div class="popup-content-container">
+        <h3>View / Send Messages</h3>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    </div>
+</div>
 <div id="popup-help" class="popup">
     <a class="popup-help_close"><i class="fa fa-2x fa-times popup-close-btn"></i></a>
     <div class="popup-content-container">

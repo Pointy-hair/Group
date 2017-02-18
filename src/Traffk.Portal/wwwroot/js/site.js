@@ -229,32 +229,29 @@ $(document).ready(function () {
         $(this).prev().val("");
         event.preventDefault();
     });
+
     $(".confirm-on-click").each(function () {
         var oldEvents = this.onclick;
         this.onclick = null;
         $(this).click(function (event) {
             var j = $(this);
-            var heading = j.attr("confirmHeading");
-            if (heading == null)
-            {
-                heading = "Are you sure?";
-            }
-            var message = j.attr("confirmMessage");
+
+            $('#popup-confirm-action-button').text("Continue");
+            $('#popup-confirm-message').text("Are you sure?");
+
+            var popupMessageObject;
             var messageFn = j.attr("confirmMessageFunction");
-            if (messageFn != null)
-            {
-                message = eval(messageFn)
+
+            if (messageFn != null) {
+                popupMessageObject = eval(messageFn);
+                $('#popup-confirm-action-button').text(popupMessageObject.buttonAction);
+                $('#popup-confirm-message').text(popupMessageObject.message);
             }
-            if (!confirm(message)) {
-                event.preventDefault();
-                event.stopImmediatePropagation();
-                return false;
-            }
+
+            $('#popup-confirm-action-button').bind('click', oldEvents);
+
+            $('#popup-confirm').popup('show');
         });
-        if (oldEvents != null)
-        {
-            $(this).click(oldEvents);
-        }
     });
 });
 

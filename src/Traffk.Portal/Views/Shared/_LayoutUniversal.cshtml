@@ -215,9 +215,16 @@ else
                 var cnt = ids.length;
                 if (itemType == null)
                 {
-                    itemType = "items";
+                    itemType = "item";
                 }
-                return "Are you sure you want to delete these " + cnt + " selected "+itemType+"?"
+                if (cnt > 1) {
+                    itemType = itemType + "s";
+                }
+                var confirmMessage = "Are you sure you want to delete the " + cnt + " selected " + itemType + "?";
+
+                var popupMessages = { buttonAction: "Delete", message: confirmMessage };
+
+                return popupMessages;
             }
         </script>
     }
