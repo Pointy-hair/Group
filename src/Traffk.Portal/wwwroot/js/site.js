@@ -223,6 +223,11 @@ function idleReactivate() {
 
 }
 
+function popupConfirmReload() {
+    $('#popup-confirm').popup('hide');
+    location.reload();
+};
+
 $(document).ready(function () {
     $(".color-picker").after('<button class="clearPreviousInputButton">Clear</button>');
     $(".clearPreviousInputButton").click(function (event) {
@@ -234,16 +239,28 @@ $(document).ready(function () {
         var oldEvents = this.onclick;
         this.onclick = null;
         $(this).click(function (event) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+
             var j = $(this);
 
             $('#popup-confirm-action-button').text("Continue");
+
+            var heading = j.attr("confirmHeading");
+            if (heading != null) {
+                $('#popup-confirm-heading').text(heading);
+            }
+
             $('#popup-confirm-message').text("Are you sure?");
 
-            var popupMessageObject;
-            var messageFn = j.attr("confirmMessageFunction");
+            var message = j.attr("confirmMessage");
+            if (message != null) {
+                $('#popup-confirm-message').text(message);
+            }
 
+            var messageFn = j.attr("confirmMessageFunction");
             if (messageFn != null) {
-                popupMessageObject = eval(messageFn);
+                var popupMessageObject = eval(messageFn);
                 $('#popup-confirm-action-button').text(popupMessageObject.buttonAction);
                 $('#popup-confirm-message').text(popupMessageObject.message);
             }
