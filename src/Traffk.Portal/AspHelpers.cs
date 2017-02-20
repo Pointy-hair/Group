@@ -54,6 +54,12 @@ namespace TraffkPortal
             public const string IsFormPage = "IsFormPage";
         }
 
+        public static class ButtonActionNames
+        {
+            public const string Save = "Save";
+            public const string Delete = "Delete";
+        }
+
         public static SelectListItem CreateNoneSelectedSelectListItem(bool preSelected=true) 
             => new SelectListItem { Disabled = false, Text = NoneDropdownItemText, Selected = preSelected, Value = NoneDropdownItemValue };
 

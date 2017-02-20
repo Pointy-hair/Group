@@ -239,5 +239,11 @@ namespace RevolutionaryStuff.Core
             str = str.Replace("Listing", "");
             return str;
         }
+
+        public static string PrependHash(this string str)
+        {
+            str = "#" + str;
+            return str;
+        }
     }
 }

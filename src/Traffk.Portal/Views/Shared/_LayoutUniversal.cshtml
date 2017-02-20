@@ -1,4 +1,5 @@
-﻿@{
+﻿@using static TraffkPortal.AspHelpers
+@{
     Layout = "~/Views/Shared/_LayoutEmptyContent.cshtml";
     ViewData["BodyContainerClass"] = "container-full-width no-side-padding";
     ViewData.SetIfMissing("Heading", ViewData["EntityTitle"] as string);
@@ -9,6 +10,14 @@
     var showListingActions = ViewData.HasPageActions() && isListingPage;
 }
 <!-- alert-->
+<div class="alert alert-info alert-dismissable" id="@AspHelpers.ButtonActionNames.Save.ToLower()-alert" style="display: none">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    <i class="fa fa-check" aria-hidden="true"></i> Save completed successfully.
+</div>
+<div class="alert alert-info alert-dismissable" id="@AspHelpers.ButtonActionNames.Delete.ToLower()-alert" style="display: none">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    <i class="fa fa-check" aria-hidden="true"></i> Items deleted successfully.
+</div>
 @RenderSection("pageAlerts", false)
 <!--end alert-->
 
@@ -222,7 +231,7 @@ else
                 }
                 var confirmMessage = "Are you sure you want to delete the " + cnt + " selected " + itemType + "?";
 
-                var popupMessages = { buttonAction: "Delete", message: confirmMessage };
+                var popupMessages = { buttonAction: '@AspHelpers.ButtonActionNames.Delete', message: confirmMessage };
 
                 return popupMessages;
             }

@@ -159,7 +159,7 @@ namespace TraffkPortal.Controllers
                 comm.CampaignName = model.CampaignName;
                 comm.TopicName = model.TopicName;
                 await Rdb.SaveChangesAsync();
-                return RedirectToAction(ActionNames.CommunicationsList);
+                return new RedirectResult(Url.Action(ActionNames.CommunicationsList) + AspHelpers.ButtonActionNames.Save.PrependHash());
             }
             return await CommunicationEdit(id);
         }
