@@ -3,6 +3,8 @@
 @{
     Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
     ViewData.SetTitleAndHeading("Tenants", "This is the tenant subheading.");
+    ViewData.IsListingPage(true);
+    ViewData.HasPageMenuItems(true);
 }
 @section listingFilters
 {

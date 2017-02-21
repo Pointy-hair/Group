@@ -1,7 +1,8 @@
 ﻿@model TraffkPortal.Models.TenantModels.SmtpSettingsModel
 @using static TraffkPortal.Controllers.TenantsController
 @{
-    Layout = "_LayoutTenant.cshtml";
+    Layout = "~/Views/Tenants/_LayoutTenant.cshtml";
+    ViewData.IsFormPage(true);
 }
 
 <form asp-action="@ActionNames.SmtpSettingsSubmission">

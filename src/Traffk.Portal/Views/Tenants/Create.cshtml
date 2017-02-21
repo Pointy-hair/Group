@@ -2,6 +2,7 @@
 @model TraffkPortal.Models.TenantModels.CreateTenantModel
 @{
     ViewData.SetTitleAndHeading("Create Tenant");
+    ViewData.IsFormPage(true);
 }
 
 <form asp-action="@ActionNames.TenantCreateSubmission">
