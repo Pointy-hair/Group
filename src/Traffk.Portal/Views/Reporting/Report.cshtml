@@ -3,10 +3,11 @@
 @model Traffk.Tableau.REST.Models.SiteViewEmbeddableResource
 @{
     Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
-    ViewData.SetTitleAndHeading(@Model.Name, "This is the report description.");
+    ViewData.SetTitleAndHeading(@Model.Name, @Model.Description);
     ViewData.HasBreadcrumbItems(true);
     ViewData.HasPageActions(true);
     ViewData.HasPageMenuItems(true);
+    ViewData.IsContentPage(true);
 }
 
 @section pageAlerts {

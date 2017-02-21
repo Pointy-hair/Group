@@ -52,6 +52,7 @@ namespace TraffkPortal
             public const string HasBreadcrumbItems = "HasBreadcrumbItems";
             public const string IsListingPage = "IsListingPage";
             public const string IsFormPage = "IsFormPage";
+            public const string IsContentPage = "IsContentPage";
         }
 
         public static class ButtonActionNames
@@ -271,6 +272,9 @@ namespace TraffkPortal
 
         public static bool IsFormPage(this ViewDataDictionary v, bool? newVal = null)
             => v.GetOrSetThenGet(ViewDataKeys.IsFormPage, newVal);
+
+        public static bool IsContentPage(this ViewDataDictionary v, bool? newVal = null)
+            => v.GetOrSetThenGet(ViewDataKeys.IsContentPage, newVal);
 
         public static bool HasBreadcrumbItems(this ViewDataDictionary v, bool? newVal = null)
             => v.GetOrSetThenGet(ViewDataKeys.HasBreadcrumbItems, newVal);

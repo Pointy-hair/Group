@@ -5,8 +5,8 @@
     ViewData.SetIfMissing("Heading", ViewData["EntityTitle"] as string);
     var isListingPage = ViewData.IsListingPage();
     var isFormPage = ViewData.IsFormPage();
-    var isContentPage = !isListingPage || isFormPage;
-    var showPageActions = ViewData.HasPageActions() && isFormPage;
+    var isContentPage = ViewData.IsContentPage();
+    var showPageActions = ViewData.HasPageActions() && (isFormPage || isContentPage);
     var showListingActions = ViewData.HasPageActions() && isListingPage;
 }
 <!-- alert-->
@@ -135,9 +135,31 @@ else
         }
 
     </div>
-}                  
+}
 else
 {
+    if (ViewData.HasPageMenuItems() || showPageActions)
+    {
+        <div class="row border-bottom">
+            @if (ViewData.HasPageMenuItems())
+                    {
+                <div class="col-sm-10" id="filter-tags-container">
+                    <ul id="personal-page-nav">
+                        @RenderSection("pageNavItems", false)
+                    </ul>
+                </div>
+            }
+            @if (showPageActions)
+                    {
+                <div class="col-sm-2 text-right">
+                    <button class="btn btn-large btn-white toggle" data-toggle="actions-container-page" onclick="updateSelectionMessaging()">Actions</button>
+                    <ul class="floated-filter list-right actions-container" id="actions-container-page">
+                        @RenderSection("pageActionItems", false)
+                    </ul>
+                </div>
+            }
+        </div>
+    }
     <div class="row">
         <div class="col-xs-12">
             @RenderBody()

@@ -21,7 +21,7 @@ namespace Traffk.Tableau.REST.Models
         public readonly string ContentUrl;
         public readonly string WorkbookId;
         public readonly string OwnerId;
-        public readonly string Description = "";//"No desc, Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+        public new string Description = "";//"No desc, Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
 
         public SiteView()
         {
@@ -72,6 +72,7 @@ namespace Traffk.Tableau.REST.Models
     {
         public string WorkbookName { get; set; }
         public string ViewName { get; set; }
+        public string Description { get; set; }
     }
 
     public class SiteViewContactEmbeddableResource : SiteViewEmbeddableResource

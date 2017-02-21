@@ -3,6 +3,8 @@
 @model IEnumerable<TraffkPortal.Models.ApplicationModels.SystemCommunicationsModel>
 @{
     Layout = "_LayoutApplication.cshtml";
+    ViewData.IsFormPage(true);
+
 }
 
 <form asp-action="@ActionNames.SystemCommunicationsSave">
