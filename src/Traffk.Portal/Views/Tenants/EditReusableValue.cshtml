@@ -12,6 +12,8 @@
         ViewData.SetTitleAndHeading(Model.Key);
     }
     var isNew = Model.Key == null || Model.Key == NewReusableValueKey;
+    ViewData.IsFormPage(true);
+
 }
 
 <form asp-action="@ActionNames.ReusableValueEditSubmission" asp-route-tenantId="@ViewContext.GetRouteValue("tenantId")" asp-route-key="@(Model.Key??NewReusableValueKey)">

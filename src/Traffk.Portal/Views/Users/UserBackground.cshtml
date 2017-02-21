@@ -2,6 +2,8 @@
 @model TraffkPortal.Models.UserModels.UserModel
 @{
     Layout = "_LayoutUser.cshtml";
+    ViewData.IsFormPage(true);
+
 }
 @section pageAlerts {
     @if (Model.CanAccessProtectedHealthInformation.GetValueOrDefault())
