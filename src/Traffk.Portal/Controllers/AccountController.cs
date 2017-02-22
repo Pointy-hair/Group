@@ -418,9 +418,23 @@ namespace TraffkPortal.Controllers
         // GET: /Account/ResetPassword
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult ResetPassword(string code = null)
+        public async Task<IActionResult> ResetPassword(string userId = null, string code = null)
         {
-            return code == null ? ErrorResult() : View();
+            if (code == null)
+            {
+                return ErrorResult();
+            }
+
+            var user = await UserManager.FindByIdAsync(userId);
+            if (user != null)
+            {
+                var model = new ResetPasswordViewModel
+                {
+                    Email = user.Email
+                };
+                return View(model);
+            }
+            return ErrorResult();
         }
 
         //
