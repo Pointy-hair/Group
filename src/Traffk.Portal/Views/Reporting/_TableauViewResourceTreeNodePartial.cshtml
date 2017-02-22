@@ -1,31 +1,41 @@
-﻿@using RevolutionaryStuff.Core.Collections
-@using RevolutionaryStuff.Core.ApplicationParts
-@using Traffk.Tableau.REST
+﻿@model IEnumerable<TreeNode<SiteViewResource>>
+@using RevolutionaryStuff.Core.Collections
 @using Traffk.Tableau.REST.Models
 @using static TraffkPortal.Controllers.ReportingController
-@model IEnumerable<TreeNode<Traffk.Tableau.REST.Models.SiteViewResource>>
-<ul>
-    @foreach (var tn in Model)
+@foreach (var tn in Model)
+{
+    var tsv = tn.Data;
+    if (tsv is SiteViewFolderResource && tn.HasChildren)
     {
-        <li role="presentation">
-            @{
-                var tsv = tn.Data;
-                if (tsv is SiteView)
-                {
-                    var view = tsv as SiteView;
-                    var urlName = ReportingController.CreateAnchorName(tsv);
-                    <a style="cursor:pointer" asp-route-id="@view.Id" asp-route-anchorName="@urlName" asp-action="@ReportingController.ActionNames.Report">@view.Name</a>
-                }
-                else if (tsv is SiteViewFolderResource)
-                {
-                    var folder = tsv as SiteViewFolderResource;
-                    <text>@folder.Name</text>
-                }
-                if (tn.HasChildren)
-                {
-                    await Html.RenderPartialAsync("_TableauViewResourceTreeNodePartial", tn.Children);
-                }
-            }
-        </li>
+        var folder = tsv as SiteViewFolderResource;
+        <h2 data-toggle="@folder.Id" class="section-toggle"><i class="fa fa-minus primary-color" aria-hidden="true"></i> @folder.Name</h2>
+            <div class="row @folder.Id">
+                    @if (tn.HasChildren)
+                    {
+                        await Html.RenderPartialAsync("_TableauViewResourceTreeNodePartial", tn.Children);
+                    }
+            </div>
     }
-</ul>
+    else if (tsv is SiteView)
+    {
+        var view = tsv as SiteView;
+        var urlName = CreateAnchorName(tsv);
+        <div class="col-md-3 col-sm-4">
+            <div class="mini-panel">
+                <div class="mini-panel-top">
+                    <input type="checkbox" name="radios" class="" id="radio1" />
+                        <a style="cursor:pointer" asp-route-id="@view.Id" asp-route-anchorName="@urlName" asp-action="@ActionNames.Report">
+                            <div class="report-preview-image-container" style="background-image: url('/Reporting/PreviewImage/@view.WorkbookId/@view.Id')">
+                                &nbsp;
+                            </div>
+                        </a>
+                </div>
+                <div class="mini-panel-bottom">
+                    <p class="mini-title"><a style="cursor:pointer" asp-route-id="@view.Id" asp-route-anchorName="@urlName" asp-action="@ActionNames.Report">@view.Name</a></p>
+                    <p>@view.Description</p>
+                    <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+                </div>
+            </div>
+        </div>
+    }
+}
