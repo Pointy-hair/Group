@@ -47,7 +47,7 @@ namespace TraffkPortal.Controllers
             : base(AspHelpers.MainNavigationPageKeys.Reporting, db, current, loggerFactory, cacher)
         {
             TableauRestService = tableauRestService;
-            AttachLogContextProperty("EventType", LoggingEventTypes.Report.ToString());
+            AttachLogContextProperty(typeof(EventType).Name, EventType.LoggingEventTypes.Report.ToString());
         }
 
         private TreeNode<SiteViewResource> GetReportFolderTreeRoot()

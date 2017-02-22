@@ -1,8 +1,12 @@
 ﻿
 namespace Traffk.Bal.Settings
 {
-    public enum LoggingEventTypes
+    public static class EventType
     {
-        Report,
+        public enum LoggingEventTypes
+        {
+            Report,
+            Account
+        }
     }
 }

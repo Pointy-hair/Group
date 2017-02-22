@@ -6,6 +6,8 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
+using Microsoft.Extensions.Logging;
+using Serilog;
 using Traffk.Bal.Settings;
 
 namespace Traffk.Bal.Data.Rdb
@@ -80,14 +82,16 @@ namespace Traffk.Bal.Data.Rdb
             }
         }
 
-        public void LogSignInAttempt(TraffkRdbContext rdb, SignInResult res)
+        public void LogSignInAttempt(SignInResult res)
         {
-            rdb.UserActivities.Add(new UserActivity
+            var logger = Log.ForContext("EventType", EventType.LoggingEventTypes.Account.ToString());
+            var activity = new UserActivity
             {
                 UserId = this.Id,
                 ActivityType = "SignInAttempt",
                 ActivityResult = res.Succeeded ? "Success" : "Failure"
-            });
+            };
+            logger.Information("Activity {@UserActivity}", activity);
         }
     }
 }

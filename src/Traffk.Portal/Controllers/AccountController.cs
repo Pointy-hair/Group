@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Http;
 using Serilog;
 using TraffkPortal.Services.Sms;
 using Traffk.Bal.Communications;
+using Traffk.Bal.Settings;
 
 namespace TraffkPortal.Controllers
 {
@@ -45,6 +46,7 @@ namespace TraffkPortal.Controllers
             EmailSender = emailSender;
             SmsSender = smsSender;
             IsSigninPersistent = Startup.IsSigninPersistent;
+            AttachLogContextProperty(typeof(EventType).Name, EventType.LoggingEventTypes.Account.ToString());
         }
 
         //
@@ -116,7 +118,7 @@ namespace TraffkPortal.Controllers
                     }
                     if (result.IsLockedOut)
                     {
-                        Log.Warning("User account locked out.");
+                        Log.Information("User account locked out.");
                         return View("Lockout");
                     }
                     else
@@ -129,7 +131,7 @@ namespace TraffkPortal.Controllers
                 {
                     if (user != null)
                     {
-                        user.LogSignInAttempt(Rdb, result);
+                        user.LogSignInAttempt(result);
                         await Rdb.SaveChangesAsync();
                     }
                 }
