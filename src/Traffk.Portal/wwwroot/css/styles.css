@@ -1056,6 +1056,27 @@ h3 {
     width:200px;
 }
 
+.contact-tags {
+    list-style-type: none;
+    padding-left: 0px;
+    width: 400px;
+    display: inline-block;
+}
+
+.contact-tags > li.contact-tag > span {
+    margin-right: 10px;
+    text-decoration: none;
+    color: #000;
+    border: 1px solid #979797;
+    border-radius: 6px;
+    padding: 4px 10px 4px 14px;
+    display:inline-block;
+}
+
+.contact-tag > span > span.fa.fa-times, .contact-tags span.glyphicon.glyphicon-plus {
+    cursor: pointer;
+}
+
 @media (min-width: 1200px) {
         .container {
         width: 90%;
