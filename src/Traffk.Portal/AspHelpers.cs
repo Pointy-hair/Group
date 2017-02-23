@@ -59,6 +59,8 @@ namespace TraffkPortal
         {
             public const string Save = "Save";
             public const string Delete = "Delete";
+            public const string Sent = "Sent";
+            public const string Sending = "Sending";
         }
 
         public static SelectListItem CreateNoneSelectedSelectListItem(bool preSelected=true) 

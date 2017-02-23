@@ -307,17 +307,14 @@ namespace TraffkPortal.Controllers
         // GET: /Account/ConfirmEmail
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> ConfirmEmail(string userId, string code)
+        public async Task<IActionResult> ConfirmEmail(string userId = null, string code = null)
         {
-            if (userId == null || code == null)
-            {
-                return ErrorResult();
-            }
+            Requires.NonNull(userId, nameof(userId));
+            Requires.NonNull(code, nameof(code));
+
             var user = await UserManager.FindByIdAsync(userId);
-            if (user == null)
-            {
-                return ErrorResult();
-            }
+            Requires.NonNull(user, nameof(user));
+
             var result = await UserManager.ConfirmEmailAsync(user, code);
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }

@@ -39,6 +39,7 @@ namespace TraffkPortal.Controllers
             public const string UserCreate = "Create";
             public const string UserCreateSave = "CreateSave";
             public const string UserDelete = "Delete";
+            public const string UserResend = "ResendInvitation";
         }
 
         private readonly IUserClaimsPrincipalFactory<ApplicationUser> UserClaimsPrincipalFactory;
@@ -162,13 +163,7 @@ namespace TraffkPortal.Controllers
                     users.Add(user);
                     if (model.SendInvitationEmail)
                     {
-                        var code = await UserManager.GeneratePasswordResetTokenAsync(user);
-                        var callbackUrl = Url.Action(nameof(AccountController.AcceptInvitation), AccountController.Name, new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                        await EmailSender.SendEmailCommunicationAsync(
-                            SystemCommunicationPurposes.UserAcceptInvitation,
-                            CommunicationModelFactory.CreateCallbackUrlModel(callbackUrl, model.InvitationText),
-                            email, null,
-                            user.ContactId);
+                        await SendInvitation(user, model.InvitationText, email);
                     }
                 }
                 if (!hasFatalErrors)
@@ -298,6 +293,20 @@ namespace TraffkPortal.Controllers
             return View(model);
         }
 
+        [Route("Users/{id}/ResendInvitation")]
+        [ActionName(ActionNames.UserResend)]
+        public async Task<IActionResult> ResendInvitation(string id = null)
+        {
+            Requires.NonNull(id, nameof(id));
+
+            var user = await UserManager.FindByIdAsync(id);
+            Requires.NonNull(user, nameof(user));
+
+            await SendInvitation(user, "Resend", user.Email);
+
+            return NoContent();
+        }
+
         private bool ApplicationUserExists(string id)
         {
             return Rdb.Users.Any(z => z.Id == id && z.TenantId == this.TenantId);
@@ -307,6 +316,17 @@ namespace TraffkPortal.Controllers
         {
             if (string.IsNullOrEmpty(id)) return null;
             return await Rdb.Users.Include(z=>z.Roles).FirstOrDefaultAsync(z => z.Id == id && z.TenantId==this.TenantId);
+        }
+
+        private async Task SendInvitation(ApplicationUser user, string invitationText, string email)
+        {
+            var code = await UserManager.GeneratePasswordResetTokenAsync(user);
+            var callbackUrl = Url.Action(nameof(AccountController.AcceptInvitation), AccountController.Name, new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+            await EmailSender.SendEmailCommunicationAsync(
+                SystemCommunicationPurposes.UserAcceptInvitation,
+                CommunicationModelFactory.CreateCallbackUrlModel(callbackUrl, invitationText),
+                email, null,
+                user.ContactId);
         }
 
         [HttpDelete]

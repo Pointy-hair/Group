@@ -230,6 +230,17 @@ function popupConfirmReload(element) {
     location.reload();
 };
 
+function onSend(itemText) {
+    $('#sending-alert-item-text').text(itemText);
+    $("#sending-alert").fadeIn(500);
+}
+
+function onSentSuccess(itemText) {
+    $('#sent-alert-item-text').text(itemText);
+    $("#sent-alert").fadeIn(500).delay(4000).hide(500);
+    $("#sending-alert").hide(500);
+}
+
 function setUI() {
     jQuery('#primary-subnav .dropdown-menu').width(window.innerWidth + 20); /* offset by 20, has a -20px left margin */
     jQuery('#primary-subnav .dropdown-menu .dropdown-submenu').width("auto"); /* offset by 20, has a -20px left margin */
@@ -423,6 +434,38 @@ $(document).ready(function () {
 });
 
 // AJAX helpers vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+function resendInvitation(id, onSuccess, onError) {
+    var itemText = "Invitation";
+    onSend(itemText);
+    $('.floated-filter').hide();
+    var url = "Users/" + id + "/ResendInvitation";
+    $.ajax({
+        url: url,
+        method: 'POST',
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        async: true,
+        processData: false,
+        cache: false,
+        success: function (data) {
+            if (onSuccess != null) {
+                onSuccess();
+            }
+            else {
+                debugAlert("success");
+            }
+            onSentSuccess(itemText);
+        },
+        error: function (xhr) {
+            if (onError != null) {
+                onError();
+            }
+            else {
+                alert("error:\n" + JSON.stringify(xhr));
+            }
+        }
+    });
+}
 
 function removeCreativeAttachment(el, creativeId, assetKey) {
     var url = "Creatives/" + creativeId + "/DeleteAttachment?assetKey=" + assetKey;

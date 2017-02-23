@@ -7,9 +7,20 @@
     ViewData.HasSelectableItems(true);
     ViewData.HasPageActions(true);
 }
+@section pageAlerts{
+    <div class="alert alert-info alert-dismissable" id="@AspHelpers.ButtonActionNames.Sent.ToLower()-alert">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <i class="fa fa-check" aria-hidden="true"></i> <span id="@AspHelpers.ButtonActionNames.Sent.ToLower()-alert-item-text"></span> sent successfully.
+    </div>
+    <div class="alert alert-info alert-dismissable" id="@AspHelpers.ButtonActionNames.Sending.ToLower()-alert">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <i class="fa fa-check" aria-hidden="true"></i> Sending <span id="@AspHelpers.ButtonActionNames.Sending.ToLower()-alert-item-text"></span>.
+    </div>
+}
+
 @section pageActionItems
 {
-    <li><a asp-action="@ActionNames.UserCreate">Create</a></li>
+    <li><a asp-action="@UsersController.ActionNames.UserCreate">Create</a></li>
     <li class="multiselect-action">
         <a onclick="deleteUsers()" class="confirm-on-click" confirmMessageFunction="deleteSelectedItemsMessage()">Delete</a>
     </li>
@@ -74,6 +85,12 @@
                                 <li>
                                     <a onclick="deleteUser('@item.Id')" class="confirm-on-click" confirmMessage="Are you sure you want to delete user: @item.UserName?">Delete</a>
                                 </li>
+                                if (!@item.EmailConfirmed)
+                                {
+                                    <li>
+                                        <a onclick="resendInvitation('@item.Id')">Resend Invitation</a>
+                                    </li>
+                                }
                             }
                         </ul>
                     </td>
