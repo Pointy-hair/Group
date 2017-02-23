@@ -84,7 +84,7 @@ namespace Traffk.Bal.Data.Rdb
 
         public void LogSignInAttempt(SignInResult res)
         {
-            var logger = Log.ForContext("EventType", EventType.LoggingEventTypes.Account.ToString());
+            var logger = Log.ForContext(typeof(EventType).Name, EventType.LoggingEventTypes.Account.ToString());
             var activity = new UserActivity
             {
                 UserId = this.Id,

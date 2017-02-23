@@ -144,8 +144,9 @@ namespace TraffkPortal
 
             services.AddPermissions();
 
-            services.AddMvc(config => 
+            services.AddMvc(config =>
             {
+                config.Filters.Add(new GlobalExceptionFilter());
                 config.Filters.Add(typeof(PreferredHostnameFilter));
                 config.Filters.Add(typeof(TraffkHttpHeadersFilter));
                 if (RequireHttps)
@@ -206,8 +207,7 @@ namespace TraffkPortal
             }
             else
             {
-                app.UseDeveloperExceptionPage();
-//                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Error");
             }
 
             app.UseMiddleware<NoTenantMiddleware>();
