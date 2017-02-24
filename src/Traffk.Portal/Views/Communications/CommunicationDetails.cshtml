@@ -3,36 +3,33 @@
 @{
     Layout = "~/Views/Communications/_LayoutCommunication.cshtml";
     ViewData.IsFormPage(true);
+    ViewData.SetTitleAndHeading(Model.CommunicationTitle);
 }
-<form asp-action="@CommunicationsController.ActionNames.CommunicationSave" asp-route-id="@Model.CommunicationId">
-    <div class="form-horizontal">
+<form asp-action="@CommunicationsController.ActionNames.CommunicationSave" asp-route-id="@Model.CommunicationId" class="inline-form">
+    <div class="row">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="CommunicationId" />
-        <div class="form-group">
-            <label asp-for="CommunicationTitle" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
+        <div class="col-sm-12">
+            <div class="form-row">
+                <label asp-for="CommunicationTitle"></label>
                 <input asp-for="CommunicationTitle" class="form-control" />
                 <span asp-validation-for="CommunicationTitle" class="text-danger" />
             </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="CampaignName" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
+            <div class="form-row">
+                <label asp-for="CampaignName"></label>
                 <input asp-for="CampaignName" class="form-control" />
                 <span asp-validation-for="CampaignName" class="text-danger" />
             </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="TopicName" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
+            <div class="form-row">
+                <label asp-for="TopicName"></label>
                 <input asp-for="TopicName" class="form-control" />
                 <span asp-validation-for="TopicName" class="text-danger" />
             </div>
         </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default btn-primary btn-large" />
-            </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 text-right">
+            <input type="submit" value="Save" class="btn btn-default btn-primary btn-large" />
         </div>
     </div>
 </form>

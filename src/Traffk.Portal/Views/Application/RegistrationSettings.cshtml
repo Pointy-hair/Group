@@ -1,32 +1,31 @@
 @model TraffkPortal.Models.ApplicationModels.RegistrationModel
 @{
-    Layout = "_LayoutApplication.cshtml";
+    Layout = "~/Views/Application/_LayoutApplication.cshtml";
     ViewData.SetTitleAndHeading("Registration Settings");
     ViewData.HasPageMenuItems(true);
     ViewData.IsFormPage(true);
 }
 
-<form asp-action="RegistrationSettings">
-    <div class="form-horizontal">
+<form asp-action="RegistrationSettings" class="inline-form html-editor-form">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="form-group">
-            <label asp-for="UsersCanSelfRegister" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="UsersCanSelfRegister" class="form-control"  />
-                <span asp-validation-for="UsersCanSelfRegister" class="text-danger" />
+            <div class="form-row">
+                <label asp-for="UsersCanSelfRegister" class="col-sm-1"></label>
+                <div class="col-sm-10">
+                    <input asp-for="UsersCanSelfRegister" />
+                    <span asp-validation-for="UsersCanSelfRegister" class="text-danger" />
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="SelfRegistrationMandatoryEmailAddressHostnamesString" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <textarea asp-for="SelfRegistrationMandatoryEmailAddressHostnamesString" class="form-control htmleditor"></textarea>
-                <span asp-validation-for="SelfRegistrationMandatoryEmailAddressHostnamesString" class="text-danger" />
+            <div class="form-row">
+                <label asp-for="SelfRegistrationMandatoryEmailAddressHostnamesString" class="col-sm-1"></label>
+                <div class="col-sm-10">
+                    <textarea asp-for="SelfRegistrationMandatoryEmailAddressHostnamesString" class="form-control htmleditor"></textarea>
+                    <span asp-validation-for="SelfRegistrationMandatoryEmailAddressHostnamesString" class="text-danger" />
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default btn-primary btn-large" />
-            </div>
+    <div class="form-row">
+        <label class="col-sm-1"></label>
+        <div class="col-sm-10">
+            <input type="submit" value="Save" class="btn btn-default btn-primary btn-large" />
         </div>
     </div>
 </form>

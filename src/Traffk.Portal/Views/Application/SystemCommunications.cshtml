@@ -2,37 +2,27 @@
 @using static TraffkPortal.Controllers.ApplicationController
 @model IEnumerable<TraffkPortal.Models.ApplicationModels.SystemCommunicationsModel>
 @{
-    Layout = "_LayoutApplication.cshtml";
+    Layout = "~/Views/Application/_LayoutApplication.cshtml";
     ViewData.IsFormPage(true);
-
+    ViewData.SetTitleAndHeading("System Communications");
 }
 
-<form asp-action="@ActionNames.SystemCommunicationsSave">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.SortableHeaderFor(z => z.Purpose)
-                </th>
-                <th>
-                    Creatives
-                </th>
-            </tr>
-        </thead>
-        <tbody>
+<form asp-action="@ApplicationController.ActionNames.SystemCommunicationsSave" class="inline-form">
+    <div class="row">
+        <div class="col-sm-12">
             @foreach (var item in Model)
             {
                 var choices = ViewBag.CreativeSelectListItemsByCommunicationModel[item.ModelType];
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Purpose)
-                    </td>
-                    <td>
-                        <select asp-items="choices" asp-for="@item.CreativeId" name="CreativeIdFor_@item.Purpose"></select>
-                    </td>
-                </tr>
+                <div class="form-row">
+                    <label>@Html.DisplayFor(modelItem => item.Purpose)</label>
+                    <select asp-items="choices" asp-for="@item.CreativeId" name="CreativeIdFor_@item.Purpose" class="form-control"></select>
+                </div>
             }
-        </tbody>
-    </table>
-    <input type="submit" value="Save" class="btn btn-default btn-primary btn-large" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 text-right">
+            <input type="submit" value="Save" class="btn btn-default btn-primary btn-large" />
+        </div>
+    </div>
 </form>

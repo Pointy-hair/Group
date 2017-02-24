@@ -1,6 +1,6 @@
 @model TraffkPortal.Models.ApplicationModels.PortalOptionsModel
 @{
-    Layout = "_LayoutApplication.cshtml";
+    Layout = "~/Views/Application/_LayoutApplication.cshtml";
     ViewData.SetTitleAndHeading("Portal Settings");
     ViewData.HasPageMenuItems(true);
     ViewData.IsFormPage(true);
@@ -8,7 +8,7 @@
 @section pageAlerts {
     <div class="alert alert-success" role="alert" id="AssetRemovedAlert" style="display:none">The asset was removed.</div>
 }
-<form asp-action="PortalSettings" enctype="multipart/form-data" class="inline-form" id="portal-settings-form">
+<form asp-action="PortalSettings" enctype="multipart/form-data" class="inline-form html-editor-form">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-row">
                 <label asp-for="RegisterMessage" class="col-sm-1"></label>

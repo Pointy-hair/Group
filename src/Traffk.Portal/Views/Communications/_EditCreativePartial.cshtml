@@ -1,47 +1,47 @@
 ﻿@model TraffkPortal.Models.CommunicationModels.CreativeModel
 <input type="hidden" asp-for="CreativeId" />
 <input type="hidden" asp-for="TemplateEngineType" value="@Traffk.Bal.Communications.TemplateEngineTypes.DollarString" />
-<div class="form-group">
-    <label asp-for="CreativeTitle" class="col-md-2 control-label"></label>
-    <div class="col-md-10">
+<div class="form-row">
+    <label asp-for="CreativeTitle" class="col-sm-1"></label>
+    <div class="col-sm-10">
         <input asp-for="CreativeTitle" class="form-control" />
         <span asp-validation-for="CreativeTitle" class="text-danger" />
     </div>
 </div>
-<div class="form-group">
-    <label asp-for="ModelTypeStringValue" class="col-md-2 control-label"></label>
-    <div class="col-md-10">
+<div class="form-row">
+    <label asp-for="ModelTypeStringValue" class="col-sm-1"></label>
+    <div class="col-sm-10">
         <select asp-for="ModelTypeStringValue" asp-items="ViewBag.ModelListItems"></select>
     </div>
 </div>
-<div class="form-group">
-    <label asp-for="CreativeSettings.EmailSubject" class="col-md-2 control-label"></label>
-    <div class="col-md-10">
+<div class="form-row">
+    <label asp-for="CreativeSettings.EmailSubject" class="col-sm-1"></label>
+    <div class="col-sm-10">
         <input asp-for="CreativeSettings.EmailSubject" class="form-control" />
     </div>
 </div>
-<div class="form-group">
-    <label asp-for="CreativeSettings.EmailHtmlBody" class="col-md-2 control-label"></label>
-    <div class="col-md-10">
+<div class="form-row">
+    <label asp-for="CreativeSettings.EmailHtmlBody" class="col-sm-1"></label>
+    <div class="col-sm-10">
         <textarea asp-for="CreativeSettings.EmailHtmlBody" class="form-control htmleditor"></textarea>
         <span asp-validation-for="CreativeSettings.EmailHtmlBody" class="text-danger" />
     </div>
 </div>
-<div class="form-group">
-    <label asp-for="CreativeSettings.EmailTextBody" class="col-md-2 control-label"></label>
-    <div class="col-md-10">
+<div class="form-row">
+    <label asp-for="CreativeSettings.EmailTextBody" class="col-sm-1"></label>
+    <div class="col-sm-10">
         <textarea asp-for="CreativeSettings.EmailTextBody" class="form-control"></textarea>
     </div>
 </div>
-<div class="form-group">
-    <label asp-for="CreativeSettings.TextMessageBody" class="col-md-2 control-label"></label>
-    <div class="col-md-10">
+<div class="form-row">
+    <label asp-for="CreativeSettings.TextMessageBody" class="col-sm-1"></label>
+    <div class="col-sm-10">
         <textarea asp-for="CreativeSettings.TextMessageBody" class="form-control"></textarea>
     </div>
 </div>
-<div class="form-group">
-    <label class="col-md-2 control-label">Attachments</label>
-    <div class="col-md-10">
+<div class="form-row">
+    <label class="col-sm-1">Attachments</label>
+    <div class="col-sm-10">
         @foreach (var attachmentAsset in Model.AttachmentAssets)
             {
             @await Html.PartialAsync("_AssetPreviewPartial", attachmentAsset)

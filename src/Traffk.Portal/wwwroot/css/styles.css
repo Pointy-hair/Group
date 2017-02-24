@@ -1096,15 +1096,15 @@ h3 {
     list-style-type: none;
 }
 
-#portal-settings-form {
+.html-editor-form {
     width: 100%
 }
 
-#portal-settings-form label{
+.html-editor-form label{
     width: revert;
 }
 
-#portal-settings-form .col-sm-10 {
+.html-editor-form .col-sm-10 {
     margin-bottom: 40px;
 }
 
