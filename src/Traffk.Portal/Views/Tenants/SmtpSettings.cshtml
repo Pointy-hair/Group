@@ -5,46 +5,38 @@
     ViewData.IsFormPage(true);
 }
 
-<form asp-action="@ActionNames.SmtpSettingsSubmission">
-    <div class="form-horizontal">
+<form asp-action="@ActionNames.SmtpSettingsSubmission" class="inline-form">
+    <div class="row">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="form-group">
-            <label asp-for="SmtpHost" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="SmtpHost" class="form-control" />
-                <span asp-validation-for="SmtpHost" class="text-danger" />
+        <div class="col-sm-12">
+            <div class="form-row">
+                <label asp-for="SmtpHost"></label>
+                    <input asp-for="SmtpHost" class="form-control" />
+                    <span asp-validation-for="SmtpHost" class="text-danger" />
+            </div>
+            <div class="form-row">
+                <label asp-for="SmtpPort"></label>
+                    <input asp-for="SmtpPort" class="form-control" />
+                    <span asp-validation-for="SmtpPort" class="text-danger" />
+            </div>
+            <div class="form-row">
+                <label asp-for="SmtpUser"></label>
+                    <input asp-for="SmtpUser" class="form-control" />
+                    <span asp-validation-for="SmtpUser" class="text-danger" />
+            </div>
+            <div class="form-row">
+                <label asp-for="SmtpPassword"></label>
+                    @Html.ReplayablePasswordFor(m => m.SmtpPassword, m => m.ConfirmSmtpPassword, new { @class = "form-control" })
+                    <span asp-validation-for="SmtpPassword" class="text-danger"></span>
+            </div>
+            <div class="form-row">
+                <label asp-for="ConfirmSmtpPassword"></label>
+                    @Html.ReplayablePasswordFor(m => m.ConfirmSmtpPassword, m => m.SmtpPassword, new { @class = "form-control" })
+                    <span asp-validation-for="ConfirmSmtpPassword" class="text-danger"></span>
             </div>
         </div>
-        <div class="form-group">
-            <label asp-for="SmtpPort" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="SmtpPort" class="form-control" />
-                <span asp-validation-for="SmtpPort" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="SmtpUser" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="SmtpUser" class="form-control" />
-                <span asp-validation-for="SmtpUser" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="SmtpPassword" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                @Html.ReplayablePasswordFor(m => m.SmtpPassword, m => m.ConfirmSmtpPassword, new { @class = "form-control" })
-                <span asp-validation-for="SmtpPassword" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="ConfirmSmtpPassword" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                @Html.ReplayablePasswordFor(m => m.ConfirmSmtpPassword, m => m.SmtpPassword, new { @class = "form-control" })
-                <span asp-validation-for="ConfirmSmtpPassword" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
+        <div class="row">
+            <div class="col-xs-12 text-right">
                 <input type="submit" value="Save" class="btn btn-default btn-primary btn-large" />
             </div>
         </div>

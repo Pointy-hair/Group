@@ -11,40 +11,33 @@
 {
     <li><a asp-controller="@Name" asp-action="@ActionNames.UserList">Users</a> <span>></span> </li>
 }
-<form asp-action="@ActionNames.UserCreateSave">
-    <div class="form-horizontal">
+<form asp-action="@ActionNames.UserCreateSave" class="inline-form">
+    <div class="row">
+        <div class="col-sm-12"></div>
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="form-group">
-            <label asp-for="Emails" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <textarea asp-for="Emails" class="form-control" ></textarea>
-                <span asp-validation-for="Emails" class="text-danger" />
-            </div>
+        <div class="form-row">
+            <label asp-for="Emails"></label>
+            <textarea asp-for="Emails" class="form-control" ></textarea>
+            <span asp-validation-for="Emails" class="text-danger"/>
         </div>
-        <div class="form-group">
-            <label asp-for="AssignedRoleIds" class="col-md-2 control-label">Roles</label>
-            <div class="col-md-10">
-                <select asp-for="AssignedRoleIds"
-                        asp-items="ViewBag.RoleListItems"></select>
-            </div>
+        <div class="form-row">
+            <label asp-for="AssignedRoleIds">Roles</label>
+            <select asp-for="AssignedRoleIds"
+                    asp-items="ViewBag.RoleListItems"></select>
         </div>
-        <div class="form-group">
-            <label asp-for="SendInvitationEmail" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="SendInvitationEmail" class="form-control" />
-            </div>
+        <div class="form-row">
+            <label asp-for="SendInvitationEmail"></label>
+            <input asp-for="SendInvitationEmail"/>
         </div>
-        <div class="form-group">
-            <label asp-for="InvitationText" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <textarea asp-for="InvitationText" class="form-control"></textarea>
-                <span asp-validation-for="InvitationText" class="text-danger" />
-            </div>
+        <div class="form-row">
+            <label asp-for="InvitationText"></label>
+            <textarea asp-for="InvitationText" class="form-control"></textarea>
+            <span asp-validation-for="InvitationText" class="text-danger"/>
         </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default btn-primary btn-large" />
-            </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 text-right">
+            <input type="submit" value="Create" class="btn btn-default btn-primary btn-large" />
         </div>
     </div>
 </form>

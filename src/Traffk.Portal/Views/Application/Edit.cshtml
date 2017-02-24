@@ -7,42 +7,37 @@
     ViewData.IsFormPage(true);
 }
 
-<form asp-action="Edit">
-    <input asp-for="ApplicationId" class="form-control" type="hidden" />
-    <div class="form-horizontal">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="form-group">
-            <label asp-for="ApplicationName" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="ApplicationName" class="form-control"  />
-                <span asp-validation-for="ApplicationName" class="text-danger" />
+<form asp-action="Edit" class="inline-form">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input asp-for="ApplicationId" class="form-control" type="hidden"/>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-row">
+                <label asp-for="ApplicationName"></label>
+                <input asp-for="ApplicationName" class="form-control"/>
+                <span asp-validation-for="ApplicationName" class="text-danger"/>
             </div>
+            <div class="form-row">
+                <label asp-for="ApplicationType"></label>
+                <input asp-for="ApplicationType" class="form-control" readonly="readonly"/>
+                <span asp-validation-for="ApplicationType" class="text-danger"/>
+            </div>
+            <div class="form-row">
+                <label asp-for="EmailSenderName"></label>
+                <input asp-for="EmailSenderName" class="form-control"/>
+                <span asp-validation-for="EmailSenderName" class="text-danger"/>
+            </div>
+            <div class="form-row">
+                <label asp-for="EmailSenderAddress"></label>
+                <input asp-for="EmailSenderAddress" class="form-control"/>
+                <span asp-validation-for="EmailSenderAddress" class="text-danger"/>
+            </div>
+
         </div>
-        <div class="form-group">
-            <label asp-for="ApplicationType" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="ApplicationType" class="form-control" readonly="readonly" />
-                <span asp-validation-for="ApplicationType" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="EmailSenderName" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="EmailSenderName" class="form-control" />
-                <span asp-validation-for="EmailSenderName" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="EmailSenderAddress" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="EmailSenderAddress" class="form-control" />
-                <span asp-validation-for="EmailSenderAddress" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default btn-primary btn-large" />
-            </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 text-right">
+            <input type="submit" value="Save" class="btn btn-default btn-primary btn-large" />
         </div>
     </div>
 </form>
