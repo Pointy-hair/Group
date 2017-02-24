@@ -42,6 +42,11 @@ namespace TraffkPortal.Controllers
             public const string UserResend = "ResendInvitation";
         }
 
+        public static class FriendlyErrorMessages
+        {
+            public static string NewUserAlreadyExists(string email) => String.Format($"A user with the address {email} already exists.");
+        }
+
         private readonly IUserClaimsPrincipalFactory<ApplicationUser> UserClaimsPrincipalFactory;
         private readonly IAuthorizationService AuthorizationService;
         private readonly UserManager<ApplicationUser> UserManager;
@@ -113,7 +118,7 @@ namespace TraffkPortal.Controllers
         [ActionName(ActionNames.UserCreate)]
         public IActionResult Create()
         {
-            return View(new CreeateUserModel());
+            return View(new CreateUserModel());
         }
 
         // POST: Users/Create
@@ -125,24 +130,25 @@ namespace TraffkPortal.Controllers
         [Route("Users/CreateSave")]
         public async Task<IActionResult> Create(
             [Bind(
-            nameof(CreeateUserModel.AssignedRoleIds),
-            nameof(CreeateUserModel.Emails),
-            nameof(CreeateUserModel.SendInvitationEmail),
-            nameof(CreeateUserModel.InvitationText),
-            nameof(CreeateUserModel.TwoFactorEnabled)
+            nameof(CreateUserModel.AssignedRoleIds),
+            nameof(CreateUserModel.Emails),
+            nameof(CreateUserModel.SendInvitationEmail),
+            nameof(CreateUserModel.InvitationText),
+            nameof(CreateUserModel.TwoFactorEnabled)
             )]
-            CreeateUserModel model)
+            CreateUserModel model)
         {
             if (ModelState.IsValid)
             {
                 bool hasFatalErrors = false;
                 foreach (var email in model.Emails.ToArrayFromHumanDelineatedString(true))
                 {
-                    Requires.EmailAddress(email, nameof(email));
-                    var u = await UserManager.FindByEmailAsync(email);
-                    Requires.Null(u, nameof(u));
-                    u = await UserManager.FindByNameAsync(email);
-                    Requires.Null(u, nameof(u));
+                    hasFatalErrors = await DoesNewUserAlreadyExist(email);
+
+                    if (hasFatalErrors)
+                    {
+                        return View(ActionNames.UserCreate,model);
+                    }
                 }
                 var users = new List<ApplicationUser>();
                 foreach (var email in model.Emails.ToArrayFromHumanDelineatedString(true))
@@ -327,6 +333,24 @@ namespace TraffkPortal.Controllers
                 CommunicationModelFactory.CreateCallbackUrlModel(callbackUrl, invitationText),
                 email, null,
                 user.ContactId);
+        }
+
+        private async Task<bool> DoesNewUserAlreadyExist(string email)
+        {
+            try
+            {
+                Requires.EmailAddress(email, nameof(email));
+                var u = await UserManager.FindByEmailAsync(email);
+                Requires.Null(u, nameof(u));
+                u = await UserManager.FindByNameAsync(email);
+                Requires.Null(u, nameof(u));
+                return false;
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError(string.Empty, FriendlyErrorMessages.NewUserAlreadyExists(email));
+                return true;
+            }
         }
 
         [HttpDelete]

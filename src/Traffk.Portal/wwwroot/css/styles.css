@@ -1092,6 +1092,10 @@ h3 {
     display: none;
 }
 
+.validation-summary-errors ul{
+    list-style-type: none;
+}
+
 @media (min-width: 1200px) {
         .container {
         width: 90%;

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TraffkPortal.Models.UserModels
 {
-    public class CreeateUserModel
+    public class CreateUserModel
     {
         public string Id { get; set; }
 
