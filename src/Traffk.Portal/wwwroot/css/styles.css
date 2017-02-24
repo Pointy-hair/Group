@@ -1047,13 +1047,24 @@ h3 {
     position: absolute;
     width: 200px;
     height: 60px;
-    background: url('../images/traffk/TraffkLogo.png') center no-repeat;
+    font-size: 60px;
+    vertical-align: middle;
+    display: table;
+    float: none;
+    margin: auto;
+    line-height: 60px;
 }
 
 #primary-subnav-logo a{
-    display:block;
-    height:60px;
-    width:200px;
+    display: table-cell;
+    float: none;
+    width: 200px;
+    height: 60px;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    margin: auto;
+    vertical-align: middle;
 }
 
 .contact-tags {

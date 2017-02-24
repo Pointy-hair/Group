@@ -11,6 +11,7 @@
 
     <link href="https://fonts.googleapis.com/css?family=Roboto:900" rel="stylesheet" />
     <script src="https://use.fontawesome.com/628ef57095.js"></script>
+    <link href='http://fontsforweb.com/font/getcss?id=2802&apikey=1099a5319f7a18cdfb872424da5e6ff5' rel='stylesheet' type='text/css'>
 
     <environment names="Development,Staging,Production">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
@@ -23,6 +24,7 @@
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
     </environment>
     @{
+        //class="fontsforweb_BAUHS93" for Traffk font
         var primaryColor = "#0c77a1";
         var secondaryColor = "#539900";
         if (R.HasBasicColors)
@@ -207,9 +209,7 @@
                 }
             </ul>
             <div class="nav navbar-right top-nav" id="primary-subnav-logo">
-                <a asp-controller="Home" asp-action="Index" class="text-hide">
-                    Traffk
-                </a>
+                <a class="fontsforweb_BAUHS93" asp-controller="Home" asp-action="Index">Traffk</a>
             </div>
         </div>
         @await Html.PartialAsync("_LoginPartial")
