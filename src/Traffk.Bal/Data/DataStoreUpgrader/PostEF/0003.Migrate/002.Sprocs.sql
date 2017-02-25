@@ -1,5 +1,20 @@
 ﻿create schema migrate
 
+
+GO
+
+create table migrate.CarrierMap
+(
+	CarrierMapId int not null identity primary key,
+	TenantId int not null references Tenants(TenantId), 
+	CarrierCodeClean varchar(50) not null,
+	CarrierCodeDirty varchar(50) not null
+)
+
+GO
+
+create unique index UX_CarrierMap on migrate.CarrierMap(TenantId, CarrierCodeClean, CarrierCodeDirty)
+
 GO
 
 create view migrate.CustomInsurancePlanMap

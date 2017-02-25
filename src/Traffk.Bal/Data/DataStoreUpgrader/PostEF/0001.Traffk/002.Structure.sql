@@ -570,3 +570,19 @@ exec db.ViewPropertySet  'CommunicationHistory', '1', @propertyName='GeneratePoc
 exec db.ViewColumnPropertySet 'CommunicationHistory', 'CommunicationPieceId', 'Key', @propertyName='CustomAttribute'
 
 GO
+
+create table ProviderMedicareSpecialtyCodeMap
+(
+	ProviderMedicareSpecialtyCodeMap int not null identity primary key,
+	ProviderContactId bigint not null references Contacts(ContactId),
+	MedicareSpecialtyCodeId int not null references CmsGov.MedicareSpecialtyCodes(MedicareSpecialtyCodeId),
+	IsPrimary bit not null
+)
+
+GO
+
+exec db.TablePropertySet  'ProviderMedicareSpecialtyCodeMap', '1', @propertyName='AddToDbContext', @tableSchema='dbo'
+exec db.TablePropertySet  'ProviderMedicareSpecialtyCodeMap', '1', @propertyName='GeneratePoco', @tableSchema='dbo'
+exec db.TablePropertySet  'ProviderMedicareSpecialtyCodeMap', 'IDontCreate', @propertyName='Implements', @tableSchema='dbo'
+
+GO

@@ -72,7 +72,8 @@ create table NationalDrugCode.Packages
 	Productid int NOT NULL references NationalDrugCode.Products(ProductId),
 	ProductNDC varchar(16) not null,
     NDCPackageCode varchar(16) NOT NULL,
-    PackageDescription nvarchar(max) NOT NULL
+    PackageDescription nvarchar(max) NOT NULL,
+	CmsCode  AS (replace(case when substring([NDCPackageCode],(6),(1))='-' AND substring([NDCPackageCode],(10),(1))='-' then (substring([NDCPackageCode],(1),(6))+'0')+substring([NDCPackageCode],(7),(6)) when substring([NDCPackageCode],(6),(1))='-' AND substring([NDCPackageCode],(11),(1))='-' then (substring([NDCPackageCode],(1),(11))+'0')+substring([NDCPackageCode],(12),(1)) when substring([NDCPackageCode],(5),(1))='-' then '0'+[NDCPackageCode] else '???' end,'-','')) PERSISTED
 )
 
 GO

@@ -2,7 +2,6 @@
 
 GO
 
-
 create table health.Members
 (
 	MemberId int not null identity primary key,
@@ -13,9 +12,6 @@ create table health.Members
 	CarrierContactId bigint not null references Contacts(ContactId),
 	MemberNumber varchar(50) not null,
 	MemberRelationshipFamilyNumber varchar(50) not null,
-	MemberRelationshipCode varchar(10) not null,
-	MemberRelationshipCodeDescription varchar(50) not null,
-	MemberStatus varchar(20) null,
 	MemberDetails dbo.JsonObject
 )
 
@@ -68,11 +64,8 @@ create table health.Eligibility
 	LongTermDisabilityTermDdim int null references DateDimensions(DateDimensionId),
 	ShortTermDisabilityEffDdim int null references DateDimensions(DateDimensionId),
 	ShortTermDisabilityTermDdim int null references DateDimensions(DateDimensionId),
-	PlanTypeLid int null references Lookups(LookupId),
+	MemberRelationshipLid int null references Lookups(LookupId),
 	CoverageTypeLid int null references Lookups(LookupId),
-	PlanLid int null references Lookups(LookupId),
-	EmployerGroupLid int null references Lookups(LookupId),
-	DivisionLid int null references Lookups(LookupId),
 	CobraLid int null references Lookups(LookupId),
 	EligibilityDetails dbo.JsonObject
 )
@@ -86,18 +79,9 @@ exec db.ColumnPropertySet 'Eligibility', 'MemberId', 'Member ID to display on th
 exec db.ColumnPropertySet 'Eligibility', 'EligibilityRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='health'
 exec db.ColumnPropertySet 'Eligibility', 'EligibilityRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='health'
 
-exec db.ColumnPropertySet 'Eligibility', 'PlanTypeLid', 'Plan type code', @tableSchema='health'
 exec db.ColumnPropertySet 'Eligibility', 'CoverageTypeLid', 'Coverage type', @tableSchema='health'
-exec db.ColumnPropertySet 'Eligibility', 'PlanLid', 'Plan id of insurance', @tableSchema='health'
-exec db.ColumnPropertySet 'Eligibility', 'EmployerGroupLid', 'Identification of the group the subscriber is employed with', @tableSchema='health'
-exec db.ColumnPropertySet 'Eligibility', 'DivisionLid', 'Identification of the division the subscriber is employed with', @tableSchema='health'
-exec db.ColumnPropertySet 'Eligibility', 'CobraLid', 'Status Code of the Employee - Not Specified : 00, Working : 01, Terminated : 02', @tableSchema='health'
-
-
-exec db.ColumnPropertySet 'Eligibility', 'PlanTypeLid', 'Commercial', @propertyName='SampleData', @tableSchema='health'
 exec db.ColumnPropertySet 'Eligibility', 'CoverageTypeLid', 'Family', @propertyName='SampleData', @tableSchema='health'
-exec db.ColumnPropertySet 'Eligibility', 'PlanLid', 'Family', @propertyName='SampleData', @tableSchema='health'
-exec db.ColumnPropertySet 'Eligibility', 'EmployerGroupLid', 'health', @propertyName='SampleData', @tableSchema='health'
+exec db.ColumnPropertySet 'Eligibility', 'CobraLid', 'Status Code of the Employee - Not Specified : 00, Working : 01, Terminated : 02', @tableSchema='health'
 
 exec db.ColumnPropertySet 'Eligibility', 'MedicalEffDdim', 'Effective date for medical plan', @tableSchema='health'
 exec db.ColumnPropertySet 'Eligibility', 'MedicalTermDdim', 'Termination date for medical plan', @tableSchema='health'
@@ -112,18 +96,90 @@ exec db.ColumnPropertySet 'Eligibility', 'LongTermDisabilityTermDdim', 'Terminat
 exec db.ColumnPropertySet 'Eligibility', 'ShortTermDisabilityEffDdim', 'Effective date for short term disability plan', @tableSchema='health'
 exec db.ColumnPropertySet 'Eligibility', 'ShortTermDisabilityTermDdim', 'Termination date for short term disability plan', @tableSchema='health'
 
+GO
 
+CREATE TABLE health.MillimanScores
+(
+	MillimanScoreId bigint not null identity primary key,
+	RowStatus dbo.RowStatus not null default '1',
+	CreatedAtUtc datetime not null default(GetUtcDate()), 
+	TenantId int not null references Tenants(TenantId), 
+	ContactId bigint  null references Contacts(ContactId),
+	MemberId int not null references health.Members(MemberId),
+	ScorePeriodStartDdim int NULL references DateDimensions(DateDimensionId),
+	ScorePeriodEndDdim int not null references DateDimensions(DateDimensionId),
+	ScoreType varchar(50) NULL,
+	InpatientScore float NULL,
+	OutpatientScore float NULL,
+	PhysicianScore float NULL,
+	PharmacyScore float NULL,
+	MedicalScore float NULL,
+	EmergencyRoomScore float NULL,
+	OtherScore float NULL,
+	TotalScore float NULL,
+	ConcurrentInpatient float NULL,
+	ConcurrentOutpatient float NULL,
+	ConcurrentPhysician float NULL,
+	ConcurrentPharmacy float NULL,
+	ConcurrentMedical float NULL,
+	ConcurrentInpatientNormalizedToGroup float NULL,
+	ConcurrentOutpatientNormalizedToGroup float NULL,
+	ConcurrentPhysicianNormalizedToGroup float NULL,
+	ConcurrentTotal float NULL
+)
+
+GO
+
+exec db.TablePropertySet  'MillimanScores', '0', @propertyName='AddToDbContext', @tableSchema='health'
+exec db.TablePropertySet  'MillimanScores', '0', @propertyName='GeneratePoco', @tableSchema='health'
+exec db.ColumnPropertySet 'MillimanScores', 'RowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='health'
+exec db.ColumnPropertySet 'MillimanScores', 'RowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='health'
+exec db.TablePropertySet  'MillimanScores', 'ITraffkTenanted, IDontCreate', @propertyName='Implements', @tableSchema='health'
+exec db.ColumnPropertySet 'MillimanScores', 'MemberId', 'Member ID to display on the application, as sent by client', @tableSchema='health'
+
+GO
+
+CREATE TABLE Health.Visits
+(
+	VisitId int not null identity primary key, 
+	RowStatus dbo.RowStatus not null default '1',
+	CreatedAtUtc datetime not null default(GetUtcDate()), 
+	TenantId int not null references Tenants(TenantId), 
+	ContactId bigint  null references Contacts(ContactId),
+	MemberId int not null references health.Members(MemberId),
+	ForeignId dbo.ForeignIdType,
+	VisitType varchar(50),
+	VisitStartDdim int not null references DateDimensions(DateDimensionId),
+	VisitEndDdim int not null references DateDimensions(DateDimensionId),
+	InpatientDays int not null,
+	AdmissionType varchar(55),
+	AdmissionFromEmergencyRoom bit not null
+)
+
+GO
+
+create unique index UX_VisitsForeignId on health.visits(ForeignId) where foreignId is not null and RowStatus='1'
+
+GO
+
+exec db.TablePropertySet  'Visits', '0', @propertyName='AddToDbContext', @tableSchema='health'
+exec db.TablePropertySet  'Visits', '0', @propertyName='GeneratePoco', @tableSchema='health'
+exec db.ColumnPropertySet 'Visits', 'RowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='health'
+exec db.ColumnPropertySet 'Visits', 'RowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='health'
+exec db.TablePropertySet  'Visits', 'ITraffkTenanted, IDontCreate', @propertyName='Implements', @tableSchema='health'
+exec db.ColumnPropertySet 'Visits', 'MemberId', 'Member ID to display on the application, as sent by client', @tableSchema='health'
 
 GO
 
 create table health.Pharmacy
 (
 	PharmacyId int not null identity primary key, 
-	PharmacyRowStatus dbo.RowStatus not null default '1',
+	RowStatus dbo.RowStatus not null default '1',
 	CreatedAtUtc datetime not null default(GetUtcDate()), 
 	TenantId int not null references Tenants(TenantId), 
-	ContactId bigint  null references Contacts(ContactId),
+	ContactId bigint not null references Contacts(ContactId),
 	MemberId int not null references health.Members(MemberId),
+	PrescriberProviderContactId bigint not null references Contacts(ContactId),
 	TransactionNumber varchar(80) not null,
 	NationalDrugCodePackageId int not null references NationalDrugCode.Packages(PackageId),
 	PrescriptionWrittenDdim int not null references DateDimensions(DateDimensionId),
@@ -143,16 +199,18 @@ create table health.Pharmacy
 	PharmacyDetails dbo.JsonObject
 )
 
+
+
 GO
 
-create unique index UX_TransactionNumber on health.Pharmacy(TransactionNumber) where PharmacyRowStatus='1'
+create unique index UX_TransactionNumber on health.Pharmacy(TransactionNumber) where RowStatus='1'
 
 GO
 
 exec db.TablePropertySet  'Pharmacy', '0', @propertyName='AddToDbContext', @tableSchema='health'
 exec db.TablePropertySet  'Pharmacy', '0', @propertyName='GeneratePoco', @tableSchema='health'
-exec db.ColumnPropertySet 'Pharmacy', 'PharmacyRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='health'
-exec db.ColumnPropertySet 'Pharmacy', 'PharmacyRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='health'
+exec db.ColumnPropertySet 'Pharmacy', 'RowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='health'
+exec db.ColumnPropertySet 'Pharmacy', 'RowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='health'
 exec db.TablePropertySet  'Pharmacy', 'ITraffkTenanted, IDontCreate', @propertyName='Implements', @tableSchema='health'
 exec db.ColumnPropertySet 'Pharmacy', 'MemberId', 'Member ID to display on the application, as sent by client', @tableSchema='health'
 exec db.ColumnPropertySet 'Pharmacy', 'PrescriptionWrittenDdim', 'date prescription was written', @tableSchema='health'
@@ -170,64 +228,125 @@ exec db.ColumnPropertySet 'Pharmacy', 'StateTaxAmt', 'State Tax Paid', @tableSch
 exec db.ColumnPropertySet 'Pharmacy', 'UsualCustomaryFeeAmt', 'Usual and Customary Fee', @tableSchema='health'
 exec db.ColumnPropertySet 'Pharmacy', 'PaidAmt', 'Amount paid', @tableSchema='health'
 
-GO
 
-CREATE TABLE Health.Visits
-(
-	VisitId int not null identity primary key, 
-	VisitRowStatus dbo.RowStatus not null default '1',
-	CreatedAtUtc datetime not null default(GetUtcDate()), 
-	TenantId int not null references Tenants(TenantId), 
-	ContactId bigint  null references Contacts(ContactId),
-	MemberId int not null references health.Members(MemberId),
-	VisitType varchar(50),
-	VisitStartDdim int not null references DateDimensions(DateDimensionId),
-	VisitEndDdim int not null references DateDimensions(DateDimensionId),
-	InpatientDays int not null,
-	AdmissionType varchar(55),
-	AdmissionFromEmergencyRoom bit not null,
-	ForeignId ForeignIdType
-)
 
-GO
-
-exec db.TablePropertySet  'Visits', '0', @propertyName='AddToDbContext', @tableSchema='health'
-exec db.TablePropertySet  'Visits', '0', @propertyName='GeneratePoco', @tableSchema='health'
-exec db.ColumnPropertySet 'Visits', 'VisitRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='health'
-exec db.ColumnPropertySet 'Visits', 'VisitRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='health'
-exec db.TablePropertySet  'Visits', 'ITraffkTenanted, IDontCreate', @propertyName='Implements', @tableSchema='health'
-exec db.ColumnPropertySet 'Visits', 'MemberId', 'Member ID to display on the application, as sent by client', @tableSchema='health'
 
 GO
 
 create table Health.MedicalClaims
 (
 	MedicalClaimId int not null identity primary key,
-	MedicalClaimRowStatus dbo.RowStatus not null default '1',
+	RowStatus dbo.RowStatus not null default '1',
 	CreatedAtUtc datetime not null default(GetUtcDate()), 
 	TenantId int not null references Tenants(TenantId), 
 	ContactId bigint  null references Contacts(ContactId),
 	MemberId int not null references health.Members(MemberId),
 	MedicalClaimNumber varchar(50) not null,
-	MedicalClaimLineNumber varchar(25) not null,
-	AllowedAmt money,
-	BilledAmt money,
-	CoinsuranceAmt money,
-	CopayAmt money,
-	DeductibleAmt money,
-	PaidAmt money,
-	NotCoveredAmt money,
-	CoverageChargeAmt money,
-	MedicalClaimDetails dbo.JsonObject
+	LineItemsCount int not null,
+	ServiceFromDdim int null references DateDimensions(DateDimensionId),
+	ServiceToDdim int null references DateDimensions(DateDimensionId)
 )
+
+GO
+
+create unique index UX_MedicalClaimNumber on health.medicalclaims(MedicalClaimNumber) where RowStatus='1'
 
 GO
 
 exec db.TablePropertySet  'MedicalClaims', '0', @propertyName='AddToDbContext', @tableSchema='health'
 exec db.TablePropertySet  'MedicalClaims', '0', @propertyName='GeneratePoco', @tableSchema='health'
-exec db.ColumnPropertySet 'MedicalClaims', 'MedicalClaimRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='health'
-exec db.ColumnPropertySet 'MedicalClaims', 'MedicalClaimRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='health'
+exec db.ColumnPropertySet 'MedicalClaims', 'RowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='health'
+exec db.ColumnPropertySet 'MedicalClaims', 'RowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='health'
 exec db.TablePropertySet  'MedicalClaims', 'ITraffkTenanted, IDontCreate', @propertyName='Implements', @tableSchema='health'
 exec db.ColumnPropertySet 'MedicalClaims', 'MemberId', 'Member ID to display on the application, as sent by client', @tableSchema='health'
 
 GO
+
+
+
+create table Health.MedicalClaimLines
+(
+	MedicalClaimLineId int not null identity primary key,
+	MedicalClaimId int not null references health.medicalclaims(medicalclaimid),
+	TenantId int not null references Tenants(TenantId), 
+	ContactId bigint  null references Contacts(ContactId),
+	MemberId int not null references health.Members(MemberId),
+	MedicalClaimLineNumber varchar(25) not null,
+	VisitId int null references health.visits(visitid),
+	ServiceFromDdim int null references DateDimensions(DateDimensionId),
+	ServiceToDdim int null references DateDimensions(DateDimensionId),
+	PaidDdim int null references DateDimensions(DateDimensionId),
+	AdjudicationDdim int null references DateDimensions(DateDimensionId),
+	AllowedAmount money,
+	BilledAmount money,
+	CoordinationOfBenefitsAmount money,
+	CoinsuranceAmount money,
+	CopayAmount money,
+	CoverageChargeAmount money,
+	DeductibleAmount money,
+	NotCoveredAmount money,
+	PPOSavings money,
+	OtherSavingsGenerated money,
+	PaidAmount money,
+	MedicalClaimLineDetails dbo.JsonObject
+)
+
+GO
+
+create unique index UX_MedicalClaimNumber on health.MedicalClaimLines(MedicalClaimId, MedicalClaimLineNumber) where RowStatus='1'
+
+GO
+
+exec db.TablePropertySet  'MedicalClaimLines', '0', @propertyName='AddToDbContext', @tableSchema='health'
+exec db.TablePropertySet  'MedicalClaimLines', '0', @propertyName='GeneratePoco', @tableSchema='health'
+exec db.TablePropertySet  'MedicalClaimLines', 'ITraffkTenanted, IDontCreate', @propertyName='Implements', @tableSchema='health'
+exec db.ColumnPropertySet 'MedicalClaimLines', 'MemberId', 'Member ID to display on the application, as sent by client', @tableSchema='health'
+
+GO
+
+create table Health.CareAlerts
+(
+	CareAlertId int not null identity primary key,
+	TenantId int not null references Tenants(TenantId), 
+	ContactId bigint  null references Contacts(ContactId),
+	CareAlertDdim int null references DateDimensions(DateDimensionId),
+	CareAlertTypeLid int not null references Lookups(LookupId),
+	MetricType varchar(50) null,
+	MetricName varchar(50) null
+)
+
+GO
+
+exec db.TablePropertySet  'CareAlerts', '0', @propertyName='AddToDbContext', @tableSchema='health'
+exec db.TablePropertySet  'CareAlerts', '0', @propertyName='GeneratePoco', @tableSchema='health'
+exec db.TablePropertySet  'CareAlerts', 'ITraffkTenanted, IDontCreate', @propertyName='Implements', @tableSchema='health'
+
+
+GO
+
+create table Health.QualityMetrics
+(
+	QualityMetricId int not null identity primary key,
+	TenantId int not null references Tenants(TenantId), 
+	ContactId bigint  null references Contacts(ContactId),
+	MeasureFromDdim int null references DateDimensions(DateDimensionId),
+	MeasureToDdim int null references DateDimensions(DateDimensionId),
+	QualityMetricTypeLid int not null references Lookups(LookupId),
+	Positive bit not null,
+	Numerator float not null,
+	Denominator float not null,
+	Value as case when positive=1 then 1 else -1 end * Numerator / Denominator persisted
+)
+
+GO
+
+exec db.TablePropertySet  'QualityMetrics', '0', @propertyName='AddToDbContext', @tableSchema='health'
+exec db.TablePropertySet  'QualityMetrics', '0', @propertyName='GeneratePoco', @tableSchema='health'
+exec db.TablePropertySet  'QualityMetrics', 'ITraffkTenanted, IDontCreate', @propertyName='Implements', @tableSchema='health'
+
+
+GO
+
+
+
+
