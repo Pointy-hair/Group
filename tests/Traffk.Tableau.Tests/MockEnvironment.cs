@@ -19,5 +19,15 @@ namespace Traffk.Tableau.Tests
 
             return optionsMock;
         }
+
+        public static Mock<IOptions<TableauSignInOptions>> TableauSignInOptions(string url, string username, string password)
+        {
+            var optionsMock = new Mock<IOptions<TableauSignInOptions>>();
+            optionsMock.Setup(x => x.Value)
+                .Returns(new TableauSignInOptions(url,
+                    username, password));
+
+            return optionsMock;
+        }
     }
 }

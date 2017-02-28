@@ -15,11 +15,13 @@ namespace Traffk.Tableau.REST.RestRequests
             Url = url;
             Username = username;
             Password = password;
+            Host = url.Replace("https://", "");
         }
 
         public string TrustedUrl => Url + "/trusted/";
         public string RestApiUrl => Url + "/#/";
         public string RestApiTrustedUrl => Url + "/#/trusted/";
+        public string Host { get; set; }
         public string Url { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http.Features.Authentication;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Traffk.Tableau.REST;
@@ -70,10 +71,28 @@ namespace Traffk.Tableau.Tests.REST
                 var testService = new TableauRestService();
                 var testUrls = TableauServerUrls.FromContentUrl("http://traffk-dev-tab.eastus.cloudapp.azure.com/#/projects/1/", 50);
                 var signIn = testService.SignIn(testUrls, "Test", "TraffkTestTableau");
-                var testImageBytes = testService.DownloadPreviewImageForView(testUrls, "a8a65fe1-4cdc-48df-8773-d681bdfe0c2b",
-                    "8c808e2f-b381-4e87-b549-e8a1eabd3663", signIn);
+                var testImageBytes = testService.DownloadPreviewImageForView(testUrls, "6d8f31d9-aceb-40be-867d-1c980215b246",
+                    "c8922aac-c202-446b-8ed2-ff4dde96eaba", signIn);
 
                 Assert.IsNotNull(testImageBytes);
+            }
+        }
+
+        [TestClass]
+        public class GetUnderlyingDataMethodTests : TableauRestServiceTests
+        {
+            [Ignore]
+            [TestMethod]
+            public void WhenSignedInGetUnderlyingData()
+            {
+                var testUrl = "https://tableau-dev.traffk.com/#/";
+                var testUrlRaw = "https://tableau-dev.traffk.com";
+                var testUser = "Test";
+                var testPassword = "TraffkTestTableau";
+                var testService = new TableauRestService();
+                var testUrls = TableauServerUrls.FromContentUrl(testUrl, 50);
+                var signIn = testService.SignIn(testUrls, testUser, testPassword);
+                testService.GetUnderlyingData(MockEnvironment.TableauSignInOptions(testUrlRaw, testUser, testPassword).Object.Value, "AverageRiskMap", "AverageRiskDashboard",signIn);
             }
         }
     }

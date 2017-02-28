@@ -31,7 +31,6 @@ namespace Traffk.Tableau
         {
             var client = new HttpClient();
 
-            //TODO: Change to use app settings
             var uri = new Uri(TableauSignInOptions.TrustedUrl);
 
             var datas = new FormUrlEncodedContent(new[]

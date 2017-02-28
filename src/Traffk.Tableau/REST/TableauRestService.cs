@@ -47,10 +47,10 @@ namespace Traffk.Tableau.REST
         public TableauServerSignIn SignIn(TableauServerUrls onlineUrls, string userName, string password, TaskStatusLogs statusLog = null)
         {
             return Cacher.FindOrCreate(
-                Cache.CreateKey(onlineUrls.CacheKey, Options.Username, Options.Password),
+                Cache.CreateKey(onlineUrls.CacheKey, userName, password),
                 key =>
                 {
-                    var l = new TableauServerSignIn(Urls, Options.Username, Options.Password, statusLog);
+                    var l = new TableauServerSignIn(onlineUrls, userName, password, statusLog);
                     l.ExecuteRequest();
                     return new CacheEntry<TableauServerSignIn>(l);
                 }).Value;
@@ -173,6 +173,17 @@ namespace Traffk.Tableau.REST
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        public void GetUnderlyingData(TableauSignInOptions options, string workbookName, string viewName, TableauServerSignIn onlineLogin = null)
+        {
+            if (onlineLogin == null)
+            {
+                onlineLogin = Login;
+            }
+
+            var request = new GetUnderlyingData(options, onlineLogin);
+            request.ExecuteRequest(workbookName, viewName);
         }
     }
 }

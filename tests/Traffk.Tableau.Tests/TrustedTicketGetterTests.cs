@@ -22,7 +22,6 @@ namespace Traffk.Tableau.Tests
         [TestClass]
         public class AuthorizeMethodTests : TrustedTicketGetterTests
         {
-            [Ignore]
             [TestMethod]
             public async Task WhenGivenUrlAndUsernameReturnTrustedTicket()
             {
