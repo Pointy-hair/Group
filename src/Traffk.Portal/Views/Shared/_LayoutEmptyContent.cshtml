@@ -25,8 +25,8 @@
     </environment>
     @{
         //class="fontsforweb_BAUHS93" for Traffk font
-        var primaryColor = "#0c77a1";
-        var secondaryColor = "#539900";
+        var primaryColor = "#a707b2";
+        var secondaryColor = "#8ec641";
         if (R.HasBasicColors)
         {
             primaryColor = @R.PrimaryColor;
@@ -137,6 +137,10 @@
                                     }
                                 </ul>
                             </li>
+                            @if (await User.HasPermission(AuthorizationService, PermissionNames.BasicReporting))
+                            {
+                                <li><a href="#">Risk Index</a></li>
+                            }
                             @if (await User.HasPermission(AuthorizationService, PermissionNames.CustomerRelationshipData))
                             {
                                 <li><a asp-controller="@CrmController.Name" asp-action="Index" class="@(mainNavPageKey == AspHelpers.MainNavigationPageKeys.CRM ? "active" : "")">CRM</a></li>
