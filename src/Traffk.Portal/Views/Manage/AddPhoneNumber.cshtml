@@ -1,22 +1,24 @@
 ﻿@model AddPhoneNumberViewModel
 @{
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
     ViewData.SetTitleAndHeading("Add Phone Number");
+    ViewData.IsFormPage(true);
 }
 
-<form asp-controller="Manage" asp-action="AddPhoneNumber" method="post" class="form-horizontal">
-    <h4>Add a phone number.</h4>
-    <hr />
+<form asp-controller="Manage" asp-action="AddPhoneNumber" method="post" class="inline-form">
     <div asp-validation-summary="All" class="text-danger"></div>
-    <div class="form-group">
-        <label asp-for="PhoneNumber" class="col-md-2 control-label"></label>
-        <div class="col-md-10">
-            <input asp-for="PhoneNumber" class="form-control" />
-            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-row">
+                <label asp-for="PhoneNumber"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
         </div>
     </div>
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <button type="submit" class="btn btn-default btn-primary btn-large">Send verification code</button>
+    <div class="row">
+        <div class="col-xs-12 text-right">
+            <input type="submit" value="Send Verification Code" class="btn btn-default btn-primary btn-large" />
         </div>
     </div>
 </form>

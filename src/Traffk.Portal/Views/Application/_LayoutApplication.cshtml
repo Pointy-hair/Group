@@ -17,13 +17,13 @@
     @RenderSection("breadcrumbItems", false)
 }
 @section pageNavItems {
-    <li><a asp-action="Edit" asp-route-id="@entityId" class="@(pageKey==PageKeys.Basics?"current-section":"")">Main</a></li>
+    <li><a asp-action="Edit" asp-route-id="@entityId" class="@(pageKey==PageKeys.Basics?"active":"")">Main</a></li>
     @if (entityType == ApplicationTypes.Portal)
     {
-        <li><a asp-action="PortalSettings" asp-route-id="@entityId" class="@(pageKey==PageKeys.PortalSettings?"current-section":"")">Portal Settings</a></li>
+        <li><a asp-action="PortalSettings" asp-route-id="@entityId" class="@(pageKey==PageKeys.PortalSettings?"active":"")">Portal Settings</a></li>
     }
-    <li><a asp-action="@ActionNames.SystemCommunications" asp-route-id="@entityId" class="@(pageKey==PageKeys.SystemCommunications? "current-section" : "")">System Communications</a></li>
-    <li><a asp-action="RegistrationSettings" asp-route-id="@entityId" class="@(pageKey==PageKeys.RegistrationSettings?"current-section":"")">Registration Settings</a></li>
+    <li><a asp-action="@ActionNames.SystemCommunications" asp-route-id="@entityId" class="@(pageKey==PageKeys.SystemCommunications? "active" : "")">System Communications</a></li>
+    <li><a asp-action="RegistrationSettings" asp-route-id="@entityId" class="@(pageKey==PageKeys.RegistrationSettings?"active":"")">Registration Settings</a></li>
     @RenderSection("pageNavItems", false)
 }
 @section pageAlerts {

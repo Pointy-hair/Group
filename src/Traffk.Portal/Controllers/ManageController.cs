@@ -16,6 +16,23 @@ namespace TraffkPortal.Controllers
     [Authorize]
     public class ManageController : BasePageController
     {
+        public const string Name = "Manage";
+
+        public class ActionNames
+        {
+            public const string Index = "Index";
+            public const string PhoneNumber = "AddPhoneNumber";
+
+        }
+
+        public enum PageKeys
+        {
+            Basics,
+            PortalSettings,
+            RegistrationSettings,
+            SystemCommunications,
+        }
+
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender EmailSender;
