@@ -12,7 +12,7 @@
             if (s.length > 0)
             {
                 var html = '<li class="contact-tag"> <span>' + s + ' <span class="fa fa-times" aria-hidden="true" onclick="removeTag(this)"></span><input name="Contact.Tags" type="hidden" value="' + s + '" /></span></li>';
-                $(el.parentElement).before(html);
+                $(el.parentElement).after(html);
                 $(el).val("");
             }
             if (event != null)
@@ -27,6 +27,10 @@
     }
 </script>
 <ul class="contact-tags" id="">
+    <li>
+        <input type="text" onkeydown="newTagKeyDown(this, event)" class="form-control" />
+        <span class="glyphicon glyphicon-plus" aria-hidden="true" onclick="addTag(this)"></span>
+    </li>
     @if (Model != null)
     {
         foreach (var s in Model)
@@ -35,14 +39,10 @@
                 <span>
                     @s
                     <span class="fa fa-times" aria-hidden="true" onclick="removeTag(this)"></span>
-                    <input name="Contact.Tags" type="hidden" value="@s" />
+                    <input name="Contact.Tags" type="hidden" value="@s"/>
                 </span>
             </li>
         }
     }
-    <li>
-        <input type="text" onkeydown="newTagKeyDown(this, event)" class="form-control"/>
-        <span class="glyphicon glyphicon-plus" aria-hidden="true" onclick="addTag(this)" ></span>
-    </li>
 </ul>
  

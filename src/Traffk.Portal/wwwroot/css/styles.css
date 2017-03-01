@@ -1074,6 +1074,10 @@ h3 {
     display: inline-block;
 }
 
+.contact-tags > li {
+    padding-bottom: 10px;
+}
+
 .contact-tags > li.contact-tag > span {
     margin-right: 10px;
     text-decoration: none;
