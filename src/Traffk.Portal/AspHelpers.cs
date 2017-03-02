@@ -28,6 +28,7 @@ namespace TraffkPortal
             Messaging,
             Reporting,
             CRM,
+            RiskIndex,
             Setup,
             Manage,
             NotSpecified,

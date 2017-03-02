@@ -1,0 +1,94 @@
+﻿@using Traffk.Tableau.REST.Models
+@using static TraffkPortal.Controllers.RiskIndexController
+@model Traffk.Tableau.REST.Models.SiteViewEmbeddableResource
+@{
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
+    ViewData.SetTitleAndHeading(@Model.Name, @Model.Description);
+    ViewData.HasBreadcrumbItems(true);
+    ViewData.HasPageActions(true);
+    ViewData.HasPageMenuItems(true);
+    ViewData.IsContentPage(true);
+}
+
+@section pageAlerts {
+    <div class="alert alert-info alert-dismissable" id="message-exported-alert" style="display: none">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <i class="fa fa-check" aria-hidden="true"></i> You exported report @Model.ViewName
+    </div>
+    <div class="alert alert-info alert-dismissable" id="MessageSentAlert" style="display: none">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <i class="fa fa-check" aria-hidden="true"></i> Your message has been sent to 143 recipients.
+    </div>
+}
+
+@section breadCrumbItems {
+    <li><a asp-controller="@RiskIndexController.Name" asp-action="Index">Risk Index</a> <span>></span> </li>
+}
+
+@section pageActionItems {
+    <li><a href="#" class="popup-export-report_open">Export</a></li>
+    <li><a href="#" class="popup-send-report-message_open">Send Message</a></li>
+}
+
+
+@await Html.PartialAsync("~/Views/Reporting/_ExportReportPartial.cshtml")
+@await Html.PartialAsync("~/Views/Reporting/_SendReportPartial.cshtml", @Model)
+
+
+
+@{     await Html.RenderPartialAsync("~/Views/Shared/_ReportFramePartial.cshtml"); }
+
+
+@section Scripts {
+    <script>
+        jQuery('.export-report-button').click(function () {
+            if (jQuery(this).attr('data-section') !== undefined) {
+                var id = jQuery(this).attr('data-section');
+                jQuery('.export-report-step:not(#' + id + ')').hide();
+                jQuery('#' + id).fadeIn(300);
+            }
+        });
+
+        jQuery('.send-report-message-button').click(function () {
+            if (jQuery(this).attr('data-section') !== undefined) {
+                var id = jQuery(this).attr('data-section');
+                jQuery('.send-report-message-step:not(#' + id + ')').hide();
+                jQuery('#' + id).fadeIn(300);
+            }
+        });
+    </script>
+
+    <script type="text/javascript">
+        function exportReport() {
+            $("#message-exported-alert").fadeIn(500).delay(4000).hide(500);
+            jQuery('.export-report-step:not(#export-report-step-1)').hide();
+        }
+
+        function sendReportMessage() {
+            $("#MessageSentAlert").fadeIn(500).delay(4000).hide(500);
+            jQuery('.send-report-message-step:not(#send-report-message-step-1)').hide();
+
+        }
+    </script>
+
+    @if (Model is SiteViewContactEmbeddableResource)
+    {
+        var contactResource = Model as SiteViewContactEmbeddableResource;
+        var contactId = contactResource.ContactId;
+        <script type="text/javascript">
+                $(document).ready(function () {
+                    var parameterString = "?ContactId=" + "@contactId";
+                    initViz("@Model.WorkbookName", "@Model.ViewName", parameterString);
+                });
+        </script>
+    }
+    else
+    {
+        <script type="text/javascript">
+                $(document).ready(function () {
+                    initViz("@Model.WorkbookName", "@Model.ViewName");
+                });
+        </script>
+    }
+
+}

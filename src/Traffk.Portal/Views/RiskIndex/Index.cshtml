@@ -2,7 +2,7 @@
 @model TreeNode<Traffk.Tableau.REST.Models.SiteViewResource>
 @{
     Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
-    ViewData.SetTitleAndHeading("Reporting", "This is the reports subheading.");
+    ViewData.SetTitleAndHeading("Risk Index", "Reports about Risk Index");
     ViewData.IsListingPage(true);
     var filters = ViewBag.ListingFilters as ListingFilters;
     var hasFilters = filters != null;
@@ -10,10 +10,10 @@
 }
 
 @section pageAlerts {
-<div class="alert alert-info alert-dismissable" id="message-exported-alert" style="display: none">
-    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-    <i class="fa fa-check" aria-hidden="true"></i> All reports have been exported.
-</div>}
+    <div class="alert alert-info alert-dismissable" id="message-exported-alert" style="display: none">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <i class="fa fa-check" aria-hidden="true"></i> All reports have been exported.
+    </div>}
 
 @section pageActionItems {
     <li class="multiselect-action"><a href="#" class="popup-export-report_open">Export</a></li>
@@ -21,8 +21,8 @@
 
 @section listingTable
 {
-    @{ await Html.RenderPartialAsync("_TableauViewResourceTreeNodePartial", Model.Children); }
-    @{await Html.RenderPartialAsync("_ExportReportPartial"); }
+    @{ await Html.RenderPartialAsync("~/Views/Reporting/_TableauViewResourceTreeNodePartial.cshtml", Model.Children); }
+    @{await Html.RenderPartialAsync("~/Views/Reporting/_ExportReportPartial.cshtml"); }
 }
 
 @section Scripts {

@@ -26,7 +26,7 @@ namespace TraffkPortal.Controllers
     {
         public const string Name = "Reporting";
 
-        public ITableauRestService TableauRestService { get; set; }
+        public ITableauRestService TableauRestService { get; }
 
         public static string CreateAnchorName(SiteViewResource view) => NameHelpers.GetName(view)?.Trim()?.ToUpperCamelCase()?.RemoveSpecialCharacters() ?? "";
 

@@ -139,7 +139,7 @@
                             </li>
                             @if (await User.HasPermission(AuthorizationService, PermissionNames.BasicReporting))
                             {
-                                <li><a href="#">Risk Index</a></li>
+                                <li><a asp-controller="@RiskIndexController.Name" asp-action="@RiskIndexController.ActionNames.Index">Risk Index</a></li>
                             }
                             @if (await User.HasPermission(AuthorizationService, PermissionNames.CustomerRelationshipData))
                             {
