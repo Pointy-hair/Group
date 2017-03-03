@@ -357,6 +357,15 @@ input.form-text:focus ~ .highlight {
   to 	{ width:0; background:transparent; }
 }
 /* Traffk */
+@font-face {
+    font-family: 'Bauhaus';
+    src: url('../fonts/BAUHS93.TTF');
+}
+
+.BAUHS93 {
+    font-family: 'Bauhaus', sans-serif;
+}
+
 html {
   height: 100%;
   background: #FFF;
