@@ -70,7 +70,7 @@ namespace TraffkPortal.Controllers
         public IActionResult Report(string id, string anchorName)
         {
             var root = GetReportFolderTreeRoot("riskindex");
-            SiteViewEmbeddableResource matchingSiteViewResource = null;
+            TableauEmbeddableResource matchingTableauResource = null;
             root.Walk((node, depth) =>
             {
                 var siteViewResource = node.Data;
@@ -78,22 +78,22 @@ namespace TraffkPortal.Controllers
                 var urlFriendlyReportName = CreateAnchorName(siteViewResource.Name);
                 if (anchorName == urlFriendlyReportName && id == siteViewResource.Id)
                 {
-                    matchingSiteViewResource = siteViewResource as SiteViewEmbeddableResource;
+                    matchingTableauResource = siteViewResource as TableauEmbeddableResource;
                 }
             });
 
-            if (matchingSiteViewResource == null)
+            if (matchingTableauResource == null)
             {
                 RedirectToAction(RiskIndexController.ActionNames.Index);
             }
 
-            Log.Information(matchingSiteViewResource.Id);
+            Log.Information(matchingTableauResource.Id);
 
-            var viewModel = new SiteViewEmbeddableResource
+            var viewModel = new TableauEmbeddableResource
             {
-                WorkbookName = matchingSiteViewResource.WorkbookName,
-                ViewName = matchingSiteViewResource.ViewName,
-                Name = matchingSiteViewResource.Name
+                WorkbookName = matchingTableauResource.WorkbookName,
+                ViewName = matchingTableauResource.ViewName,
+                Name = matchingTableauResource.Name
             };
 
             return View(viewModel);
@@ -101,11 +101,11 @@ namespace TraffkPortal.Controllers
 
         private string CreateAnchorName(string name) => name.Trim()?.ToUpperCamelCase()?.RemoveSpecialCharacters() ?? "";
 
-        private TreeNode<SiteViewResource> GetReportFolderTreeRoot(string filter)
+        private TreeNode<TableauResource> GetReportFolderTreeRoot(string filter)
         {
             return Cacher.FindOrCreate(filter, key =>
             {
-                var root = new TreeNode<SiteViewResource>(new SiteViewFolderResource(filter));
+                var root = new TreeNode<TableauResource>(new TableauFolder(filter));
                 var views = TableauRestService.DownloadViewsForSite().Views;
 
                 if (views.Count() > 0)
@@ -121,7 +121,7 @@ namespace TraffkPortal.Controllers
                         }
                     }
                 }
-                return new CacheEntry<TreeNode<SiteViewResource>>(root);
+                return new CacheEntry<TreeNode<TableauResource>>(root);
             }).Value;
         }
     }

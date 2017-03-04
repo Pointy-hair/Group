@@ -1,6 +1,6 @@
 ﻿@using Traffk.Tableau.REST.Models
 @using static TraffkPortal.Controllers.RiskIndexController
-@model Traffk.Tableau.REST.Models.SiteViewEmbeddableResource
+@model Traffk.Tableau.REST.Models.TableauEmbeddableResource
 @{
     Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
     ViewData.SetTitleAndHeading(@Model.Name, @Model.Description);
@@ -71,9 +71,9 @@
         }
     </script>
 
-    @if (Model is SiteViewContactEmbeddableResource)
+    @if (Model is TableauContactReportVisual)
     {
-        var contactResource = Model as SiteViewContactEmbeddableResource;
+        var contactResource = Model as TableauContactReportVisual;
         var contactId = contactResource.ContactId;
         <script type="text/javascript">
                 $(document).ready(function () {

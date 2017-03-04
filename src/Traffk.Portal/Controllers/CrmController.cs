@@ -503,7 +503,7 @@ namespace TraffkPortal.Controllers
             SetHeroLayoutViewData(contact, PageKeys.Messages);
             const string workbookName = "MemberClaims";
             const string viewName = "Claims-Breakdown";
-            var viewModel = new SiteViewContactEmbeddableResource
+            var viewModel = new TableauContactReportVisual
             {
                 WorkbookName = workbookName,
                 ViewName = viewName,

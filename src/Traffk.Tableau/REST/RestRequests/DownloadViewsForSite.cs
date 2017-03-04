@@ -12,7 +12,7 @@ namespace Traffk.Tableau.REST.RestRequests
         private readonly TableauServerUrls urls;
         private readonly string xmlNamespace;
 
-        public IEnumerable<SiteView> Views;
+        public IEnumerable<TableauReportVisual> Views;
 
         public DownloadViewsForSite(TableauServerUrls onlineUrls, TableauServerSignIn login)
             : base(login)
@@ -24,7 +24,7 @@ namespace Traffk.Tableau.REST.RestRequests
 
         public void ExecuteRequest()
         {
-            var views = new List<SiteView>();
+            var views = new List<TableauReportVisual>();
 
             int numberPages = 1; //Start with 1 page (we will get an updated value from server)
             //Get subsequent pages
@@ -43,7 +43,7 @@ namespace Traffk.Tableau.REST.RestRequests
             Views = views;
         }
 
-        private void ExecuteRequestForPage(List<SiteView> views, int pageToRequest, out int totalNumberPages)
+        private void ExecuteRequestForPage(List<TableauReportVisual> views, int pageToRequest, out int totalNumberPages)
         {
             int pageSize = urls.PageSize;
             //Create a web request, in including the users logged-in auth information in the request headers
@@ -74,12 +74,12 @@ namespace Traffk.Tableau.REST.RestRequests
             totalNumberPages = GetPageCount(paginationElement, pageSize);
         }
 
-        private SiteView ParseSiteXElement(XElement element)
+        private TableauReportVisual ParseSiteXElement(XElement element)
         {
             try
             {
                 var itemXml = element.ToXmlNode();
-                var siteView = new SiteView(itemXml, xmlNamespace);
+                var siteView = new TableauReportVisual(itemXml, xmlNamespace);
                 SanityCheckView(siteView, itemXml);
 
                 return siteView;
@@ -92,7 +92,7 @@ namespace Traffk.Tableau.REST.RestRequests
             return null;
         }
 
-        private void SanityCheckView(SiteView view, XmlNode xmlNode)
+        private void SanityCheckView(TableauReportVisual view, XmlNode xmlNode)
         {
             if (string.IsNullOrWhiteSpace(view.Id))
             {

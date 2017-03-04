@@ -27,7 +27,7 @@ namespace Traffk.Tableau.Tests.REST.Models
                 var nsManager = XmlHelper.CreateTableauXmlNamespaceManager("iwsOnline", "http://tableau.com/api");
                 var ns = nsManager.LookupNamespace("iwsOnline");
                 var viewElements = testXDocument.Root.Descendants(XName.Get("view", ns));
-                var testSiteView = new SiteView(viewElements.First().ToXmlNode(), ns);
+                var testSiteView = new TableauReportVisual(viewElements.First().ToXmlNode(), ns);
 
                 Assert.AreEqual(testSiteView.WorkbookName, "Finance");
             }
@@ -40,7 +40,7 @@ namespace Traffk.Tableau.Tests.REST.Models
                 var nsManager = XmlHelper.CreateTableauXmlNamespaceManager("iwsOnline", "http://tableau.com/api");
                 var ns = nsManager.LookupNamespace("iwsOnline");
                 var viewElements = testXDocument.Root.Descendants(XName.Get("view", ns));
-                var testSiteView = new SiteView(viewElements.First().ToXmlNode(), ns);
+                var testSiteView = new TableauReportVisual(viewElements.First().ToXmlNode(), ns);
 
                 Assert.AreEqual(testSiteView.ViewName, "EconomicIndicators");
             }

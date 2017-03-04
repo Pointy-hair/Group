@@ -8,7 +8,7 @@ using RevolutionaryStuff.Core.ApplicationParts;
 
 namespace Traffk.Tableau.REST.Models
 {
-    public class SiteViewResource : IName
+    public class TableauResource : IName
     {
         public string Id { get; set; }
         public string Name { get; set; }
@@ -16,19 +16,21 @@ namespace Traffk.Tableau.REST.Models
 
     }
 
-    public class SiteView : SiteViewEmbeddableResource
+    public class TableauReportVisual : TableauResource, ITableauReportVisual
     {
+        public string WorkbookName { get; set; }
+        public string ViewName { get; set; }
         public readonly string ContentUrl;
-        public readonly string WorkbookId;
+        public string WorkbookId { get; }
         public readonly string OwnerId;
         public new string Description = "";//"No desc, Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
 
-        public SiteView()
+        public TableauReportVisual()
         {
             
         }
 
-        public SiteView(XmlNode content, string xmlNamespace)
+        public TableauReportVisual(XmlNode content, string xmlNamespace)
         {
             if (content.Name.ToLower() != "view")
             {
@@ -66,23 +68,23 @@ namespace Traffk.Tableau.REST.Models
             string view = match.Groups["view"].Value;
             return view;
         }
+
     }
 
-    public class SiteViewEmbeddableResource : SiteViewResource
-    {
-        public string WorkbookName { get; set; }
-        public string ViewName { get; set; }
-        public string Description { get; set; }
-    }
+    //public class TableauEmbeddableResource : TableauResource
+    //{
+    //    public string WorkbookName { get; set; }
+    //    public string ViewName { get; set; }
+    //}
 
-    public class SiteViewContactEmbeddableResource : SiteViewEmbeddableResource
+    public class TableauContactReportVisual : TableauReportVisual, ITableauContactReportVisual
     {
         public string ContactId { get; set; }
     }
 
-    public class SiteViewFolderResource : SiteViewResource, IName
+    public class TableauFolder : TableauResource, IName
     {
-        public SiteViewFolderResource(string name, string id = "")
+        public TableauFolder(string name, string id = "")
         {
             base.Id = id;
             base.Name = name;

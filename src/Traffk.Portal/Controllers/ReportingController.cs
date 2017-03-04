@@ -28,7 +28,7 @@ namespace TraffkPortal.Controllers
 
         public ITableauRestService TableauRestService { get; }
 
-        public static string CreateAnchorName(SiteViewResource view) => NameHelpers.GetName(view)?.Trim()?.ToUpperCamelCase()?.RemoveSpecialCharacters() ?? "";
+        public static string CreateAnchorName(TableauResource view) => NameHelpers.GetName(view)?.Trim()?.ToUpperCamelCase()?.RemoveSpecialCharacters() ?? "";
 
         public static class ActionNames
         {
@@ -50,10 +50,10 @@ namespace TraffkPortal.Controllers
             AttachLogContextProperty(typeof(EventType).Name, EventType.LoggingEventTypes.Report.ToString());
         }
 
-        private TreeNode<SiteViewResource> GetReportFolderTreeRoot()
+        private TreeNode<TableauResource> GetReportFolderTreeRoot()
         {
             return Cacher.FindOrCreate("root", key=>{
-                var root = new TreeNode<SiteViewResource>(new SiteViewFolderResource("Root"));
+                var root = new TreeNode<TableauResource>(new TableauFolder("Root"));
                 var views = TableauRestService.DownloadViewsForSite().Views;
 
                 if (views.Count() > 0)
@@ -70,7 +70,7 @@ namespace TraffkPortal.Controllers
 
                         if (parentWorkbookFolder == null)
                         {
-                            var newWorkbookFolder = new TreeNode<SiteViewResource>(new SiteViewFolderResource(workbookName, workbookId));
+                            var newWorkbookFolder = new TreeNode<TableauResource>(new TableauFolder(workbookName, workbookId));
                             newWorkbookFolder.AddChildren(view);
                             workbookFolders.Add(newWorkbookFolder);
                         }
@@ -85,17 +85,17 @@ namespace TraffkPortal.Controllers
                         root.Add(folder);
                     }
                 }
-                return new CacheEntry<TreeNode<SiteViewResource>>(root);
+                return new CacheEntry<TreeNode<TableauResource>>(root);
             }).Value;
         }
 
-        private List<TreeNode<SiteViewResource>> GetWorkbookFolders()
+        private List<TreeNode<TableauResource>> GetWorkbookFolders()
         {
-            var workbookFolders = new List<TreeNode<SiteViewResource>>();
+            var workbookFolders = new List<TreeNode<TableauResource>>();
             var workbooks = TableauRestService.DownloadWorkbooksList().Workbooks.OrderBy(x => x.Name);
             foreach (var workbook in workbooks)
             {
-                var newWorkbookFolder = new TreeNode<SiteViewResource>(new SiteViewFolderResource(workbook.Name, workbook.Id));
+                var newWorkbookFolder = new TreeNode<TableauResource>(new TableauFolder(workbook.Name, workbook.Id));
                 workbookFolders.Add(newWorkbookFolder);
             }
 
@@ -108,7 +108,7 @@ namespace TraffkPortal.Controllers
         public IActionResult Report(string id, string anchorName)
         {
             var root = GetReportFolderTreeRoot();
-            SiteViewEmbeddableResource matchingSiteViewResource = null;
+            TableauEmbeddableResource matchingTableauResource = null;
             root.Walk((node, depth) =>
             {
                 var siteViewResource = node.Data;
@@ -116,22 +116,22 @@ namespace TraffkPortal.Controllers
                 var urlFriendlyReportName = CreateAnchorName(siteViewResource);
                 if (anchorName == urlFriendlyReportName && id == siteViewResource.Id)
                 {
-                    matchingSiteViewResource = siteViewResource as SiteViewEmbeddableResource;
+                    matchingTableauResource = siteViewResource as TableauEmbeddableResource;
                 }
             });
 
-            if (matchingSiteViewResource == null)
+            if (matchingTableauResource == null)
             {
                 RedirectToAction(ActionNames.Index);
             }
 
-            Log.Information(matchingSiteViewResource.Id);
+            Log.Information(matchingTableauResource.Id);
 
-            var viewModel = new SiteViewEmbeddableResource
+            var viewModel = new TableauEmbeddableResource
             {
-                WorkbookName = matchingSiteViewResource.WorkbookName,
-                ViewName = matchingSiteViewResource.ViewName,
-                Name = matchingSiteViewResource.Name
+                WorkbookName = matchingTableauResource.WorkbookName,
+                ViewName = matchingTableauResource.ViewName,
+                Name = matchingTableauResource.Name
             };
 
             return View(viewModel);

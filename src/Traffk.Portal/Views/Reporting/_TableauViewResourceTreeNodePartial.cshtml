@@ -1,13 +1,13 @@
-﻿@model IEnumerable<TreeNode<SiteViewResource>>
+﻿@model IEnumerable<TreeNode<TableauResource>>
 @using RevolutionaryStuff.Core.Collections
 @using Traffk.Tableau.REST.Models
 @using static TraffkPortal.Controllers.ReportingController
 @foreach (var tn in Model)
 {
     var tsv = tn.Data;
-    if (tsv is SiteViewFolderResource && tn.HasChildren)
+    if (tsv is TableauFolder && tn.HasChildren)
     {
-        var folder = tsv as SiteViewFolderResource;
+        var folder = tsv as TableauFolder;
         <h2 data-toggle="@folder.Id" class="section-toggle"><i class="fa fa-minus primary-color" aria-hidden="true"></i> @folder.Name</h2>
             <div class="row @folder.Id">
                     @if (tn.HasChildren)
