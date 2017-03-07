@@ -1,22 +1,20 @@
 ﻿using Newtonsoft.Json;
+using System.Threading.Tasks;
 using Traffk.Tableau.REST.RestRequests;
+using Traffk.Tableau.VQL;
 
 namespace Traffk.Tableau.REST
 {
     public interface ITableauRestService
     {
         TableauServerSignIn Login { get; set; }
+        //TODO: Remove {TableauServerUrls onlineUrls, string userName, string password} from the signature
         TableauServerSignIn SignIn(TableauServerUrls onlineUrls, string userName, string password, TaskStatusLogs statusLog = null);
-        DownloadProjectsList DownloadProjectsList(TableauServerUrls onlineUrls, TableauServerSignIn onlineLogin = null);
-        DownloadViewsForSite DownloadViewsForSite(TableauServerUrls onlineUrls, TableauServerSignIn onlineLogin = null);
+        DownloadProjectsList DownloadProjectsList();
         DownloadViewsForSite DownloadViewsForSite();
         DownloadWorkbooksList DownloadWorkbooksList();
-        DownloadWorkbooksList DownloadWorkbooksList(TableauServerUrls onlineUrls, TableauServerSignIn onlineLogin = null);
         byte[] DownloadPreviewImageForView(string workbookId, string viewId);
-        byte[] DownloadPreviewImageForView(TableauServerUrls onlineUrls, string workbookId, string viewId,
-            TableauServerSignIn onlineLogin = null);
-
-        void GetUnderlyingData(TableauSignInOptions options, string workbookName, string viewName, TableauServerSignIn onlineLogin);
+        Task<UnderlyingDataTable> GetUnderlyingDataAsync(GetUnderlyingDataOptions options, string workbookName, string viewName);
     }
 
     public class VisualId

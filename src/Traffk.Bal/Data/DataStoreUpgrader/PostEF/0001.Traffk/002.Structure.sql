@@ -12,7 +12,7 @@ create table Tenants
 (
 	TenantId int not null identity primary key,
 	ParentTenantId int null references Tenants(TenantId),
-	CreatedAtUtc datetime not null default (getutcdate()), --given CDC and sys.fn_cdc_map_lsn_to_time, do we need created at?
+	CreatedAtUtc datetime not null default (getutcdate()),
 	TenantRowStatus dbo.RowStatus not null default '1',
 	TenantName dbo.Title not null,
 	LoginDomain dbo.DeveloperName null,

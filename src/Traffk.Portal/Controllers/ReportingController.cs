@@ -102,6 +102,24 @@ namespace TraffkPortal.Controllers
             return workbookFolders;
         }
 
+        [AllowAnonymous]
+        [Route("/GUD")]
+        public IActionResult GUD()
+        {
+            var ret = TableauRestService.GetUnderlyingDataAsync(
+                new GetUnderlyingDataOptions
+                {
+                    MaxRows = 100,
+                    WorksheetName= "Avg Risk by Urbanicity",
+                    DashboardName= "Average Risk by Urbanicity"
+                }, 
+                "AverageRiskbyUrbanicity", "AverageRiskbyUrbanicity").ExecuteSynchronously();
+            Stuff.Noop(ret);
+            var dt = ret.ToDataTable();
+            Stuff.Noop(dt);
+            return NoContent();
+        }
+
         [SetTableauTrustedTicket]
         [Route("/Reporting/Report/{id}/{anchorName}")]
         [ActionName(ActionNames.Report)]
@@ -114,7 +132,7 @@ namespace TraffkPortal.Controllers
                 var siteViewResource = node.Data;
                 if (siteViewResource == null) return;
                 var urlFriendlyReportName = CreateAnchorName(siteViewResource);
-                if (anchorName == urlFriendlyReportName && id == siteViewResource.Id)
+                if (id == siteViewResource.Id)
                 {
                     matchingSiteViewResource = siteViewResource as SiteViewEmbeddableResource;
                 }

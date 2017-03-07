@@ -13,9 +13,6 @@ namespace TraffkPortal
                 .UseIISIntegration()
                 .UseStartup<Startup>()
                 .Build();
-
-            Services.CachingServices.Initialize(host.Services);
-
             host.Run();
         }
     }

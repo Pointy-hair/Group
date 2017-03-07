@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
-using RevolutionaryStuff.PowerBiToys;
 using System.Linq;
 using Traffk.Bal;
 using Traffk.Bal.Data.Rdb;
@@ -16,44 +15,14 @@ namespace TraffkPortal.Services
 {
     public class CurrentContextServices : CurrentTenantServices, ICurrentUser, ICurrentContextServices
     {
-        private const string PowerBiUsernameKey = "PowerBiUsername";
-        private const string PowerBiPasswordKey = "PowerBiPassword";
-
-
-
         private readonly IHostingEnvironment Env;
         private readonly ITraffkTenantFinder TenantFinder;
         private readonly TraffkRdbContext Rdb;
         private readonly IHttpContextAccessor HttpContextAccessor;
         private readonly UserManager<ApplicationUser> UserManager;
-        private readonly IOptions<PowerBiWebApplicationOptions> PowerBiWebAppOptions;
-        private readonly IOptions<PowerBiEndpointOptions> PowerBiEndpointOptions;
 
         private static readonly ICache<string, AzureActiveDirectoryResourceAuthorizationGetter.AuthenticationResult>
             BearerCache = CachingServices.Instance.CreateSynchronized<string, AzureActiveDirectoryResourceAuthorizationGetter.AuthenticationResult>(CachingServices.FlushPeriods.Medium);
-
-        public PowerBiServices PowerBi
-        {
-            get
-            {
-                if (PowerBi_p == null)
-                {
-                    var app = PowerBiWebAppOptions.Value;
-                    PowerBi_p = new PowerBiServices(
-                        PowerBiEndpointOptions,
-                        new AzureActiveDirectoryResourceAuthorizationGetter(
-                            app.ClientID,
-                            app.ClientSecretKey,
-                            PowerBiEndpointOptions.Value.RestApiResourceUrl,
-                            Stringer.Transform(app.Username),
-                            app.Password,
-                            BearerCache)
-                        );
-                }
-                return PowerBi_p;
-            }
-        }
-        private PowerBiServices PowerBi_p;
 
         public Application Application
         {
@@ -88,8 +57,6 @@ namespace TraffkPortal.Services
             TraffkRdbContext rdb, 
             IHttpContextAccessor httpContextAccessor, 
             UserManager<ApplicationUser> userManager,
-            IOptions<PowerBiWebApplicationOptions> powerBiWebAppOptions, 
-            IOptions<PowerBiEndpointOptions> powerBiEndpointOptions,
             IOptions<TableauSignInOptions> tableauSigninOptions
             )
             : base(tenantFinder, rdb)
@@ -100,8 +67,6 @@ namespace TraffkPortal.Services
             Rdb = rdb;
             HttpContextAccessor = httpContextAccessor;
             UserManager = userManager;
-            PowerBiWebAppOptions = powerBiWebAppOptions;
-            PowerBiEndpointOptions = powerBiEndpointOptions;
         }
     }
 }

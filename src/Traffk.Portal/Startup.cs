@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
-using RevolutionaryStuff.PowerBiToys;
 using Serilog;
 using System;
 using Serilog.Core;
@@ -67,7 +66,7 @@ namespace TraffkPortal
                     .Enrich.WithProperty("ApplicationName", Configuration["RevolutionaryStuffCoreOptions:ApplicationName"])
                     .Enrich.WithProperty("MachineName", Environment.MachineName)
                     .Enrich.With<EventTimeEnricher>()
-                    //.Enrich.With<UserEnricher>()
+                    .Enrich.With<UserEnricher>()
                     .MinimumLevel.Verbose()
                     .Enrich.FromLogContext()
                     .WriteTo.Trace()
@@ -98,8 +97,6 @@ namespace TraffkPortal
             services.Configure<CachingServices.CachingServicesOptions>(Configuration.GetSection(nameof(CachingServices.CachingServicesOptions)));
             services.Configure<PreferredHostnameFilter.PreferredHostnameFilterOptions>(Configuration.GetSection(nameof(PreferredHostnameFilter.PreferredHostnameFilterOptions)));
             services.Configure<PortalOptions>(Configuration.GetSection(nameof(PortalOptions)));
-            services.Configure<PowerBiEndpointOptions>(Configuration.GetSection(nameof(PowerBiEndpointOptions)));
-            services.Configure<PowerBiWebApplicationOptions>(Configuration.GetSection(nameof(PowerBiWebApplicationOptions)));
             services.Configure<NoTenantMiddleware.NoTenantMiddlewareOptions>(Configuration.GetSection(nameof(NoTenantMiddleware.NoTenantMiddlewareOptions)));
             services.Configure<BlobStorageServices.BlobStorageServicesOptions>(Configuration.GetSection(nameof(BlobStorageServices.BlobStorageServicesOptions)));
             services.Configure<TwilioSmsSenderOptions>(Configuration.GetSection(nameof(TwilioSmsSenderOptions)));
@@ -176,13 +173,10 @@ namespace TraffkPortal
             services.AddScoped<Resources.PortalResourceServiceBuilder>();
             services.AddScoped<Resources.PortalResourceService>();
             services.AddScoped<BlobStorageServices>();
-            services.AddScoped<PowerBiServices>();
             services.AddScoped<ConfigStringFormatter>();
             services.AddScoped<ITableauServices, TableauServices>();
             services.AddScoped<ITrustedTicketGetter, TrustedTicketGetter>();
             services.AddScoped<ITableauRestService, TableauRestService>();
-
-            services.AddScoped<SetPowerBiBearerActionFilter>();
             services.AddScoped<TableauTrustedTicketActionFilter>();
 
             services.Add(new ServiceDescriptor(typeof(ICacher), Cache.DataCacher));
@@ -227,9 +221,9 @@ namespace TraffkPortal
 
             app.UseSession();
 
-            HttpContextGetter.Configure(app.ApplicationServices.GetRequiredService<IHttpContextAccessor>());
-            //CurrentContextGetter.Configure(app.ApplicationServices.GetRequiredService<ICurrentUser>());
 
+            CachingServices.Initialize(app.ApplicationServices);
+            UserEnricher.Initialize(app.ApplicationServices);
 
             app.UseMvc(routes =>
             {

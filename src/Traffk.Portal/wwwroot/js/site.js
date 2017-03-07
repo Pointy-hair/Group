@@ -583,3 +583,21 @@ function deleteCommunications(ids, onSuccess) {
 }
 
 // AJAX helpers ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+var viz;
+function initViz(workbook, view, parameterString) {
+    var trustedTicket = getCookie("trustedTicket");
+    var viewUrl = "@Current.TableauSignInOptions.TrustedUrl" + trustedTicket + "/views/" + workbook + "/" + view;
+    if (parameterString) {
+        viewUrl = viewUrl + parameterString;
+    }
+    var containerDiv = document.getElementById("reportContainer"),
+        url = viewUrl,
+        options = {
+            hideTabs: true,
+            onFirstInteractive: function () {
+            }
+        };
+    // Create a viz object and embed it in the container div.
+    viz = new tableau.Viz(containerDiv, url, options);
+    return viz;
+}

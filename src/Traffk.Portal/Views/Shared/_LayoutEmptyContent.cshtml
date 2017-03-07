@@ -340,25 +340,6 @@
 </environment>
 <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
 <script>tinymce.init({ selector: '.htmleditor', plugins: "code" });</script>
-<script>
-    function initViz(workbook, view, parameterString) {
-        var trustedTicket = getCookie("trustedTicket");
-        var viewUrl = "@Current.TableauSignInOptions.TrustedUrl" + trustedTicket + "/views/" + workbook + "/" + view;
-        if (parameterString) {
-            viewUrl = viewUrl + parameterString;
-        }
-        var containerDiv = document.getElementById("reportContainer"),
-            url = viewUrl,
-            options = {
-                hideTabs: true,
-                onFirstInteractive: function () {
-                }
-            };
-        // Create a viz object and embed it in the container div.
-        var viz = new tableau.Viz(containerDiv, url, options);
-    }
-</script>
-
 @RenderSection("scripts", required: false)
 @if (R.JavascriptLink != null)
 {

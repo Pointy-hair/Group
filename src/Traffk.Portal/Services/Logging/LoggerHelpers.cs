@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Serilog.Context;
+using Serilog.Events;
+using Serilog.Core;
 
 namespace TraffkPortal.Services.Logging
 {
@@ -13,5 +15,8 @@ namespace TraffkPortal.Services.Logging
         {
             LogContext.PushProperty(name, val);
         }
+
+        public static void AddPropertyValueIfAbsent(this LogEvent logEvent, ILogEventPropertyFactory propertyFactory, string name, object val)
+            => logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty(name, val));
     }
 }

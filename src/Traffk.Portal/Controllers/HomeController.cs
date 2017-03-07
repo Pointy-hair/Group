@@ -33,7 +33,6 @@ namespace TraffkPortal.Controllers
 
         [ActionName(ActionNames.Index)]
         [SetTableauTrustedTicket]
-        [SetPowerBiBearer]
         public IActionResult Index()
         {
             return View();

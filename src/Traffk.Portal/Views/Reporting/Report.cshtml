@@ -50,9 +50,36 @@
 
 @{     await Html.RenderPartialAsync("~/Views/Shared/_ReportFramePartial.cshtml"); }
 
+<!--
+<button class="btn" id="getData" onclick="getUnderlyingData()">Get Data</button>
+
+<div id="dataTarget" style="border: 3px solid green; "></div>
+-->
 
 @section Scripts {
     <script>
+
+        function getUnderlyingData() {
+            var sheet = viz.getWorkbook().getActiveSheet().getWorksheets()[0];
+            // If the active sheet is not a dashboard, then you can just enter:
+            // viz.getWorkbook().getActiveSheet();
+            options = {
+                maxRows: 10, // Max rows to return. Use 0 to return all rows
+                ignoreAliases: false,
+                ignoreSelection: true,
+                includeAllColumns: false
+            };
+
+            sheet.getUnderlyingDataAsync(options).then(function (t) {
+                table = t;
+                var tgt = document.getElementById("dataTarget");
+                var d = table.getData();
+                var json = JSON.stringify(d);
+                tgt.innerHTML = "<h4>Underlying Data:</h4><p>" + json + "</p>";
+            });
+        }
+
+
         jQuery('.export-report-button').click(function () {
             if (jQuery(this).attr('data-section') !== undefined) {
                 var id = jQuery(this).attr('data-section');
@@ -102,5 +129,4 @@
                 });
             </script>
         }
-
 }

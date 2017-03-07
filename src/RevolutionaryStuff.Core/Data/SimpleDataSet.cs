@@ -100,7 +100,10 @@ namespace RevolutionaryStuff.Core.Data
                 {
                     foreach (var row in ea.Data)
                     {
-                        Requires.Null(row.Table, "row.Table");
+                        if (row.Table != table)
+                        {
+                            Requires.Null(row.Table, "row.Table");
+                        }
                         var srow = row as SimpleDataRow;
                         if (srow != null)
                         {
