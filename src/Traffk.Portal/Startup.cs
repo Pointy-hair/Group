@@ -18,6 +18,7 @@ using Traffk.Bal;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Email;
 using Traffk.Bal.Identity;
+using Traffk.Bal.ReportVisuals;
 using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
 using Traffk.Tableau;
@@ -181,6 +182,8 @@ namespace TraffkPortal
             services.AddScoped<ITableauServices, TableauServices>();
             services.AddScoped<ITrustedTicketGetter, TrustedTicketGetter>();
             services.AddScoped<ITableauRestService, TableauRestService>();
+            services.AddScoped<ITableauTenantFinder, TableauTenantFinder>();
+            services.AddScoped<IReportVisualService, ReportVisualService>();
 
             services.AddScoped<SetPowerBiBearerActionFilter>();
             services.AddScoped<TableauTrustedTicketActionFilter>();
@@ -201,7 +204,7 @@ namespace TraffkPortal
 
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                app.UseExceptionHandler("/Error");
                 app.UseDatabaseErrorPage();
                 app.UseBrowserLink();
             }

@@ -35,6 +35,9 @@ namespace Traffk.Bal.Settings
         [DataMember(Name = "RequiresTwoFactorAuthentication")]
         public bool RequiresTwoFactorAuthentication { get; set; }
 
+        [DataMember(Name = "TableauTenantId")]
+        public string TableauTenantId { get; set; }
+
         [DataContract]
         public class PasswordOptions
         {

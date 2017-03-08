@@ -71,12 +71,6 @@ namespace Traffk.Tableau.REST.Models
 
     }
 
-    //public class TableauEmbeddableResource : TableauResource
-    //{
-    //    public string WorkbookName { get; set; }
-    //    public string ViewName { get; set; }
-    //}
-
     public class TableauContactReportVisual : TableauReportVisual, ITableauContactReportVisual
     {
         public string ContactId { get; set; }

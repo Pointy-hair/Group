@@ -6,6 +6,7 @@ namespace TraffkPortal.Services.TenantServices
     {
         TenantNotFound,
         TenantNotActive,
+        TableauTenantNotFound
     }
 
     public class TenantFinderServiceException : CodedException<TenantServiceExceptionCodes>

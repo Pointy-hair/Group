@@ -64,40 +64,40 @@ namespace TraffkPortal.Controllers
             return View("Index", root);
         }
 
-        [SetTableauTrustedTicket]
-        [Route("/RiskIndex/{id}/{anchorName}")]
-        [ActionName(RiskIndexController.ActionNames.Report)]
-        public IActionResult Report(string id, string anchorName)
-        {
-            var root = GetReportFolderTreeRoot("riskindex");
-            TableauEmbeddableResource matchingTableauResource = null;
-            root.Walk((node, depth) =>
-            {
-                var siteViewResource = node.Data;
-                if (siteViewResource == null) return;
-                var urlFriendlyReportName = CreateAnchorName(siteViewResource.Name);
-                if (anchorName == urlFriendlyReportName && id == siteViewResource.Id)
-                {
-                    matchingTableauResource = siteViewResource as TableauEmbeddableResource;
-                }
-            });
+        //[SetTableauTrustedTicket]
+        //[Route("/RiskIndex/{id}/{anchorName}")]
+        //[ActionName(RiskIndexController.ActionNames.Report)]
+        //public IActionResult Report(string id, string anchorName)
+        //{
+        //    var root = GetReportFolderTreeRoot("riskindex");
+        //    TableauEmbeddableResource matchingTableauResource = null;
+        //    root.Walk((node, depth) =>
+        //    {
+        //        var siteViewResource = node.Data;
+        //        if (siteViewResource == null) return;
+        //        var urlFriendlyReportName = CreateAnchorName(siteViewResource.Name);
+        //        if (anchorName == urlFriendlyReportName && id == siteViewResource.Id)
+        //        {
+        //            matchingTableauResource = siteViewResource as TableauEmbeddableResource;
+        //        }
+        //    });
 
-            if (matchingTableauResource == null)
-            {
-                RedirectToAction(RiskIndexController.ActionNames.Index);
-            }
+        //    if (matchingTableauResource == null)
+        //    {
+        //        RedirectToAction(RiskIndexController.ActionNames.Index);
+        //    }
 
-            Log.Information(matchingTableauResource.Id);
+        //    Log.Information(matchingTableauResource.Id);
 
-            var viewModel = new TableauEmbeddableResource
-            {
-                WorkbookName = matchingTableauResource.WorkbookName,
-                ViewName = matchingTableauResource.ViewName,
-                Name = matchingTableauResource.Name
-            };
+        //    var viewModel = new TableauEmbeddableResource
+        //    {
+        //        WorkbookName = matchingTableauResource.WorkbookName,
+        //        ViewName = matchingTableauResource.ViewName,
+        //        Name = matchingTableauResource.Name
+        //    };
 
-            return View(viewModel);
-        }
+        //    return View(viewModel);
+        //}
 
         private string CreateAnchorName(string name) => name.Trim()?.ToUpperCamelCase()?.RemoveSpecialCharacters() ?? "";
 

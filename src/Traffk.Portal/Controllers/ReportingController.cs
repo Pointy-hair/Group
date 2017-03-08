@@ -13,6 +13,7 @@ using RevolutionaryStuff.Core.ApplicationParts;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using Serilog;
+using Traffk.Bal.ReportVisuals;
 using Traffk.Bal.Settings;
 using Traffk.Tableau;
 using Traffk.Tableau.REST;
@@ -26,9 +27,11 @@ namespace TraffkPortal.Controllers
     {
         public const string Name = "Reporting";
 
-        public ITableauRestService TableauRestService { get; }
+        public IReportVisualService ReportVisualService { get; }
 
         public static string CreateAnchorName(TableauResource view) => NameHelpers.GetName(view)?.Trim()?.ToUpperCamelCase()?.RemoveSpecialCharacters() ?? "";
+        public static string CreateAnchorName(ReportVisual view) => NameHelpers.GetName(view)?.Trim()?.ToUpperCamelCase()?.RemoveSpecialCharacters() ?? "";
+
 
         public static class ActionNames
         {
@@ -42,99 +45,32 @@ namespace TraffkPortal.Controllers
             CurrentContextServices current,
             ILoggerFactory loggerFactory,
             ICacher cacher,
-            ITableauRestService tableauRestService
+            IReportVisualService reportVisualService
         )
             : base(AspHelpers.MainNavigationPageKeys.Reporting, db, current, loggerFactory, cacher)
         {
-            TableauRestService = tableauRestService;
+            ReportVisualService = reportVisualService;
             AttachLogContextProperty(typeof(EventType).Name, EventType.LoggingEventTypes.Report.ToString());
         }
 
-        private TreeNode<TableauResource> GetReportFolderTreeRoot()
+        private TreeNode<IReportResource> GetReportFolderTreeRoot()
         {
             return Cacher.FindOrCreate("root", key=>{
-                var root = new TreeNode<TableauResource>(new TableauFolder("Root"));
-                var views = TableauRestService.DownloadViewsForSite().Views;
+                var root = new TreeNode<IReportResource>(new ReportVisualFolder("Root"));
+                var views = ReportVisualService.GetReportVisuals(VisualContext.Tenant);
 
-                if (views.Count() > 0)
+                if (views.Any())
                 {
-                    views = views.OrderBy(r => r.Name);
-                    var workbookFolders = GetWorkbookFolders();
+                    views = views.OrderBy(r => r.Title);
+                    //var workbookFolders = GetWorkbookFolders();
 
                     foreach (var view in views)
                     {
-                        var workbookName = view.WorkbookName;
-                        var workbookId = view.WorkbookId;
-                        var parentWorkbookFolder =
-                            workbookFolders.Find(x => x.Data.Id == workbookId);
-
-                        if (parentWorkbookFolder == null)
-                        {
-                            var newWorkbookFolder = new TreeNode<TableauResource>(new TableauFolder(workbookName, workbookId));
-                            newWorkbookFolder.AddChildren(view);
-                            workbookFolders.Add(newWorkbookFolder);
-                        }
-                        else
-                        {
-                            parentWorkbookFolder.AddChildren(view);
-                        }
-                    }
-
-                    foreach (var folder in workbookFolders)
-                    {
-                        root.Add(folder);
+                        root.AddChildren(view);
                     }
                 }
-                return new CacheEntry<TreeNode<TableauResource>>(root);
+                return new CacheEntry<TreeNode<IReportResource>>(root);
             }).Value;
-        }
-
-        private List<TreeNode<TableauResource>> GetWorkbookFolders()
-        {
-            var workbookFolders = new List<TreeNode<TableauResource>>();
-            var workbooks = TableauRestService.DownloadWorkbooksList().Workbooks.OrderBy(x => x.Name);
-            foreach (var workbook in workbooks)
-            {
-                var newWorkbookFolder = new TreeNode<TableauResource>(new TableauFolder(workbook.Name, workbook.Id));
-                workbookFolders.Add(newWorkbookFolder);
-            }
-
-            return workbookFolders;
-        }
-
-        [SetTableauTrustedTicket]
-        [Route("/Reporting/Report/{id}/{anchorName}")]
-        [ActionName(ActionNames.Report)]
-        public IActionResult Report(string id, string anchorName)
-        {
-            var root = GetReportFolderTreeRoot();
-            TableauEmbeddableResource matchingTableauResource = null;
-            root.Walk((node, depth) =>
-            {
-                var siteViewResource = node.Data;
-                if (siteViewResource == null) return;
-                var urlFriendlyReportName = CreateAnchorName(siteViewResource);
-                if (anchorName == urlFriendlyReportName && id == siteViewResource.Id)
-                {
-                    matchingTableauResource = siteViewResource as TableauEmbeddableResource;
-                }
-            });
-
-            if (matchingTableauResource == null)
-            {
-                RedirectToAction(ActionNames.Index);
-            }
-
-            Log.Information(matchingTableauResource.Id);
-
-            var viewModel = new TableauEmbeddableResource
-            {
-                WorkbookName = matchingTableauResource.WorkbookName,
-                ViewName = matchingTableauResource.ViewName,
-                Name = matchingTableauResource.Name
-            };
-
-            return View(viewModel);
         }
 
         [Route("/Reporting")]
@@ -176,7 +112,7 @@ namespace TraffkPortal.Controllers
             {                
                 try
                 {
-                    byte[] previewImagesBytes = TableauRestService.DownloadPreviewImageForView(workbookId, viewId);
+                    byte[] previewImagesBytes = ReportVisualService.DownloadPreviewImageForTableauVisual(workbookId, viewId);
                     if (previewImagesBytes != null)
                     {
                         var fileResult = new FileContentResult(previewImagesBytes, "image/png");
