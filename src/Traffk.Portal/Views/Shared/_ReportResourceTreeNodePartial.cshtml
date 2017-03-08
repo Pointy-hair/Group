@@ -1,0 +1,61 @@
+﻿@model IEnumerable<TreeNode<Traffk.Bal.ReportVisuals.IReportResource>>
+@using RevolutionaryStuff.Core.Collections
+@using Traffk.Bal.ReportVisuals
+@using static TraffkPortal.Controllers.ReportingController
+@foreach (var tn in Model)
+{
+    var reportResource = tn.Data;
+    if (reportResource is ReportVisualFolder && tn.HasChildren)
+    {
+        var folder = reportResource as ReportVisualFolder;
+        <h2 data-toggle="@folder.Title" class="section-toggle"><i class="fa fa-minus primary-color" aria-hidden="true"></i> @folder.Title</h2>
+        <div class="row @folder.Title">
+            @if (tn.HasChildren)
+                    {
+                        await Html.RenderPartialAsync("~/Views/Shared/_ReportResourceTreeNodePartial.cshtml", tn.Children);
+                    }
+        </div>
+    }
+    else if (reportResource is ReportVisual)
+    {
+        var view = reportResource as ReportVisual;
+        var urlName = ReportingController.CreateAnchorName(view);
+        <div class="col-md-3 col-sm-4">
+            <div class="mini-panel">
+                <div class="mini-panel-top">
+                    <input type="checkbox" name="radios" class="" id="radio1" />
+                    <a style="cursor:pointer" asp-route-id="@view.Id" asp-route-anchorName="@urlName" asp-action="@ReportingController.ActionNames.Report">
+                        <div class="report-preview-image-container" style="background-image: url('@view.PreviewImageUrl')">
+                            &nbsp;
+                        </div>
+                    </a>
+                </div>
+                <div class="mini-panel-bottom">
+                    <p class="mini-title"><a style="cursor:pointer" asp-route-id="@view.Id" asp-route-anchorName="@urlName" asp-action="@ReportingController.ActionNames.Report">@view.Title</a></p>
+                    <p>@view.Description</p>
+                    <p><b>Folder Path:</b> @view.FolderPath</p>
+                    <ul class="contact-tags" id="">
+                        @foreach (var tag in @view.Tags)
+                        {
+                            <li class="contact-tag">
+                                <span>
+                                    @tag
+                                </span>
+                            </li>
+                        }
+                        @if (view.ContainsPhi)
+                        {
+                            <li class="contact-tag">
+                                <span>
+                                    PHI
+                                </span>
+                            </li>
+                        }
+                    </ul>
+
+                    <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+                </div>
+            </div>
+        </div>
+    }
+}
