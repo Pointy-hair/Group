@@ -240,9 +240,9 @@ namespace RevolutionaryStuff.Core
             return str;
         }
 
-        public static string PrependHash(this string str)
+        public static string PrependQuestionMark(this string str)
         {
-            str = "#" + str;
+            str = "?" + str;
             return str;
         }
     }

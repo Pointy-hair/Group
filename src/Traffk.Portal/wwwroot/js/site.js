@@ -225,9 +225,10 @@ function idleReactivate() {
 
 function popupConfirmReload(element) {
     $('#popup-confirm').popup('hide');
-    var action = element.innerText;
-    window.location.hash = '#' + action;
-    location.reload();
+    var action = element.innerText.toLowerCase();
+    if (action === "delete") {
+        $("#delete-alert").fadeIn(500).delay(4000).hide(500);
+    }
 };
 
 function onSend(itemText) {
@@ -284,8 +285,12 @@ $(document).ready(function () {
             event.stopImmediatePropagation();
 
             var j = $(this);
-
-            $('#popup-confirm-action-button').text("Continue");
+            
+            if (this.text) {
+                $('#popup-confirm-action-button').text(this.text);
+            } else {
+                $('#popup-confirm-action-button').text("Continue");
+            }
 
             var heading = j.attr("confirmHeading");
             if (heading != null) {
@@ -312,11 +317,11 @@ $(document).ready(function () {
         });
     });
 
-    if (location.hash.toLowerCase() === "#save") {
+    if (window.location.search.toLowerCase().indexOf("save") >= 0) {
         $("#save-alert").fadeIn(500).delay(4000).hide(500);
     }
 
-    if (location.hash.toLowerCase() === "#delete") {
+    if (window.location.search.toLowerCase().indexOf("delete") >= 0) {
         $("#delete-alert").fadeIn(500).delay(4000).hide(500);
     }
 
