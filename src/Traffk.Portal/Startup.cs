@@ -195,7 +195,7 @@ namespace TraffkPortal
 
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                app.UseExceptionHandler("/Error");
                 app.UseDatabaseErrorPage();
                 app.UseBrowserLink();
             }
