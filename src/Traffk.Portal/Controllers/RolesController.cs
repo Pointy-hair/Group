@@ -63,6 +63,7 @@ namespace TraffkPortal.Controllers
             {
                 Rdb.Add(ApplicationRole.Create(m.Name));
                 await Rdb.SaveChangesAsync();
+                SetToast(AspHelpers.ToastMessages.Saved);
                 return RedirectToIndex();
             }
             return View(m);
@@ -115,6 +116,7 @@ namespace TraffkPortal.Controllers
                     }
                     Rdb.Update(applicationRole);
                     await Rdb.SaveChangesAsync();
+                    SetToast(AspHelpers.ToastMessages.Saved);
                 }
                 catch (DbUpdateConcurrencyException)
                 {

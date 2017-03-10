@@ -133,6 +133,7 @@ namespace TraffkPortal.Controllers
             app.ApplicationSettings.CreativeIdBySystemCommunicationPurpose = model.ToDictionary(z => z.Purpose, z => z.CreativeId);
             Rdb.Update(app);
             await Rdb.SaveChangesAsync();
+            SetToast(AspHelpers.ToastMessages.Saved);
             return RedirectToIndex();
         }
 
@@ -259,6 +260,7 @@ namespace TraffkPortal.Controllers
                 app.ApplicationSettings.Registration.UsersCanSelfRegister = m.UsersCanSelfRegister;
                 app.ApplicationSettings.Registration.SelfRegistrationMandatoryEmailAddressHostnames = m.SelfRegistrationMandatoryEmailAddressHostnames;
                 await Rdb.SaveChangesAsync();
+                SetToast(AspHelpers.ToastMessages.Saved);
                 return RedirectToAction(ActionNames.ApplicationBasics);
             }
             return View(m);
@@ -357,6 +359,7 @@ namespace TraffkPortal.Controllers
                 }
                 Rdb.Update(app);
                 await Rdb.SaveChangesAsync();
+                SetToast(AspHelpers.ToastMessages.Saved);
                 return RedirectToAction(ActionNames.ApplicationBasics);
             }
             return View(model);
