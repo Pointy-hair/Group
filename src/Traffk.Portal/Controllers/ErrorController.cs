@@ -19,6 +19,13 @@ namespace TraffkPortal.Controllers
     {
         private IHostingEnvironment HostingEnvironment_p;
 
+        public const string Name = "Error";
+        public static class ActionNames
+        {
+            public const string Index = "Index";
+        }
+
+
         public ErrorController(
             TraffkRdbContext db,
             CurrentContextServices current,
@@ -31,6 +38,7 @@ namespace TraffkPortal.Controllers
         }
 
         [Route("/Error")]
+        [ActionName(ActionNames.Index)]
         public IActionResult Index()
         {
             var exception = HttpContext.Features.Get<IExceptionHandlerFeature>();

@@ -11,6 +11,7 @@ using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using Serilog;
 using System;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Serilog.Core;
 using Serilog.Events;
 using Traffk.Bal;
@@ -154,6 +155,7 @@ namespace TraffkPortal
 
             services.AddDistributedMemoryCache();
             services.AddSession();
+            services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
 
 
             // Add application services.

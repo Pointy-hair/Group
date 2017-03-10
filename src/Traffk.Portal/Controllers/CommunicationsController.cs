@@ -16,6 +16,7 @@ using TraffkPortal.Models.CommunicationModels;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
 using System;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Traffk.Bal.Communications;
 
 namespace TraffkPortal.Controllers
@@ -159,7 +160,8 @@ namespace TraffkPortal.Controllers
                 comm.CampaignName = model.CampaignName;
                 comm.TopicName = model.TopicName;
                 await Rdb.SaveChangesAsync();
-                return new RedirectResult(Url.Action(ActionNames.CommunicationsList) + AspHelpers.ButtonActionNames.Save.PrependQuestionMark());
+                SetToast(AspHelpers.ToastMessages.Saved);
+                return new RedirectResult(Url.Action(ActionNames.CommunicationsList));
             }
             return await CommunicationEdit(id);
         }

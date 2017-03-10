@@ -14,6 +14,7 @@ using static TraffkPortal.AspHelpers;
 using Serilog.Context;
 using RevolutionaryStuff.Core.Caching;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Serilog;
 using ILogger = Serilog.ILogger;
 using Traffk.Bal;
@@ -36,7 +37,7 @@ namespace TraffkPortal.Controllers
 
         protected ActionResult ErrorResult()
         {
-            return ErrorResult();
+            return RedirectToAction(ErrorController.ActionNames.Index, ErrorController.Name);
         }
 
         private static readonly IDictionary<string, string> NoMappings = new Dictionary<string, string>().AsReadOnly();
@@ -119,14 +120,7 @@ namespace TraffkPortal.Controllers
             Rdb = db;
             Current = current;
             Logger = Log.Logger;
-            //AttachLogContextProperty("TenantId", current.TenantId);
-            //AttachLogContextProperty("EventTime", DateTime.UtcNow);
             var u = current.User;
-            //if (u != null)
-            //{
-            //    AttachLogContextProperty("UserName", current.User.UserName);
-            //    AttachLogContextProperty("UserId", current.User.Id);
-            //}
             if (cacher != null)
             {
                 Cacher = cacher.CreateScope(GetType(), TenantId);
@@ -182,6 +176,7 @@ namespace TraffkPortal.Controllers
         {
             ViewData[ViewDataKeys.MainNavPageKey] = MainNavPageKey;
             ViewData[ViewDataKeys.TenantName] = Current.TenantId.ToString();
+            ViewData[ViewDataKeys.ToastMessage] = TempData[ViewDataKeys.ToastMessage];
             return base.OnActionExecutionAsync(context, next);
             /*
             var setTenant = Task.Run(() =>
@@ -199,6 +194,11 @@ namespace TraffkPortal.Controllers
 
             return setTenant.ContinueWith(_ => base.OnActionExecutionAsync(context, next));
             */
+        }
+
+        protected void SetToast(string toastMessage)
+        {
+            TempData[ViewDataKeys.ToastMessage] = toastMessage;
         }
     }
 }
