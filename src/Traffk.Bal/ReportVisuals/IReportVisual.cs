@@ -23,6 +23,7 @@ namespace Traffk.Bal.ReportVisuals
         DateTime LastEdit { get; set; } //For user convenience
         string LastEditedField { get; set; } //For user convenience
         VisualContext VisualContext { get; set; }
+        string FolderName { get; }
     }
 
     public enum VisualContext

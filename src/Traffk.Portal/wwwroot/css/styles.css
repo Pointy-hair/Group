@@ -1092,6 +1092,26 @@ h3 {
     cursor: pointer;
 }
 
+.report-tags {
+    list-style-type: none;
+    padding-left: 0px;
+}
+
+.report-tags > li {
+    padding-bottom: 10px;
+    display: inline-block;
+}
+
+.report-tags > li.report-tag > span {
+    margin-right: 10px;
+    text-decoration: none;
+    color: #000;
+    border: 1px solid #979797;
+    border-radius: 6px;
+    padding: 4px 10px 4px 14px;
+    display:inline-block;
+}
+
 .alert {
     display: none;
 }

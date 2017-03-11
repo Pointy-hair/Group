@@ -12,12 +12,19 @@ namespace Traffk.Tableau.REST.Models
     {
         public string Id { get; set; }
         public string Name { get; set; }
+        string IName.Name => Name;
         public override string ToString() => Id + "-" + Name;
 
     }
 
     public class TableauReportVisual : TableauResource, ITableauReportVisual
     {
+        string ITableauReportVisual.Id => Id;
+        string ITableauReportVisual.Title => Title;
+        string ITableauReportVisual.ViewName => ViewName;
+        string ITableauReportVisual.WorkbookId => WorkbookId;
+        string ITableauReportVisual.WorkbookName => WorkbookName;
+        public string Title => Name;
         public string WorkbookName { get; set; }
         public string ViewName { get; set; }
         public readonly string ContentUrl;

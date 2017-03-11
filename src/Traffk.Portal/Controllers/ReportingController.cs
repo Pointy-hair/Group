@@ -9,6 +9,7 @@ using RevolutionaryStuff.Core.Collections;
 using Traffk.Bal.Permissions;
 using Traffk.Bal.Data.Rdb;
 using System.Linq;
+using System.Text.RegularExpressions;
 using RevolutionaryStuff.Core.ApplicationParts;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
@@ -18,6 +19,7 @@ using Traffk.Bal.Settings;
 using Traffk.Tableau;
 using Traffk.Tableau.REST;
 using Traffk.Tableau.REST.Models;
+using TraffkPortal.Models.ReportingModels;
 
 namespace TraffkPortal.Controllers
 {
@@ -29,8 +31,9 @@ namespace TraffkPortal.Controllers
 
         public IReportVisualService ReportVisualService { get; }
 
-        public static string CreateAnchorName(TableauResource view) => NameHelpers.GetName(view)?.Trim()?.ToUpperCamelCase()?.RemoveSpecialCharacters() ?? "";
-        public static string CreateAnchorName(ReportVisual view) => NameHelpers.GetName(view)?.Trim()?.ToUpperCamelCase()?.RemoveSpecialCharacters() ?? "";
+
+        public static string CreateAnchorName(IReportResource reportResource) =>
+            Traffk.Bal.ReportVisuals.ReportVisualService.CreateAnchorName(reportResource.Title?.Trim()?.ToUpperCamelCase()?.RemoveSpecialCharacters() ?? "");
 
 
         public static class ActionNames
@@ -55,22 +58,7 @@ namespace TraffkPortal.Controllers
 
         private TreeNode<IReportResource> GetReportFolderTreeRoot()
         {
-            return Cacher.FindOrCreate("root", key=>{
-                var root = new TreeNode<IReportResource>(new ReportVisualFolder("Root"));
-                var views = ReportVisualService.GetReportVisuals(VisualContext.Tenant);
-
-                if (views.Any())
-                {
-                    views = views.OrderBy(r => r.Title);
-                    //var workbookFolders = GetWorkbookFolders();
-
-                    foreach (var view in views)
-                    {
-                        root.AddChildren(view);
-                    }
-                }
-                return new CacheEntry<TreeNode<IReportResource>>(root);
-            }).Value;
+            return Cacher.FindOrCreate("root", key=> ReportVisualService.GetReportFolderTreeRoot(VisualContext.Tenant)).Value;
         }
 
         [Route("/Reporting")]
@@ -79,6 +67,34 @@ namespace TraffkPortal.Controllers
         {
             var root = GetReportFolderTreeRoot();
             return View(root);
+        }
+
+        [SetTableauTrustedTicket]
+        [Route("/Reporting/Report/{id}/{anchorName}")]
+        [ActionName(ActionNames.Report)]
+        public IActionResult Report(string id, string anchorName)
+        {
+            var root = GetReportFolderTreeRoot();
+            TableauReportViewModel tableauReportViewModel = null;
+            root.Walk((node, depth) =>
+            {
+                var matchingReportVisual = node.Data as ReportVisual;
+                if (matchingReportVisual == null) return;
+                var urlFriendlyReportName = CreateAnchorName(matchingReportVisual);
+                if (anchorName == urlFriendlyReportName && (id == matchingReportVisual.Id || id == matchingReportVisual.ParentId))
+                {
+                    tableauReportViewModel = new TableauReportViewModel(matchingReportVisual);
+                    
+                    Log.Information(matchingReportVisual.Id);
+                }
+            });
+
+            if (tableauReportViewModel == null)
+            {
+                RedirectToAction(ActionNames.Index);
+            }
+
+            return View(tableauReportViewModel);
         }
 
         private static readonly DateTime StartedAtUtc = DateTime.UtcNow;

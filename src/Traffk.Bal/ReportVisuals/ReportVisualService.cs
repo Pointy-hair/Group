@@ -4,11 +4,14 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using RevolutionaryStuff.Core;
+using RevolutionaryStuff.Core.Caching;
+using RevolutionaryStuff.Core.Collections;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Permissions;
 using Traffk.Bal.Services;
@@ -17,9 +20,15 @@ using Traffk.Tableau.REST.Models;
 
 namespace Traffk.Bal.ReportVisuals
 {
+    public static class ReportTagFilters
+    {
+        public static string RiskIndex = "Risk Index";
+    }
+
     public interface IReportVisualService
     {
-        IEnumerable<ReportVisual> GetReportVisuals(VisualContext visualContext);
+        TreeNode<IReportResource> GetReportFolderTreeRoot(VisualContext visualContext, string reportTagFilter = null);
+        IEnumerable<ReportVisual> GetReportVisuals(VisualContext visualContext, string reportTagFilter);
 
         byte[] DownloadPreviewImageForTableauVisual(string workbookId, string viewId);
     }
@@ -29,45 +38,85 @@ namespace Traffk.Bal.ReportVisuals
         private ITableauRestService TableauRestService;
         private TraffkRdbContext Rdb;
         private ITableauTenantFinder TableauTenantFinder;
-        private ICurrentUser CurrentUser;
+        private ApplicationUser CurrentUser;
         private AuthorizationHandlerContext AuthorizationHandlerContext;
-        private ICollection<ReportMetaData> MockReportMetaData;
+        private HashSet<ReportMetaData> MockReportMetaData;
         private bool CanAccessPhi;
+        private IEnumerable<string> TableauReportIds;
 
         //Do we make these private?
         public string TableauTenantId { get; private set; }
 
         public ReportVisualService(ITableauRestService tableauRestService, TraffkRdbContext rdb, 
-            ITableauTenantFinder tableauTenantFinder, ICurrentUser currentUser, AuthorizationHandlerContext authorizationHandlerContext)
+            ITableauTenantFinder tableauTenantFinder, ICurrentUser currentUser)
         {
             TableauRestService = tableauRestService;
             Rdb = rdb;
             TableauTenantFinder = tableauTenantFinder;
 
             TableauTenantId = TableauTenantFinder.GetTenantIdAsync().Result;
-            CurrentUser = currentUser;
-            AuthorizationHandlerContext = authorizationHandlerContext;
+            CurrentUser = currentUser.User;
 
-            MockReportMetaData = new Collection<ReportMetaData>();
-
-            //Can we move to higher level?
-            var permission = AuthorizationHandlerContext.User.FindFirst(c => c.Type == Permissions.PermissionNames.ProtectedHealthInformation.ToString());
-            var pcv = PermissionClaimValue.CreateFromJson(permission.Value);
-            CanAccessPhi = pcv.Granted;
+            CanAccessPhi = true;
+            MockReportMetaData = new HashSet<ReportMetaData>();
         }
 
-        public IEnumerable<ReportVisual> GetReportVisuals(VisualContext visualContext)
+        IEnumerable<ReportVisual> IReportVisualService.GetReportVisuals(VisualContext visualContext, string reportTagFilter) 
+            => GetReportVisuals(visualContext, reportTagFilter);
+
+        TreeNode<IReportResource> IReportVisualService.GetReportFolderTreeRoot(VisualContext context, string reportTagFilter)
+            => GetReportFolderTreeRoot(context, reportTagFilter);
+
+        public TreeNode<IReportResource> GetReportFolderTreeRoot(VisualContext visualContext, string reportTagFilter)
+        {
+            var root = new TreeNode<IReportResource>(new ReportVisualFolder("Root"));
+            var reportVisuals = (ICollection<ReportVisual>)(GetReportVisuals(VisualContext.Tenant, reportTagFilter) as ICollection<ReportVisual> ?? 
+                                GetReportVisuals(VisualContext.Tenant, reportTagFilter).ToList());
+
+            if (reportVisuals.Any())
+            {
+                var workbookFolders = new HashSet<TreeNode<IReportResource>>();
+                foreach (var visual in reportVisuals)
+                {
+                    var folderName = visual.FolderName;
+
+                    if (folderName == "")
+                    {
+                        root.Add(visual);
+                    }
+
+                    var existingFolder = workbookFolders.SingleOrDefault(x => x.Data.Title == folderName);
+                    if (existingFolder != null)
+                    {
+                        existingFolder.Add(visual);
+                    }
+                    else
+                    {
+                        var newWorkbookFolder = new TreeNode<IReportResource>(new ReportVisualFolder(folderName));
+                        newWorkbookFolder.Add(visual);
+                        workbookFolders.Add(newWorkbookFolder);
+                    }
+                }
+
+                foreach (var folder in workbookFolders)
+                {
+                    root.Add(folder);
+                }
+            }
+            return new CacheEntry<TreeNode<IReportResource>>(root).Value;
+        }
+
+        public IEnumerable<ReportVisual> GetReportVisuals(VisualContext visualContext, string reportTagFilter = null)
         {
             var tableauReports = GetTableauReportVisuals();
             var tableauReportVisuals = tableauReports as IList<ITableauReportVisual> ?? tableauReports.ToList();
-            var tableauReportIds = tableauReportVisuals.Select(t => t.Id);
+            TableauReportIds = tableauReportVisuals.Select(t => t.Id);
 
-            var relevantReportMetaDatas = GetRelevantReportMetaDatas().Where(x => tableauReportIds.Contains(x.ExternalReportId) && x.VisualContext == visualContext);
-            
+            var relevantReportMetaDatas = new HashSet<IReportMetaData>(GetRelevantReportMetaDatas(visualContext, reportTagFilter));
+
             List<ReportVisual> visuals = new List<ReportVisual>();
             foreach (var rmd in relevantReportMetaDatas)
             {
-                //could there be 2 tableau reports that have same ExternalReportId??
                 var tableauReport = tableauReportVisuals.SingleOrDefault(x => x.Id == rmd.ExternalReportId);
                 var visual = (ReportVisual)Merge(tableauReport, rmd);
                 visuals.Add(visual);
@@ -76,7 +125,7 @@ namespace Traffk.Bal.ReportVisuals
             return visuals;
         }
         
-        private IReportVisual Merge(ITableauReportVisual tableauReportVisual, IReportMetaData reportMetaData)
+        private static IReportVisual Merge(ITableauReportVisual tableauReportVisual, IReportMetaData reportMetaData)
         {
             Requires.NonNull(reportMetaData.Description, nameof(reportMetaData.Description));
 
@@ -125,23 +174,60 @@ namespace Traffk.Bal.ReportVisuals
         {
             if (TableauTenantId == null)
             {
-                var visuals = TableauRestService.DownloadViewsForSite().Views.ToList();
+                var tableauReportVisuals = TableauRestService.DownloadViewsForSite().Views.ToList();
                 var random = new Random();
 
+                //Placeholder for Risk Index tags
+                var riskIndexReportNames = new HashSet<string>(Comparers.CaseInsensitiveStringComparer);
+                const string riskIndex = "RiskIndex";
+                var reportNames = new List<string> { "tables", "age", "urbanicity", "occupations", "diseaseincidence" };
+                foreach (var name in reportNames)
+                {
+                    riskIndexReportNames.Add(riskIndex + name);
+                }
+
+                int reportMetaDataCount = 0;
+
                 //Dummy method in lieu of database
-                foreach (var visual in visuals)
+                foreach (var visual in tableauReportVisuals)
                 {
                     int tagNumber = random.Next(1, 10);
+                    var tags = new Collection<string> { "Tag " + tagNumber.ToString() };
                     bool containsPhi = tagNumber % 2 == 0;
+
+                    var folderPath = "";
+
+                    if (tagNumber < 4)
+                    {
+                        folderPath = @"\Low Folder";
+                    }
+
+                    if (tagNumber >= 4 && tagNumber < 7)
+                    {
+                        folderPath = @"\Medium Folder";
+                    }
+
+                    if (tagNumber >= 7)
+                    {
+                        folderPath = @"\High Folder";
+                    }
+
+                    if (riskIndexReportNames.Contains(CreateAnchorName(visual.WorkbookName)))
+                    {
+                        tags.Add("Risk Index"); 
+                    }
+
                     var rmd = new ReportMetaData
                     {
-                        ReportMetaDataId = visual.Id,
+                        ReportMetaDataId = reportMetaDataCount.ToString(),
                         ExternalReportId = visual.Id,
-                        Title = visual.ViewName,
+                        Title = visual.Title,
                         Description = "This description is from ReportVisualService loop.",
                         ContainsPhi = containsPhi,
-                        Tags = new Collection<string> { "tag" + tagNumber.ToString() },
-                        Parameters = null
+                        Tags = tags,
+                        Parameters = null,
+                        VisualContext = VisualContext.Tenant,
+                        FolderPath = folderPath
                     };
                     MockReportMetaData.Add(rmd);
 
@@ -149,34 +235,45 @@ namespace Traffk.Bal.ReportVisuals
                     {
                         var rmd2 = new ReportMetaData
                         {
-                            ParentReportMetaDataId = "Copy",
+                            ReportMetaDataId = "Copy" + reportMetaDataCount.ToString(),
+                            ParentReportMetaDataId = reportMetaDataCount.ToString(),
                             ExternalReportId = visual.Id,
-                            Title = "Copy of" + visual.ViewName,
+                            Title = "Copy of " + visual.Title,
                             Description = "My custom description.",
                             ContainsPhi = containsPhi,
-                            Tags = new Collection<string> { "tag" + tagNumber.ToString(), "Copy" },
+                            Tags = new Collection<string> { "Tag " + tagNumber.ToString() },
                             Parameters = null,
-                            OwnerUserId = CurrentUser.User.Id
+                            OwnerUserId = CurrentUser.Id,
+                            VisualContext = VisualContext.Tenant,
+                            FolderPath = @"\Your Reports"
                         };
+                        rmd2.Tags.Add("Copy");
                         MockReportMetaData.Add(rmd2);
 
                         var rmd3 = new ReportMetaData
                         {
-                            ParentReportMetaDataId = "Shared",
+                            ReportMetaDataId = "Shared" + reportMetaDataCount.ToString(),
+                            ParentReportMetaDataId = reportMetaDataCount.ToString(),
                             ExternalReportId = visual.Id,
-                            Title = "Shared version of" + visual.ViewName,
+                            Title = "Shared version of " + visual.Title,
                             Description = "Shared by Aaron C Scott",
                             ContainsPhi = containsPhi,
-                            Tags = new Collection<string> { "tag" + tagNumber.ToString(), "Copy", "Shared" },
+                            Tags = new Collection<string> { "Tag " + tagNumber.ToString() },
                             Parameters = null,
                             OwnerUserId = "SomeoneElse",
-                            Shared = true
+                            Shared = true,
+                            VisualContext = VisualContext.Tenant,
+                            FolderPath = @"\Shared Reports"
                         };
+                        rmd3.Tags.Add("Copy");
+                        rmd3.Tags.Add("Shared");
                         MockReportMetaData.Add(rmd3);
                     }
+
+                    reportMetaDataCount++;
                 }
 
-                return visuals;
+                return tableauReportVisuals;
             }
             else
             {
@@ -184,14 +281,17 @@ namespace Traffk.Bal.ReportVisuals
             }
         }
 
-        private IEnumerable<IReportMetaData> GetRelevantReportMetaDatas()
+        private IEnumerable<IReportMetaData> GetRelevantReportMetaDatas(VisualContext visualContext, string tag = null)
         {
             var relevantReportMetaDatas =
                 MockReportMetaData.Where(
-                    x => x.ContainsPhi == CanAccessPhi && 
-                    (x.ParentReportMetaDataId == null //Traffk supplied metadata
-                    || (x.OwnerUserId == CurrentUser.User.Id) //Users metadata
-                    || (x.OwnerUserId != CurrentUser.User.Id && x.Shared))); //Shared metadata
+                        x => TableauReportIds.Contains(x.ExternalReportId) &&
+                        x.VisualContext == visualContext &&
+                        (tag == null || x.Tags.Contains(tag)) &&
+                            ((x.ParentReportMetaDataId == null //Traffk supplied metadata
+                            || (x.OwnerUserId == CurrentUser.Id) //User's metadata
+                            || (x.OwnerUserId != CurrentUser.Id && x.Shared))) //Shared metadata
+                    );
             return relevantReportMetaDatas;
         }
 
@@ -199,6 +299,8 @@ namespace Traffk.Bal.ReportVisuals
         {
             return MockReportMetaData.Where(x => x.ExternalReportId == externalReportId); //missing check for delete bit
         }
+
+        public static string CreateAnchorName(string name) => name.Trim()?.ToLower()?.RemoveSpecialCharacters() ?? "";
 
         public byte[] DownloadPreviewImageForTableauVisual(string workbookId, string viewId)
         {

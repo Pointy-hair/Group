@@ -1,5 +1,5 @@
 @using RevolutionaryStuff.Core.Collections
-@model TreeNode<Traffk.Tableau.REST.Models.TableauResource>
+@model TreeNode<Traffk.Bal.ReportVisuals.IReportResource>
 @{
     Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
     ViewData.SetTitleAndHeading("Risk Index", "Reports about Risk Index");
@@ -21,7 +21,7 @@
 
 @section listingTable
 {
-    @{ await Html.RenderPartialAsync("~/Views/Reporting/_TableauViewResourceTreeNodePartial.cshtml", Model.Children); }
+    @{ await Html.RenderPartialAsync("~/Views/Shared/_ReportResourceTreeNodePartial.cshtml", Model.Children); }
     @{await Html.RenderPartialAsync("~/Views/Reporting/_ExportReportPartial.cshtml"); }
 }
 

@@ -11,6 +11,7 @@ namespace Traffk.Tableau.REST.Models
         string WorkbookId { get; }
         string WorkbookName { get; }
         string ViewName { get; }
+        string Title { get; }
     }
 
     public interface ITableauContactReportVisual : ITableauReportVisual
