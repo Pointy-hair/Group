@@ -12,7 +12,6 @@ namespace Traffk.Bal.ReportVisuals
         string ReportMetaDataId { get; set; }
         string Title { get; set; }
         string Description { get; set; }
-        string ReportVisualType { get; set; }
         string ExternalReportId { get; set; }
         string FolderPath { get; set; } //similar to Windows folder paths
         string PreviewImageUrl { get; set; } //not URI so that we can use relative paths

@@ -1,6 +1,8 @@
 ﻿@model TraffkPortal.Models.ReportingModels.TableauReportViewModel
 @{
     Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
+    var contactName = ViewData["ContactName"] as string;
+    var contactId = ViewData["ContactId"] as string;
     ViewData.SetTitleAndHeading(@Model.Title, @Model.Description);
     ViewData.HasBreadcrumbItems(true);
     ViewData.HasPageActions(true);
@@ -10,7 +12,9 @@
 
 
 @section breadCrumbItems {
-    <li><a asp-controller="@ReportingController.Name" asp-action="Index">Risk Index</a> <span>></span> </li>
+<li><a asp-controller="@CrmController.Name" asp-action="Index" id="IndexLink">Contacts</a> <span>></span> </li>
+<li><a asp-controller="@CrmController.Name" asp-action="ContactBackground" asp-route-id="@ViewData["ContactId"]">@ViewData["ContactName"]</a> <span>></span> </li>
+
 }
 
 @section pageActionItems {
@@ -55,7 +59,9 @@
 
     <script type="text/javascript">
                     $(document).ready(function () {
-                        initViz("@Model.WorkbookName", "@Model.ViewName");
+                        debugger;
+                        var parameterString = "?ContactId=" + "@ViewData["ContactId"]";
+                        initViz("@Model.WorkbookName", "@Model.ViewName", parameterString);
                     });
     </script>
 }

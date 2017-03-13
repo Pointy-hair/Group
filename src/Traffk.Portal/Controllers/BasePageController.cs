@@ -17,6 +17,7 @@ using System.Diagnostics;
 using Serilog;
 using ILogger = Serilog.ILogger;
 using Traffk.Bal;
+using Traffk.Bal.ReportVisuals;
 
 namespace TraffkPortal.Controllers
 {
@@ -200,5 +201,9 @@ namespace TraffkPortal.Controllers
             return setTenant.ContinueWith(_ => base.OnActionExecutionAsync(context, next));
             */
         }
+
+        public static string CreateAnchorName(IReportResource reportResource) =>
+            ReportVisualService.CreateAnchorName(reportResource.Title?.Trim()?.ToUpperCamelCase()?.RemoveSpecialCharacters() ?? "");
+
     }
 }

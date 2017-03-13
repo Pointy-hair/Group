@@ -70,8 +70,8 @@ namespace Traffk.Bal.ReportVisuals
         public TreeNode<IReportResource> GetReportFolderTreeRoot(VisualContext visualContext, string reportTagFilter)
         {
             var root = new TreeNode<IReportResource>(new ReportVisualFolder("Root"));
-            var reportVisuals = (ICollection<ReportVisual>)(GetReportVisuals(VisualContext.Tenant, reportTagFilter) as ICollection<ReportVisual> ?? 
-                                GetReportVisuals(VisualContext.Tenant, reportTagFilter).ToList());
+            var reportVisuals = (ICollection<ReportVisual>)(GetReportVisuals(visualContext, reportTagFilter) as ICollection<ReportVisual> ?? 
+                                GetReportVisuals(visualContext, reportTagFilter).ToList());
 
             if (reportVisuals.Any())
             {
@@ -217,6 +217,12 @@ namespace Traffk.Bal.ReportVisuals
                         tags.Add("Risk Index"); 
                     }
 
+                    var visualContext = VisualContext.Tenant;
+                    if (visual.Id == "076e81f7-9dce-417b-a9c8-ee8b29041ab2")
+                    {
+                        visualContext = VisualContext.ContactPerson;;
+                    }
+
                     var rmd = new ReportMetaData
                     {
                         ReportMetaDataId = reportMetaDataCount.ToString(),
@@ -226,7 +232,7 @@ namespace Traffk.Bal.ReportVisuals
                         ContainsPhi = containsPhi,
                         Tags = tags,
                         Parameters = null,
-                        VisualContext = VisualContext.Tenant,
+                        VisualContext = visualContext,
                         FolderPath = folderPath
                     };
                     MockReportMetaData.Add(rmd);
@@ -244,7 +250,7 @@ namespace Traffk.Bal.ReportVisuals
                             Tags = new Collection<string> { "Tag " + tagNumber.ToString() },
                             Parameters = null,
                             OwnerUserId = CurrentUser.Id,
-                            VisualContext = VisualContext.Tenant,
+                            VisualContext = visualContext,
                             FolderPath = @"\Your Reports"
                         };
                         rmd2.Tags.Add("Copy");
@@ -262,7 +268,7 @@ namespace Traffk.Bal.ReportVisuals
                             Parameters = null,
                             OwnerUserId = "SomeoneElse",
                             Shared = true,
-                            VisualContext = VisualContext.Tenant,
+                            VisualContext = visualContext,
                             FolderPath = @"\Shared Reports"
                         };
                         rmd3.Tags.Add("Copy");

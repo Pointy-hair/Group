@@ -2,6 +2,7 @@
 @using RevolutionaryStuff.Core.Collections
 @using Traffk.Bal.ReportVisuals
 @using static TraffkPortal.Controllers.ReportingController
+@using static TraffkPortal.Controllers.CrmController
 @foreach (var tn in Model)
 {
     var reportResource = tn.Data;
@@ -19,19 +20,42 @@
     else if (reportResource is ReportVisual)
     {
         var view = reportResource as ReportVisual;
-        var urlName = ReportingController.CreateAnchorName(view);
+        var urlName = BasePageController.CreateAnchorName(view);
         <div class="col-md-3 col-sm-4">
             <div class="mini-panel">
                 <div class="mini-panel-top">
                     <input type="checkbox" name="radios" class="" id="radio1" />
-                    <a style="cursor:pointer" asp-route-id="@view.Id" asp-route-anchorName="@urlName" asp-action="@ReportingController.ActionNames.Report">
-                        <div class="report-preview-image-container" style="background-image: url('@view.PreviewImageUrl')">
-                            &nbsp;
-                        </div>
-                    </a>
+                    @if (@view.VisualContext == VisualContext.ContactPerson)
+                    {
+                        <a style="cursor:pointer" asp-controller="@CrmController.Name" asp-route-contactId="@ViewData["ContactId"]" asp-action="@CrmController.ActionNames.Report" asp-route-id="@view.Id" asp-route-anchorName="@urlName">
+                            <div class="report-preview-image-container" style="background-image: url('@view.PreviewImageUrl')">
+                                &nbsp;
+                            </div>
+                        </a>
+                    }
+                    else
+                    {
+                        <a style="cursor:pointer" asp-route-id="@view.Id" asp-route-anchorName="@urlName" asp-action="@ReportingController.ActionNames.Report">
+                            <div class="report-preview-image-container" style="background-image: url('@view.PreviewImageUrl')">
+                                &nbsp;
+                            </div>
+                        </a>
+                    }
                 </div>
                 <div class="mini-panel-bottom">
-                    <p class="mini-title"><a style="cursor:pointer" asp-route-id="@view.Id" asp-route-anchorName="@urlName" asp-action="@ReportingController.ActionNames.Report">@view.Title</a></p>
+                    @if (@view.VisualContext == VisualContext.ContactPerson)
+                    {
+                        <p class="mini-title">
+                            <a  asp-controller="@CrmController.Name" asp-route-contactId="@ViewData["ContactId"]" asp-action="@CrmController.ActionNames.Report" asp-route-id="@view.Id" asp-route-anchorName="@urlName">@view.Title</a>
+                        </p>
+                    }
+                    else
+                    {
+                        <p class="mini-title">
+                            <a style="cursor: pointer" asp-route-id="@view.Id" asp-route-anchorName="@urlName" asp-action="@ReportingController.ActionNames.Report">@view.Title</a>
+                        </p>
+                    }
+                        
                     <p>@view.Description</p>
                     <ul class="report-tags" id="">
                         @foreach (var tag in @view.Tags)

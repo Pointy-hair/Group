@@ -15,10 +15,15 @@ using TraffkPortal.Models.CrmModels;
 using System;
 using Traffk.Bal.Data;
 using System.Collections.Generic;
+using RevolutionaryStuff.Core.Caching;
+using RevolutionaryStuff.Core.Collections;
+using Serilog;
 using Traffk.Bal;
 using Traffk.Bal.Communications;
+using Traffk.Bal.ReportVisuals;
 using Traffk.Tableau;
 using Traffk.Tableau.REST.Models;
+using TraffkPortal.Models.ReportingModels;
 
 namespace TraffkPortal.Controllers
 {
@@ -27,6 +32,8 @@ namespace TraffkPortal.Controllers
     [Route("Crm")]
     public class CrmController : BasePageController
     {
+        public IReportVisualService ReportVisualService { get; }
+
         public const string Name = "Crm";
 
         public enum PageKeys
@@ -90,6 +97,8 @@ namespace TraffkPortal.Controllers
             public const string ContactRelationships = "ContactRelationships";
             public const string CreateNote = "CreateNote";
             public const string SendDirectMessage = "SendDirectMessage";
+            public const string Reports = "ReportIndex";
+            public const string Report = "Report";
 
             public static class Health
             {
@@ -135,10 +144,13 @@ namespace TraffkPortal.Controllers
             IEmailSender emailSender,
             TraffkRdbContext db,
             CurrentContextServices current,
-            ILoggerFactory loggerFactory
+            ILoggerFactory loggerFactory,
+            ICacher cacher,
+            IReportVisualService reportVisualService
             )
-            : base(AspHelpers.MainNavigationPageKeys.CRM, db, current, loggerFactory)
+            : base(AspHelpers.MainNavigationPageKeys.CRM, db, current, loggerFactory, cacher)
         {
+            ReportVisualService = reportVisualService;
             EmailSender = emailSender;
         }
 
@@ -494,26 +506,7 @@ namespace TraffkPortal.Controllers
         [Route("Contacts/{id}/Pharmacy/{pharmacyItemId}")]
         public Task<IActionResult> ContactPharmacyItemDetail(long id, string pharmacyItemId)
             => ContactHealthItemDetail(id, PageKeys.Pharmacy, ViewNames.Health.Pharmacy, mid => Rdb.Pharmacy.Where(z => z.ContactId == mid && z.rev_transaction_num == pharmacyItemId));
-
-        [SetTableauTrustedTicket]
-        [Route("/Reporting/MemberDashboard/{contactId}")]
-        public IActionResult MemberReport(string contactId)
-        {
-            var contact = FindContactByIdAsync(Convert.ToInt64(contactId)).Result;
-            SetHeroLayoutViewData(contact, PageKeys.Messages);
-            const string workbookName = "MemberClaims";
-            const string viewName = "Claims-Breakdown";
-            var viewModel = new TableauContactReportVisual
-            {
-                WorkbookName = workbookName,
-                ViewName = viewName,
-                Name = workbookName.ToTitleFriendlyString(),
-                ContactId = contactId
-            };
-            return View("~/Views/Reporting/Report.cshtml", viewModel);
-        }
-
-
+        
         private async Task<Contact> FindContactByIdAsync(long id)
         {
             Contact c = null;
@@ -523,6 +516,54 @@ namespace TraffkPortal.Controllers
                 return c;
             }
             return null;
+        }
+
+        private TreeNode<IReportResource> GetReportFolderTreeRoot()
+        {
+            return Cacher.FindOrCreate("crmreportsroot", key => ReportVisualService.GetReportFolderTreeRoot(VisualContext.ContactPerson)).Value;
+        }
+
+        [Route("Contacts/{id}/Reports")]
+        [ActionName(ActionNames.Reports)]
+        public async Task<IActionResult> ReportIndex(long id)
+        {
+            var contact = await FindContactByIdAsync(id);
+            if (contact == null) return NotFound();
+            SetHeroLayoutViewData(contact, PageKeys.Reports);
+
+            var root = GetReportFolderTreeRoot();
+            return View(root);
+        }
+
+        [SetTableauTrustedTicket]
+        [Route("Contacts/{contactId}/Reports/{id}/{anchorName}")]
+        [ActionName(ActionNames.Report)]
+        public async Task<IActionResult> Report(long contactId, string id, string anchorName)
+        {
+            var contact = await FindContactByIdAsync(Convert.ToInt64(contactId));
+            SetHeroLayoutViewData(contact, PageKeys.Messages);
+
+            var root = GetReportFolderTreeRoot();
+            TableauReportViewModel tableauReportViewModel = null;
+            root.Walk((node, depth) =>
+            {
+                var matchingReportVisual = node.Data as ReportVisual;
+                if (matchingReportVisual == null) return;
+                var urlFriendlyReportName = CreateAnchorName(matchingReportVisual);
+                if (id == matchingReportVisual.Id || id == matchingReportVisual.ParentId)
+                {
+                    tableauReportViewModel = new TableauReportViewModel(matchingReportVisual);
+
+                    Log.Information(matchingReportVisual.Id + " ContactId: " + contactId);
+                }
+            });
+
+            if (tableauReportViewModel == null)
+            {
+                RedirectToAction(ActionNames.ContactBackground, id);
+            }
+
+            return View(tableauReportViewModel);
         }
     }
 }

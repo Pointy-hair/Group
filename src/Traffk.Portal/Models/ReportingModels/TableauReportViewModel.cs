@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using RevolutionaryStuff.Core;
+using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.ReportVisuals;
 
 namespace TraffkPortal.Models.ReportingModels
@@ -23,4 +25,15 @@ namespace TraffkPortal.Models.ReportingModels
         public string ViewName { get; private set; }
         public string Description { get; private set; }
     }
+
+    //public class TableauContactReportViewModel : TableauReportViewModel
+    //{
+    //    public TableauContactReportViewModel(ReportVisual reportVisual, Contact contact) : base(reportVisual)
+    //    {
+    //        Requires.NonNull(contact, nameof(contact));
+    //        ContactId = contact.ContactId;
+    //    }
+
+    //    public long ContactId { get; private set; }
+    //}
 }

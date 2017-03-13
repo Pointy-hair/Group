@@ -10,7 +10,6 @@ namespace Traffk.Bal.ReportVisuals
         public string ReportMetaDataId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public string ReportVisualType { get; set; }
         public string ExternalReportId { get; set; }
         public string FolderPath { get; set; }
         public string PreviewImageUrl { get; set; }

@@ -31,11 +31,6 @@ namespace TraffkPortal.Controllers
 
         public IReportVisualService ReportVisualService { get; }
 
-
-        public static string CreateAnchorName(IReportResource reportResource) =>
-            Traffk.Bal.ReportVisuals.ReportVisualService.CreateAnchorName(reportResource.Title?.Trim()?.ToUpperCamelCase()?.RemoveSpecialCharacters() ?? "");
-
-
         public static class ActionNames
         {
             public const string ShowReport = "ShowReport";
@@ -58,7 +53,7 @@ namespace TraffkPortal.Controllers
 
         private TreeNode<IReportResource> GetReportFolderTreeRoot()
         {
-            return Cacher.FindOrCreate("root", key=> ReportVisualService.GetReportFolderTreeRoot(VisualContext.Tenant)).Value;
+            return Cacher.FindOrCreate("reportingroot", key=> ReportVisualService.GetReportFolderTreeRoot(VisualContext.Tenant)).Value;
         }
 
         [Route("/Reporting")]

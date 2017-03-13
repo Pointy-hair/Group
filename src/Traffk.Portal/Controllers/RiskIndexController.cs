@@ -17,6 +17,7 @@ using Traffk.Bal.Settings;
 using Traffk.Tableau;
 using Traffk.Tableau.REST;
 using Traffk.Tableau.REST.Models;
+using TraffkPortal.Models.ReportingModels;
 using TraffkPortal.Permissions;
 using TraffkPortal.Services;
 
@@ -65,26 +66,37 @@ namespace TraffkPortal.Controllers
             return View("Index", root);
         }
 
-        private string CreateAnchorName(string name) => name.Trim()?.ToUpperCamelCase()?.RemoveSpecialCharacters() ?? "";
-
         private TreeNode<IReportResource> GetReportFolderTreeRoot()
         {
-            return Cacher.FindOrCreate("root", key => {
-                var root = new TreeNode<IReportResource>(new ReportVisualFolder("Root"));
-                var views = ReportVisualService.GetReportVisuals(VisualContext.Tenant, ReportTagFilters.RiskIndex);
+            return Cacher.FindOrCreate("riskindexreportroot", key => ReportVisualService.GetReportFolderTreeRoot(VisualContext.Tenant, ReportTagFilters.RiskIndex)).Value;
+        }
 
-                if (views.Any())
+        [SetTableauTrustedTicket]
+        [Route("/RiskIndex/Report/{id}/{anchorName}")]
+        [ActionName(ActionNames.Report)]
+        public IActionResult Report(string id, string anchorName)
+        {
+            var root = GetReportFolderTreeRoot();
+            TableauReportViewModel tableauReportViewModel = null;
+            root.Walk((node, depth) =>
+            {
+                var matchingReportVisual = node.Data as ReportVisual;
+                if (matchingReportVisual == null) return;
+                var urlFriendlyReportName = CreateAnchorName(matchingReportVisual);
+                if (anchorName == urlFriendlyReportName && (id == matchingReportVisual.Id || id == matchingReportVisual.ParentId))
                 {
-                    views = views.OrderBy(r => r.Title);
-                    //var workbookFolders = GetWorkbookFolders();
+                    tableauReportViewModel = new TableauReportViewModel(matchingReportVisual);
 
-                    foreach (var view in views)
-                    {
-                        root.AddChildren(view);
-                    }
+                    Log.Information(matchingReportVisual.Id);
                 }
-                return new CacheEntry<TreeNode<IReportResource>>(root);
-            }).Value;
+            });
+
+            if (tableauReportViewModel == null)
+            {
+                RedirectToAction(ActionNames.Index);
+            }
+
+            return View(tableauReportViewModel);
         }
     }
 }

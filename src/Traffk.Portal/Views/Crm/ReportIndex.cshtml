@@ -1,8 +1,10 @@
-@using RevolutionaryStuff.Core.Collections
+﻿@using RevolutionaryStuff.Core.Collections
 @model TreeNode<Traffk.Bal.ReportVisuals.IReportResource>
 @{
     Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
-    ViewData.SetTitleAndHeading("Reporting", "This is the reports subheading.");
+    var contactName = ViewData["ContactName"] as string;
+    var contactId = ViewData["ContactId"] as string;
+    ViewData.SetTitleAndHeading("Member Reports", "Reports about " + contactName);
     ViewData.IsListingPage(true);
     var filters = ViewBag.ListingFilters as ListingFilters;
     var hasFilters = filters != null;
@@ -10,10 +12,10 @@
 }
 
 @section pageAlerts {
-<div class="alert alert-info alert-dismissable" id="message-exported-alert" style="display: none">
-    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-    <i class="fa fa-check" aria-hidden="true"></i> All reports have been exported.
-</div>}
+    <div class="alert alert-info alert-dismissable" id="message-exported-alert" style="display: none">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <i class="fa fa-check" aria-hidden="true"></i> All reports have been exported.
+    </div>}
 
 @section pageActionItems {
     <li class="multiselect-action"><a href="#" class="popup-export-report_open">Export</a></li>
@@ -22,7 +24,7 @@
 @section listingTable
 {
     @{ await Html.RenderPartialAsync("~/Views/Shared/_ReportResourceTreeNodePartial.cshtml", Model.Children); }
-    @{await Html.RenderPartialAsync("~/Views/Reporting/_ExportReportPartial.cshtml"); }
+@{await Html.RenderPartialAsync("~/Views/Reporting/_ExportReportPartial.cshtml"); }
 }
 
 @section Scripts {
