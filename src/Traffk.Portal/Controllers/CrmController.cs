@@ -363,6 +363,7 @@ namespace TraffkPortal.Controllers
                     Stuff.Noop();
                 }
                 await Rdb.SaveChangesAsync();
+                SetToast(AspHelpers.ToastMessages.Saved);
                 return RedirectToIndex();
             }
             await SetViewBagEmailTemplateItems();

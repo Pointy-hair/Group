@@ -8,11 +8,12 @@
     var isContentPage = ViewData.IsContentPage();
     var showPageActions = ViewData.HasPageActions() && (isFormPage || isContentPage);
     var showListingActions = ViewData.HasPageActions() && isListingPage;
+    var toastMessage = ViewData[AspHelpers.ViewDataKeys.ToastMessage];
 }
 <!-- alert-->
-<div class="alert alert-info alert-dismissable" id="@AspHelpers.ButtonActionNames.Save.ToLower()-alert">
+<div class="alert alert-info alert-dismissable" id="universal-alert">
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-    <i class="fa fa-check" aria-hidden="true"></i> Save completed successfully.
+    <i class="fa fa-check" aria-hidden="true"></i> @toastMessage
 </div>
 <div class="alert alert-info alert-dismissable" id="@AspHelpers.ButtonActionNames.Delete.ToLower()-alert">
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -25,7 +26,7 @@
 {
     <ul class="breadcrumbs">
         @RenderSection("breadcrumbItems", false)
-        <li>@ViewData[ViewDataKeys.Heading]</li>
+        <li>@ViewData[AspHelpers.ViewDataKeys.Heading]</li>
     </ul>
 }
 else
@@ -257,6 +258,12 @@ else
 
                 return popupMessages;
             }
+        </script>
+    }
+    @if (ViewData[AspHelpers.ViewDataKeys.ToastMessage] != null)
+    {
+        <script>
+            $("#universal-alert").fadeIn(500).delay(4000).hide(500);
         </script>
     }
 }

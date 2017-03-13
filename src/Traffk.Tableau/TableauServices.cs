@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -24,22 +22,24 @@ namespace Traffk.Tableau
             TrustedTicketGetter = trustedTicketGetter;
         }
 
-        public Task<string> GetTrustedTicket() => TrustedTicketGetter.GetTrustedTicket();
+        public async Task<string> GetTrustedTicket() =>
+            (await TrustedTicketGetter.AuthorizeAsync()).Token;
 
         [Produces("text/html")]
         public async Task<HttpContent> GetVisualization(string workbook, string view, string trustedTicket)
         {
-            var httpClient = new HttpClient();
+            using (var httpClient = new HttpClient())
+            {
+                var uri = new Uri($"{TableauSignInOptions.TrustedUrl}{trustedTicket}/views/{workbook}/{view}");
+                httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/html,application/xhtml+xml,application/xml");
+                httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:19.0) Gecko/20100101 Firefox/19.0");
+                httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Charset", "ISO-8859-1");
 
-            var uri = new Uri($"{TableauSignInOptions.TrustedUrl}{trustedTicket}/views/{workbook}/{view}");
-            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/html,application/xhtml+xml,application/xml");
-            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:19.0) Gecko/20100101 Firefox/19.0");
-            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Charset", "ISO-8859-1");
+                var response = await httpClient.GetAsync(uri);
 
-            var response = await httpClient.GetAsync(uri);
-
-            var httpContent = response.Content;
-            return httpContent;
+                var httpContent = response.Content;
+                return httpContent;
+            }
         }
     }
 }

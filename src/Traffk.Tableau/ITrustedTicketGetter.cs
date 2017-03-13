@@ -4,7 +4,6 @@ namespace Traffk.Tableau
 {
     public interface ITrustedTicketGetter
     {
-        Task<TrustedTicketGetter.TrustedTicketResult> Authorize();
-        Task<string> GetTrustedTicket();
+        Task<TrustedTicketGetter.TrustedTicketResult> AuthorizeAsync();
     }
 }

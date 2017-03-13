@@ -182,6 +182,7 @@ namespace TraffkPortal.Controllers
                         }
                     }
                     await Rdb.SaveChangesAsync();
+                    SetToast(AspHelpers.ToastMessages.Saved);
                     return RedirectToIndex();
                 }
             }
@@ -281,6 +282,7 @@ namespace TraffkPortal.Controllers
                     }
                     Rdb.Update(user);
                     await Rdb.SaveChangesAsync();
+                    SetToast(AspHelpers.ToastMessages.Saved);
                 }
                 catch (DbUpdateConcurrencyException)
                 {

@@ -11,7 +11,6 @@
 
     <link href="https://fonts.googleapis.com/css?family=Roboto:900" rel="stylesheet" />
     <script src="https://use.fontawesome.com/628ef57095.js"></script>
-    <link href='http://fontsforweb.com/font/getcss?id=2802&apikey=1099a5319f7a18cdfb872424da5e6ff5' rel='stylesheet' type='text/css'>
 
     <environment names="Development,Staging,Production">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
@@ -213,7 +212,7 @@
                 }
             </ul>
             <div class="nav navbar-right top-nav" id="primary-subnav-logo">
-                <a class="fontsforweb_BAUHS93" asp-controller="Home" asp-action="Index">Traffk</a>
+                <a class="BAUHS93" asp-controller="Home" asp-action="Index">Traffk</a>
             </div>
         </div>
         @await Html.PartialAsync("_LoginPartial")
@@ -341,25 +340,6 @@
 </environment>
 <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
 <script>tinymce.init({ selector: '.htmleditor', plugins: "code" });</script>
-<script>
-    function initViz(workbook, view, parameterString) {
-        var trustedTicket = getCookie("trustedTicket");
-        var viewUrl = "@Current.TableauSignInOptions.TrustedUrl" + trustedTicket + "/views/" + workbook + "/" + view;
-        if (parameterString) {
-            viewUrl = viewUrl + parameterString;
-        }
-        var containerDiv = document.getElementById("reportContainer"),
-            url = viewUrl,
-            options = {
-                hideTabs: true,
-                onFirstInteractive: function () {
-                }
-            };
-        // Create a viz object and embed it in the container div.
-        var viz = new tableau.Viz(containerDiv, url, options);
-    }
-</script>
-
 @RenderSection("scripts", required: false)
 @if (R.JavascriptLink != null)
 {

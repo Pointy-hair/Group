@@ -14,6 +14,8 @@ namespace TraffkPortal.Services.TenantServices
 {
     public class TenantFinderService : ITraffkTenantFinder
     {
+        public const string HttpContextTenantIdKey = "TenantId";
+
         public class TenantServiceFinderOptions
         {
             public int? TenantId { get; set; }
@@ -74,6 +76,7 @@ namespace TraffkPortal.Services.TenantServices
                     PreferredHostname = z.PreferredHostname;
                 }
             }
+            acc.HttpContext.Items[HttpContextTenantIdKey] = TenantId_p;
         }
     }
 }

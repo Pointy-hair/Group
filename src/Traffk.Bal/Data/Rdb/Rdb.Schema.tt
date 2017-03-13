@@ -337,66 +337,16 @@ foreach (var f in z.XPathSelectElements("Columns/Column"))
 	var customAttributeNames = GetPropertyValue(f, "CustomAttribute");
 	var displayName = GetPropertyValue(f, "DisplayName") ?? ToTitleFriendlyString(propertyName);
 	var sampleData = GetPropertyValue(f, "SampleData");
-	string maxLen = null;
-	bool canUseMaxLen = false;
-	bool isNullable = GetAttrValAsBool(f, "isNullable");
 	bool isPrimaryKey = GetAttrValAsBool(f, "isPrimaryKey");
 	var addToCopyConstructor = !isPrimaryKey;
 	if (isPrimaryKey)
 	{
 		primaryKeyPropertyName = propertyName;
 	}
-	string jsonSettingsClass = null;
-	string dataType;
-	switch (GetAttrVal(f, "sqlType"))
-	{
-		case "uniqueidentifier":
-			dataType = "Guid";
-			break;
-		case "smallint":
-			dataType = "int" + (isNullable ? "?" : "");//should be a ushort, but EF doesn't like that type with SQL Server
-			break;
-		case "tinyint":
-			dataType = "byte" + (isNullable ? "?" : "");
-			break;
-		case "money":
-		case "numeric":
-			dataType = "decimal" + (isNullable ? "?" : "");
-			break;
-		case "float":
-			dataType = "double" + (isNullable ? "?" : "");
-			break;
-		case "int":
-			dataType = "int" + (isNullable ? "?" : "");
-			break;
-		case "bigint":
-			dataType = "long" + (isNullable ? "?" : "");
-			break;
-		case "char":
-			dataType = isNullable ? "string" : "char";
-			break;
-		case "bit":
-			dataType = "bool" + (isNullable ? "?" : "");
-			break;
-		case "datetime":
-		case "date":
-			dataType = "DateTime" + (isNullable ? "?" : "");
-			break;
-		case "nvarchar":
-		case "varchar":
-			canUseMaxLen = true;
-			dataType = "string";
-			jsonSettingsClass = GetPropertyValue(f, "JsonSettingsClass");
-			break;
-		default:
-			dataType = "object";
-			break;
-	}
-	if (canUseMaxLen)
-	{
-		maxLen = GetAttrVal(f, "maxLen");
-		if (maxLen=="-1") maxLen = null;	
-	}
+	bool isNullable;
+	string maxLen;
+	string jsonSettingsClass;
+	string dataType = GetClrTypeFromColumn(f, out isNullable, out maxLen, out jsonSettingsClass);
 	if (comment!=null)
 	{
 #>
@@ -718,6 +668,65 @@ public string LeftOf(string s, string pivot)
 	var x = s.IndexOf(pivot);
 	if (x<0) return s;
 	return s.Substring(0, x);
+}
+
+public string GetClrTypeFromColumn(XElement f, out bool isNullable, out string maxLen, out string jsonSettingsClass)
+{
+	isNullable = GetAttrValAsBool(f, "isNullable");
+	maxLen = null;
+	jsonSettingsClass = null;
+	string dataType = null;
+	bool canUseMaxLen = false;
+	switch (GetAttrVal(f, "sqlType"))
+	{
+		case "uniqueidentifier":
+			dataType = "Guid";
+			break;
+		case "smallint":
+			dataType = "int" + (isNullable ? "?" : "");//should be a ushort, but EF doesn't like that type with SQL Server
+			break;
+		case "tinyint":
+			dataType = "byte" + (isNullable ? "?" : "");
+			break;
+		case "money":
+		case "numeric":
+			dataType = "decimal" + (isNullable ? "?" : "");
+			break;
+		case "float":
+			dataType = "double" + (isNullable ? "?" : "");
+			break;
+		case "int":
+			dataType = "int" + (isNullable ? "?" : "");
+			break;
+		case "bigint":
+			dataType = "long" + (isNullable ? "?" : "");
+			break;
+		case "char":
+			dataType = isNullable ? "string" : "char";
+			break;
+		case "bit":
+			dataType = "bool" + (isNullable ? "?" : "");
+			break;
+		case "datetime":
+		case "date":
+			dataType = "DateTime" + (isNullable ? "?" : "");
+			break;
+		case "nvarchar":
+		case "varchar":
+			canUseMaxLen = true;
+			dataType = "string";
+			jsonSettingsClass = GetPropertyValue(f, "JsonSettingsClass");
+			break;
+		default:
+			dataType = "object";
+			break;
+	}
+	if (canUseMaxLen)
+	{
+		maxLen = GetAttrVal(f, "maxLen");
+		if (maxLen=="-1") maxLen = null;	
+	}
+	return dataType;
 }
 public string SqlTypeToClrType(string sqlType)
 {

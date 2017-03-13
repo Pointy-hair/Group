@@ -3,7 +3,6 @@
   "dependencies": {
     "RevolutionaryStuff.Core": "1.0.0-*",
     "Traffk.Bal": "1.0.0-*",
-    "RevolutionaryStuff.PowerBiToys": "1.0.0-*",
     "Microsoft.Extensions.SecretManager": "1.0.0-rc1-final",
     //    "BundlerMinifier.Core": "2.1.258",
     "WindowsAzure.Storage": "7.2.1",

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
@@ -33,7 +34,6 @@ namespace TraffkPortal.Controllers
 
         [ActionName(ActionNames.Index)]
         [SetTableauTrustedTicket]
-        [SetPowerBiBearer]
         public IActionResult Index()
         {
             return View();
@@ -52,12 +52,6 @@ namespace TraffkPortal.Controllers
         {
             ViewData["Message"] = "Your contact page.";
 
-            return View();
-        }
-
-        [Route("/Error")]
-        public IActionResult Error()
-        {
             return View();
         }
 

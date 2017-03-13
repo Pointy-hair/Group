@@ -154,6 +154,7 @@ namespace TraffkPortal.Controllers
                      UserId = user.Id
                 });
                 await Rdb.SaveChangesAsync();
+                SetToast(AspHelpers.ToastMessages.Saved);
                 return RedirectToAction(ActionNames.TenantsList);
             }
             return View(ViewNames.TenantEdit, model);
@@ -214,6 +215,7 @@ namespace TraffkPortal.Controllers
                     tenant.TenantSettings.RequiresTwoFactorAuthentication = model.RequiresTwoFactorAuthentication;
                     tenant.TenantSettings.ProtectedHealthInformationViewableByEmailAddressHostnames = model.ProtectedHealthInformationViewableByEmailAddressHostnames;
                     await Rdb.SaveChangesAsync();
+                    SetToast(AspHelpers.ToastMessages.Saved);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -298,6 +300,7 @@ namespace TraffkPortal.Controllers
                     tenant.TenantSettings.Password.Copy(model);
                     Rdb.Update(tenant);
                     await Rdb.SaveChangesAsync();
+                    SetToast(AspHelpers.ToastMessages.Saved);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -359,6 +362,7 @@ namespace TraffkPortal.Controllers
                     }
                     Rdb.Update(tenant);
                     await Rdb.SaveChangesAsync();
+                    SetToast(AspHelpers.ToastMessages.Saved);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -419,6 +423,7 @@ namespace TraffkPortal.Controllers
                     tenant.TenantSettings.Smtp = new SmtpOptions(m);
                     Rdb.Update(tenant);
                     await Rdb.SaveChangesAsync();
+                    SetToast(AspHelpers.ToastMessages.Saved);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -529,6 +534,7 @@ namespace TraffkPortal.Controllers
                 }
                 rv.Value = model.Value;
                 await Rdb.SaveChangesAsync();
+                SetToast(AspHelpers.ToastMessages.Saved);
                 return RedirectToAction(ActionNames.ReusableValuesList);
             }
             return View(ViewNames.ReusableValueEdit, model);

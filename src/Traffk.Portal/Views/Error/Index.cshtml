@@ -1,0 +1,34 @@
+﻿@model TraffkPortal.Models.ErrorModels.ErrorModel
+@{
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
+    ViewData.SetTitleAndHeading("Error", @Model.StatusCode);
+}
+<div class="row">
+    <div class="panel medium-padding">
+        <p class="text-danger">
+            An error occurred while processing your request.
+        </p>
+        <div class="form-row">
+            @if (!String.IsNullOrEmpty(@Model.Type))
+            {
+                <label asp-for="@Model.Type"></label>
+                <p>@Model.Type</p>
+            }
+        </div>
+        <div class="form-row">
+            @if (!String.IsNullOrEmpty(@Model.Message))
+            {
+                <label asp-for="@Model.StatusCode"></label>
+                <p>@Model.StatusCode</p>
+            }
+        </div>
+
+        <div class="form-row">
+            @if (!String.IsNullOrEmpty(@Model.StackTrace))
+            {
+                <label asp-for="@Model.StackTrace"></label>
+                <p>@Model.StackTrace</p>
+            }
+        </div>
+    </div>
+</div>

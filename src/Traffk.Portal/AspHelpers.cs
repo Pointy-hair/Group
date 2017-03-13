@@ -54,6 +54,7 @@ namespace TraffkPortal
             public const string IsListingPage = "IsListingPage";
             public const string IsFormPage = "IsFormPage";
             public const string IsContentPage = "IsContentPage";
+            public const string ToastMessage = "ToastMessage";
         }
 
         public static class ButtonActionNames
@@ -62,6 +63,12 @@ namespace TraffkPortal
             public const string Delete = "Delete";
             public const string Sent = "Sent";
             public const string Sending = "Sending";
+        }
+
+        public static class ToastMessages
+        {
+            public const string Saved = "Items saved successfully.";
+            public const string Deleted = "Items deleted successfully.";
         }
 
         public static SelectListItem CreateNoneSelectedSelectListItem(bool preSelected=true) 

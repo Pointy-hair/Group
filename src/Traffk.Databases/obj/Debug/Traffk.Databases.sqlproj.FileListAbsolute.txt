@@ -1,0 +1,7 @@
+C:\src\traffk\Repos\HealthInformationPortal\src\Traffk.Databases\bin\Debug\Traffk.Databases.dacpac
+C:\src\traffk\Repos\HealthInformationPortal\src\Traffk.Databases\obj\Debug\Model.xml
+C:\src\traffk\Repos\HealthInformationPortal\src\Traffk.Databases\obj\Debug\refactor.xml
+C:\src\traffk\Repos\HealthInformationPortal\src\Traffk.Databases\obj\Debug\postdeploy.sql
+C:\src\traffk\Repos\HealthInformationPortal\src\Traffk.Databases\obj\Debug\predeploy.sql
+C:\src\traffk\Repos\HealthInformationPortal\src\Traffk.Databases\obj\Debug\Traffk.Databases.dll
+C:\src\traffk\Repos\HealthInformationPortal\src\Traffk.Databases\obj\Debug\Traffk.Databases.pdb

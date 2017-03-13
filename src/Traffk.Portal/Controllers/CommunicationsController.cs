@@ -16,6 +16,7 @@ using TraffkPortal.Models.CommunicationModels;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
 using System;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Traffk.Bal.Communications;
 
 namespace TraffkPortal.Controllers
@@ -159,7 +160,8 @@ namespace TraffkPortal.Controllers
                 comm.CampaignName = model.CampaignName;
                 comm.TopicName = model.TopicName;
                 await Rdb.SaveChangesAsync();
-                return new RedirectResult(Url.Action(ActionNames.CommunicationsList) + AspHelpers.ButtonActionNames.Save.PrependHash());
+                SetToast(AspHelpers.ToastMessages.Saved);
+                return RedirectToAction(ActionNames.CommunicationsList);
             }
             return await CommunicationEdit(id);
         }
@@ -199,6 +201,7 @@ namespace TraffkPortal.Controllers
                 Rdb.Communications.Update(item);
                 await Rdb.AddNextScheduledBlasts(id, false, true);
                 await Rdb.SaveChangesAsync();
+                SetToast(AspHelpers.ToastMessages.Saved);
                 return RedirectToAction(ActionNames.CommunicationDetails);
             }
             SetHeroLayoutViewData(item, CommunicationPageKeys.Schedule);
@@ -253,6 +256,7 @@ namespace TraffkPortal.Controllers
                     Rdb.Creatives.Add(creative);
                 }
                 await CreativeModelSaveAsync(model, creative);
+                SetToast(AspHelpers.ToastMessages.Saved);
                 return RedirectToAction(ActionNames.CommunicationDetails);
             }
             SetHeroLayoutViewData(comm, CommunicationPageKeys.Creative);
@@ -376,6 +380,7 @@ namespace TraffkPortal.Controllers
                     Rdb.Creatives.Add(creative);
                 }
                 await CreativeModelSaveAsync(model, creative);
+                SetToast(AspHelpers.ToastMessages.Saved);
                 return RedirectToAction(ActionNames.CreativesList);
             }
             SetHeroLayoutViewData(model, CreativePageKeys.Background);
