@@ -1,0 +1,63 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <AssemblyName>Traffk.Bal</AssemblyName>
+    <PackageId>Traffk.Bal</PackageId>
+    <PackageTargetFallback>$(PackageTargetFallback);dotnet5.6;dnxcore50;portable-net451+win8</PackageTargetFallback>
+    <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Data\DataStoreUpgrader\DDB\**" />
+    <EmbeddedResource Remove="Data\DataStoreUpgrader\DDB\**" />
+    <None Remove="Data\DataStoreUpgrader\DDB\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Data\DataStoreUpgrader\PostEF\0001.Traffk\001.Requirements.txt" />
+    <EmbeddedResource Include="Data\DataStoreUpgrader\PostEF\0001.Traffk\002.Structure.sql" />
+    <EmbeddedResource Include="Data\DataStoreUpgrader\PostEF\0001.Traffk\003.Bootstrap.sql" />
+    <EmbeddedResource Include="Data\DataStoreUpgrader\PostEF\0001.Traffk\004.Sprocs.sql" />
+    <EmbeddedResource Include="Data\DataStoreUpgrader\PostEF\0001.Traffk\005.Security.sql" />
+    <EmbeddedResource Include="Data\DataStoreUpgrader\PostEF\0002.Deerwalk\001.Requirements.txt" />
+    <EmbeddedResource Include="Data\DataStoreUpgrader\PostEF\0002.Deerwalk\002.Structure.sql" />
+    <EmbeddedResource Include="Data\DataStoreUpgrader\PostEF\0002.Deerwalk\003.Converters.sql" />
+    <EmbeddedResource Include="Data\DataStoreUpgrader\PostEF\0003.Migrate\001.Requirements.txt" />
+    <EmbeddedResource Include="Data\DataStoreUpgrader\PostEF\0003.Migrate\002.Sprocs.sql" />
+    <EmbeddedResource Include="Data\DataStoreUpgrader\Releases\0001.Database\001.Requirements.txt" />
+    <EmbeddedResource Include="Data\DataStoreUpgrader\Releases\0001.Database\002.Structure.sql" />
+    <EmbeddedResource Include="Data\DataStoreUpgrader\Releases\0002.Notes\001.Archon.sql" />
+    <EmbeddedResource Include="Data\DataStoreUpgrader\Releases\0002.Notes\002.BGame.sql" />
+    <EmbeddedResource Include="Data\DataStoreUpgrader\Releases\0002.Notes\003.CGame.sql" />
+    <EmbeddedResource Include="Data\DataStoreUpgrader\Releases\0002.Notes\004.DOOM.sql" />
+    <EmbeddedResource Include="Data\DataStoreUpgrader\Releases\0002.Notes\005.EGame.sql" />
+    <EmbeddedResource Include="Data\DataStoreUpgrader\Releases\0002.Notes\006.FGame.sql" />
+    <EmbeddedResource Include="Data\DataStoreUpgrader\Releases\0002.Notes\007.GGame.sql" />
+    <EmbeddedResource Include="Data\DataStoreUpgrader\Releases\0002.Notes\008.HGame.sql" />
+    <EmbeddedResource Include="Data\DataStoreUpgrader\Releases\0002.Notes\009.IGame.sql" />
+    <EmbeddedResource Include="Data\DataStoreUpgrader\Releases\0002.Notes\010.JGame.sql" />
+    <EmbeddedResource Include="Data\DataStoreUpgrader\Releases\0002.Notes\011.KGame.sql" />
+    <EmbeddedResource Include="Data\DefaultPasswordUnallowedWordList.txt" />
+    <EmbeddedResource Include="Data\DefaultProhibitedPasswordList.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RevolutionaryStuff.Core\RevolutionaryStuff.Core.csproj" />
+    <ProjectReference Include="..\Traffk.Tableau\Traffk.Tableau.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="cloudscribe.HtmlAgilityPack" Version="1.0.0" />
+    <PackageReference Include="WindowsAzure.Storage" Version="7.2.1" />
+    <PackageReference Include="MailKit" Version="1.10.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="1.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="1.1.1" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.3.0" />
+  </ItemGroup>
+
+</Project>

@@ -5,10 +5,6 @@
   DTS:CreationName="OLEDB">
   <DTS:ObjectData>
     <DTS:ConnectionManager
-      DTS:ConnectionString="Data Source=traffkrdb-dev.database.windows.net;User ID=EtlGuy;Initial Catalog=TraffkHip2;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;">
-      <DTS:Password
-        DTS:Name="Password"
-        Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAkEOnv00+2EyaABZnHklzIwAAAAACAAAAAAAQZgAAAAEAACAAAACpjoejjSwCNEJ0+0DWiWCqufZqd5yy6PEI8RA6vIEIHgAAAAAOgAAAAAIAACAAAAAz80cukzvUxiYAW0wB4d/7VHFnQzejgABYlgnF5xp4moAAAAAaVaIDzPJ1gSfKmOLoXQaLQ8otcybPP2ECm/04PUFiVYzKwneCNpIB/EsKLiC8AbmvEd4MQ+1blSxjnmnl2IENtUp7iXvBbqeT+IN4Co3eCGGrkXnDWiLsjcksWgzEYLK53/y1x7Z/kMZZTL/AiCeviUjjRWMc8g/XAUGwNAsRGEAAAAC0CGlEx17avJhC4KB4nbpUpXuy+fbxUJhe+bNjt7Is3K0QFcH5U5/U3p59Lta8UJQXwtZEMLd5GjqQZYuIiPbH</DTS:Password>
-    </DTS:ConnectionManager>
+      DTS:ConnectionString="Data Source=traffkrdb-dev.database.windows.net;User ID=EtlGuy;Initial Catalog=TraffkHip2;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;" />
   </DTS:ObjectData>
 </DTS:ConnectionManager>

@@ -183,7 +183,6 @@ namespace TraffkPortal
             services.AddScoped<ITableauTenantFinder, TableauTenantFinder>();
             services.AddScoped<IReportVisualService, ReportVisualService>();
 
-            services.AddScoped<SetPowerBiBearerActionFilter>();
             services.AddScoped<TableauTrustedTicketActionFilter>();
 
             services.Add(new ServiceDescriptor(typeof(ICacher), Cache.DataCacher));
