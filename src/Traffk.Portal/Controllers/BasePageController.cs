@@ -203,7 +203,7 @@ namespace TraffkPortal.Controllers
         }
 
         public static string CreateAnchorName(IReportResource reportResource) =>
-            ReportVisualService.CreateAnchorName(reportResource.Title?.Trim()?.ToUpperCamelCase()?.RemoveSpecialCharacters() ?? "");
+            ReportVisualService.CreateAnchorName(reportResource);
 
     }
 }

@@ -29,6 +29,7 @@ namespace Traffk.Bal.ReportVisuals
     {
         TreeNode<IReportResource> GetReportFolderTreeRoot(VisualContext visualContext, string reportTagFilter = null);
         IEnumerable<ReportVisual> GetReportVisuals(VisualContext visualContext, string reportTagFilter);
+        ReportVisual GetReportVisual(VisualContext context, string id);
 
         byte[] DownloadPreviewImageForTableauVisual(string workbookId, string viewId);
     }
@@ -43,16 +44,18 @@ namespace Traffk.Bal.ReportVisuals
         private HashSet<ReportMetaData> MockReportMetaData;
         private bool CanAccessPhi;
         private IEnumerable<string> TableauReportIds;
+        private ICacher Cacher;
 
         //Do we make these private?
         public string TableauTenantId { get; private set; }
 
         public ReportVisualService(ITableauRestService tableauRestService, TraffkRdbContext rdb, 
-            ITableauTenantFinder tableauTenantFinder, ICurrentUser currentUser)
+            ITableauTenantFinder tableauTenantFinder, ICurrentUser currentUser, ICacher cacher = null)
         {
             TableauRestService = tableauRestService;
             Rdb = rdb;
             TableauTenantFinder = tableauTenantFinder;
+            Cacher = cacher;
 
             TableauTenantId = TableauTenantFinder.GetTenantIdAsync().Result;
             CurrentUser = currentUser.User;
@@ -66,11 +69,56 @@ namespace Traffk.Bal.ReportVisuals
 
         TreeNode<IReportResource> IReportVisualService.GetReportFolderTreeRoot(VisualContext context, string reportTagFilter)
             => GetReportFolderTreeRoot(context, reportTagFilter);
+        ReportVisual IReportVisualService.GetReportVisual(VisualContext context, string id) 
+            => GetReportVisual(context, id);
 
-        public TreeNode<IReportResource> GetReportFolderTreeRoot(VisualContext visualContext, string reportTagFilter)
+        public ReportVisual GetReportVisual(VisualContext context, string id)
+        {
+            var root = GetReportFolderTreeRoot(context);
+            ReportVisual matchingReportVisual = null;
+            root.Walk((node, depth) =>
+            {
+                var currentReportVisual = node.Data as ReportVisual;
+                if (currentReportVisual == null) return;
+                var urlFriendlyReportName = CreateAnchorName(currentReportVisual);
+                if (id == currentReportVisual.Id || id == currentReportVisual.ParentId)
+                {
+                    matchingReportVisual = currentReportVisual;
+                }
+            });
+
+            return matchingReportVisual;
+        }
+
+        public TreeNode<IReportResource> GetReportFolderTreeRoot(VisualContext visualContext, string reportTagFilter = null)
+        {
+            var rootKey = visualContext.ToString() + reportTagFilter;
+            return Cacher.FindOrCreate(rootKey, key => GetTreeCacheEntry(visualContext, reportTagFilter)).Value;
+        }
+        
+        public IEnumerable<ReportVisual> GetReportVisuals(VisualContext visualContext, string reportTagFilter = null)
+        {
+            var tableauReports = GetTableauReportVisuals();
+            var tableauReportVisuals = tableauReports as IList<ITableauReportVisual> ?? tableauReports.ToList();
+            TableauReportIds = tableauReportVisuals.Select(t => t.Id);
+
+            var relevantReportMetaDatas = new HashSet<IReportMetaData>(GetRelevantReportMetaDatas(visualContext, reportTagFilter));
+
+            List<ReportVisual> visuals = new List<ReportVisual>();
+            foreach (var rmd in relevantReportMetaDatas)
+            {
+                var tableauReport = tableauReportVisuals.SingleOrDefault(x => x.Id == rmd.ExternalReportId);
+                var visual = (ReportVisual)Merge(tableauReport, rmd);
+                visuals.Add(visual);
+            }
+
+            return visuals;
+        }
+
+        private TreeNode<IReportResource> GetTreeCacheEntry(VisualContext visualContext, string reportTagFilter)
         {
             var root = new TreeNode<IReportResource>(new ReportVisualFolder("Root"));
-            var reportVisuals = (ICollection<ReportVisual>)(GetReportVisuals(visualContext, reportTagFilter) as ICollection<ReportVisual> ?? 
+            var reportVisuals = (ICollection<ReportVisual>)(GetReportVisuals(visualContext, reportTagFilter) as ICollection<ReportVisual> ??
                                 GetReportVisuals(visualContext, reportTagFilter).ToList());
 
             if (reportVisuals.Any())
@@ -106,25 +154,7 @@ namespace Traffk.Bal.ReportVisuals
             return new CacheEntry<TreeNode<IReportResource>>(root).Value;
         }
 
-        public IEnumerable<ReportVisual> GetReportVisuals(VisualContext visualContext, string reportTagFilter = null)
-        {
-            var tableauReports = GetTableauReportVisuals();
-            var tableauReportVisuals = tableauReports as IList<ITableauReportVisual> ?? tableauReports.ToList();
-            TableauReportIds = tableauReportVisuals.Select(t => t.Id);
 
-            var relevantReportMetaDatas = new HashSet<IReportMetaData>(GetRelevantReportMetaDatas(visualContext, reportTagFilter));
-
-            List<ReportVisual> visuals = new List<ReportVisual>();
-            foreach (var rmd in relevantReportMetaDatas)
-            {
-                var tableauReport = tableauReportVisuals.SingleOrDefault(x => x.Id == rmd.ExternalReportId);
-                var visual = (ReportVisual)Merge(tableauReport, rmd);
-                visuals.Add(visual);
-            }
-
-            return visuals;
-        }
-        
         private static IReportVisual Merge(ITableauReportVisual tableauReportVisual, IReportMetaData reportMetaData)
         {
             Requires.NonNull(reportMetaData.Description, nameof(reportMetaData.Description));
@@ -306,7 +336,8 @@ namespace Traffk.Bal.ReportVisuals
             return MockReportMetaData.Where(x => x.ExternalReportId == externalReportId); //missing check for delete bit
         }
 
-        public static string CreateAnchorName(string name) => name.Trim()?.ToLower()?.RemoveSpecialCharacters() ?? "";
+        public static string CreateAnchorName(IReportResource resource) => CreateAnchorName(resource.Title);
+        private static string CreateAnchorName(string name) => name.Trim()?.ToLower()?.RemoveSpecialCharacters() ?? "";
 
         public byte[] DownloadPreviewImageForTableauVisual(string workbookId, string viewId)
         {

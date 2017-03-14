@@ -32,9 +32,10 @@ namespace TraffkPortal.Controllers
     [Route("Crm")]
     public class CrmController : BasePageController
     {
-        public IReportVisualService ReportVisualService { get; }
-
         public const string Name = "Crm";
+        public const VisualContext ReportVisualContext = VisualContext.ContactPerson;
+
+        public IReportVisualService ReportVisualService { get; }
 
         public enum PageKeys
         {
@@ -519,11 +520,6 @@ namespace TraffkPortal.Controllers
             return null;
         }
 
-        private TreeNode<IReportResource> GetReportFolderTreeRoot()
-        {
-            return Cacher.FindOrCreate("crmreportsroot", key => ReportVisualService.GetReportFolderTreeRoot(VisualContext.ContactPerson)).Value;
-        }
-
         [Route("Contacts/{id}/Reports")]
         [ActionName(ActionNames.Reports)]
         public async Task<IActionResult> ReportIndex(long id)
@@ -532,7 +528,7 @@ namespace TraffkPortal.Controllers
             if (contact == null) return NotFound();
             SetHeroLayoutViewData(contact, PageKeys.Reports);
 
-            var root = GetReportFolderTreeRoot();
+            var root = ReportVisualService.GetReportFolderTreeRoot(ReportVisualContext);
             return View(root);
         }
 
@@ -544,26 +540,13 @@ namespace TraffkPortal.Controllers
             var contact = await FindContactByIdAsync(Convert.ToInt64(contactId));
             SetHeroLayoutViewData(contact, PageKeys.Messages);
 
-            var root = GetReportFolderTreeRoot();
-            TableauReportViewModel tableauReportViewModel = null;
-            root.Walk((node, depth) =>
+            var reportVisual = ReportVisualService.GetReportVisual(ReportVisualContext, id);
+            if (reportVisual == null)
             {
-                var matchingReportVisual = node.Data as ReportVisual;
-                if (matchingReportVisual == null) return;
-                var urlFriendlyReportName = CreateAnchorName(matchingReportVisual);
-                if (id == matchingReportVisual.Id || id == matchingReportVisual.ParentId)
-                {
-                    tableauReportViewModel = new TableauReportViewModel(matchingReportVisual);
-
-                    Log.Information(matchingReportVisual.Id + " ContactId: " + contactId);
-                }
-            });
-
-            if (tableauReportViewModel == null)
-            {
-                RedirectToAction(ActionNames.ContactBackground, id);
+                RedirectToAction(ActionNames.ContactBackground);
             }
-
+            Log.Information(reportVisual.Id + " ContactId: " + contactId);
+            var tableauReportViewModel = new TableauReportViewModel(reportVisual);
             return View(tableauReportViewModel);
         }
     }

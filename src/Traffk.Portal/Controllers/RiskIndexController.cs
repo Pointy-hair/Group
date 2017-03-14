@@ -29,8 +29,7 @@ namespace TraffkPortal.Controllers
     {
         public IReportVisualService ReportVisualService { get; }
         public const string Name = "RiskIndex";
-
-        private ICollection<string> RiskIndexReportNames;
+        public const VisualContext ReportVisualContext = VisualContext.Tenant;
 
         public static class ActionNames
         {
@@ -49,26 +48,14 @@ namespace TraffkPortal.Controllers
         {
             ReportVisualService = reportVisualService;
             AttachLogContextProperty(typeof(EventType).Name, EventType.LoggingEventTypes.Report.ToString());
-
-            //RiskIndexReportNames = new Collection<string>();
-            //var reportNames = new List<string> {"tables", "age", "urbanicity", "occupations", "diseaseincidence"};
-            //foreach (var name in reportNames)
-            //{
-            //    RiskIndexReportNames.Add((Name + name).ToLower());
-            //}
         }
 
         [Route("/RiskIndex")]
         [ActionName(ActionNames.Index)]
         public IActionResult Index()
         {
-            var root = GetReportFolderTreeRoot();
-            return View("Index", root);
-        }
-
-        private TreeNode<IReportResource> GetReportFolderTreeRoot()
-        {
-            return Cacher.FindOrCreate("riskindexreportroot", key => ReportVisualService.GetReportFolderTreeRoot(VisualContext.Tenant, ReportTagFilters.RiskIndex)).Value;
+            var root = ReportVisualService.GetReportFolderTreeRoot(ReportVisualContext, ReportTagFilters.RiskIndex);
+            return View(root);
         }
 
         [SetTableauTrustedTicket]
@@ -76,26 +63,13 @@ namespace TraffkPortal.Controllers
         [ActionName(ActionNames.Report)]
         public IActionResult Report(string id, string anchorName)
         {
-            var root = GetReportFolderTreeRoot();
-            TableauReportViewModel tableauReportViewModel = null;
-            root.Walk((node, depth) =>
-            {
-                var matchingReportVisual = node.Data as ReportVisual;
-                if (matchingReportVisual == null) return;
-                var urlFriendlyReportName = CreateAnchorName(matchingReportVisual);
-                if (anchorName == urlFriendlyReportName && (id == matchingReportVisual.Id || id == matchingReportVisual.ParentId))
-                {
-                    tableauReportViewModel = new TableauReportViewModel(matchingReportVisual);
-
-                    Log.Information(matchingReportVisual.Id);
-                }
-            });
-
-            if (tableauReportViewModel == null)
+            var reportVisual = ReportVisualService.GetReportVisual(ReportVisualContext, id);
+            if (reportVisual == null)
             {
                 RedirectToAction(ActionNames.Index);
             }
-
+            Log.Information(reportVisual.Id);
+            var tableauReportViewModel = new TableauReportViewModel(reportVisual);
             return View(tableauReportViewModel);
         }
     }

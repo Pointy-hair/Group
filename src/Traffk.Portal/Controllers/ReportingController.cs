@@ -28,6 +28,7 @@ namespace TraffkPortal.Controllers
     public class ReportingController : BasePageController
     {
         public const string Name = "Reporting";
+        public const VisualContext ReportVisualContext = VisualContext.Tenant;
 
         public IReportVisualService ReportVisualService { get; }
 
@@ -51,16 +52,11 @@ namespace TraffkPortal.Controllers
             AttachLogContextProperty(typeof(EventType).Name, EventType.LoggingEventTypes.Report.ToString());
         }
 
-        private TreeNode<IReportResource> GetReportFolderTreeRoot()
-        {
-            return Cacher.FindOrCreate("reportingroot", key=> ReportVisualService.GetReportFolderTreeRoot(VisualContext.Tenant)).Value;
-        }
-
         [Route("/Reporting")]
         [ActionName(ActionNames.Index)]
         public IActionResult Index()
         {
-            var root = GetReportFolderTreeRoot();
+            var root = ReportVisualService.GetReportFolderTreeRoot(ReportVisualContext);
             return View(root);
         }
 
@@ -69,26 +65,13 @@ namespace TraffkPortal.Controllers
         [ActionName(ActionNames.Report)]
         public IActionResult Report(string id, string anchorName)
         {
-            var root = GetReportFolderTreeRoot();
-            TableauReportViewModel tableauReportViewModel = null;
-            root.Walk((node, depth) =>
-            {
-                var matchingReportVisual = node.Data as ReportVisual;
-                if (matchingReportVisual == null) return;
-                var urlFriendlyReportName = CreateAnchorName(matchingReportVisual);
-                if (anchorName == urlFriendlyReportName && (id == matchingReportVisual.Id || id == matchingReportVisual.ParentId))
-                {
-                    tableauReportViewModel = new TableauReportViewModel(matchingReportVisual);
-                    
-                    Log.Information(matchingReportVisual.Id);
-                }
-            });
-
-            if (tableauReportViewModel == null)
+            var reportVisual = ReportVisualService.GetReportVisual(ReportVisualContext, id);
+            if (reportVisual == null)
             {
                 RedirectToAction(ActionNames.Index);
             }
-
+            Log.Information(reportVisual.Id);
+            var tableauReportViewModel = new TableauReportViewModel(reportVisual);
             return View(tableauReportViewModel);
         }
 
