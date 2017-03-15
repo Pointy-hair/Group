@@ -201,13 +201,13 @@ namespace TraffkPortal
 
             if (env.IsDevelopment())
             {
-                //app.UseExceptionHandler("/Error");
+                app.UseExceptionHandler("/E");
                 app.UseDatabaseErrorPage();
                 app.UseBrowserLink();
             }
             else
             {
-                app.UseExceptionHandler("/Error");
+                app.UseExceptionHandler("/E");
             }
 
             app.UseMiddleware<NoTenantMiddleware>();

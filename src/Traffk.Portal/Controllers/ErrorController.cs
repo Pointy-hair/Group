@@ -25,7 +25,14 @@ namespace TraffkPortal.Controllers
             public const string Index = "Index";
         }
 
-
+        public static class ErrorKeys
+        {
+            public const string StatusCode = "ExceptionStatusCode";
+            public const string Type = "ExceptionType";
+            public const string Message = "ExceptionMessage";
+            public const string StackTrace = "ExceptionStackTrace";
+        }
+        
         public ErrorController(
             TraffkRdbContext db,
             CurrentContextServices current,
@@ -37,19 +44,35 @@ namespace TraffkPortal.Controllers
             HostingEnvironment_p = hostingEnvironment;
         }
 
+        [Route("/E")]
+        public IActionResult E()
+        {
+            var exception = HttpContext.Features.Get<IExceptionHandlerFeature>();
+            ViewData[ErrorKeys.StatusCode] = HttpContext.Response.StatusCode;
+
+            if (HostingEnvironment_p.IsDevelopment() && exception != null)
+            {
+                SetException(exception.Error);
+            }
+
+            return RedirectToAction(ActionNames.Index, ErrorController.Name);
+        }
+
         [Route("/Error")]
         [ActionName(ActionNames.Index)]
         public IActionResult Index()
         {
-            var exception = HttpContext.Features.Get<IExceptionHandlerFeature>();
-            var errorModel = new ErrorModel(HttpContext.Response.StatusCode.ToString());
-            if (HostingEnvironment_p.IsDevelopment())
-            {
-                errorModel.Type = exception.GetType().Name;
-                errorModel.Message = exception.Error.Message;
-                errorModel.StackTrace = exception.Error.StackTrace;
-            }
+            var errorModel = new ErrorModel(ViewData[ErrorKeys.StatusCode]?.ToString() ?? "");
+            errorModel.Message = ViewData[ErrorKeys.Message]?.ToString() ?? "";
+            errorModel.Type = ViewData[ErrorKeys.Type]?.ToString() ?? "";
+            errorModel.StackTrace = ViewData[ErrorKeys.StackTrace]?.ToString() ?? "";
             return View(errorModel);
+        }
+
+        [Route("/Te")]
+        public IActionResult Te()
+        {
+            throw new NotImplementedException();
         }
     }
 }

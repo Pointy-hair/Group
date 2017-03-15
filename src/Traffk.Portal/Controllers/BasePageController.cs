@@ -178,6 +178,12 @@ namespace TraffkPortal.Controllers
             ViewData[ViewDataKeys.MainNavPageKey] = MainNavPageKey;
             ViewData[ViewDataKeys.TenantName] = Current.TenantId.ToString();
             ViewData[ViewDataKeys.ToastMessage] = TempData[ViewDataKeys.ToastMessage];
+
+            ViewData[ViewDataKeys.ExceptionStatusCode] = TempData[ViewDataKeys.ExceptionStatusCode];
+            ViewData[ViewDataKeys.ExceptionType] = TempData[ViewDataKeys.ExceptionType];
+            ViewData[ViewDataKeys.ExceptionMessage] = TempData[ViewDataKeys.ExceptionMessage];
+            ViewData[ViewDataKeys.ExceptionStackTrace] = TempData[ViewDataKeys.ExceptionStackTrace];
+
             return base.OnActionExecutionAsync(context, next);
             /*
             var setTenant = Task.Run(() =>
@@ -200,6 +206,14 @@ namespace TraffkPortal.Controllers
         protected void SetToast(string toastMessage)
         {
             TempData[ViewDataKeys.ToastMessage] = toastMessage;
+        }
+
+        protected void SetException(Exception exception)
+        {
+            TempData[ViewDataKeys.ExceptionStatusCode] = HttpContext.Response.StatusCode;
+            TempData[ViewDataKeys.ExceptionType] = exception.GetType().Name;
+            TempData[ViewDataKeys.ExceptionMessage] = exception.Message;
+            TempData[ViewDataKeys.ExceptionStackTrace] = exception.StackTrace;
         }
 
         public static string CreateAnchorName(IReportResource reportResource) =>

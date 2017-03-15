@@ -55,6 +55,11 @@ namespace TraffkPortal
             public const string IsFormPage = "IsFormPage";
             public const string IsContentPage = "IsContentPage";
             public const string ToastMessage = "ToastMessage";
+
+            public const string ExceptionStatusCode = "ExceptionStatusCode";
+            public const string ExceptionType = "ExceptionType";
+            public const string ExceptionMessage = "ExceptionMessage";
+            public const string ExceptionStackTrace = "ExceptionStackTrace";
         }
 
         public static class ButtonActionNames
