@@ -14,7 +14,7 @@
     <li><a asp-controller="@Name" asp-action="@ActionNames.Index" id="IndexLink">Roles</a> <span>></span> </li>
 }
 @section pageActionItems {
-    <li><a onclick="deleteRole('@Model.Id', function(){location=$('#IndexLink').attr('href');})" class="confirm-on-click" confirmHeading="Are you sure?" confirmMessage="Are you sure you want to delete role: @Model.RoleName?">Delete</a></li>
+    <li><a onclick="deleteRoleWithRedirect('@Model.Id', function(){location=$('#IndexLink').attr('href');})" class="confirm-on-click" confirmHeading="Are you sure?" confirmMessage="Are you sure you want to delete role: @Model.RoleName?">Delete</a></li>
 }
 
 <form asp-action="Edit">

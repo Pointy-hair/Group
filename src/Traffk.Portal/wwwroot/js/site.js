@@ -223,12 +223,8 @@ function idleReactivate() {
 
 }
 
-function popupConfirmReload(element) {
+function popupConfirmHide() {
     $('#popup-confirm').popup('hide');
-    var action = element.innerText.toLowerCase();
-    if (action === "delete") {
-        $("#delete-alert").fadeIn(500).delay(4000).hide(500);
-    }
 };
 
 function onSend(itemText) {
@@ -316,14 +312,6 @@ $(document).ready(function () {
             $('#popup-confirm').popup('show');
         });
     });
-
-    if (window.location.search.toLowerCase().indexOf("save") >= 0) {
-        $("#save-alert").fadeIn(500).delay(4000).hide(500);
-    }
-
-    if (window.location.search.toLowerCase().indexOf("delete") >= 0) {
-        $("#delete-alert").fadeIn(500).delay(4000).hide(500);
-    }
 
     //Remove filter tags
     jQuery('.filter-tags li a').click(function () {
@@ -537,6 +525,7 @@ function deleteByIds(url, ids, onSuccess) {
         if (onSuccess == null) {
             deleteRowsWithContextIds(ids);
             updateSelectionMessaging();
+            $("#delete-alert").fadeIn(500).delay(4000).hide(500);
         }
         else {
             onSuccess(ids);
@@ -555,12 +544,20 @@ function deleteRoles(ids, onSuccess) {
     return deleteByIds("/roles/delete", ids, onSuccess);
 }
 
+function deleteRoleWithRedirect(id, onSuccess) {
+    return deleteByIds("/roles/delete?redirect=true", [id], onSuccess);
+}
+
 function deleteUser(id, onSuccess) {
     deleteUsers([id], onSuccess);
 }
 
 function deleteUsers(ids, onSuccess) {
     return deleteByIds("/users/delete", ids, onSuccess);
+}
+
+function deleteUserWithRedirect(id, onSuccess) {
+    return deleteByIds("/users/delete?redirect=true", [id], onSuccess);
 }
 
 function deleteContact(id, onSuccess) {

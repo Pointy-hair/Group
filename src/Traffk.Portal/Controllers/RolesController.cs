@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Permissions;
 using TraffkPortal.Services;
+using static TraffkPortal.AspHelpers;
 
 namespace TraffkPortal.Controllers
 {
@@ -141,7 +142,14 @@ namespace TraffkPortal.Controllers
         }
 
         [HttpDelete]
-        public Task<IActionResult> Delete() => JsonDeleteFromRdbAsync<ApplicationRole, string>(Rdb.Roles);
+        public Task<IActionResult> Delete(bool redirect = false)
+        {
+            if (redirect)
+            {
+                SetToast(ToastMessages.Deleted);
+            }
+            return JsonDeleteFromRdbAsync<ApplicationRole, string>(Rdb.Roles);
+        } 
     }
 }
 

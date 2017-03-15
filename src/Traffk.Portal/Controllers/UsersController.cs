@@ -17,6 +17,7 @@ using TraffkPortal.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Traffk.Bal.Communications;
+using static TraffkPortal.AspHelpers;
 
 namespace TraffkPortal.Controllers
 {
@@ -357,6 +358,13 @@ namespace TraffkPortal.Controllers
 
         [HttpDelete]
         [Route("/users/delete")]
-        public Task<IActionResult> Delete() => JsonDeleteFromRdbAsync<ApplicationUser, string>(Rdb.Users);
+        public Task<IActionResult> Delete(bool redirect = false)
+        {
+            if (redirect)
+            {
+                SetToast(ToastMessages.Deleted);
+            }
+            return JsonDeleteFromRdbAsync<ApplicationUser, string>(Rdb.Users);
+        }
     }
 }
