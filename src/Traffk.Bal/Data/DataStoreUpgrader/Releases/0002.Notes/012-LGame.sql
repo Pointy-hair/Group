@@ -1,4 +1,4 @@
-﻿insert into Releases values ('urn:traffk.com/portal', '2017-02-19', 'Leisure Suit Larry', null)
+﻿insert into Releases values ('urn:traffk.com/portal', '2017-02-21', 'Leisure Suit Larry', null)
 
 GO
 
