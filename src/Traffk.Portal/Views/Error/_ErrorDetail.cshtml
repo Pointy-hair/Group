@@ -1,0 +1,33 @@
+﻿@using TraffkPortal.Models.ErrorModels
+@model TraffkPortal.Models.ErrorModels.ErrorModel
+
+<div class="form-row">
+    @if (!String.IsNullOrEmpty(Model.Type))
+            {
+        <label asp-for="@Model.Type"></label>
+                <p>@Model.Type</p>
+    }
+</div>
+<div class="form-row">
+    @if (!String.IsNullOrEmpty(Model.Message))
+            {
+        <label asp-for="@Model.Message"></label>
+                <p>@Model.Message</p>
+    }
+</div>
+
+<div class="form-row">
+    @if (!String.IsNullOrEmpty(Model.StackTrace))
+    {
+        <label asp-for="@Model.StackTrace"></label>
+        <p>@Model.StackTrace</p>
+    }
+</div>
+
+@if (Model.InnerErrorModels != null)
+{
+    foreach (var innerError in Model.InnerErrorModels)
+    {
+        await Html.RenderPartialAsync("~/Views/Error/_ErrorDetail.cshtml", innerError);
+    }
+}

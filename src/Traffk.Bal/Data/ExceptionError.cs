@@ -26,6 +26,10 @@ namespace Traffk.Bal.Data
         [DataMember(Name = "innerErrors")]
         public IList<ExceptionError> InnerErrors { get; set; }
 
+        [JsonProperty("errorStackTrace")]
+        [DataMember(Name = "errorStackTrace")]
+        public string ErrorStackTrace { get; set; }
+
         public ExceptionError()
         { }
 
@@ -34,6 +38,7 @@ namespace Traffk.Bal.Data
             ErrorType = ex.GetType().Name;
             ErrorMessage = ex.Message;
             ErrorCode = BaseCodedException.GetCode(ex);
+            ErrorStackTrace = ex.StackTrace;
             var kids = new List<ExceptionError>();
             if (ex.InnerException != null)
             {
@@ -50,5 +55,9 @@ namespace Traffk.Bal.Data
         }
 
         public string ToJson() => JsonConvert.SerializeObject(this);
+
+        public static ExceptionError CreateExceptionErrorFromJson(string json)
+            => JsonConvert.DeserializeObject<ExceptionError>(json);
+        
     }
 }

@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Traffk.Bal.Data;
 
 namespace TraffkPortal.Models.ErrorModels
 {
@@ -21,9 +22,22 @@ namespace TraffkPortal.Models.ErrorModels
         [DisplayName("Stack Trace")]
         public string StackTrace { get; set; }
 
-        public ErrorModel(string statusCode)
+        public List<ErrorModel> InnerErrorModels { get; set; }
+
+        public ErrorModel(string statusCode, ExceptionError exception)
         {
             StatusCode = statusCode;
+            Type = exception.ErrorType;
+            Message = exception.ErrorMessage;
+            StackTrace = exception.ErrorStackTrace;
+            if (exception.InnerErrors != null)
+            {
+                InnerErrorModels = new List<ErrorModel>();
+                foreach (var innerError in exception.InnerErrors)
+                {
+                    InnerErrorModels.Add(new ErrorModel(statusCode, innerError));
+                }
+            }
         }
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RevolutionaryStuff.Core.Caching;
+using Traffk.Bal.Data;
 using Traffk.Bal.Data.Rdb;
 using TraffkPortal.Models.ErrorModels;
 using TraffkPortal.Services;
@@ -62,17 +63,17 @@ namespace TraffkPortal.Controllers
         [ActionName(ActionNames.Index)]
         public IActionResult Index()
         {
-            var errorModel = new ErrorModel(ViewData[ErrorKeys.StatusCode]?.ToString() ?? "");
-            errorModel.Message = ViewData[ErrorKeys.Message]?.ToString() ?? "";
-            errorModel.Type = ViewData[ErrorKeys.Type]?.ToString() ?? "";
-            errorModel.StackTrace = ViewData[ErrorKeys.StackTrace]?.ToString() ?? "";
+            var exception = ExceptionError.CreateExceptionErrorFromJson(TempData[Name].ToString());
+
+            var errorModel = new ErrorModel(ViewData[ErrorKeys.StatusCode]?.ToString() ?? "", exception);
+
             return View(errorModel);
         }
 
-        [Route("/Te")]
-        public IActionResult Te()
+        protected void SetException(Exception exception)
         {
-            throw new NotImplementedException();
+            TempData[Name] = new ExceptionError(exception).ToJson();
+            TempData[AspHelpers.ViewDataKeys.ExceptionStatusCode] = HttpContext.Response.StatusCode;
         }
     }
 }
