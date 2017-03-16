@@ -27,6 +27,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RevolutionaryStuff.Core.Tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Traffk.Portal.Tests", "tests\Traffk.Portal.Tests\Traffk.Portal.Tests.csproj", "{562D7A47-AC94-4F4A-B430-31D514064154}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Traffk.CommunicationBlaster", "src\Traffk.CommunicationBlaster\Traffk.CommunicationBlaster.csproj", "{28322F08-EB95-415B-8ECF-4B25DAB12E16}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Traffk.CommunicationBlaster.Tests", "tests\Traffk.CommunicationBlaster.Tests\Traffk.CommunicationBlaster.Tests.csproj", "{F3D583B4-ADEA-41A6-86EE-B6272B1BA38B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,6 +69,14 @@ Global
 		{562D7A47-AC94-4F4A-B430-31D514064154}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{562D7A47-AC94-4F4A-B430-31D514064154}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{562D7A47-AC94-4F4A-B430-31D514064154}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28322F08-EB95-415B-8ECF-4B25DAB12E16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28322F08-EB95-415B-8ECF-4B25DAB12E16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28322F08-EB95-415B-8ECF-4B25DAB12E16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28322F08-EB95-415B-8ECF-4B25DAB12E16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3D583B4-ADEA-41A6-86EE-B6272B1BA38B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3D583B4-ADEA-41A6-86EE-B6272B1BA38B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3D583B4-ADEA-41A6-86EE-B6272B1BA38B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3D583B4-ADEA-41A6-86EE-B6272B1BA38B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -78,5 +90,7 @@ Global
 		{7368E6A2-A35C-4A81-B8C4-8A403C3AE070} = {D5AB1A3B-756E-4823-80F8-9A91ECB492AE}
 		{05EB3B16-0A65-417F-B3A2-84F355400BFC} = {6FD7D644-BE42-456F-9689-8B8BD0952A5D}
 		{562D7A47-AC94-4F4A-B430-31D514064154} = {D5AB1A3B-756E-4823-80F8-9A91ECB492AE}
+		{28322F08-EB95-415B-8ECF-4B25DAB12E16} = {2D992A1D-203B-461A-B1C1-312F64C77810}
+		{F3D583B4-ADEA-41A6-86EE-B6272B1BA38B} = {D5AB1A3B-756E-4823-80F8-9A91ECB492AE}
 	EndGlobalSection
 EndGlobal

@@ -142,9 +142,9 @@ namespace TraffkPortal.Controllers
         }
 
         [HttpDelete]
-        public Task<IActionResult> Delete(bool redirect = false)
+        public Task<IActionResult> Delete(bool showToast = false)
         {
-            if (redirect)
+            if (showToast)
             {
                 SetToast(ToastMessages.Deleted);
             }

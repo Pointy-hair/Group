@@ -1,6 +1,7 @@
 @using static TraffkPortal.Controllers.UsersController
 @model TraffkPortal.Models.UserModels.UserModel
 @{
+    ViewData.SetTitleAndHeading(Model.UserName);
     Layout = "_LayoutUser.cshtml";
     ViewData.IsFormPage(true);
 

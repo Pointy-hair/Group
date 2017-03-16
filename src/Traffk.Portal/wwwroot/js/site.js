@@ -234,13 +234,17 @@ function onSend(itemText) {
 
 function onSentSuccess(itemText) {
     $('#sent-alert-item-text').text(itemText);
-    $("#sent-alert").fadeIn(500).delay(4000).hide(500);
+    toastAppearDisappear($('#sent-alert'));
     $("#sending-alert").hide(500);
 }
 
 function setUI() {
     jQuery('#primary-subnav .dropdown-menu').width(window.innerWidth + 20); /* offset by 20, has a -20px left margin */
     jQuery('#primary-subnav .dropdown-menu .dropdown-submenu').width("auto"); /* offset by 20, has a -20px left margin */
+}
+
+function toastAppearDisappear(element) {
+    element.fadeIn(500).delay(4000).hide(500);
 }
 
 $(document).ready(function () {
@@ -525,7 +529,7 @@ function deleteByIds(url, ids, onSuccess) {
         if (onSuccess == null) {
             deleteRowsWithContextIds(ids);
             updateSelectionMessaging();
-            $("#delete-alert").fadeIn(500).delay(4000).hide(500);
+            toastAppearDisappear($('#delete-alert'));
         }
         else {
             onSuccess(ids);
@@ -545,7 +549,7 @@ function deleteRoles(ids, onSuccess) {
 }
 
 function deleteRoleWithRedirect(id, onSuccess) {
-    return deleteByIds("/roles/delete?redirect=true", [id], onSuccess);
+    return deleteByIds("/roles/delete?showToast=true", [id], onSuccess);
 }
 
 function deleteUser(id, onSuccess) {
@@ -557,7 +561,7 @@ function deleteUsers(ids, onSuccess) {
 }
 
 function deleteUserWithRedirect(id, onSuccess) {
-    return deleteByIds("/users/delete?redirect=true", [id], onSuccess);
+    return deleteByIds("/users/delete?showToast=true", [id], onSuccess);
 }
 
 function deleteContact(id, onSuccess) {

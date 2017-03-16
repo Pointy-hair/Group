@@ -45,3 +45,35 @@
 /tests/RevolutionaryStuff.SqlSchemaFoundations.Tests/bin
 *.lock.json
 /.vs/config/applicationhost.config
+/TraffkHealthInformationPortal-Migrations/.vs/config/applicationhost.config
+/TraffkHealthInformationPortal-Migrations/Backup/RevolutionaryStuff.Core.xproj
+/TraffkHealthInformationPortal-Migrations/Backup/Traffk.CommunicationBlastRunner.xproj
+/TraffkHealthInformationPortal-Migrations/Backup/project (2).json
+/TraffkHealthInformationPortal-Migrations/Backup/project.json
+/TraffkHealthInformationPortal-Migrations/Backup1/Traffk.CommunicationBlaster.Tests.xproj
+/TraffkHealthInformationPortal-Migrations/Backup1/Traffk.Tableau.xproj
+/TraffkHealthInformationPortal-Migrations/Backup1/project (2).json
+/TraffkHealthInformationPortal-Migrations/Backup1/project.json
+/TraffkHealthInformationPortal-Migrations/Backup2/Traffk.Bal.xproj
+/TraffkHealthInformationPortal-Migrations/Backup2/project.json
+/TraffkHealthInformationPortal-Migrations/Backup3/Traffk.Portal.xproj
+/TraffkHealthInformationPortal-Migrations/Backup3/project.json
+/TraffkHealthInformationPortal-Migrations/TraffkHealthInformationPortalTests-Migrations/Backup/Traffk.Tableau.Tests.xproj
+/TraffkHealthInformationPortal-Migrations/TraffkHealthInformationPortalTests-Migrations/Backup/global.json
+/TraffkHealthInformationPortal-Migrations/TraffkHealthInformationPortalTests-Migrations/Backup/project.json
+/TraffkHealthInformationPortal-Migrations/TraffkHealthInformationPortalTests-Migrations/Backup1/Traffk.Bal.Tests.xproj
+/TraffkHealthInformationPortal-Migrations/TraffkHealthInformationPortalTests-Migrations/Backup1/project.json
+/TraffkHealthInformationPortal-Migrations/TraffkHealthInformationPortalTests-Migrations/Backup2/RevolutionaryStuff.Core.Tests.xproj
+/TraffkHealthInformationPortal-Migrations/TraffkHealthInformationPortalTests-Migrations/Backup2/project.json
+/TraffkHealthInformationPortal-Migrations/TraffkHealthInformationPortalTests-Migrations/Backup3/Traffk.Portal.Tests.xproj
+/TraffkHealthInformationPortal-Migrations/TraffkHealthInformationPortalTests-Migrations/Backup3/project.json
+/TraffkHealthInformationPortal-Migrations/TraffkHealthInformationPortalTests-Migrations/UpgradeLog.htm
+/TraffkHealthInformationPortal-Migrations/TraffkHealthInformationPortalTests-Migrations/UpgradeLog2.htm
+/TraffkHealthInformationPortal-Migrations/TraffkHealthInformationPortalTests-Migrations/UpgradeLog3.htm
+/TraffkHealthInformationPortal-Migrations/TraffkHealthInformationPortalTests-Migrations/UpgradeLog4.htm
+/TraffkHealthInformationPortal-Migrations/UpgradeLog (2).htm
+/TraffkHealthInformationPortal-Migrations/UpgradeLog.htm
+/TraffkHealthInformationPortal-Migrations/UpgradeLog2 (2).htm
+/TraffkHealthInformationPortal-Migrations/UpgradeLog2.htm
+/TraffkHealthInformationPortal-Migrations/UpgradeLog3.htm
+/TraffkHealthInformationPortal-Migrations/UpgradeLog4.htm
