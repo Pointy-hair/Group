@@ -12,28 +12,31 @@
     <li><a asp-controller="@Name" asp-action="@ActionNames.UserList">Users</a> <span>></span> </li>
 }
 <form asp-action="@ActionNames.UserCreateSave" class="inline-form">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
     <div class="row">
-        <div class="col-sm-12"></div>
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="form-row">
-            <label asp-for="Emails"></label>
-            <textarea asp-for="Emails" class="form-control" ></textarea>
-            <span asp-validation-for="Emails" class="text-danger"/>
+        <div class="col-sm-12">
+            <div class="form-row">
+                <label asp-for="Emails"></label>
+                <textarea asp-for="Emails" class="form-control"></textarea>
+                <span asp-validation-for="Emails" class="text-danger" />
+            </div>
+            <div class="form-row">
+                <label asp-for="AssignedRoleIds">Roles</label>
+                <select asp-for="AssignedRoleIds"
+                        asp-items="ViewBag.RoleListItems"></select>
+            </div>
+            <div class="form-row">
+                <label asp-for="SendInvitationEmail"></label>
+                <input asp-for="SendInvitationEmail" />
+            </div>
+            <div class="form-row">
+                <label asp-for="InvitationText"></label>
+                <textarea asp-for="InvitationText" class="form-control"></textarea>
+                <span asp-validation-for="InvitationText" class="text-danger" />
+            </div>
         </div>
-        <div class="form-row">
-            <label asp-for="AssignedRoleIds">Roles</label>
-            <select asp-for="AssignedRoleIds"
-                    asp-items="ViewBag.RoleListItems"></select>
-        </div>
-        <div class="form-row">
-            <label asp-for="SendInvitationEmail"></label>
-            <input asp-for="SendInvitationEmail"/>
-        </div>
-        <div class="form-row">
-            <label asp-for="InvitationText"></label>
-            <textarea asp-for="InvitationText" class="form-control"></textarea>
-            <span asp-validation-for="InvitationText" class="text-danger"/>
-        </div>
+       
     </div>
     <div class="row">
         <div class="col-xs-12 text-right">

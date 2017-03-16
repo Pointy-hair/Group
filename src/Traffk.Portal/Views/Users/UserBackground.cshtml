@@ -14,78 +14,61 @@
 @section pageActionItems {
     <li><a onclick="deleteUserWithRedirect('@Model.Id', function(){location=$('#IndexLink').attr('href');})" class="confirm-on-click" confirmHeading="Are you sure?" confirmMessage="Are you sure you want to delete user: @Model.UserName?">Delete</a></li>
 }
-<form asp-action="@ActionNames.UserBackgroundSave">
-    <div class="form-horizontal">
+<form asp-action="@ActionNames.UserBackgroundSave" class="inline-form">
+    <div class="row">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <input type="hidden" asp-for="Id" />
-        <div class="form-group">
-            <label asp-for="UserName" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
+        <div class="col-xs-12">
+            <input type="hidden" asp-for="Id" />
+            <div class="form-row">
+                <label asp-for="UserName"></label>
                 <input asp-for="UserName" class="form-control" />
                 <span asp-validation-for="UserName" class="text-danger" />
             </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="Email" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
+            <div class="form-row">
+                <label asp-for="Email"></label>
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger" />
             </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="EmailConfirmed" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="EmailConfirmed" class="form-control" />
+            <div class="form-row">
+                <label asp-for="EmailConfirmed"></label>
+                <input asp-for="EmailConfirmed"/>
             </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="AccessFailedCount" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
+            <div class="form-row">
+                <label asp-for="AccessFailedCount"></label>
                 <input asp-for="AccessFailedCount" class="form-control" />
                 <span asp-validation-for="AccessFailedCount" class="text-danger" />
             </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="LockoutEnabled" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="LockoutEnabled" class="form-control" />
+            <div class="form-row">
+                <label asp-for="LockoutEnabled"></label>
+                <input asp-for="LockoutEnabled"/>
             </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="LockoutEnd" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
+            <div class="form-row">
+                <label asp-for="LockoutEnd"></label>
                 <input asp-for="LockoutEnd" class="form-control" />
                 <span asp-validation-for="LockoutEnd" class="text-danger" />
             </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="PhoneNumber" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
+            <div class="form-row">
+                <label asp-for="PhoneNumber"></label>
                 <input asp-for="PhoneNumber" class="form-control" />
                 <span asp-validation-for="PhoneNumber" class="text-danger" />
             </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="PhoneNumberConfirmed" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="PhoneNumberConfirmed" class="form-control" />
+            <div class="form-row">
+                <label asp-for="PhoneNumberConfirmed"></label>
+                    <input asp-for="PhoneNumberConfirmed"/>
             </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="TwoFactorEnabled" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="TwoFactorEnabled" class="form-control" />
+            <div class="form-row">
+                <label asp-for="TwoFactorEnabled"></label>
+                <input asp-for="TwoFactorEnabled" />
             </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="AssignedRoleIds" class="col-md-2 control-label">Roles</label>
-            <div class="col-md-10">
+            <div class="form-row">
+                <label asp-for="AssignedRoleIds">Roles</label>
                 <select asp-for="AssignedRoleIds" multiple="multiple"
                         asp-items="ViewBag.RoleListItems"></select>
             </div>
+
         </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
+        <div class="row">
+            <div class="col-xs-12 text-right">
                 <input type="submit" value="Save" class="btn btn-default btn-primary btn-large" />
             </div>
         </div>

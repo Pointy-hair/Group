@@ -17,28 +17,27 @@
     <li><a onclick="deleteRoleWithRedirect('@Model.Id', function(){location=$('#IndexLink').attr('href');})" class="confirm-on-click" confirmHeading="Are you sure?" confirmMessage="Are you sure you want to delete role: @Model.RoleName?">Delete</a></li>
 }
 
-<form asp-action="Edit">
-    <div class="form-horizontal">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <input type="hidden" asp-for="Id" />
-        <input type="hidden" asp-for="InitialPermissionList" />
-        <div class="form-group">
-            <label asp-for="RoleName" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="RoleName" class="form-control" />
-                <span asp-validation-for="RoleName" class="text-danger" />
+<form asp-action="Edit" class="inline-form">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+        <div class="col-sm-12">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="InitialPermissionList" />
+            <div class="form-row">
+                <label asp-for="RoleName"></label>
+                    <input asp-for="RoleName" class="form-control" />
+                    <span asp-validation-for="RoleName" class="text-danger" />
+            </div>
+            <div class="form-row">
+                <label asp-for="SelectedPermissions">Permissions</label>
+                    <select asp-items="Model.InitialPermissionList" multiple="multiple" asp-for="SelectedPermissions"></select>
             </div>
         </div>
-        <div class="form-group">
-            <label asp-for="SelectedPermissions" class="col-md-2 control-label">Permissions</label>
-            <div class="col-md-10">
-                <select asp-items="Model.InitialPermissionList" multiple="multiple" asp-for="SelectedPermissions"></select>
-            </div>
         </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default btn-primary btn-large" />
-            </div>
+
+    <div class="row">
+        <div class="col-xs-12 text-right">
+            <input type="submit" value="Save" class="btn btn-default btn-primary btn-large" />
         </div>
     </div>
 </form>
