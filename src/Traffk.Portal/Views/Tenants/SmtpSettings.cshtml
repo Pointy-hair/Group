@@ -3,6 +3,7 @@
 @{
     Layout = "~/Views/Tenants/_LayoutTenant.cshtml";
     ViewData.IsFormPage(true);
+    ViewData.SetTitleAndHeading("SMTP Settings");
 }
 
 <form asp-action="@ActionNames.SmtpSettingsSubmission" class="inline-form">
