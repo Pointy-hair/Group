@@ -21,6 +21,7 @@ using Traffk.Bal.Identity;
 using Traffk.Bal.ReportVisuals;
 using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
+using Traffk.Portal.Services;
 using Traffk.Tableau;
 using Traffk.Tableau.REST;
 using Traffk.Tableau.REST.RestRequests;
@@ -124,13 +125,21 @@ namespace TraffkPortal
             {
                 options.Cookies.ApplicationCookie.SlidingExpiration = true;
                 options.Cookies.ApplicationCookie.ExpireTimeSpan = TimeSpan.FromSeconds(IdleLogout.TotalSeconds*2); //due to sliding expiration, things can be cut in half...
+                options.Tokens.EmailConfirmationTokenProvider =
+                    TraffkDataProtectorTokenProviderOptions.ConfirmationTokenProviderName;
             });
 
+            services.Configure<TraffkDataProtectorTokenProviderOptions>(options =>
+            {
+                options.TokenLifespan = Parse.ParseTimeSpan(Configuration["RegistrationTokenExpiration"],
+                    TimeSpan.FromDays(7));
+            });
 
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<TraffkRdbContext>()
-                .AddDefaultTokenProviders();
-
+                .AddDefaultTokenProviders()
+                .AddTokenProvider<TraffkDataProtectorTokenProvider<ApplicationUser>>(
+                    TraffkDataProtectorTokenProviderOptions.ConfirmationTokenProviderName);
 
             /*
              * To change password validation, sub out the following....
