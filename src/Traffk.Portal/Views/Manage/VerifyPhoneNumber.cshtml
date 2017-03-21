@@ -1,23 +1,25 @@
 ﻿@model VerifyPhoneNumberViewModel
 @{
     ViewData.SetTitleAndHeading("Verify Phone Number");
+    ViewData.IsFormPage(true);
 }
 
-<form asp-controller="Manage" asp-action="VerifyPhoneNumber" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal">
-    <input asp-for="PhoneNumber" type="hidden" />
-    <h4>Add a phone number.</h4>
-    <h5>@ViewData["Status"]</h5>
-    <hr />
+<form asp-controller="Manage" asp-action="VerifyPhoneNumber" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="inline-form">
     <div asp-validation-summary="All" class="text-danger"></div>
-    <div class="form-group">
-        <label asp-for="Code" class="col-md-2 control-label"></label>
-        <div class="col-md-10">
-            <input asp-for="Code" class="form-control" />
-            <span asp-validation-for="Code" class="text-danger"></span>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <input asp-for="PhoneNumber" type="hidden" />
+            <div class="form-row">
+                <span asp-validation-for="Code" class="text-danger"></span>
+                <label asp-for="Code"></label>
+                <input asp-for="Code" class="form-control"/>
+            </div>            
         </div>
     </div>
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
+
+    <div class="row">
+        <div class="col-xs-12 text-right">
             <button type="submit" class="btn btn-default btn-primary btn-large">Submit</button>
         </div>
     </div>

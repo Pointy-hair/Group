@@ -3,71 +3,43 @@
 @{
     Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
     ViewData.SetTitleAndHeading("Register", "Create a new account");
+    ViewData.IsFormPage(true);
 }
 
-<div class="row">
-    <div class="col-md-6">
-        <section>
-            <form asp-controller="Account" asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal">
-                @if (Current.Application.ApplicationSettings.Registration.UsersCanSelfRegister)
-                {
-                    <div asp-validation-summary="All" class="text-danger"></div>
-                    <div class="form-group">
-                        <label asp-for="Email" class="col-md-2 control-label"></label>
-                        <div class="col-md-10">
-                            <input asp-for="Email" class="form-control" />
-                            <span asp-validation-for="Email" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Password" class="col-md-2 control-label"></label>
-                        <div class="col-md-10">
-                            <input asp-for="Password" class="form-control" />
-                            <span asp-validation-for="Password" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="ConfirmPassword" class="col-md-2 control-label"></label>
-                        <div class="col-md-10">
-                            <input asp-for="ConfirmPassword" class="form-control" />
-                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-md-offset-2 col-md-10">
-                            <button type="submit" class="btn btn-default btn-primary btn-large">Register</button>
-                        </div>
-                    </div>
-                }
-                else
-                {
-                    <text>
-                    Self-registration is currently disabled.  If you require and account, please contact <a href="mailto:@R.SystemAdminEmailAddress">@R.SystemAdminName</a>.
-                    </text>
-                }
-            </form>
+<form asp-controller="Account" asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="inline-form">
+    @if (Current.Application.ApplicationSettings.Registration.UsersCanSelfRegister)
+    {
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="row">
+        <div class="col-sm-12">
+            <div class="form-row">
+                <label asp-for="Email"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-row">
+                <label asp-for="Password"></label>
+                    <input asp-for="Password" class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-row">
+                <label asp-for="ConfirmPassword"></label>
+                    <input asp-for="ConfirmPassword" class="form-control" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+        </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 text-right">
+                <button type="submit" class="btn btn-default btn-primary btn-large">Register</button>
+            </div>
+        </div>
+    }
+    else
+    {
+        <text>
+        Self-registration is currently disabled.  If you require and account, please contact <a href="mailto:@R.SystemAdminEmailAddress">@R.SystemAdminName</a>.
+        </text>
+    }
+</form>
 
-
-        </section>
-    </div>
-    <div class="col-md-6">
-        @if (R.RegisterMessage.Value != null)
-        {
-            <text>@R.RegisterMessage</text>
-        }
-        else
-        {
-            <text>
-            <p>
-                <b>RegisterMessage(page)</b>
-            </p>
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse lacinia volutpat congue. Cras dictum mi sit amet ante iaculis maximus. Pellentesque ullamcorper quis velit eget dapibus. Quisque eget elit sit amet arcu scelerisque sollicitudin. Nulla facilisi. Nam et augue lobortis, congue enim sed, mattis odio. Donec rhoncus enim lorem, eget mattis mauris sodales egestas. Aenean dignissim hendrerit fermentum. Curabitur feugiat hendrerit eros, a congue sem pulvinar id.
-            </p>
-            <p>
-                In vel augue vel eros aliquam tincidunt. Maecenas fermentum fermentum justo pellentesque ultricies. Nulla augue massa, faucibus eget orci vel, commodo facilisis augue. Praesent nec erat non leo feugiat lacinia sit amet eu sem. Maecenas sit amet eleifend nibh. Nunc cursus nisl vitae molestie malesuada. Nunc accumsan, quam et ultrices interdum, nisl orci vestibulum ligula, eget suscipit libero massa ac ex. Interdum et malesuada fames ac ante ipsum primis in faucibus. Sed lobortis est et commodo tempus. Sed suscipit metus erat, in scelerisque nunc congue pretium. Sed fermentum nibh augue, at elementum leo mollis non. Sed a odio bibendum est cursus venenatis. Phasellus mollis dui vitae dictum tincidunt.
-            </p>
-            </text>
-        }
-    </div>
-</div>

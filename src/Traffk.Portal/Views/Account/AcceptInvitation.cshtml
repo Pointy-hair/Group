@@ -1,35 +1,35 @@
 ﻿@model ResetPasswordViewModel
 @{
     ViewData.SetTitleAndHeading("Accept Invitation");
+    ViewData.IsFormPage(true);
 }
 
-<form asp-controller="Account" asp-action="AcceptInvitation" method="post" class="form-horizontal">
+<form asp-controller="Account" asp-action="AcceptInvitation" method="post" class="inline-form">
     <div asp-validation-summary="All" class="text-danger"></div>
-    <input asp-for="Code" type="hidden" />
-    <div class="form-group">
-        <label asp-for="Email" class="col-md-2 control-label"></label>
-        <div class="col-md-10">
-            <input asp-for="Email" class="form-control" readonly="readonly" />
-            <span asp-validation-for="Email" class="text-danger"></span>
+    <div class="row">
+        <div class="col-sm-12">
+            <input asp-for="Code" type="hidden" />
+            <div class="form-row">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control" readonly="readonly" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-row">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-row">
+                <label asp-for="ConfirmPassword"></label>
+                <input asp-for="ConfirmPassword" class="form-control" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
         </div>
     </div>
-    <div class="form-group">
-        <label asp-for="Password" class="col-md-2 control-label"></label>
-        <div class="col-md-10">
-            <input asp-for="Password" class="form-control" />
-            <span asp-validation-for="Password" class="text-danger"></span>
-        </div>
-    </div>
-    <div class="form-group">
-        <label asp-for="ConfirmPassword" class="col-md-2 control-label"></label>
-        <div class="col-md-10">
-            <input asp-for="ConfirmPassword" class="form-control" />
-            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <button type="submit" class="btn btn-default btn-primary btn-large">Confirm</button>
+    
+    <div class="row">
+        <div class="col-xs-12 text-right">
+            <input type="submit" value="Confirm" class="btn btn-default btn-primary btn-large" />
         </div>
     </div>
 </form>

@@ -5,61 +5,50 @@
     ViewData.IsFormPage(true);
 }
 
-<form asp-action="@ActionNames.TenantCreateSubmission">
-    <input type="hidden" asp-for="ParentTenantId" />
-    <div class="form-horizontal">
-        <h4>Tenant Information</h4>
-        <hr />
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="form-group">
-            <label asp-for="LoginDomain" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="LoginDomain" class="form-control" />
-                <span asp-validation-for="LoginDomain" class="text-danger" />
+<form asp-action="@ActionNames.TenantCreateSubmission" class="inline-form">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+        <div class="col-sm-12">
+            <input type="hidden" asp-for="ParentTenantId" />
+            <h4>Tenant Information</h4>
+            <hr />
+            <div class="form-row">
+                <label asp-for="LoginDomain"></label>
+                    <input asp-for="LoginDomain" class="form-control" />
+                    <span asp-validation-for="LoginDomain" class="text-danger" />
+            </div>
+            <div class="form-row">
+                <label asp-for="TenantName"></label>
+                    <input asp-for="TenantName" class="form-control" />
+                    <span asp-validation-for="TenantName" class="text-danger" />
+            </div>
+            <h4>Administer Information</h4>
+            <hr />
+            <div class="form-row">
+                <label asp-for="Email"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-row">
+                <label asp-for="Password"></label>
+                    <input asp-for="Password" class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-row">
+                <label asp-for="ConfirmPassword"></label>
+                    <input asp-for="ConfirmPassword" class="form-control" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
         </div>
-        <div class="form-group">
-            <label asp-for="TenantName" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="TenantName" class="form-control" />
-                <span asp-validation-for="TenantName" class="text-danger" />
-            </div>
-        </div>
-        <h4>Administer Information</h4>
-        <hr />
-        <div class="form-group">
-            <label asp-for="Email" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="Password" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="ConfirmPassword" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="ConfirmPassword" class="form-control" />
-                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-            </div>
-        </div>
-        <hr />
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default btn-primary btn-large" />
-            </div>
+
+    </div>
+    <div class="row">
+        <div class="col-xs-12 text-right">
+            <input type="submit" value="Create" class="btn btn-default btn-primary btn-large" />
         </div>
     </div>
-</form>
 
-<div>
-    <button type="button" class="btn btn-default" asp-action="Index">Back to List</button>
-</div>
+</form>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
