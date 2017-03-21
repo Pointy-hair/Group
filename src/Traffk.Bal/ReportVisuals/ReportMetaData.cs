@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Traffk.Bal.Settings;
 
 namespace Traffk.Bal.ReportVisuals
 {
@@ -36,5 +38,12 @@ namespace Traffk.Bal.ReportVisuals
             //Use reflection?
             return new ReportMetaData();
         }
+
+        public static ReportMetaData CreateFromJson(string json)
+        {
+            return TraffkHelpers.JsonConvertDeserializeObjectOrFallback<ReportMetaData>(json);
+        }
+
+        public string ToJson() => JsonConvert.SerializeObject(this);
     }
 }

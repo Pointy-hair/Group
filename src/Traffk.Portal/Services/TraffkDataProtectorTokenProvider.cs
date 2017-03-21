@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,9 +9,10 @@ using Microsoft.Extensions.Options;
 
 namespace Traffk.Portal.Services
 {
-    public class TraffkDataProtectorTokenProvider<TUser> : DataProtectorTokenProvider<TUser> where TUser:class
+    public class TraffkDataProtectorTokenProvider<TUser> : DataProtectorTokenProvider<TUser> where TUser : class
     {
-        public TraffkDataProtectorTokenProvider(IDataProtectionProvider dataProtectionProvider, IOptions<TraffkDataProtectorTokenProviderOptions> options) : base(dataProtectionProvider, options)
+        public TraffkDataProtectorTokenProvider(IDataProtectionProvider dataProtectionProvider, IOptions<TraffkDataProtectorTokenProviderOptions> options)
+            : base(dataProtectionProvider, options)
         {
         }
     }

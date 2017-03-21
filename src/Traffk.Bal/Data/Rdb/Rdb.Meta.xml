@@ -1,5 +1,78 @@
 ﻿<SchemaMeta>
   <Tables>
+    <Table schema="CmsGov" name="HealthcareCommonProcedureCodingSystemCodes" tableType="BASE TABLE">
+      <Columns>
+        <Column name="HcpcsId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="RecordIdentificationCode" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="11" />
+        <Column name="HcpcsCode" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="5" />
+        <Column name="SequenceNumber" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="IsPrimary" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" default="((0))" />
+        <Column name="ShortDescription" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="255" />
+        <Column name="LongDescription" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="-1" />
+        <Column name="PricingIndicatorCodeId" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="CmsGov" refTable="PricingIndicatorCodes" />
+        <Column name="MogId" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="CmsGov" refTable="MedicareOutpatientGroupsPaymentGroupCodes" />
+        <Column name="LabCertificationCodeId" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="CmsGov" refTable="LabCertificationCodes" />
+      </Columns>
+      <Collections>
+        <Collection schema="health" table="MedicalClaimLines" column="ProcedureHcpcsId" />
+      </Collections>
+    </Table>
+    <Table schema="CmsGov" name="HealthCareProviderTaxonomyCodeCrosswalk" tableType="BASE TABLE">
+      <Columns>
+        <Column name="HealthCareProviderTaxonomyCodeCrosswalkId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="MedicareSpecialtyCodeId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="CmsGov" refTable="MedicareSpecialtyCodes" />
+        <Column name="HealthCareProviderTaxonomyCode" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="10" />
+      </Columns>
+    </Table>
+    <Table schema="CmsGov" name="LabCertificationCodes" tableType="BASE TABLE">
+      <Columns>
+        <Column name="LabCertificationCodeId" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="ParentLabCertificationCodeId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="CmsGov" refTable="LabCertificationCodes" />
+        <Column name="LabCertificationCode" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="3" />
+        <Column name="SpecialtyCertificationCategory" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="100" />
+      </Columns>
+      <Collections>
+        <Collection schema="CmsGov" table="LabCertificationCodes" column="ParentLabCertificationCodeId" />
+        <Collection schema="CmsGov" table="HealthcareCommonProcedureCodingSystemCodes" column="LabCertificationCodeId" />
+      </Collections>
+    </Table>
+    <Table schema="CmsGov" name="MedicareOutpatientGroupsPaymentGroupCodes" tableType="BASE TABLE">
+      <Columns>
+        <Column name="MogId" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="MogCode" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="3" />
+        <Column name="MogCategory" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
+        <Column name="MogTitle" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="100" />
+      </Columns>
+      <Collections>
+        <Collection schema="CmsGov" table="HealthcareCommonProcedureCodingSystemCodes" column="MogId" />
+      </Collections>
+    </Table>
+    <Table schema="CmsGov" name="MedicareSpecialtyCodes" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="0" />
+        <Property name="GeneratePoco" value="0" />
+        <Property name="Implements" value="IDontCreate" />
+      </Properties>
+      <Columns>
+        <Column name="MedicareSpecialtyCodeId" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="MedicareSpecialtyCode" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="2" />
+        <Column name="MedicareSpecialtySupplierTypeDescription" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
+      </Columns>
+      <Collections>
+        <Collection schema="CmsGov" table="HealthCareProviderTaxonomyCodeCrosswalk" column="MedicareSpecialtyCodeId" />
+      </Collections>
+    </Table>
+    <Table schema="CmsGov" name="PricingIndicatorCodes" tableType="BASE TABLE">
+      <Columns>
+        <Column name="PricingIndicatorCodeId" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="PricingIndicatorCode" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="2" />
+        <Column name="Header" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
+        <Column name="Description" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="255" />
+      </Columns>
+      <Collections>
+        <Collection schema="CmsGov" table="HealthcareCommonProcedureCodingSystemCodes" column="PricingIndicatorCodeId" />
+      </Collections>
+    </Table>
     <Table schema="db" name="ChangeLog" tableType="BASE TABLE">
       <Columns>
         <Column name="ChangeLogId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
@@ -23,6 +96,20 @@
         <Column name="ColumnName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" />
         <Column name="PropertyName" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
         <Column name="PropertyValue" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" />
+      </Columns>
+    </Table>
+    <Table schema="db" name="ProcResultsetColumns" tableType="BASE TABLE">
+      <Columns>
+        <Column name="TABLE_SCHEMA" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="TABLE_NAME" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="RESULT_SET" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="ResultType" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" />
+        <Column name="COLUMN_NAME" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="ORDINAL_POSITION" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="IS_NULLABLE" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="3" />
+        <Column name="DATA_TYPE" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" />
+        <Column name="CHARACTER_MAXIMUM_LENGTH" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="ErrorMessage" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="4000" />
       </Columns>
     </Table>
     <Table schema="db" name="SchemaMeta" tableType="VIEW">
@@ -437,6 +524,7 @@
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="GeneratePoco" value="1" />
+        <Property name="Implements" value="ITraffkTenanted" />
         <Property name="InheritanceClass:Carrier,Carriers" value="Carrier" />
         <Property name="InheritanceClass:Organization,Organizations" value="Organization" />
         <Property name="InheritanceClass:Person,People" value="Person" />
@@ -534,11 +622,15 @@
         </Column>
       </Columns>
       <Collections>
-        <Collection schema="health" table="MedicalClaims" column="ContactId" />
+        <Collection schema="health" table="Pharmacy" column="ContactId" />
+        <Collection schema="health" table="Pharmacy" column="PrescriberProviderContactId" />
+        <Collection schema="health" table="MillimanScores" column="ContactId" />
+        <Collection schema="health" table="CareAlerts" column="ContactId" />
         <Collection schema="deerwalk" table="Eligibility" column="ContactId" />
         <Collection schema="deerwalk" table="Pharmacy" column="ContactId" />
         <Collection schema="dbo" table="InsurancePlans" column="InsuranceCarrierContactId" />
         <Collection schema="dbo" table="CommunicationPieces" column="ContactId" />
+        <Collection schema="health" table="QualityMetrics" column="ContactId" />
         <Collection schema="deerwalk" table="MedicalClaims" column="ContactId" />
         <Collection schema="deerwalk" table="Demographics" column="ContactId" />
         <Collection schema="deerwalk" table="Visits" column="ContactId" />
@@ -549,10 +641,13 @@
         <Collection schema="deerwalk" table="QualityMetrics" column="ContactId" />
         <Collection schema="deerwalk" table="HighCostDiagnosis" column="ContactId" />
         <Collection schema="deerwalk" table="CareAlerts" column="ContactId" />
-        <Collection schema="health" table="Pharmacy" column="ContactId" />
+        <Collection schema="health" table="Participation" column="ContactId" />
         <Collection schema="health" table="Eligibility" column="ContactId" />
-        <Collection schema="dbo" table="AspNetUsers" column="ContactId" />
+        <Collection schema="dbo" table="ReportMetaData" column="OwnerContactId" />
+        <Collection schema="health" table="MedicalClaimLines" column="ContactId" />
         <Collection schema="health" table="Visits" column="ContactId" />
+        <Collection schema="dbo" table="AspNetUsers" column="ContactId" />
+        <Collection schema="health" table="MedicalClaims" column="ContactId" />
         <Collection schema="health" table="Members" column="PersonContactId" />
         <Collection schema="health" table="Members" column="CarrierContactId" />
       </Collections>
@@ -700,9 +795,15 @@
         <Collection schema="deerwalk" table="Eligibility" column="InsStdTermDateDateDimId" />
         <Collection schema="deerwalk" table="Pharmacy" column="MbrDobDateDimId" />
         <Collection schema="deerwalk" table="Pharmacy" column="SvcWrittenDateDateDimId" />
+        <Collection schema="health" table="Pharmacy" column="PrescriptionWrittenDdim" />
         <Collection schema="deerwalk" table="Pharmacy" column="SvcFilledDateDateDimId" />
+        <Collection schema="health" table="MillimanScores" column="ScorePeriodStartDdim" />
+        <Collection schema="health" table="Pharmacy" column="PrescriptionFilledDdim" />
         <Collection schema="deerwalk" table="Pharmacy" column="SvcServiceDateDateDimId" />
+        <Collection schema="health" table="MillimanScores" column="ScorePeriodEndDdim" />
+        <Collection schema="health" table="Pharmacy" column="ServiceDdim" />
         <Collection schema="deerwalk" table="Pharmacy" column="RevPaidDateDateDimId" />
+        <Collection schema="health" table="Pharmacy" column="PaidDdim" />
         <Collection schema="deerwalk" table="MedicalClaims" column="MbrDobDateDimId" />
         <Collection schema="deerwalk" table="MedicalClaims" column="SvcServiceFrmDateDateDimId" />
         <Collection schema="deerwalk" table="MedicalClaims" column="SvcServiceToDateDateDimId" />
@@ -726,31 +827,38 @@
         <Collection schema="deerwalk" table="QualityMetrics" column="EnddateDateDimId" />
         <Collection schema="deerwalk" table="CareAlerts" column="MbrDobDateDimId" />
         <Collection schema="deerwalk" table="CareAlerts" column="CareAlertStartdateDateDimId" />
+        <Collection schema="health" table="CareAlerts" column="CareAlertDdim" />
+        <Collection schema="health" table="QualityMetrics" column="MeasureFromDdim" />
+        <Collection schema="health" table="QualityMetrics" column="MeasureToDdim" />
         <Collection schema="dbo" table="CustomInsurancePlanEconomics" column="PeriodStartDdim" />
         <Collection schema="dbo" table="CustomInsurancePlanEconomics" column="PeriodEndDdim" />
-        <Collection schema="health" table="Pharmacy" column="PrescriptionWrittenDdim" />
-        <Collection schema="health" table="Pharmacy" column="PrescriptionFilledDdim" />
-        <Collection schema="health" table="Pharmacy" column="ServiceDdim" />
-        <Collection schema="health" table="Pharmacy" column="PaidDdim" />
+        <Collection schema="health" table="Participation" column="ProgramStartDdim" />
+        <Collection schema="health" table="Participation" column="ProgramEndDdim" />
         <Collection schema="health" table="Eligibility" column="MedicalEffDdim" />
         <Collection schema="health" table="Eligibility" column="MedicalTermDdim" />
         <Collection schema="health" table="Eligibility" column="PrescriptionEffDdim" />
         <Collection schema="health" table="Eligibility" column="PrescriptionTermDdim" />
         <Collection schema="health" table="Eligibility" column="DentalEffDdim" />
+        <Collection schema="health" table="MedicalClaimLines" column="ServiceFromDdim" />
         <Collection schema="health" table="Eligibility" column="DentalTermDdim" />
+        <Collection schema="health" table="MedicalClaimLines" column="ServiceToDdim" />
         <Collection schema="health" table="Eligibility" column="VisionEffDdim" />
+        <Collection schema="health" table="MedicalClaimLines" column="PaidDdim" />
         <Collection schema="health" table="Eligibility" column="VisionTermDdim" />
+        <Collection schema="health" table="MedicalClaimLines" column="AdjudicationDdim" />
         <Collection schema="health" table="Eligibility" column="LongTermDisabilityEffDdim" />
+        <Collection schema="health" table="Visits" column="VisitStartDdim" />
         <Collection schema="health" table="Eligibility" column="LongTermDisabilityTermDdim" />
+        <Collection schema="health" table="Visits" column="VisitEndDdim" />
         <Collection schema="health" table="Eligibility" column="ShortTermDisabilityEffDdim" />
         <Collection schema="health" table="Eligibility" column="ShortTermDisabilityTermDdim" />
+        <Collection schema="health" table="MedicalClaims" column="ServiceFromDdim" />
+        <Collection schema="health" table="MedicalClaims" column="ServiceToDdim" />
         <Collection schema="deerwalk" table="Eligibility" column="MbrDobDateDimId" />
         <Collection schema="deerwalk" table="Eligibility" column="InsMedEffDateDateDimId" />
         <Collection schema="deerwalk" table="Eligibility" column="InsMedTermDateDateDimId" />
         <Collection schema="deerwalk" table="Eligibility" column="InsRxEffDateDateDimId" />
-        <Collection schema="health" table="Visits" column="VisitStartDdim" />
         <Collection schema="deerwalk" table="Eligibility" column="InsRxTermDateDateDimId" />
-        <Collection schema="health" table="Visits" column="VisitEndDdim" />
         <Collection schema="deerwalk" table="Eligibility" column="InsDenEffDateDateDimId" />
         <Collection schema="deerwalk" table="Eligibility" column="InsDenTermDateDateDimId" />
         <Collection schema="deerwalk" table="Eligibility" column="InsVisEffDateDateDimId" />
@@ -880,11 +988,12 @@
         <Column name="LookupValue" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
       </Columns>
       <Collections>
-        <Collection schema="health" table="Eligibility" column="PlanTypeLid" />
+        <Collection schema="health" table="CareAlerts" column="CareAlertTypeLid" />
+        <Collection schema="health" table="QualityMetrics" column="QualityMetricTypeLid" />
+        <Collection schema="health" table="Participation" column="ProgramCodeLid" />
+        <Collection schema="health" table="Eligibility" column="MemberRelationshipLid" />
         <Collection schema="health" table="Eligibility" column="CoverageTypeLid" />
-        <Collection schema="health" table="Eligibility" column="PlanLid" />
-        <Collection schema="health" table="Eligibility" column="EmployerGroupLid" />
-        <Collection schema="health" table="Eligibility" column="DivisionLid" />
+        <Collection schema="health" table="MedicalClaims" column="DischargeLid" />
         <Collection schema="health" table="Eligibility" column="CobraLid" />
       </Collections>
     </Table>
@@ -932,6 +1041,35 @@
         <Collection schema="dbo" table="ReleaseChanges" column="ReleaseId" />
       </Collections>
     </Table>
+    <Table schema="dbo" name="ReportMetaData" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+      </Properties>
+      <Columns>
+        <Column name="ReportMetaDataId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="ExternalReportKey" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="2000" />
+        <Column name="ParentReportMetaDataId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="RowStatus" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')">
+          <Properties>
+            <Property name="AccessModifier" value="missing" />
+            <Property name="ImplementsRowStatusSemantics" value="1" />
+          </Properties>
+        </Column>
+        <Column name="OwnerContactId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" refSchema="dbo" refTable="Contacts" />
+        <Column name="TenantId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="Tenants" />
+        <Column name="CreatedAtUtc" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())">
+          <Properties>
+            <Property name="MS_Description" value="Datetime when this entity was created." />
+          </Properties>
+        </Column>
+        <Column name="MetaData" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="-1">
+          <Properties>
+            <Property name="JsonSettingsClass" value="Bal.ReportVisuals.ReportMetaData" />
+          </Properties>
+        </Column>
+      </Columns>
+    </Table>
     <Table schema="dbo" name="sysdiagrams" tableType="BASE TABLE">
       <Properties>
         <Property name="microsoft_database_tools_support" value="1" />
@@ -972,13 +1110,16 @@
         </Column>
       </Columns>
       <Collections>
-        <Collection schema="health" table="MedicalClaims" column="TenantId" />
+        <Collection schema="health" table="Pharmacy" column="TenantId" />
+        <Collection schema="health" table="MillimanScores" column="TenantId" />
         <Collection schema="dbo" table="Communications" column="TenantId" />
         <Collection schema="dbo" table="CommunicationBlasts" column="TenantId" />
+        <Collection schema="health" table="CareAlerts" column="TenantId" />
         <Collection schema="deerwalk" table="Eligibility" column="TenantId" />
         <Collection schema="dbo" table="InsurancePlans" column="TenantId" />
         <Collection schema="dbo" table="CommunicationPieces" column="TenantId" />
         <Collection schema="deerwalk" table="Pharmacy" column="TenantId" />
+        <Collection schema="health" table="QualityMetrics" column="TenantId" />
         <Collection schema="deerwalk" table="MedicalClaims" column="TenantId" />
         <Collection schema="dbo" table="CustomInsurancePlans" column="TenantId" />
         <Collection schema="deerwalk" table="Demographics" column="TenantId" />
@@ -997,16 +1138,21 @@
         <Collection schema="dbo" table="Jobs" column="TenantId" />
         <Collection schema="dbo" table="CustomInsurancePlanEconomics" column="TenantId" />
         <Collection schema="deerwalk" table="CareAlerts" column="TenantId" />
-        <Collection schema="health" table="Pharmacy" column="TenantId" />
         <Collection schema="dbo" table="CommunicationBlastTrackers" column="TenantId" />
+        <Collection schema="health" table="Participation" column="TenantId" />
         <Collection schema="dbo" table="CommunicationPieceVisits" column="TenantId" />
         <Collection schema="health" table="Eligibility" column="TenantId" />
+        <Collection schema="health" table="MedicalClaimLines" column="TenantId" />
+        <Collection schema="dbo" table="ReportMetaData" column="TenantId" />
         <Collection schema="dbo" table="Tenants" column="ParentTenantId" />
         <Collection schema="dbo" table="AspNetUsers" column="TenantId" />
+        <Collection schema="health" table="Visits" column="TenantId" />
         <Collection schema="dbo" table="AspNetRoles" column="TenantId" />
+        <Collection schema="migrate" table="CarrierMap" column="TenantId" />
+        <Collection schema="health" table="MedicalClaims" column="TenantId" />
         <Collection schema="dbo" table="Applications" column="TenantId" />
         <Collection schema="dbo" table="DateDimensions" column="TenantId" />
-        <Collection schema="health" table="Visits" column="TenantId" />
+        <Collection schema="health" table="MedicalClaimDiagnoses" column="TenantId" />
         <Collection schema="health" table="Members" column="TenantId" />
       </Collections>
     </Table>
@@ -5105,6 +5251,22 @@
         <Column name="DateDimensionsLinked" position="19" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" default="((0))" />
       </Columns>
     </Table>
+    <Table schema="health" name="CareAlerts" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="0" />
+        <Property name="GeneratePoco" value="0" />
+        <Property name="Implements" value="ITraffkTenanted, IDontCreate" />
+      </Properties>
+      <Columns>
+        <Column name="CareAlertId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Tenants" />
+        <Column name="ContactId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" refSchema="dbo" refTable="Contacts" />
+        <Column name="CareAlertDdim" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="DateDimensions" />
+        <Column name="CareAlertTypeLid" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Lookups" />
+        <Column name="MetricType" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="MetricName" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+      </Columns>
+    </Table>
     <Table schema="health" name="Eligibility" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="0" />
@@ -5188,41 +5350,85 @@
             <Property name="MS_Description" value="Termination date for short term disability plan" />
           </Properties>
         </Column>
-        <Column name="PlanTypeLid" position="20" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="Lookups">
-          <Properties>
-            <Property name="MS_Description" value="Plan type code" />
-            <Property name="SampleData" value="Commercial" />
-          </Properties>
-        </Column>
-        <Column name="CoverageTypeLid" position="21" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="Lookups">
+        <Column name="CoverageTypeLid" position="20" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="Lookups">
           <Properties>
             <Property name="MS_Description" value="Coverage type" />
             <Property name="SampleData" value="Family" />
           </Properties>
         </Column>
-        <Column name="PlanLid" position="22" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="Lookups">
-          <Properties>
-            <Property name="MS_Description" value="Plan id of insurance" />
-            <Property name="SampleData" value="Family" />
-          </Properties>
-        </Column>
-        <Column name="EmployerGroupLid" position="23" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="Lookups">
-          <Properties>
-            <Property name="MS_Description" value="Identification of the group the subscriber is employed with" />
-            <Property name="SampleData" value="health" />
-          </Properties>
-        </Column>
-        <Column name="DivisionLid" position="24" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="Lookups">
-          <Properties>
-            <Property name="MS_Description" value="Identification of the division the subscriber is employed with" />
-          </Properties>
-        </Column>
-        <Column name="CobraLid" position="25" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="Lookups">
+        <Column name="CobraLid" position="21" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="Lookups">
           <Properties>
             <Property name="MS_Description" value="Status Code of the Employee - Not Specified : 00, Working : 01, Terminated : 02" />
           </Properties>
         </Column>
-        <Column name="EligibilityDetails" position="26" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
+        <Column name="MemberRelationshipLid" position="22" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="Lookups" />
+        <Column name="EligibilityDetails" position="23" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
+      </Columns>
+    </Table>
+    <Table schema="health" name="MedicalClaimDiagnoses" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="0" />
+        <Property name="GeneratePoco" value="0" />
+        <Property name="Implements" value="ITraffkTenanted, IDontCreate" />
+      </Properties>
+      <Columns>
+        <Column name="MedicalClaimDiagnosisId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Tenants" />
+        <Column name="RowStatus" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')">
+          <Properties>
+            <Property name="AccessModifier" value="missing" />
+            <Property name="ImplementsRowStatusSemantics" value="1" />
+          </Properties>
+        </Column>
+        <Column name="MedicalClaimId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="health" refTable="MedicalClaims" />
+        <Column name="Icd10Id" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="InternationalClassificationDiseases" refTable="ICD10" />
+        <Column name="DiagnosisNumber" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+      </Columns>
+    </Table>
+    <Table schema="health" name="MedicalClaimLines" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="0" />
+        <Property name="GeneratePoco" value="0" />
+        <Property name="Implements" value="ITraffkTenanted, IDontCreate" />
+      </Properties>
+      <Columns>
+        <Column name="MedicalClaimLineId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="MedicalClaimId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="health" refTable="MedicalClaims" />
+        <Column name="TenantId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Tenants" />
+        <Column name="RowStatus" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')">
+          <Properties>
+            <Property name="AccessModifier" value="missing" />
+            <Property name="ImplementsRowStatusSemantics" value="1" />
+          </Properties>
+        </Column>
+        <Column name="ContactId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" refSchema="dbo" refTable="Contacts" />
+        <Column name="MemberId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="health" refTable="Members">
+          <Properties>
+            <Property name="MS_Description" value="Member ID to display on the application, as sent by client" />
+          </Properties>
+        </Column>
+        <Column name="MedicalClaimLineNumber" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="25" />
+        <Column name="VisitId" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="health" refTable="Visits" />
+        <Column name="ProcedureType" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10" />
+        <Column name="ProcedureCode" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="10" />
+        <Column name="ProcedureDescription" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" />
+        <Column name="ProcedureHcpcsId" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="CmsGov" refTable="HealthcareCommonProcedureCodingSystemCodes" />
+        <Column name="ServiceFromDdim" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="DateDimensions" />
+        <Column name="ServiceToDdim" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="DateDimensions" />
+        <Column name="PaidDdim" position="15" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="DateDimensions" />
+        <Column name="AdjudicationDdim" position="16" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="DateDimensions" />
+        <Column name="AllowedAmount" position="17" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="BilledAmount" position="18" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="CoordinationOfBenefitsAmount" position="19" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="CoinsuranceAmount" position="20" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="CopayAmount" position="21" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="CoverageChargeAmount" position="22" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="DeductibleAmount" position="23" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="NotCoveredAmount" position="24" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="PPOSavings" position="25" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="OtherSavingsGenerated" position="26" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="PaidAmount" position="27" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="MedicalClaimLineDetails" position="28" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
       </Columns>
     </Table>
     <Table schema="health" name="MedicalClaims" tableType="BASE TABLE">
@@ -5233,7 +5439,7 @@
       </Properties>
       <Columns>
         <Column name="MedicalClaimId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
-        <Column name="MedicalClaimRowStatus" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')">
+        <Column name="RowStatus" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')">
           <Properties>
             <Property name="AccessModifier" value="missing" />
             <Property name="ImplementsRowStatusSemantics" value="1" />
@@ -5248,17 +5454,15 @@
           </Properties>
         </Column>
         <Column name="MedicalClaimNumber" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" />
-        <Column name="MedicalClaimLineNumber" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="25" />
-        <Column name="AllowedAmt" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
-        <Column name="BilledAmt" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
-        <Column name="CoinsuranceAmt" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
-        <Column name="CopayAmt" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
-        <Column name="DeductibleAmt" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
-        <Column name="PaidAmt" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
-        <Column name="NotCoveredAmt" position="15" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
-        <Column name="CoverageChargeAmt" position="16" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
-        <Column name="MedicalClaimDetails" position="17" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
+        <Column name="DischargeLid" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="Lookups" />
+        <Column name="LineItemsCount" position="9" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="ServiceFromDdim" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="DateDimensions" />
+        <Column name="ServiceToDdim" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="DateDimensions" />
       </Columns>
+      <Collections>
+        <Collection schema="health" table="MedicalClaimLines" column="MedicalClaimId" />
+        <Collection schema="health" table="MedicalClaimDiagnoses" column="MedicalClaimId" />
+      </Collections>
     </Table>
     <Table schema="health" name="MemberMap" tableType="VIEW">
       <Columns>
@@ -5290,27 +5494,27 @@
         <Column name="CarrierContactId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bigint" refSchema="dbo" refTable="Contacts" />
         <Column name="MemberNumber" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" />
         <Column name="MemberRelationshipFamilyNumber" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" />
-        <Column name="MemberRelationshipCode" position="9" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="10" />
-        <Column name="MemberRelationshipCodeDescription" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" />
-        <Column name="MemberStatus" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="20" />
-        <Column name="MemberDetails" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
+        <Column name="MemberDetails" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
       </Columns>
       <Collections>
-        <Collection schema="health" table="MedicalClaims" column="MemberId" />
         <Collection schema="health" table="Pharmacy" column="MemberId" />
+        <Collection schema="health" table="MillimanScores" column="MemberId" />
+        <Collection schema="health" table="Participation" column="MemberId" />
         <Collection schema="health" table="Eligibility" column="MemberId" />
+        <Collection schema="health" table="MedicalClaimLines" column="MemberId" />
         <Collection schema="health" table="Visits" column="MemberId" />
+        <Collection schema="health" table="MedicalClaims" column="MemberId" />
       </Collections>
     </Table>
-    <Table schema="health" name="Pharmacy" tableType="BASE TABLE">
+    <Table schema="health" name="MillimanScores" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="0" />
         <Property name="GeneratePoco" value="0" />
         <Property name="Implements" value="ITraffkTenanted, IDontCreate" />
       </Properties>
       <Columns>
-        <Column name="PharmacyId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
-        <Column name="PharmacyRowStatus" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')">
+        <Column name="MillimanScoreId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="bigint" />
+        <Column name="RowStatus" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')">
           <Properties>
             <Property name="AccessModifier" value="missing" />
             <Property name="ImplementsRowStatusSemantics" value="1" />
@@ -5324,79 +5528,167 @@
             <Property name="MS_Description" value="Member ID to display on the application, as sent by client" />
           </Properties>
         </Column>
-        <Column name="TransactionNumber" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80" />
-        <Column name="NationalDrugCodePackageId" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="NationalDrugCode" refTable="Packages" />
-        <Column name="PrescriptionWrittenDdim" position="9" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="DateDimensions">
+        <Column name="ScorePeriodStartDdim" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="DateDimensions" />
+        <Column name="ScorePeriodEndDdim" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="DateDimensions" />
+        <Column name="ScoreType" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="InpatientScore" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+        <Column name="OutpatientScore" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+        <Column name="PhysicianScore" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+        <Column name="PharmacyScore" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+        <Column name="MedicalScore" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+        <Column name="EmergencyRoomScore" position="15" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+        <Column name="OtherScore" position="16" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+        <Column name="TotalScore" position="17" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+        <Column name="ConcurrentInpatient" position="18" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+        <Column name="ConcurrentOutpatient" position="19" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+        <Column name="ConcurrentPhysician" position="20" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+        <Column name="ConcurrentPharmacy" position="21" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+        <Column name="ConcurrentMedical" position="22" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+        <Column name="ConcurrentInpatientNormalizedToGroup" position="23" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+        <Column name="ConcurrentOutpatientNormalizedToGroup" position="24" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+        <Column name="ConcurrentPhysicianNormalizedToGroup" position="25" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+        <Column name="ConcurrentTotal" position="26" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+      </Columns>
+    </Table>
+    <Table schema="health" name="Participation" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="0" />
+        <Property name="GeneratePoco" value="0" />
+        <Property name="Implements" value="ITraffkTenanted, IDontCreate" />
+      </Properties>
+      <Columns>
+        <Column name="ParticipationId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="RowStatus" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')">
+          <Properties>
+            <Property name="AccessModifier" value="missing" />
+            <Property name="ImplementsRowStatusSemantics" value="1" />
+          </Properties>
+        </Column>
+        <Column name="TenantId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Tenants" />
+        <Column name="ContactId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" refSchema="dbo" refTable="Contacts" />
+        <Column name="MemberId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="health" refTable="Members" />
+        <Column name="ProgramTypeCode" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" />
+        <Column name="ProgramStatus" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="20" />
+        <Column name="ProgramCodeLid" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="Lookups" />
+        <Column name="ProgramStartDdim" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="DateDimensions" />
+        <Column name="ProgramEndDdim" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="DateDimensions" />
+      </Columns>
+    </Table>
+    <Table schema="health" name="Pharmacy" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="0" />
+        <Property name="GeneratePoco" value="0" />
+        <Property name="Implements" value="ITraffkTenanted, IDontCreate" />
+      </Properties>
+      <Columns>
+        <Column name="PharmacyId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="RowStatus" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')">
+          <Properties>
+            <Property name="AccessModifier" value="missing" />
+            <Property name="ImplementsRowStatusSemantics" value="1" />
+          </Properties>
+        </Column>
+        <Column name="CreatedAtUtc" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())" />
+        <Column name="TenantId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Tenants" />
+        <Column name="ContactId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bigint" refSchema="dbo" refTable="Contacts" />
+        <Column name="MemberId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="health" refTable="Members">
+          <Properties>
+            <Property name="MS_Description" value="Member ID to display on the application, as sent by client" />
+          </Properties>
+        </Column>
+        <Column name="PrescriberProviderContactId" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bigint" refSchema="dbo" refTable="Contacts" />
+        <Column name="TransactionNumber" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80" />
+        <Column name="NationalDrugCodePackageId" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="NationalDrugCode" refTable="Packages" />
+        <Column name="PrescriptionWrittenDdim" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="DateDimensions">
           <Properties>
             <Property name="MS_Description" value="date prescription was written" />
           </Properties>
         </Column>
-        <Column name="PrescriptionFilledDdim" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="DateDimensions">
+        <Column name="PrescriptionFilledDdim" position="11" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="DateDimensions">
           <Properties>
             <Property name="MS_Description" value="date prescription was filled" />
           </Properties>
         </Column>
-        <Column name="ServiceDdim" position="11" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="DateDimensions">
+        <Column name="ServiceDdim" position="12" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="DateDimensions">
           <Properties>
             <Property name="MS_Description" value="date of service" />
           </Properties>
         </Column>
-        <Column name="PaidDdim" position="12" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="DateDimensions">
+        <Column name="PaidDdim" position="13" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="DateDimensions">
           <Properties>
             <Property name="MS_Description" value="date of payment" />
           </Properties>
         </Column>
-        <Column name="AllowedAmt" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money">
+        <Column name="AllowedAmt" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money">
           <Properties>
             <Property name="MS_Description" value="Amount allowed under contract" />
           </Properties>
         </Column>
-        <Column name="BilledAmt" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money">
+        <Column name="BilledAmt" position="15" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money">
           <Properties>
             <Property name="MS_Description" value="Gross charges" />
           </Properties>
         </Column>
-        <Column name="CoinsuranceAmt" position="15" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money">
+        <Column name="CoinsuranceAmt" position="16" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money">
           <Properties>
             <Property name="MS_Description" value="Coinsurance due from patient" />
           </Properties>
         </Column>
-        <Column name="CopayAmt" position="16" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money">
+        <Column name="CopayAmt" position="17" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money">
           <Properties>
             <Property name="MS_Description" value="Amount collected from the patient as a co-payment." />
           </Properties>
         </Column>
-        <Column name="DeductibleAmt" position="17" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money">
+        <Column name="DeductibleAmt" position="18" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money">
           <Properties>
             <Property name="MS_Description" value="Deductible Portion of the Allowed Amount" />
           </Properties>
         </Column>
-        <Column name="DispensingFeeAmt" position="18" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money">
+        <Column name="DispensingFeeAmt" position="19" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money">
           <Properties>
             <Property name="MS_Description" value="Dispensing Fee textged by the Pharmacy to the PBM" />
           </Properties>
         </Column>
-        <Column name="IngredientsCostAmt" position="19" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money">
+        <Column name="IngredientsCostAmt" position="20" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money">
           <Properties>
             <Property name="MS_Description" value="Cost of ingredients" />
           </Properties>
         </Column>
-        <Column name="StateTaxAmt" position="20" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money">
+        <Column name="StateTaxAmt" position="21" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money">
           <Properties>
             <Property name="MS_Description" value="State Tax Paid" />
           </Properties>
         </Column>
-        <Column name="UsualCustomaryFeeAmt" position="21" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money">
+        <Column name="UsualCustomaryFeeAmt" position="22" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money">
           <Properties>
             <Property name="MS_Description" value="Usual and Customary Fee" />
           </Properties>
         </Column>
-        <Column name="PaidAmt" position="22" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money">
+        <Column name="PaidAmt" position="23" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money">
           <Properties>
             <Property name="MS_Description" value="Amount paid" />
           </Properties>
         </Column>
-        <Column name="PharmacyDetails" position="23" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
+        <Column name="PharmacyDetails" position="24" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
+      </Columns>
+    </Table>
+    <Table schema="health" name="QualityMetrics" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="0" />
+        <Property name="GeneratePoco" value="0" />
+        <Property name="Implements" value="ITraffkTenanted, IDontCreate" />
+      </Properties>
+      <Columns>
+        <Column name="QualityMetricId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Tenants" />
+        <Column name="ContactId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" refSchema="dbo" refTable="Contacts" />
+        <Column name="MeasureFromDdim" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="DateDimensions" />
+        <Column name="MeasureToDdim" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="DateDimensions" />
+        <Column name="QualityMetricTypeLid" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Lookups" />
+        <Column name="Positive" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" />
+        <Column name="Numerator" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="float" />
+        <Column name="Denominator" position="9" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="float" />
+        <Column name="Value" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="float" />
       </Columns>
     </Table>
     <Table schema="health" name="Visits" tableType="BASE TABLE">
@@ -5407,7 +5699,7 @@
       </Properties>
       <Columns>
         <Column name="VisitId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
-        <Column name="VisitRowStatus" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')">
+        <Column name="RowStatus" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')">
           <Properties>
             <Property name="AccessModifier" value="missing" />
             <Property name="ImplementsRowStatusSemantics" value="1" />
@@ -5421,14 +5713,17 @@
             <Property name="MS_Description" value="Member ID to display on the application, as sent by client" />
           </Properties>
         </Column>
-        <Column name="VisitType" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
-        <Column name="VisitStartDdim" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="DateDimensions" />
-        <Column name="VisitEndDdim" position="9" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="DateDimensions" />
-        <Column name="InpatientDays" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
-        <Column name="AdmissionType" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="55" />
-        <Column name="AdmissionFromEmergencyRoom" position="12" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" />
-        <Column name="ForeignId" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="50" />
+        <Column name="ForeignId" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="50" />
+        <Column name="VisitType" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="VisitStartDdim" position="9" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="DateDimensions" />
+        <Column name="VisitEndDdim" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="DateDimensions" />
+        <Column name="InpatientDays" position="11" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="AdmissionType" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="55" />
+        <Column name="AdmissionFromEmergencyRoom" position="13" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" />
       </Columns>
+      <Collections>
+        <Collection schema="health" table="MedicalClaimLines" column="VisitId" />
+      </Collections>
     </Table>
     <Table schema="i" name="Carealerts" tableType="BASE TABLE">
       <Columns>
@@ -6137,6 +6432,681 @@
         <Column name="admissionFromEr" position="12" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
       </Columns>
     </Table>
+    <Table schema="InternationalClassificationDiseases" name="ICD10" tableType="BASE TABLE">
+      <Columns>
+        <Column name="Icd10Id" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="ParentIcd10Id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="InternationalClassificationDiseases" refTable="ICD10" />
+        <Column name="DiagnosisCode" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="16" />
+        <Column name="DiagnosisDescription" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="255" />
+      </Columns>
+      <Collections>
+        <Collection schema="InternationalClassificationDiseases" table="ICD10" column="ParentIcd10Id" />
+        <Collection schema="health" table="MedicalClaimDiagnoses" column="Icd10Id" />
+      </Collections>
+    </Table>
+    <Table schema="jamie" name="ICD10codes" tableType="BASE TABLE">
+      <Columns>
+        <Column name="code" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10" />
+        <Column name="type" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="5" />
+        <Column name="desc" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="255" />
+      </Columns>
+    </Table>
+    <Table schema="jamie" name="ICD9codes" tableType="BASE TABLE">
+      <Columns>
+        <Column name="Code" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10" />
+        <Column name="Desc" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="255" />
+      </Columns>
+    </Table>
+    <Table schema="jamie" name="Zip5" tableType="BASE TABLE">
+      <Columns>
+        <Column name="Zip5Id" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="ZipCode" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="5" />
+        <Column name="PrimaryRecord" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bit" />
+        <Column name="Population" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="HouseholdsPerZipcode" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="WhitePopulation" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="BlackPopulation" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="HispanicPopulation" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="AsianPopulation" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="HawaiianPopulation" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="IndianPopulation" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="OtherPopulation" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="MalePopulation" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="FemalePopulation" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="PersonsPerHousehold" position="15" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="decimal" />
+        <Column name="AverageHouseValue" position="16" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="IncomePerHousehold" position="17" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="MedianAge" position="18" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="decimal" />
+        <Column name="MedianAgeMale" position="19" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="decimal" />
+        <Column name="MedianAgeFemale" position="20" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="decimal" />
+        <Column name="Latitude" position="21" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+        <Column name="Longitude" position="22" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+        <Column name="Location" position="23" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="geography" maxLen="-1" />
+        <Column name="Elevation" position="24" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="State" position="25" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="2" />
+        <Column name="StateFullName" position="26" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="35" />
+        <Column name="CityType" position="27" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1" />
+        <Column name="CityAliasAbbreviation" position="28" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="13" />
+        <Column name="AreaCode" position="29" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="55" />
+        <Column name="City" position="30" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="35" />
+        <Column name="CityAliasName" position="31" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="35" />
+        <Column name="County" position="32" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="45" />
+        <Column name="CountyFIPS" position="33" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="5" />
+        <Column name="StateFIPS" position="34" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="2" />
+        <Column name="TimeZone" position="35" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="2" />
+        <Column name="DayLightSaving" position="36" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1" />
+        <Column name="MSA" position="37" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="35" />
+        <Column name="PMSA" position="38" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="4" />
+        <Column name="CSA" position="39" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="3" />
+        <Column name="CBSA" position="40" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="5" />
+        <Column name="CBSA_DIV" position="41" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="5" />
+        <Column name="CBSA_Type" position="42" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="5" />
+        <Column name="CBSA_Name" position="43" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="150" />
+        <Column name="MSA_Name" position="44" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="150" />
+        <Column name="PMSA_Name" position="45" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="150" />
+        <Column name="Region" position="46" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10" />
+        <Column name="Division" position="47" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="20" />
+        <Column name="MailingName" position="48" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1" />
+        <Column name="NumberOfBusinesses" position="49" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="NumberOfEmployees" position="50" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="BusinessFirstQuarterPayroll" position="51" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="BusinessAnnualPayroll" position="52" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="BusinessEmpolymentFlag" position="53" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1" />
+        <Column name="GrowthRank" position="54" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="GrowingCountiesA" position="55" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="GrowingCountiesB" position="56" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="GrowthIncreaseNumber" position="57" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="GrowthIncreasePercentage" position="58" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="decimal" />
+        <Column name="CBSAPopulation" position="59" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="CBSADivisionPopulation" position="60" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="CongressionalDistrict" position="61" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="150" />
+        <Column name="CongressionalLandArea" position="62" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="150" />
+        <Column name="DeliveryResidential" position="63" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="DeliveryBusiness" position="64" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="DeliveryTotal" position="65" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="PreferredLastLineKey" position="66" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10" />
+        <Column name="ClassificationCode" position="67" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1" />
+        <Column name="MultiCounty" position="68" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1" />
+        <Column name="CSAName" position="69" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="255" />
+        <Column name="CBSA_Div_Name" position="70" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="255" />
+        <Column name="CityStateKey" position="71" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="6" />
+        <Column name="PopulationEstimate" position="72" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="LandArea" position="73" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="decimal" />
+        <Column name="WaterArea" position="74" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="decimal" />
+        <Column name="CityAliasCode" position="75" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="5" />
+        <Column name="CityMixedCase" position="76" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="35" />
+        <Column name="CityAliasMixedCase" position="77" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="35" />
+        <Column name="BoxCount" position="78" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="SFDU" position="79" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="MFDU" position="80" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="StateANSI" position="81" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="2" />
+        <Column name="CountyANSI" position="82" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="3" />
+        <Column name="ZIPIntro" position="83" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="15" />
+        <Column name="AliasIntroDate" position="84" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="15" />
+        <Column name="FacilityCode" position="85" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="1" />
+        <Column name="CityDeliveryIndicator" position="86" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="1" />
+        <Column name="CarrierRouteRateSortation" position="87" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="1" />
+        <Column name="FinanceNumber" position="88" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="6" />
+        <Column name="UniqueZIPName" position="89" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="1" />
+        <Column name="SSAStateCountyCode" position="90" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="255" />
+        <Column name="MedicareCBSACode" position="91" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="255" />
+        <Column name="MedicareCBSAName" position="92" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="255" />
+        <Column name="MedicareCBSAType" position="93" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="255" />
+        <Column name="MarketRatingAreaID" position="94" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+      </Columns>
+    </Table>
+    <Table schema="jamie" name="Zip5Full" tableType="BASE TABLE">
+      <Columns>
+        <Column name="Zip5Id" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="Auto generated primary key" />
+          </Properties>
+        </Column>
+        <Column name="Zip9Id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="FK reference to Zip9 table" />
+          </Properties>
+        </Column>
+        <Column name="ZipCode" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="5">
+          <Properties>
+            <Property name="MS_Description" value="00000-99999 Five digit numeric ZIP Code of the area." />
+          </Properties>
+        </Column>
+        <Column name="PrimaryRecord" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="Character ‘P’ denoting if this row is a Primary Record or not. Absence of character denotes a non-primary record." />
+          </Properties>
+        </Column>
+        <Column name="Population" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The population of the ZIP Code based on 2010 Census data." />
+          </Properties>
+        </Column>
+        <Column name="HouseholdsPerZipcode" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The estimated number of households of the ZIP Code based on 2010 Census data." />
+          </Properties>
+        </Column>
+        <Column name="WhitePopulation" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The estimated White/Caucasian Population of the ZIP Code based on 2010 Census data." />
+          </Properties>
+        </Column>
+        <Column name="BlackPopulation" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The estimated Black/African American Population of the ZIP Code based on 2010 Census data." />
+          </Properties>
+        </Column>
+        <Column name="HispanicPopulation" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The estimated Hispanic Population of the ZIP Code based on 2010 Census data." />
+          </Properties>
+        </Column>
+        <Column name="AsianPopulation" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The estimated Asian Population of the ZIP Code based on 2010 Census data." />
+          </Properties>
+        </Column>
+        <Column name="HawaiianPopulation" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The estimated Hawaiian or Pacific Islander Population of the ZIP Code based on 2010 Census data." />
+          </Properties>
+        </Column>
+        <Column name="IndianPopulation" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The estimated American Indian and Alaska Native Population of the ZIP Code based on 2010 Census data." />
+          </Properties>
+        </Column>
+        <Column name="OtherPopulation" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The estimated Population of all other races for the ZIP Code based on 2010 Census data." />
+          </Properties>
+        </Column>
+        <Column name="MalePopulation" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The estimated Male Population of the ZIP Code based on 2010 Census data." />
+          </Properties>
+        </Column>
+        <Column name="FemalePopulation" position="15" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The estimated Female Population of the ZIP Code based on 2010 Census data." />
+          </Properties>
+        </Column>
+        <Column name="PersonsPerHousehold" position="16" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="decimal">
+          <Properties>
+            <Property name="MS_Description" value="The estimated average number of persons per household of the ZIP Code based on 2010 Census data." />
+          </Properties>
+        </Column>
+        <Column name="AverageHouseValue" position="17" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The average house value in County." />
+          </Properties>
+        </Column>
+        <Column name="IncomePerHousehold" position="18" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The average household per ZIP Code." />
+          </Properties>
+        </Column>
+        <Column name="Latitude" position="19" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="decimal">
+          <Properties>
+            <Property name="MS_Description" value="Geographic coordinate as a point measured in degrees north or south of the equator." />
+          </Properties>
+        </Column>
+        <Column name="Longitude" position="20" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="decimal">
+          <Properties>
+            <Property name="MS_Description" value="Geographic coordinate as a point measured in degrees east or west of the Greenwich Meridian." />
+          </Properties>
+        </Column>
+        <Column name="Location" position="21" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="geography" maxLen="-1">
+          <Properties>
+            <Property name="MS_Description" value="Geographic point combining Latitude and Longitude." />
+          </Properties>
+        </Column>
+        <Column name="Elevation" position="22" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The average elevation of the county." />
+          </Properties>
+        </Column>
+        <Column name="State" position="23" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="2">
+          <Properties>
+            <Property name="MS_Description" value="2 letter state name abbreviation." />
+          </Properties>
+        </Column>
+        <Column name="StateFullName" position="24" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="35">
+          <Properties>
+            <Property name="MS_Description" value="The full US State Name." />
+          </Properties>
+        </Column>
+        <Column name="CityType" position="25" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="Indicates the type of locale such as Post Office, Stations, or Branch." />
+          </Properties>
+        </Column>
+        <Column name="CityAliasAbbreviation" position="26" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="13">
+          <Properties>
+            <Property name="MS_Description" value="13 Character abbreviation for the city alias name." />
+          </Properties>
+        </Column>
+        <Column name="AreaCode" position="27" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="55">
+          <Properties>
+            <Property name="MS_Description" value="The telephone area codes available in this ZIP Code." />
+          </Properties>
+        </Column>
+        <Column name="City" position="28" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="35">
+          <Properties>
+            <Property name="MS_Description" value="Name of the city as designated by the USPS." />
+          </Properties>
+        </Column>
+        <Column name="CityAliasName" position="29" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="35">
+          <Properties>
+            <Property name="MS_Description" value="Alias name of the city if it exists." />
+          </Properties>
+        </Column>
+        <Column name="County" position="30" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="45">
+          <Properties>
+            <Property name="MS_Description" value="Name of County or Parish this ZIP Code resides in." />
+          </Properties>
+        </Column>
+        <Column name="CountyFIPS" position="31" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="5">
+          <Properties>
+            <Property name="MS_Description" value="FIPS code for the County this ZIP Code resides in." />
+          </Properties>
+        </Column>
+        <Column name="StateFIPS" position="32" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="2">
+          <Properties>
+            <Property name="MS_Description" value="FIPS code for the State this ZIP Code resides in." />
+          </Properties>
+        </Column>
+        <Column name="TimeZone" position="33" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="2">
+          <Properties>
+            <Property name="MS_Description" value="Hours past Greenwich Time Zone this ZIP Code belongs to." />
+          </Properties>
+        </Column>
+        <Column name="DayLightSaving" position="34" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="Flag indicating whether this ZIP Code observes daylight savings." />
+          </Properties>
+        </Column>
+        <Column name="MSA" position="35" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="35">
+          <Properties>
+            <Property name="MS_Description" value="Metropolitan Statistical Area number." />
+          </Properties>
+        </Column>
+        <Column name="PMSA" position="36" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="4">
+          <Properties>
+            <Property name="MS_Description" value="Primary Metropolitan Statistical Area Number." />
+          </Properties>
+        </Column>
+        <Column name="CSA" position="37" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="3">
+          <Properties>
+            <Property name="MS_Description" value="Core Statistical Area. This area is a group of MSAs combined into a population core area." />
+          </Properties>
+        </Column>
+        <Column name="CBSA" position="38" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="5">
+          <Properties>
+            <Property name="MS_Description" value="Core Based Statistical Area Number." />
+          </Properties>
+        </Column>
+        <Column name="CBSA_DIV" position="39" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="5">
+          <Properties>
+            <Property name="MS_Description" value="Core Based Statistical Area Division." />
+          </Properties>
+        </Column>
+        <Column name="CBSA_Type" position="40" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="5">
+          <Properties>
+            <Property name="MS_Description" value="Core Based Statistical Area Type (Metro or Micro)." />
+          </Properties>
+        </Column>
+        <Column name="CBSA_Name" position="41" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="150">
+          <Properties>
+            <Property name="MS_Description" value="Core Based Statistical Area Name or Title." />
+          </Properties>
+        </Column>
+        <Column name="MSA_Name" position="42" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="150">
+          <Properties>
+            <Property name="MS_Description" value="Metropolitan Statistical Area name." />
+          </Properties>
+        </Column>
+        <Column name="PMSA_Name" position="43" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="150">
+          <Properties>
+            <Property name="MS_Description" value="Primary Metropolitan Statistical Area name or Title." />
+          </Properties>
+        </Column>
+        <Column name="Region" position="44" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10">
+          <Properties>
+            <Property name="MS_Description" value="The Region of the United States this record resides in." />
+          </Properties>
+        </Column>
+        <Column name="Division" position="45" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="20">
+          <Properties>
+            <Property name="MS_Description" value="The Division of the United States this record resides in." />
+          </Properties>
+        </Column>
+        <Column name="MailingName" position="46" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="Yes or No (Y/N) flag indicating whether or not the USPS accepts this City Alias Name for mailing purposes." />
+          </Properties>
+        </Column>
+        <Column name="PreferredLastLineKey" position="47" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10">
+          <Properties>
+            <Property name="MS_Description" value="Links this record with other products ZIP-Codes.com offers." />
+          </Properties>
+        </Column>
+        <Column name="ClassificationCode" position="48" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="The classification type of this ZIP Code." />
+          </Properties>
+        </Column>
+        <Column name="MultiCounty" position="49" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="Flag indicating whether this ZIP Code crosses county lines." />
+          </Properties>
+        </Column>
+        <Column name="CSAName" position="50" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="255">
+          <Properties>
+            <Property name="MS_Description" value="The name of the CSA this ZIP Code is in." />
+          </Properties>
+        </Column>
+        <Column name="CBSA_Div_Name" position="51" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="255">
+          <Properties>
+            <Property name="MS_Description" value="The name of the CBSA Division this ZIP Code is in." />
+          </Properties>
+        </Column>
+        <Column name="CityStateKey" position="52" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="6">
+          <Properties>
+            <Property name="MS_Description" value="Links this record with other products ZIP-Codes.com offers such as the ZIP+4." />
+          </Properties>
+        </Column>
+        <Column name="CityAliasCode" position="53" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="5">
+          <Properties>
+            <Property name="MS_Description" value="Code indication the type of the city alias name for this record. Record can be Abbreviations, Universities, Government, and more." />
+          </Properties>
+        </Column>
+        <Column name="CityMixedCase" position="54" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="35">
+          <Properties>
+            <Property name="MS_Description" value="The city name in mixed case (i.e. Not in all uppercase letters)." />
+          </Properties>
+        </Column>
+        <Column name="CityAliasMixedCase" position="55" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="35">
+          <Properties>
+            <Property name="MS_Description" value="The city alias name in mixed case (i.e. Not in all uppercase letters)." />
+          </Properties>
+        </Column>
+        <Column name="StateANSI" position="56" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="2">
+          <Properties>
+            <Property name="MS_Description" value="ANSI code for the State this ZIP Code resides in." />
+          </Properties>
+        </Column>
+        <Column name="CountyANSI" position="57" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="3">
+          <Properties>
+            <Property name="MS_Description" value="ANSI code for the County/Parish this ZIP Code resides in." />
+          </Properties>
+        </Column>
+        <Column name="FacilityCode" position="58" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="The type of locale identified in the city/state name." />
+          </Properties>
+        </Column>
+        <Column name="CityDeliveryIndicator" position="59" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="Specifies whether or not a post office has city-delivery carrier routes." />
+          </Properties>
+        </Column>
+        <Column name="CarrierRouteRateSortation" position="60" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="Identifies where automation Carrier Route rates are available." />
+          </Properties>
+        </Column>
+        <Column name="FinanceNumber" position="61" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="6">
+          <Properties>
+            <Property name="MS_Description" value="A code assigned to Postal Service facilities." />
+          </Properties>
+        </Column>
+        <Column name="UniqueZIPName" position="62" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="Field that specifies whether the City State Record contains the organization name for a unique ZIP Code." />
+          </Properties>
+        </Column>
+      </Columns>
+    </Table>
+    <Table schema="jamie" name="Zip9" tableType="BASE TABLE">
+      <Columns>
+        <Column name="Zip9Id" position="1" isPrimaryKey="0" isIdentity="1" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="Auto generated primary key" />
+          </Properties>
+        </Column>
+        <Column name="ZipCode" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="5">
+          <Properties>
+            <Property name="MS_Description" value="00000-99999 Five digit numeric ZIP Code of the area." />
+          </Properties>
+        </Column>
+        <Column name="UpdateKey" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10">
+          <Properties>
+            <Property name="MS_Description" value="A unique key number identifying this record for updates." />
+          </Properties>
+        </Column>
+        <Column name="ActionType" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="A or D, meaning add or delete this record. Always an A for Base File." />
+          </Properties>
+        </Column>
+        <Column name="RecordType" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="A flag indicating which type of record this is. Ex: Firm, General Delivery, High Rise, PO Box, Rural Route, or Street." />
+          </Properties>
+        </Column>
+        <Column name="CarrierRoute" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="4">
+          <Properties>
+            <Property name="MS_Description" value="Carrier identification code or number for a given delivery route or PO box presentation." />
+          </Properties>
+        </Column>
+        <Column name="StPreDirAbbr" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="2">
+          <Properties>
+            <Property name="MS_Description" value="The directional abbreviation that comes before an address: Ex: The N meaning North in “123 N MAIN ST”" />
+          </Properties>
+        </Column>
+        <Column name="StName" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="28">
+          <Properties>
+            <Property name="MS_Description" value="The official name of the street as assigned by a local governing authority for this record." />
+          </Properties>
+        </Column>
+        <Column name="StSuffixAbbr" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="4">
+          <Properties>
+            <Property name="MS_Description" value="Code that is the standard USPS abbreviation for the trailing designator in a street address." />
+          </Properties>
+        </Column>
+        <Column name="StPostDirAbbr" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="2">
+          <Properties>
+            <Property name="MS_Description" value="A geographic direction that follows the street name. Ex: The N meaning North in “123 MAIN ST N”" />
+          </Properties>
+        </Column>
+        <Column name="AddressPrimaryLowNumber" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10">
+          <Properties>
+            <Property name="MS_Description" value="The low number in a range of numeric or alphanumeric components to an address preceding the street name." />
+          </Properties>
+        </Column>
+        <Column name="AddressPrimaryHighNumber" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10">
+          <Properties>
+            <Property name="MS_Description" value="The high number in a range of numeric or alphanumeric components to an address preceding the street name." />
+          </Properties>
+        </Column>
+        <Column name="AddressPrimaryOddEven" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="Code that identifies the side or sides of a street for which a given address range is applicable. O = Odd, E = Even." />
+          </Properties>
+        </Column>
+        <Column name="BuildingFirmName" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="40">
+          <Properties>
+            <Property name="MS_Description" value="The name of a company, building, apartment complex, shopping center, or other distinguishing secondary address information." />
+          </Properties>
+        </Column>
+        <Column name="AddressSecondaryAbbr" position="15" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="4">
+          <Properties>
+            <Property name="MS_Description" value="Only Applicable to Record Types F and H." />
+          </Properties>
+        </Column>
+        <Column name="AddressSecondaryLowNumber" position="16" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10">
+          <Properties>
+            <Property name="MS_Description" value="The low-end secondary address component in a range of secondary addresses. Only Applicable to Record Types F and H." />
+          </Properties>
+        </Column>
+        <Column name="AddressSecondaryHighNumber" position="17" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10">
+          <Properties>
+            <Property name="MS_Description" value="The high-end secondary address component in a range of secondary addresses. Only Applicable to Record Types F and H." />
+          </Properties>
+        </Column>
+        <Column name="AddressSecondaryOddEven" position="18" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="Code that identifies the side or sides of a street for which a given address range is applicable. O = Odd, E = Even. Only Applicable to Record Types F and H." />
+          </Properties>
+        </Column>
+        <Column name="Plus4Low" position="19" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="4">
+          <Properties>
+            <Property name="MS_Description" value="ZIP Add-On Low Number in the range. Also known as the +4." />
+          </Properties>
+        </Column>
+        <Column name="Plus4High" position="20" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="4">
+          <Properties>
+            <Property name="MS_Description" value="ZIP Add-On High Number in the range. Also know nas the +4." />
+          </Properties>
+        </Column>
+        <Column name="BaseAlternateCode" position="21" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="Code that specifies whether a record is a base (preferred) or alternate record. B= Base, A = Alternate" />
+          </Properties>
+        </Column>
+        <Column name="LACSStatus" position="22" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="L = LACS Converted, Blank = Not Applicable" />
+          </Properties>
+        </Column>
+        <Column name="GovernmentBuilding" position="23" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="This indicates what type of Government building this is if applicable." />
+          </Properties>
+        </Column>
+        <Column name="FinanceNumber" position="24" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="6">
+          <Properties>
+            <Property name="MS_Description" value="A code assigned to Postal Service facilities (primarily post offices) to collect cost and statistical data and compile revenue and expense data." />
+          </Properties>
+        </Column>
+        <Column name="State" position="25" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="2">
+          <Properties>
+            <Property name="MS_Description" value="A 2-character abbreviation for the name of a state, U.S. territory, or armed forces ZIP Code designation." />
+          </Properties>
+        </Column>
+        <Column name="CountyFIPS" position="26" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="3">
+          <Properties>
+            <Property name="MS_Description" value="The 3-digit (FIPS) code assigned to counties in sequence within each state. Match this code with the County Table for county based info." />
+          </Properties>
+        </Column>
+        <Column name="CongressionalDistrict" position="27" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="2">
+          <Properties>
+            <Property name="MS_Description" value="The Congressional District this record is assigned to." />
+          </Properties>
+        </Column>
+        <Column name="MunicipalityKey" position="28" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="6">
+          <Properties>
+            <Property name="MS_Description" value="Reserved for future use." />
+          </Properties>
+        </Column>
+        <Column name="UrbanizationKey" position="29" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="6">
+          <Properties>
+            <Property name="MS_Description" value="An index to the Deluxe ZIP Code Database file that provides the urbanization name for this delivery range." />
+          </Properties>
+        </Column>
+        <Column name="PreferredLastLineCityStateKey" position="30" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="6">
+          <Properties>
+            <Property name="MS_Description" value="Match this field to our Deluxe ZIP Code Database for City name, City alias, Area Code, Time Zone, and more." />
+          </Properties>
+        </Column>
+        <Column name="ToLatitude" position="31" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="decimal">
+          <Properties>
+            <Property name="MS_Description" value="The north/south measurement indicating the end of this record." />
+          </Properties>
+        </Column>
+        <Column name="FromLatitude" position="32" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="decimal">
+          <Properties>
+            <Property name="MS_Description" value="The north/south measurement indicating the beginning for this record." />
+          </Properties>
+        </Column>
+        <Column name="ToLongitude" position="33" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="decimal">
+          <Properties>
+            <Property name="MS_Description" value="The east/west measurement indicating the end of this record." />
+          </Properties>
+        </Column>
+        <Column name="FromLongitude" position="34" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="decimal">
+          <Properties>
+            <Property name="MS_Description" value="The east/west measurement indicating the beginning for this record." />
+          </Properties>
+        </Column>
+        <Column name="CensusTract" position="35" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="6">
+          <Properties>
+            <Property name="MS_Description" value="Small, locally delineated statistical areas within selected counties, generally having stable boundaries and, when first established by local communities, designed to have relatively homogeneous demographic characteristics." />
+          </Properties>
+        </Column>
+        <Column name="CensusBlock" position="36" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="4">
+          <Properties>
+            <Property name="MS_Description" value="Blocks are numbered uniquely within each census tract with a 4-character number that identifies the collection block used in the census and a character block suffix. This character block suffix is often blank." />
+          </Properties>
+        </Column>
+        <Column name="TLID" position="37" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="10">
+          <Properties>
+            <Property name="MS_Description" value="Tiger Line Identification (TLID) is a universal number associated with Census Bureau products." />
+          </Properties>
+        </Column>
+        <Column name="LatLonMultiMatch" position="38" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="Code that specifies if a ZIP+4 has more than 1 Latitude/Longitude Match. Y = Yes, Blank = No" />
+          </Properties>
+        </Column>
+        <Column name="CenLat" position="39" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="decimal">
+          <Properties>
+            <Property name="MS_Description" value="Latitude of the ZIP+4 Centroid" />
+          </Properties>
+        </Column>
+        <Column name="CenLon" position="40" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="decimal">
+          <Properties>
+            <Property name="MS_Description" value="Longitude of the ZIP+4 Centroid" />
+          </Properties>
+        </Column>
+        <Column name="CensusBlockGroup" position="41" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="12">
+          <Properties>
+            <Property name="MS_Description" value="Census block group code (state, county, tract and block group codes)" />
+          </Properties>
+        </Column>
+      </Columns>
+    </Table>
+    <Table schema="jamie" name="ZipMultiCounty" tableType="BASE TABLE">
+      <Columns>
+        <Column name="ZipCode" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="5">
+          <Properties>
+            <Property name="MS_Description" value="00000-99999 Five digit numeric ZIP Code of the area." />
+          </Properties>
+        </Column>
+        <Column name="StateFIPS" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="2">
+          <Properties>
+            <Property name="MS_Description" value="2 Digit FIPS code for the State this ZIP Code resides in." />
+          </Properties>
+        </Column>
+        <Column name="State" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="2">
+          <Properties>
+            <Property name="MS_Description" value="Two character state abbreviation." />
+          </Properties>
+        </Column>
+        <Column name="CountyFIPS" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="3">
+          <Properties>
+            <Property name="MS_Description" value="3 Digit FIPS code for the County this ZIP Code resides in." />
+          </Properties>
+        </Column>
+        <Column name="County" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="255">
+          <Properties>
+            <Property name="MS_Description" value="Name of County or Parish this ZIP Code resides in." />
+          </Properties>
+        </Column>
+      </Columns>
+    </Table>
     <Table schema="jbt" name="claimsbyday" tableType="BASE TABLE">
       <Columns>
         <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
@@ -6145,6 +7115,14 @@
         <Column name="ClaimType" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="1" />
         <Column name="SumRevPaidAmt" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
         <Column name="CntRevClaims" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+      </Columns>
+    </Table>
+    <Table schema="migrate" name="CarrierMap" tableType="BASE TABLE">
+      <Columns>
+        <Column name="CarrierMapId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Tenants" />
+        <Column name="CarrierCodeClean" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" />
+        <Column name="CarrierCodeDirty" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" />
       </Columns>
     </Table>
     <Table schema="migrate" name="CustomInsurancePlanMap" tableType="VIEW">
@@ -6168,21 +7146,6 @@
         <Column name="MemberNumber" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" />
         <Column name="CarrierContactId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bigint" />
         <Column name="CarrierId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
-      </Columns>
-    </Table>
-    <Table schema="migrate" name="Members" tableType="VIEW">
-      <Columns>
-        <Column name="ins_carrier_id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="13" />
-        <Column name="mbr_id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="19" />
-        <Column name="mbr_ssn" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="22" />
-        <Column name="mbr_first_name" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="17" />
-        <Column name="mbr_middle_name" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1" />
-        <Column name="mbr_last_name" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="20" />
-        <Column name="mbr_gender" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="1" />
-        <Column name="mbr_dob" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="10" />
-        <Column name="source" position="9" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="12" />
-        <Column name="dt" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="10" />
-        <Column name="priority" position="11" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
       </Columns>
     </Table>
     <Table schema="NationalDrugCode" name="Labelers" tableType="BASE TABLE">
@@ -6225,7 +7188,7 @@
             <Property name="MS_Description" value="A description of the size and type of packaging in sentence form. Multilevel packages will have the descriptions concatenated together.  For example: 4 BOTTLES in 1 CARTON/100 TABLETS in 1 BOTTLE." />
           </Properties>
         </Column>
-        <Column name="ndc" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="8000" />
+        <Column name="CmsCode" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="8000" />
       </Columns>
       <Collections>
         <Collection schema="health" table="Pharmacy" column="NationalDrugCodePackageId" />
@@ -6520,6 +7483,145 @@
         <Column name="count_diagnosis" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
       </Columns>
     </Table>
+    <Table schema="reporting" name="contacts_by_top_diag_1" tableType="BASE TABLE">
+      <Columns>
+        <Column name="contactid" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
+        <Column name="c" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="svc_diag_1_desc" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
+      </Columns>
+    </Table>
+    <Table schema="reporting" name="contacts_by_top_prescription_class" tableType="BASE TABLE">
+      <Columns>
+        <Column name="contactid" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
+        <Column name="c" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="prescription_class" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="200" />
+      </Columns>
+    </Table>
+    <Table schema="reporting" name="Demo_Risk_Factors" tableType="BASE TABLE">
+      <Columns>
+        <Column name="Age" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="tenantid" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="contactid" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
+        <Column name="SumRevPaidAmt" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="mbr_id" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" />
+        <Column name="Gender" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="2" />
+        <Column name="Member_Relationship" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="mbr_zip" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10" />
+        <Column name="mbr_state" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="2" />
+        <Column name="Average_Risk_Score" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+      </Columns>
+    </Table>
+    <Table schema="reporting" name="demo_risk_factors_with_proc_groupers" tableType="BASE TABLE">
+      <Columns>
+        <Column name="Age" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="tenantid" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="contactid" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
+        <Column name="SumRevPaidAmt" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="mbr_id" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" />
+        <Column name="Gender" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="2" />
+        <Column name="Member_Relationship" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="mbr_zip" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10" />
+        <Column name="mbr_state" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="2" />
+        <Column name="Average_Risk_Score" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+        <Column name="ins_plan_type_code" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="20" />
+        <Column name="ins_plan_type_desc" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="255" />
+        <Column name="ins_emp_group_id" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="20" />
+        <Column name="ins_emp_group_name" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="prescription_class" position="15" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="200" />
+        <Column name="svc_diag_1_desc" position="16" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
+        <Column name="proc1_grouper_id" position="17" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
+        <Column name="proc1_grouper_desc" position="18" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
+      </Columns>
+    </Table>
+    <Table schema="reporting" name="Demo_Risk_Factors2" tableType="BASE TABLE">
+      <Columns>
+        <Column name="Age" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="tenantid" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="contactid" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
+        <Column name="SumRevPaidAmt" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="mbr_id" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" />
+        <Column name="Gender" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="2" />
+        <Column name="Member_Relationship" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="mbr_zip" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10" />
+        <Column name="mbr_state" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="2" />
+        <Column name="Average_Risk_Score" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+        <Column name="ins_plan_type_code" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="20" />
+        <Column name="ins_plan_type_desc" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="255" />
+        <Column name="ins_emp_group_id" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="20" />
+        <Column name="ins_emp_group_name" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+      </Columns>
+    </Table>
+    <Table schema="reporting" name="Demo_Risk_Factors3" tableType="BASE TABLE">
+      <Columns>
+        <Column name="Age" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="tenantid" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="contactid" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
+        <Column name="SumRevPaidAmt" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="mbr_id" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" />
+        <Column name="Gender" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="2" />
+        <Column name="Member_Relationship" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="mbr_zip" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10" />
+        <Column name="mbr_state" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="2" />
+        <Column name="Average_Risk_Score" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+        <Column name="ins_plan_type_code" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="20" />
+        <Column name="ins_plan_type_desc" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="255" />
+        <Column name="ins_emp_group_id" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="20" />
+        <Column name="ins_emp_group_name" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="prescription_class" position="15" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="200" />
+      </Columns>
+    </Table>
+    <Table schema="reporting" name="demo_risk_factors4" tableType="BASE TABLE">
+      <Columns>
+        <Column name="Age" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="tenantid" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="contactid" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
+        <Column name="SumRevPaidAmt" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="mbr_id" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" />
+        <Column name="Gender" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="2" />
+        <Column name="Member_Relationship" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="mbr_zip" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10" />
+        <Column name="mbr_state" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="2" />
+        <Column name="Average_Risk_Score" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+        <Column name="ins_plan_type_code" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="20" />
+        <Column name="ins_plan_type_desc" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="255" />
+        <Column name="ins_emp_group_id" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="20" />
+        <Column name="ins_emp_group_name" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="prescription_class" position="15" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="200" />
+        <Column name="svc_diag_1_desc" position="16" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
+      </Columns>
+    </Table>
+    <Table schema="reporting" name="demo_risk_factors5" tableType="BASE TABLE">
+      <Columns>
+        <Column name="Age" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="tenantid" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="contactid" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
+        <Column name="SumRevPaidAmt" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="mbr_id" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" />
+        <Column name="Gender" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="2" />
+        <Column name="Member_Relationship" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="mbr_zip" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10" />
+        <Column name="mbr_state" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="2" />
+        <Column name="Average_Risk_Score" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="float" />
+        <Column name="ins_plan_type_code" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="20" />
+        <Column name="ins_plan_type_desc" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="255" />
+        <Column name="ins_emp_group_id" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="20" />
+        <Column name="ins_emp_group_name" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" />
+        <Column name="prescription_class" position="15" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="200" />
+        <Column name="svc_diag_1_desc" position="16" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
+        <Column name="proc1_grouper_id" position="17" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
+        <Column name="proc1_grouper_desc" position="18" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
+        <Column name="svc_drg_code" position="19" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="7" />
+        <Column name="svc_drg_desc" position="20" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
+        <Column name="svc_rx_class_code" position="21" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
+      </Columns>
+    </Table>
+    <Table schema="reporting" name="DRG_RANGES_AND_DESCRIPTIONS" tableType="BASE TABLE">
+      <Columns>
+        <Column name="MDC" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="255" />
+        <Column name="DRG_RANGE" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="255" />
+        <Column name="DESCRIPITON" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="255" />
+      </Columns>
+    </Table>
     <Table schema="reporting" name="Eligibility" tableType="VIEW">
       <Columns>
         <Column name="Tenantid" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
@@ -6674,6 +7776,21 @@
         <Column name="AvgPaidPerClaim" position="15" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
       </Columns>
     </Table>
+    <Table schema="reporting" name="random_contact_sampleT24" tableType="BASE TABLE">
+      <Columns>
+        <Column name="contactid" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
+      </Columns>
+    </Table>
+    <Table schema="reporting" name="ranoom_sample_demo_data" tableType="BASE TABLE">
+      <Columns>
+        <Column name="ContactId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
+        <Column name="Age" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="Gender" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="10" />
+        <Column name="rev_paid_date" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="date" />
+        <Column name="rev_paid_amt" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="money" />
+        <Column name="Zipcode" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
+      </Columns>
+    </Table>
     <Table schema="reporting" name="reduced_care_alert_table" tableType="BASE TABLE">
       <Columns>
         <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
@@ -6786,6 +7903,21 @@
         <Column name="TotalClaims" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
       </Columns>
     </Table>
+    <Table schema="reporting" name="top_groupers_for_demo_risk_factors_drg_test" tableType="BASE TABLE">
+      <Columns>
+        <Column name="contactid" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
+        <Column name="c" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="svc_drg_code" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="7" />
+      </Columns>
+    </Table>
+    <Table schema="reporting" name="top_groupers_for_demo_risk_factors4_t24" tableType="BASE TABLE">
+      <Columns>
+        <Column name="contactid" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
+        <Column name="c" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="proc1_grouper_id" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
+        <Column name="proc1_grouper_desc" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
+      </Columns>
+    </Table>
     <Table schema="reporting" name="Top_Primary_and_Secondary_Diag_T1" tableType="BASE TABLE">
       <Columns>
         <Column name="count_diagnosis" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
@@ -6804,6 +7936,13 @@
         <Column name="ContactId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
         <Column name="svc_diag_1_desc" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
         <Column name="svc_diag_2_desc" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
+      </Columns>
+    </Table>
+    <Table schema="reporting" name="top_rx_classes_demo_risk_factors5_t24" tableType="BASE TABLE">
+      <Columns>
+        <Column name="contactid" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
+        <Column name="c" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="svc_rx_class_code" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="12" />
       </Columns>
     </Table>
     <Table schema="reporting" name="Top100primary_and_secondary_diagnosisT1" tableType="BASE TABLE">
@@ -6847,30 +7986,45 @@
         <Arg position="2" mode="IN" name="@actual" sqlType="sql_variant" maxLen="0" />
         <Arg position="3" mode="IN" name="@msg" sqlType="varchar" maxLen="4000" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="0" />
+      </ResultSets>
     </Sproc>
     <Sproc schema="db" name="AssertNotNull">
       <Args>
         <Arg position="1" mode="IN" name="@actual" sqlType="int" />
         <Arg position="2" mode="IN" name="@msg" sqlType="varchar" maxLen="4000" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="0" />
+      </ResultSets>
     </Sproc>
     <Sproc schema="db" name="AssertNull">
       <Args>
         <Arg position="1" mode="IN" name="@actual" sqlType="int" />
         <Arg position="2" mode="IN" name="@msg" sqlType="varchar" maxLen="4000" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="0" />
+      </ResultSets>
     </Sproc>
     <Sproc schema="db" name="AssertZero">
       <Args>
         <Arg position="1" mode="IN" name="@actual" sqlType="int" />
         <Arg position="2" mode="IN" name="@msg" sqlType="varchar" maxLen="4000" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="0" />
+      </ResultSets>
     </Sproc>
     <Sproc schema="db" name="AssertZeroOrOne">
       <Args>
         <Arg position="1" mode="IN" name="@actual" sqlType="int" />
         <Arg position="2" mode="IN" name="@msg" sqlType="varchar" maxLen="4000" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="0" />
+      </ResultSets>
     </Sproc>
     <Sproc schema="db" name="ColumnPropertySet">
       <Args>
@@ -6880,6 +8034,11 @@
         <Arg position="4" mode="IN" name="@tableSchema" sqlType="nvarchar" maxLen="128" />
         <Arg position="5" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>The metadata could not be determined because statement 'EXEC %%ExtendedPropertySet().RemoveValue(Name = @name, Level0type = @level0type, Level0name = @level' in procedure 'sp_dropextendedproperty' does not support metadata discovery.</Error>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="db" name="ExecuteSqlIfColumnNotExists">
       <Args>
@@ -6887,18 +8046,33 @@
         <Arg position="2" mode="IN" name="@columnName" sqlType="nvarchar" maxLen="128" />
         <Arg position="3" mode="IN" name="@sql" sqlType="nvarchar" maxLen="-1" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>The metadata could not be determined because statement 'EXEC dbo.sp_executesql @statement = @sql' in procedure 'ExecuteSqlIfColumnNotExists'  contains dynamic SQL.  Consider using the WITH RESULT SETS clause to explicitly describe the result set.</Error>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="db" name="ExecuteSqlIfObjectExists">
       <Args>
         <Arg position="1" mode="IN" name="@objectName" sqlType="nvarchar" maxLen="128" />
         <Arg position="2" mode="IN" name="@sql" sqlType="nvarchar" maxLen="-1" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>The metadata could not be determined because statement 'EXEC dbo.sp_executesql @statement = @sql' in procedure 'ExecuteSqlIfObjectExists'  contains dynamic SQL.  Consider using the WITH RESULT SETS clause to explicitly describe the result set.</Error>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="db" name="ExecuteSqlIfObjectNotExists">
       <Args>
         <Arg position="1" mode="IN" name="@objectName" sqlType="nvarchar" maxLen="128" />
         <Arg position="2" mode="IN" name="@sql" sqlType="nvarchar" maxLen="-1" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>The metadata could not be determined because statement 'EXEC dbo.sp_executesql @statement = @sql' in procedure 'ExecuteSqlIfObjectNotExists'  contains dynamic SQL.  Consider using the WITH RESULT SETS clause to explicitly describe the result set.</Error>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="db" name="PrintNow">
       <Args>
@@ -6929,12 +8103,27 @@
         <Arg position="25" mode="IN" name="@m3" sqlType="money" />
         <Arg position="26" mode="IN" name="@startedAt" sqlType="datetime" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="0" />
+      </ResultSets>
     </Sproc>
     <Sproc schema="db" name="PrintSql">
       <Args>
         <Arg position="1" mode="IN" name="@sql" sqlType="nvarchar" maxLen="-1" />
         <Arg position="2" mode="IN" name="@debugMode" sqlType="bit" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="1" isError="0">
+          <Columns>
+            <Column name="Sql" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="xml" maxLen="-1" />
+          </Columns>
+        </ResultSet>
+      </ResultSets>
+    </Sproc>
+    <Sproc schema="db" name="ProcResultsetColumnsPopulate">
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="0" />
+      </ResultSets>
     </Sproc>
     <Sproc schema="db" name="RoutineReplace">
       <Args>
@@ -6942,11 +8131,21 @@
         <Arg position="2" mode="IN" name="@sql" sqlType="nvarchar" maxLen="-1" />
         <Arg position="3" mode="IN" name="@routineSchema" sqlType="nvarchar" maxLen="128" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>The metadata could not be determined because statement 'EXEC dbo.sp_executesql @statement = @sql' in procedure 'RoutineReplace'  contains dynamic SQL.  Consider using the WITH RESULT SETS clause to explicitly describe the result set.</Error>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="db" name="RowStatusTriggersCreate">
       <Args>
         <Arg position="1" mode="IN" name="@full" sqlType="bit" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>The metadata could not be determined because statement 'exec (@sql)' in procedure 'RowStatusTriggersCreate'  contains dynamic SQL.  Consider using the WITH RESULT SETS clause to explicitly describe the result set.</Error>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="db" name="SchemaLogUpgradeBegin">
       <Args>
@@ -6954,22 +8153,46 @@
         <Arg position="2" mode="IN" name="@path" sqlType="varchar" maxLen="255" />
         <Arg position="3" mode="IN" name="@title" sqlType="varchar" maxLen="255" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="1" isError="0">
+          <Columns>
+            <Column name="Field1" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="numeric" maxLen="17" />
+          </Columns>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="db" name="SchemaLogUpgradeEnd">
       <Args>
         <Arg position="1" mode="IN" name="@schemaUpgraderLogId" sqlType="int" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="0" />
+      </ResultSets>
     </Sproc>
     <Sproc schema="db" name="SchemaRequirementExists">
       <Args>
         <Arg position="1" mode="IN" name="@namespace" sqlType="varchar" maxLen="255" />
         <Arg position="2" mode="IN" name="@path" sqlType="varchar" maxLen="255" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="1" isError="0">
+          <Columns>
+            <Column name="Field1" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" maxLen="1" />
+          </Columns>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="db" name="SchemaRequirementMaxVersionGet">
       <Args>
         <Arg position="1" mode="IN" name="@namespace" sqlType="varchar" maxLen="255" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="1" isError="0">
+          <Columns>
+            <Column name="path" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="255" />
+          </Columns>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="db" name="SprocParameterPropertySet">
       <Args>
@@ -6979,6 +8202,11 @@
         <Arg position="4" mode="IN" name="@sprocSchema" sqlType="nvarchar" maxLen="128" />
         <Arg position="5" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>The metadata could not be determined because statement 'EXEC %%ExtendedPropertySet().RemoveValue(Name = @name, Level0type = @level0type, Level0name = @level' in procedure 'sp_dropextendedproperty' does not support metadata discovery.</Error>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="db" name="SprocPropertySet">
       <Args>
@@ -6987,6 +8215,11 @@
         <Arg position="3" mode="IN" name="@routineSchema" sqlType="nvarchar" maxLen="128" />
         <Arg position="4" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>The metadata could not be determined because statement 'EXEC %%ExtendedPropertySet().RemoveValue(Name = @name, Level0type = @level0type, Level0name = @level' in procedure 'sp_dropextendedproperty' does not support metadata discovery.</Error>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="db" name="TablePropertySet">
       <Args>
@@ -6996,6 +8229,11 @@
         <Arg position="4" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
         <Arg position="5" mode="IN" name="@remove" sqlType="bit" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>The metadata could not be determined because statement 'EXEC %%ExtendedPropertySet().RemoveValue(Name = @name, Level0type = @level0type, Level0name = @level' in procedure 'sp_dropextendedproperty' does not support metadata discovery.</Error>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="db" name="ViewColumnPropertySet">
       <Args>
@@ -7005,6 +8243,11 @@
         <Arg position="4" mode="IN" name="@viewSchema" sqlType="nvarchar" maxLen="128" />
         <Arg position="5" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>The metadata could not be determined because statement 'EXEC %%ExtendedPropertySet().RemoveValue(Name = @name, Level0type = @level0type, Level0name = @level' in procedure 'sp_dropextendedproperty' does not support metadata discovery.</Error>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="db" name="ViewPropertySet">
       <Args>
@@ -7014,6 +8257,11 @@
         <Arg position="4" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
         <Arg position="5" mode="IN" name="@remove" sqlType="bit" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>The metadata could not be determined because statement 'EXEC %%ExtendedPropertySet().RemoveValue(Name = @name, Level0type = @level0type, Level0name = @level' in procedure 'sp_dropextendedproperty' does not support metadata discovery.</Error>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="db" name="WhoIsActive">
       <Args>
@@ -7042,6 +8290,19 @@
         <Arg position="23" mode="INOUT" name="@schema" sqlType="varchar" maxLen="-1" />
         <Arg position="24" mode="IN" name="@help" sqlType="bit" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>
+            The metadata could not be determined because statement 'INSERT #sessions
+            (
+            recursion,
+            session_id,
+            request_id,
+            session_number,
+            elapsed' in procedure 'WhoIsActive' uses a temp table.
+          </Error>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="dbo" name="ApplicationFindByHost">
       <Properties>
@@ -7057,11 +8318,29 @@
           </Properties>
         </Arg>
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="4" isError="0">
+          <Columns>
+            <Column name="ApplicationId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" maxLen="4" />
+            <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" maxLen="4" />
+            <Column name="ActualHostname" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="2048" />
+            <Column name="PreferredHostname" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="8000" />
+          </Columns>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="dbo" name="DateDimensionsForTenantCreate">
       <Args>
         <Arg position="1" mode="IN" name="@tenantId" sqlType="int" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>
+            The metadata could not be determined because statement 'insert into datedimensions
+            (TenantId, calendarDate, FiscalYear, FiscalQuarter, FiscalMonth, Fiscal' in procedure 'DateDimensionsForTenantCreate' uses a temp table.
+          </Error>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="dbo" name="FiscalYearsConfigure">
       <Args>
@@ -7070,6 +8349,18 @@
         <Arg position="3" mode="IN" name="@baselineCalendarYear" sqlType="int" />
         <Arg position="4" mode="IN" name="@baselineCalendarMonth" sqlType="int" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>
+            The metadata could not be determined because statement 'insert into #z
+            values
+            (
+            @cd,
+            @baselineFiscalYear,
+            'FY'+cast(@baselineFiscalYear' in procedure 'FiscalYearsConfigure' uses a temp table.
+          </Error>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="dbo" name="GetFieldCounts">
       <Properties>
@@ -7083,6 +8374,14 @@
         <Arg position="3" mode="IN" name="@tenantId" sqlType="int" />
         <Arg position="4" mode="IN" name="@fieldNamesCsv" sqlType="nvarchar" maxLen="-1" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>
+            The metadata could not be determined because statement 'insert into #cnts
+            exec(@sql)' in procedure 'GetFieldCounts' uses a temp table.
+          </Error>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="dbo" name="JobDequeue">
       <Properties>
@@ -7101,11 +8400,25 @@
         <Arg position="5" mode="IN" name="@tenantId" sqlType="int" />
         <Arg position="6" mode="IN" name="@maxConcurrentPerTenant" sqlType="int" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>
+            The metadata could not be determined because statement 'update j
+            set
+            jobstatus='Dequeued',
+            dequeuedAtutc=@dt,
+            ServiceRoleMachineName=@serviceRol' in procedure 'JobDequeue' uses a temp table.
+          </Error>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="dbo" name="JobReset">
       <Args>
         <Arg position="1" mode="IN" name="@jobId" sqlType="int" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="0" />
+      </ResultSets>
     </Sproc>
     <Sproc schema="dbo" name="sp_alterdiagram">
       <Properties>
@@ -7117,6 +8430,11 @@
         <Arg position="3" mode="IN" name="@version" sqlType="int" />
         <Arg position="4" mode="IN" name="@definition" sqlType="varbinary" maxLen="-1" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>The metadata could not be determined because statement 'revert;' in procedure 'sp_alterdiagram' does not support metadata discovery.</Error>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="dbo" name="sp_creatediagram">
       <Properties>
@@ -7128,6 +8446,11 @@
         <Arg position="3" mode="IN" name="@version" sqlType="int" />
         <Arg position="4" mode="IN" name="@definition" sqlType="varbinary" maxLen="-1" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>The metadata could not be determined because statement 'revert;' in procedure 'sp_creatediagram' does not support metadata discovery.</Error>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="dbo" name="sp_dropdiagram">
       <Properties>
@@ -7137,6 +8460,11 @@
         <Arg position="1" mode="IN" name="@diagramname" sqlType="nvarchar" maxLen="128" />
         <Arg position="2" mode="IN" name="@owner_id" sqlType="int" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>The metadata could not be determined because statement 'REVERT;' in procedure 'sp_dropdiagram' does not support metadata discovery.</Error>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="dbo" name="sp_helpdiagramdefinition">
       <Properties>
@@ -7146,6 +8474,11 @@
         <Arg position="1" mode="IN" name="@diagramname" sqlType="nvarchar" maxLen="128" />
         <Arg position="2" mode="IN" name="@owner_id" sqlType="int" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>The metadata could not be determined because statement 'revert;' in procedure 'sp_helpdiagramdefinition' does not support metadata discovery.</Error>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="dbo" name="sp_helpdiagrams">
       <Properties>
@@ -7155,6 +8488,11 @@
         <Arg position="1" mode="IN" name="@diagramname" sqlType="nvarchar" maxLen="128" />
         <Arg position="2" mode="IN" name="@owner_id" sqlType="int" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>The metadata could not be determined because statement 'REVERT;' in procedure 'sp_helpdiagrams' does not support metadata discovery.</Error>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="dbo" name="sp_renamediagram">
       <Properties>
@@ -7165,17 +8503,30 @@
         <Arg position="2" mode="IN" name="@owner_id" sqlType="int" />
         <Arg position="3" mode="IN" name="@new_diagramname" sqlType="nvarchar" maxLen="128" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>The metadata could not be determined because statement 'REVERT;' in procedure 'sp_renamediagram' does not support metadata discovery.</Error>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="dbo" name="sp_upgraddiagrams">
       <Properties>
         <Property name="microsoft_database_tools_support" value="1" />
       </Properties>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="0" />
+      </ResultSets>
     </Sproc>
     <Sproc schema="migrate" name="ContactsCreateFromDeerwalkEligibility">
       <Args>
         <Arg position="1" mode="IN" name="@tenantId" sqlType="int" />
         <Arg position="2" mode="IN" name="@batchSize" sqlType="int" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>The metadata could not be determined because every code path results in an error; see previous errors for some of these.</Error>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="migrate" name="ContactsCreateFromDeerwalkSetContactIds">
       <Args>
@@ -7186,6 +8537,14 @@
         <Arg position="5" mode="IN" name="@batchSize" sqlType="int" />
         <Arg position="6" mode="IN" name="@contactTableKeyFieldName" sqlType="nvarchar" maxLen="128" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>
+            The metadata could not be determined because statement 'insert into #m
+            exec(@sql)' in procedure 'ContactsCreateFromDeerwalkSetContactIds' uses a temp table.
+          </Error>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="migrate" name="DateDimensionLink">
       <Args>
@@ -7194,12 +8553,22 @@
         <Arg position="3" mode="IN" name="@tenantId" sqlType="int" />
         <Arg position="4" mode="IN" name="@batchSize" sqlType="int" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>The metadata could not be determined because every code path results in an error; see previous errors for some of these.</Error>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="migrate" name="DeerwalkDataImport">
       <Args>
         <Arg position="1" mode="IN" name="@tenantId" sqlType="int" />
         <Arg position="2" mode="IN" name="@createContactsAfterImport" sqlType="bit" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>The metadata could not be determined because statement 'exec(@sql)' in procedure 'MoveRows'  contains dynamic SQL.  Consider using the WITH RESULT SETS clause to explicitly describe the result set.</Error>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="migrate" name="MoveRows">
       <Args>
@@ -7210,16 +8579,33 @@
         <Arg position="5" mode="IN" name="@tenantId" sqlType="int" />
         <Arg position="6" mode="IN" name="@batchSize" sqlType="int" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>The metadata could not be determined because statement 'exec(@sql)' in procedure 'MoveRows'  contains dynamic SQL.  Consider using the WITH RESULT SETS clause to explicitly describe the result set.</Error>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="security" name="SecurityPoliciesCreate">
       <Args>
         <Arg position="1" mode="IN" name="@full" sqlType="bit" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="1" isError="0">
+          <Columns>
+            <Column name="Sql" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="xml" maxLen="-1" />
+          </Columns>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
     <Sproc schema="security" name="TenantSecurityCreate">
       <Args>
         <Arg position="1" mode="IN" name="@tenantId" sqlType="int" />
       </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>The metadata could not be determined because every code path results in an error; see previous errors for some of these.</Error>
+        </ResultSet>
+      </ResultSets>
     </Sproc>
   </Sprocs>
 </SchemaMeta>
