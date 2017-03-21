@@ -11,6 +11,7 @@ using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using Serilog;
 using System;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Serilog.Core;
 using Serilog.Events;
@@ -104,6 +105,7 @@ namespace TraffkPortal
             services.Configure<BlobStorageServices.BlobStorageServicesOptions>(Configuration.GetSection(nameof(BlobStorageServices.BlobStorageServicesOptions)));
             services.Configure<TwilioSmsSenderOptions>(Configuration.GetSection(nameof(TwilioSmsSenderOptions)));
             services.Configure<TableauSignInOptions>(Configuration.GetSection(nameof(TableauSignInOptions)));
+            services.Configure<DataProtectionTokenProviderOptions>(Configuration.GetSection(nameof(DataProtectionTokenProviderOptions)));
             services.Configure<TraffkHttpHeadersFilter.TraffkHttpHeadersFilterOptions>(Configuration.GetSection(nameof(TraffkHttpHeadersFilter.TraffkHttpHeadersFilterOptions)));
 
 
@@ -124,21 +126,11 @@ namespace TraffkPortal
             {
                 options.Cookies.ApplicationCookie.SlidingExpiration = true;
                 options.Cookies.ApplicationCookie.ExpireTimeSpan = TimeSpan.FromSeconds(IdleLogout.TotalSeconds*2); //due to sliding expiration, things can be cut in half...
-                //options.Tokens.EmailConfirmationTokenProvider =
-                //    TraffkDataProtectorTokenProviderOptions.ConfirmationTokenProviderName;
             });
-
-            //services.Configure<TraffkDataProtectorTokenProviderOptions>(options =>
-            //{
-            //    options.TokenLifespan = Parse.ParseTimeSpan(Configuration["RegistrationTokenExpiration"],
-            //        TimeSpan.FromDays(7));
-            //});
 
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<TraffkRdbContext>()
                 .AddDefaultTokenProviders();
-                //.AddTokenProvider<TraffkDataProtectorTokenProvider<ApplicationUser>>(
-                //    TraffkDataProtectorTokenProviderOptions.ConfirmationTokenProviderName);
 
             /*
              * To change password validation, sub out the following....
