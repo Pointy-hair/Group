@@ -9,8 +9,8 @@
     if (reportResource is ReportVisualFolder && tn.HasChildren)
     {
         var folder = reportResource as ReportVisualFolder;
-        <h2 data-toggle="@folder.Title" class="section-toggle" id="@folder.Title.ToUpperCamelCase()"><i class="fa fa-minus primary-color" aria-hidden="true"></i> @folder.Title</h2>
-        <div class="row @folder.Title">
+        <h2 data-toggle="@folder.Title.ToUpperCamelCase()" class="section-toggle"><i class="fa fa-minus primary-color" aria-hidden="true"></i> @folder.Title</h2>
+        <div class="row @folder.Title.ToUpperCamelCase()">
             @if (tn.HasChildren)
             {
                 await Html.RenderPartialAsync("~/Views/Shared/_ReportResourceTreeNodePartial.cshtml", tn.Children);

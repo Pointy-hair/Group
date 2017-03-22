@@ -1079,7 +1079,6 @@ h3 {
 .contact-tags {
     list-style-type: none;
     padding-left: 0px;
-    width: 400px;
     display: inline-block;
 }
 
@@ -1232,7 +1231,7 @@ ul.navbar-left {
 	  border-right: 1px solid #eee;
 	}
 	.navbar-right {
-	  background: #000;
+
 	}
 	.navbar-right > li > a {
 	  padding: 0 13px;
@@ -1313,6 +1312,10 @@ ul.navbar-left {
 	  margin: 12px 12px 0 0;
 	  background: #000;
 	}
+    .navbar-inverse .navbar-toggle, .navbar-inverse .navbar-toggle:focus, .navbar-inverse .navbar-toggle:hover {
+        border-color: transparent;
+        background-color: transparent;
+    }
 	.step-buttons li {
 	  float: none !important;
 	}

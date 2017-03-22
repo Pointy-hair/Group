@@ -19,16 +19,16 @@ namespace Traffk.Tableau.Tests
             Options = MockEnvironment.TableauSignInOptions().Object;
         }
 
-        [TestClass]
-        public class AuthorizeMethodTests : TrustedTicketGetterTests
-        {
-            [TestMethod]
-            public async Task WhenGivenUrlAndUsernameReturnTrustedTicket()
-            {
-                var testGetter = new TrustedTicketGetter(Options);
-                var result = await testGetter.Authorize();
-                Assert.AreNotEqual("-1", result.Token);
-            }
-        }
+        //[TestClass]
+        //public class AuthorizeMethodTests : TrustedTicketGetterTests
+        //{
+        //    [TestMethod]
+        //    public async Task WhenGivenUrlAndUsernameReturnTrustedTicket()
+        //    {
+        //        var testGetter = new TrustedTicketGetter(Options);
+        //        var result = await testGetter.Authorize();
+        //        Assert.AreNotEqual("-1", result.Token);
+        //    }
+        //}
     }
 }

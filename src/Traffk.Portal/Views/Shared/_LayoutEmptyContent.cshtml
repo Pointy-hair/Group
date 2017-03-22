@@ -23,12 +23,12 @@
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
     </environment>
     @{
-        //class="fontsforweb_BAUHS93" for Traffk font
         var primaryColor = "#a707b2";
         var secondaryColor = "#8ec641";
         if (R.HasBasicColors)
         {
             primaryColor = @R.PrimaryColor;
+
             secondaryColor = @R.SecondaryColor;
         }
     }
@@ -211,7 +211,7 @@
 
                 }
             </ul>
-            <div class="nav navbar-right top-nav" id="primary-subnav-logo">
+            <div class="nav navbar-left top-nav" id="primary-subnav-logo">
                 <a class="BAUHS93" asp-controller="Home" asp-action="Index">Traffk</a>
             </div>
         </div>

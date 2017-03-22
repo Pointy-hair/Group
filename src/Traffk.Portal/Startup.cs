@@ -22,7 +22,6 @@ using Traffk.Bal.Identity;
 using Traffk.Bal.ReportVisuals;
 using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
-using Traffk.Portal.Services;
 using Traffk.Tableau;
 using Traffk.Tableau.REST;
 using Traffk.Tableau.REST.RestRequests;
