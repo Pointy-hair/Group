@@ -540,7 +540,7 @@ namespace TraffkPortal.Controllers
             var contact = await FindContactByIdAsync(Convert.ToInt64(contactId));
             SetHeroLayoutViewData(contact, PageKeys.Messages);
 
-            var reportVisual = ReportVisualService.GetReportVisual(ReportVisualContext, id);
+            var reportVisual = ReportVisualService.GetReportVisual(ReportVisualContext, Parse.ParseInt32(id));
             if (reportVisual == null)
             {
                 RedirectToAction(ActionNames.ContactBackground);

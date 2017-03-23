@@ -1065,7 +1065,7 @@
         </Column>
         <Column name="MetaData" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="-1">
           <Properties>
-            <Property name="JsonSettingsClass" value="Bal.ReportVisuals.ReportMetaData" />
+            <Property name="JsonSettingsClass" value="Bal.ReportVisuals.ReportDetails" />
           </Properties>
         </Column>
       </Columns>

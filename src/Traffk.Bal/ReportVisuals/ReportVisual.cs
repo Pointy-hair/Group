@@ -9,7 +9,7 @@ namespace Traffk.Bal.ReportVisuals
 {
     public class ReportVisual : IReportVisual, IReportResource
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public string ExternalReportId { get; set; }
@@ -17,8 +17,8 @@ namespace Traffk.Bal.ReportVisuals
         public string PreviewImageUrl { get; set; }
         public ICollection<string> Tags { get; set; }
         public bool ContainsPhi { get; set; }
-        public string ParentId { get; set; }
-        public string OwnerUserId { get; set; }
+        public int? ParentId { get; set; }
+        public long? OwnerContactId { get; set; }
         public bool Shared { get; set; }
         public bool Favorite { get; set; }
         public ICollection<KeyValuePair<string, string>> Parameters { get; set; }
@@ -39,7 +39,7 @@ namespace Traffk.Bal.ReportVisuals
             set { ContainsPhi = value; }
         }
 
-        string IReportVisual.Id
+        long IReportVisual.Id
         {
             get { return Id; }
             set { Id = value; }
@@ -51,7 +51,7 @@ namespace Traffk.Bal.ReportVisuals
             set { Description = value; }
         }
 
-        string IReportVisual.ExternalReportId
+        string IReportVisual.ExternalReportKey
         {
             get { return ExternalReportId; }
             set { ExternalReportId = value; }

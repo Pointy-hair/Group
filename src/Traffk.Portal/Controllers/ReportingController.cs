@@ -65,12 +65,12 @@ namespace TraffkPortal.Controllers
         [ActionName(ActionNames.Report)]
         public IActionResult Report(string id, string anchorName)
         {
-            var reportVisual = ReportVisualService.GetReportVisual(ReportVisualContext, id);
+            var reportVisual = ReportVisualService.GetReportVisual(ReportVisualContext, Parse.ParseInt32(id));
             if (reportVisual == null)
             {
                 RedirectToAction(ActionNames.Index);
             }
-            Log.Information(reportVisual.Id);
+            Log.Information(reportVisual.Id.ToString());
             var tableauReportViewModel = new TableauReportViewModel(reportVisual);
             return View(tableauReportViewModel);
         }

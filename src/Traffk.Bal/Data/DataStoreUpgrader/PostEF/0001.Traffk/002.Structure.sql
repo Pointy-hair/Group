@@ -603,7 +603,7 @@ GO
 
 exec db.TablePropertySet  'ReportMetaData', '1', @propertyName='AddToDbContext'
 exec db.TablePropertySet  'ReportMetaData', '1', @propertyName='GeneratePoco'
-exec db.ColumnPropertySet 'ReportMetaData', 'MetaData', 'Bal.ReportVisuals.ReportMetaData', @propertyName='JsonSettingsClass'
+exec db.ColumnPropertySet 'ReportMetaData', 'MetaData', 'Bal.ReportVisuals.ReportDetails', @propertyName='JsonSettingsClass'
 exec db.ColumnPropertySet 'ReportMetaData', 'RowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
 exec db.ColumnPropertySet 'ReportMetaData', 'RowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
 exec db.ColumnPropertySet 'ReportMetaData', 'CreatedAtUtc', 'Datetime when this entity was created.'

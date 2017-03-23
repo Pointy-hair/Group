@@ -28,8 +28,8 @@ namespace Traffk.Bal.ReportVisuals
     public interface IReportVisualService
     {
         TreeNode<IReportResource> GetReportFolderTreeRoot(VisualContext visualContext, string reportTagFilter = null);
-        IEnumerable<ReportVisual> GetReportVisuals(VisualContext visualContext, string reportTagFilter);
-        ReportVisual GetReportVisual(VisualContext context, string id);
+        IEnumerable<IReportVisual> GetReportVisuals(VisualContext visualContext, string reportTagFilter);
+        ReportVisual GetReportVisual(VisualContext context, int id);
 
         byte[] DownloadPreviewImageForTableauVisual(string workbookId, string viewId);
     }
@@ -41,7 +41,6 @@ namespace Traffk.Bal.ReportVisuals
         private ITableauTenantFinder TableauTenantFinder;
         private ApplicationUser CurrentUser;
         private AuthorizationHandlerContext AuthorizationHandlerContext;
-        private HashSet<ReportMetaData> MockReportMetaData;
         private bool CanAccessPhi;
         private IEnumerable<string> TableauReportIds;
         private ICacher Cacher;
@@ -61,18 +60,17 @@ namespace Traffk.Bal.ReportVisuals
             CurrentUser = currentUser.User;
 
             CanAccessPhi = true;
-            MockReportMetaData = new HashSet<ReportMetaData>();
         }
 
-        IEnumerable<ReportVisual> IReportVisualService.GetReportVisuals(VisualContext visualContext, string reportTagFilter) 
+        IEnumerable<IReportVisual> IReportVisualService.GetReportVisuals(VisualContext visualContext, string reportTagFilter) 
             => GetReportVisuals(visualContext, reportTagFilter);
 
         TreeNode<IReportResource> IReportVisualService.GetReportFolderTreeRoot(VisualContext context, string reportTagFilter)
             => GetReportFolderTreeRoot(context, reportTagFilter);
-        ReportVisual IReportVisualService.GetReportVisual(VisualContext context, string id) 
+        ReportVisual IReportVisualService.GetReportVisual(VisualContext context, int id) 
             => GetReportVisual(context, id);
 
-        public ReportVisual GetReportVisual(VisualContext context, string id)
+        public ReportVisual GetReportVisual(VisualContext context, int id)
         {
             var root = GetReportFolderTreeRoot(context);
             ReportVisual matchingReportVisual = null;
@@ -96,18 +94,18 @@ namespace Traffk.Bal.ReportVisuals
             return Cacher.FindOrCreate(rootKey, key => GetTreeCacheEntry(visualContext, reportTagFilter)).Value;
         }
         
-        public IEnumerable<ReportVisual> GetReportVisuals(VisualContext visualContext, string reportTagFilter = null)
+        public IEnumerable<IReportVisual> GetReportVisuals(VisualContext visualContext, string reportTagFilter = null)
         {
             var tableauReports = GetTableauReportVisuals();
             var tableauReportVisuals = tableauReports as IList<ITableauReportVisual> ?? tableauReports.ToList();
             TableauReportIds = tableauReportVisuals.Select(t => t.Id);
 
-            var relevantReportMetaDatas = new HashSet<IReportMetaData>(GetRelevantReportMetaDatas(visualContext, reportTagFilter));
+            var relevantReportMetaDatas = new HashSet<ReportMetaData>(GetRelevantReportMetaDatas(visualContext, reportTagFilter));
 
             List<ReportVisual> visuals = new List<ReportVisual>();
             foreach (var rmd in relevantReportMetaDatas)
             {
-                var tableauReport = tableauReportVisuals.SingleOrDefault(x => x.Id == rmd.ExternalReportId);
+                var tableauReport = tableauReportVisuals.SingleOrDefault(x => x.Id == rmd.ExternalReportKey);
                 var visual = (ReportVisual)Merge(tableauReport, rmd);
                 visuals.Add(visual);
             }
@@ -118,25 +116,26 @@ namespace Traffk.Bal.ReportVisuals
         private TreeNode<IReportResource> GetTreeCacheEntry(VisualContext visualContext, string reportTagFilter)
         {
             var root = new TreeNode<IReportResource>(new ReportVisualFolder("Root"));
-            var reportVisuals = (ICollection<ReportVisual>)(GetReportVisuals(visualContext, reportTagFilter) as ICollection<ReportVisual> ??
+            var reportVisuals = (ICollection<IReportVisual>)(GetReportVisuals(visualContext, reportTagFilter) as ICollection<IReportVisual> ??
                                 GetReportVisuals(visualContext, reportTagFilter).ToList());
 
             if (reportVisuals.Any())
             {
                 var workbookFolders = new HashSet<TreeNode<IReportResource>>();
-                foreach (var visual in reportVisuals)
+                foreach (var rv in reportVisuals)
                 {
-                    var folderName = visual.FolderName;
-
-                    if (folderName == "")
-                    {
-                        root.Add(visual);
-                    }
+                    var visual = rv as ReportVisual;
+                    var folderName = rv.FolderName;
 
                     var existingFolder = workbookFolders.SingleOrDefault(x => x.Data.Title == folderName);
+
                     if (existingFolder != null)
                     {
                         existingFolder.Add(visual);
+                    }
+                    else if (folderName == "")
+                    {
+                        root.Add(visual);
                     }
                     else
                     {
@@ -155,9 +154,9 @@ namespace Traffk.Bal.ReportVisuals
         }
 
 
-        private static IReportVisual Merge(ITableauReportVisual tableauReportVisual, IReportMetaData reportMetaData)
+        private static IReportVisual Merge(ITableauReportVisual tableauReportVisual, ReportMetaData reportMetaData)
         {
-            Requires.NonNull(reportMetaData.Description, nameof(reportMetaData.Description));
+            Requires.NonNull(reportMetaData.MetaData.Description, nameof(reportMetaData.MetaData.Description));
 
             const string siteIdKey = "SiteId";
 
@@ -177,35 +176,60 @@ namespace Traffk.Bal.ReportVisuals
 
             var visual = new ReportVisual()
             {
-                CanExport = reportMetaData.CanExport,
-                ContainsPhi = reportMetaData.ContainsPhi,
-                Description = reportMetaData.Description ?? "Description via ReportVisualService",
+                CanExport = reportMetaData.MetaData.CanExport,
+                ContainsPhi = reportMetaData.MetaData.ContainsPhi,
+                Description = reportMetaData.MetaData.Description ?? "No description available",
                 ExternalReportId = tableauReportVisual.Id,
-                Favorite = reportMetaData.Favorite,
-                FolderPath = reportMetaData.FolderPath ?? "/",
+                Favorite = reportMetaData.MetaData.Favorite,
+                FolderPath = reportMetaData.MetaData.FolderPath ?? "/",
                 Id = reportMetaData.ReportMetaDataId,
-                LastEdit = reportMetaData.LastEdit,
-                LastEditedField = reportMetaData.LastEditedField,
-                OwnerUserId = reportMetaData.OwnerUserId,
-                Parameters = reportMetaData.Parameters ?? parameters,
+                LastEdit = reportMetaData.MetaData.LastEdit,
+                LastEditedField = reportMetaData.MetaData.LastEditedField,
+                OwnerContactId = reportMetaData.OwnerContactId,
+                Parameters = reportMetaData.MetaData.Parameters ?? parameters,
                 ParentId = reportMetaData.ParentReportMetaDataId,
-                PreviewImageUrl = reportMetaData.PreviewImageUrl ??
+                PreviewImageUrl = reportMetaData.MetaData.PreviewImageUrl ??
                                   $"/Reporting/PreviewImage/{tableauReportVisual.WorkbookId}/{tableauReportVisual.Id}",
-                Shared = reportMetaData.Shared,
-                Tags = reportMetaData.Tags,
-                Title = reportMetaData.Title ?? tableauReportVisual.ViewName,
-                VisualContext = reportMetaData.VisualContext               
+                Shared = reportMetaData.MetaData.Shared,
+                Tags = reportMetaData.MetaData.Tags,
+                Title = reportMetaData.MetaData.Title ?? tableauReportVisual.ViewName,
+                VisualContext = reportMetaData.MetaData.VisualContext               
             };
 
             return visual;
+        }
+
+        private static ReportMetaData Merge(ReportMetaData primary, ReportMetaData secondary)
+        {
+            var mergedReportDetails = new ReportDetails
+            {
+                Title = primary.MetaData.Title ?? secondary.MetaData.Title,
+                Description = primary.MetaData.Description ?? secondary.MetaData.Description,
+                ContainsPhi = primary.MetaData.ContainsPhi,
+                Tags = primary.MetaData.Tags ?? secondary.MetaData.Tags,
+                Parameters = primary.MetaData.Parameters ?? secondary.MetaData.Parameters,
+                VisualContext = primary.MetaData.VisualContext,
+                FolderPath = primary.MetaData.FolderPath,
+                CanExport = primary.MetaData.CanExport
+            };
+
+            var mergedRmd = new ReportMetaData
+            {
+                ParentReportMetaDataId = primary.ParentReportMetaDataId ?? secondary.ParentReportMetaDataId,
+                ExternalReportKey = primary.ExternalReportKey ?? secondary.ExternalReportKey,
+                MetaData = mergedReportDetails,
+                OwnerContactId = primary.OwnerContactId ?? secondary.OwnerContactId,
+                TenantId = primary.TenantId ?? secondary.TenantId
+            };
+
+            return mergedRmd;
         }
 
         private IEnumerable<ITableauReportVisual> GetTableauReportVisuals()
         {
             if (TableauTenantId == null)
             {
-                var tableauReportVisuals = TableauRestService.DownloadViewsForSite().Views.ToList();
-                var random = new Random();
+                var tableauReportVisuals = TableauRestService.DownloadViewsForSite().Views.OrderBy(x => x.ViewName).ToList();
 
                 //Placeholder for Risk Index tags
                 var riskIndexReportNames = new HashSet<string>(Comparers.CaseInsensitiveStringComparer);
@@ -216,99 +240,6 @@ namespace Traffk.Bal.ReportVisuals
                     riskIndexReportNames.Add(riskIndex + name);
                 }
 
-                int reportMetaDataCount = 0;
-
-                //Dummy method in lieu of database
-                foreach (var visual in tableauReportVisuals)
-                {
-                    int tagNumber = random.Next(1, 10);
-                    var tags = new Collection<string> { "Tag " + tagNumber.ToString() };
-                    bool containsPhi = tagNumber % 2 == 0;
-
-                    var folderPath = "";
-
-                    if (tagNumber < 4)
-                    {
-                        folderPath = @"\Low Folder";
-                    }
-
-                    if (tagNumber >= 4 && tagNumber < 7)
-                    {
-                        folderPath = @"\Medium Folder";
-                    }
-
-                    if (tagNumber >= 7)
-                    {
-                        folderPath = @"\High Folder";
-                    }
-
-                    if (riskIndexReportNames.Contains(CreateAnchorName(visual.WorkbookName)))
-                    {
-                        tags.Add("Risk Index"); 
-                    }
-
-                    var visualContext = VisualContext.Tenant;
-                    if (visual.Id == "076e81f7-9dce-417b-a9c8-ee8b29041ab2")
-                    {
-                        visualContext = VisualContext.ContactPerson;;
-                    }
-
-                    var rmd = new ReportMetaData
-                    {
-                        ReportMetaDataId = reportMetaDataCount.ToString(),
-                        ExternalReportId = visual.Id,
-                        Title = visual.Title,
-                        Description = "This description is from ReportVisualService loop.",
-                        ContainsPhi = containsPhi,
-                        Tags = tags,
-                        Parameters = null,
-                        VisualContext = visualContext,
-                        FolderPath = folderPath
-                    };
-                    MockReportMetaData.Add(rmd);
-
-                    if (visual.Id == "9f271580-e62d-4ef6-bf7b-0b9ff42d1c8a")
-                    {
-                        var rmd2 = new ReportMetaData
-                        {
-                            ReportMetaDataId = "Copy" + reportMetaDataCount.ToString(),
-                            ParentReportMetaDataId = reportMetaDataCount.ToString(),
-                            ExternalReportId = visual.Id,
-                            Title = "Copy of " + visual.Title,
-                            Description = "My custom description.",
-                            ContainsPhi = containsPhi,
-                            Tags = new Collection<string> { "Tag " + tagNumber.ToString() },
-                            Parameters = null,
-                            OwnerUserId = CurrentUser.Id,
-                            VisualContext = visualContext,
-                            FolderPath = @"\Your Reports"
-                        };
-                        rmd2.Tags.Add("Copy");
-                        MockReportMetaData.Add(rmd2);
-
-                        var rmd3 = new ReportMetaData
-                        {
-                            ReportMetaDataId = "Shared" + reportMetaDataCount.ToString(),
-                            ParentReportMetaDataId = reportMetaDataCount.ToString(),
-                            ExternalReportId = visual.Id,
-                            Title = "Shared version of " + visual.Title,
-                            Description = "Shared by Aaron C Scott",
-                            ContainsPhi = containsPhi,
-                            Tags = new Collection<string> { "Tag " + tagNumber.ToString() },
-                            Parameters = null,
-                            OwnerUserId = "SomeoneElse",
-                            Shared = true,
-                            VisualContext = visualContext,
-                            FolderPath = @"\Shared Reports"
-                        };
-                        rmd3.Tags.Add("Copy");
-                        rmd3.Tags.Add("Shared");
-                        MockReportMetaData.Add(rmd3);
-                    }
-
-                    reportMetaDataCount++;
-                }
-
                 return tableauReportVisuals;
             }
             else
@@ -317,23 +248,24 @@ namespace Traffk.Bal.ReportVisuals
             }
         }
 
-        private IEnumerable<IReportMetaData> GetRelevantReportMetaDatas(VisualContext visualContext, string tag = null)
+        private IEnumerable<ReportMetaData> GetRelevantReportMetaDatas(VisualContext visualContext, string tag = null)
         {
             var relevantReportMetaDatas =
-                MockReportMetaData.Where(
-                        x => TableauReportIds.Contains(x.ExternalReportId) &&
-                        x.VisualContext == visualContext &&
-                        (tag == null || x.Tags.Contains(tag)) &&
+                Rdb.ReportMetaData.Where(
+                        x => TableauReportIds.Contains(x.ExternalReportKey) &&
+                        x.MetaData.VisualContext == visualContext &&
+                        (tag == null || x.MetaData.Tags.Contains(tag)) &&
                             ((x.ParentReportMetaDataId == null //Traffk supplied metadata
-                            || (x.OwnerUserId == CurrentUser.Id) //User's metadata
-                            || (x.OwnerUserId != CurrentUser.Id && x.Shared))) //Shared metadata
+                            || (x.OwnerContactId == CurrentUser.ContactId) //User's metadata
+                            || (x.OwnerContactId != CurrentUser.ContactId && x.MetaData.Shared))) //Shared metadata
                     );
+
             return relevantReportMetaDatas;
         }
 
-        private IEnumerable<IReportMetaData> GetReportMetaData(string externalReportId)
+        private IEnumerable<ReportMetaData> GetReportMetaData(string externalReportKey)
         {
-            return MockReportMetaData.Where(x => x.ExternalReportId == externalReportId); //missing check for delete bit
+            return Rdb.ReportMetaData.Where(x => x.ExternalReportKey == externalReportKey); //missing check for delete bit
         }
 
         public static string CreateAnchorName(IReportResource resource) => CreateAnchorName(resource.Title);
