@@ -24,4 +24,10 @@
     <PackageReference Include="MSTest.TestFramework" Version="1.0.8-rc" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="REST\Models\TestViewResponse.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

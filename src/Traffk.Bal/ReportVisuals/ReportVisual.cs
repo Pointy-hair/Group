@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Traffk.Bal.ReportVisuals
 {
-    public class ReportVisual : IReportVisual, IReportResource
+    internal class ReportVisual : IReportVisual, IReportResource
     {
         public long Id { get; set; }
         public string Title { get; set; }

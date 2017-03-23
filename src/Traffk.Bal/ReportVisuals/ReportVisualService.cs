@@ -29,7 +29,7 @@ namespace Traffk.Bal.ReportVisuals
     {
         TreeNode<IReportResource> GetReportFolderTreeRoot(VisualContext visualContext, string reportTagFilter = null);
         IEnumerable<IReportVisual> GetReportVisuals(VisualContext visualContext, string reportTagFilter);
-        ReportVisual GetReportVisual(VisualContext context, int id);
+        IReportVisual GetReportVisual(VisualContext context, int id);
 
         byte[] DownloadPreviewImageForTableauVisual(string workbookId, string viewId);
     }
@@ -67,10 +67,10 @@ namespace Traffk.Bal.ReportVisuals
 
         TreeNode<IReportResource> IReportVisualService.GetReportFolderTreeRoot(VisualContext context, string reportTagFilter)
             => GetReportFolderTreeRoot(context, reportTagFilter);
-        ReportVisual IReportVisualService.GetReportVisual(VisualContext context, int id) 
+        IReportVisual IReportVisualService.GetReportVisual(VisualContext context, int id) 
             => GetReportVisual(context, id);
 
-        public ReportVisual GetReportVisual(VisualContext context, int id)
+        public IReportVisual GetReportVisual(VisualContext context, int id)
         {
             var root = GetReportFolderTreeRoot(context);
             ReportVisual matchingReportVisual = null;

@@ -10,7 +10,7 @@ namespace TraffkPortal.Models.ReportingModels
 {
     public class TableauReportViewModel
     {
-        public TableauReportViewModel(ReportVisual reportVisual)
+        public TableauReportViewModel(IReportVisual reportVisual)
         {
             WorkbookName = reportVisual.Parameters.SingleOrDefault(p => p.Key == nameof(WorkbookName)).Value;
             ViewName = reportVisual.Parameters.SingleOrDefault(p => p.Key == nameof(ViewName)).Value;
