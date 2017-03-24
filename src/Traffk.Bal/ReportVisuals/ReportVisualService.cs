@@ -156,7 +156,7 @@ namespace Traffk.Bal.ReportVisuals
 
         private static IReportVisual Merge(ITableauReportVisual tableauReportVisual, ReportMetaData reportMetaData)
         {
-            Requires.NonNull(reportMetaData.MetaData.Description, nameof(reportMetaData.MetaData.Description));
+            Requires.NonNull(reportMetaData.ReportDetails.Description, nameof(reportMetaData.ReportDetails.Description));
 
             const string siteIdKey = "SiteId";
 
@@ -176,24 +176,24 @@ namespace Traffk.Bal.ReportVisuals
 
             var visual = new ReportVisual()
             {
-                CanExport = reportMetaData.MetaData.CanExport,
-                ContainsPhi = reportMetaData.MetaData.ContainsPhi,
-                Description = reportMetaData.MetaData.Description ?? "No description available",
+                CanExport = reportMetaData.ReportDetails.CanExport,
+                ContainsPhi = reportMetaData.ReportDetails.ContainsPhi,
+                Description = reportMetaData.ReportDetails.Description ?? "No description available",
                 ExternalReportId = tableauReportVisual.Id,
-                Favorite = reportMetaData.MetaData.Favorite,
-                FolderPath = reportMetaData.MetaData.FolderPath ?? "/",
+                Favorite = reportMetaData.ReportDetails.Favorite,
+                FolderPath = reportMetaData.ReportDetails.FolderPath ?? "/",
                 Id = reportMetaData.ReportMetaDataId,
-                LastEdit = reportMetaData.MetaData.LastEdit,
-                LastEditedField = reportMetaData.MetaData.LastEditedField,
+                LastEdit = reportMetaData.ReportDetails.LastEdit,
+                LastEditedField = reportMetaData.ReportDetails.LastEditedField,
                 OwnerContactId = reportMetaData.OwnerContactId,
-                Parameters = reportMetaData.MetaData.Parameters ?? parameters,
+                Parameters = reportMetaData.ReportDetails.Parameters ?? parameters,
                 ParentId = reportMetaData.ParentReportMetaDataId,
-                PreviewImageUrl = reportMetaData.MetaData.PreviewImageUrl ??
+                PreviewImageUrl = reportMetaData.ReportDetails.PreviewImageUrl ??
                                   $"/Reporting/PreviewImage/{tableauReportVisual.WorkbookId}/{tableauReportVisual.Id}",
-                Shared = reportMetaData.MetaData.Shared,
-                Tags = reportMetaData.MetaData.Tags,
-                Title = reportMetaData.MetaData.Title ?? tableauReportVisual.ViewName,
-                VisualContext = reportMetaData.MetaData.VisualContext               
+                Shared = reportMetaData.ReportDetails.Shared,
+                Tags = reportMetaData.ReportDetails.Tags,
+                Title = reportMetaData.ReportDetails.Title ?? tableauReportVisual.ViewName,
+                VisualContext = reportMetaData.ReportDetails.VisualContext               
             };
 
             return visual;
@@ -203,21 +203,21 @@ namespace Traffk.Bal.ReportVisuals
         {
             var mergedReportDetails = new ReportDetails
             {
-                Title = primary.MetaData.Title ?? secondary.MetaData.Title,
-                Description = primary.MetaData.Description ?? secondary.MetaData.Description,
-                ContainsPhi = primary.MetaData.ContainsPhi,
-                Tags = primary.MetaData.Tags ?? secondary.MetaData.Tags,
-                Parameters = primary.MetaData.Parameters ?? secondary.MetaData.Parameters,
-                VisualContext = primary.MetaData.VisualContext,
-                FolderPath = primary.MetaData.FolderPath,
-                CanExport = primary.MetaData.CanExport
+                Title = primary.ReportDetails.Title ?? secondary.ReportDetails.Title,
+                Description = primary.ReportDetails.Description ?? secondary.ReportDetails.Description,
+                ContainsPhi = primary.ReportDetails.ContainsPhi,
+                Tags = primary.ReportDetails.Tags ?? secondary.ReportDetails.Tags,
+                Parameters = primary.ReportDetails.Parameters ?? secondary.ReportDetails.Parameters,
+                VisualContext = primary.ReportDetails.VisualContext,
+                FolderPath = primary.ReportDetails.FolderPath,
+                CanExport = primary.ReportDetails.CanExport
             };
 
             var mergedRmd = new ReportMetaData
             {
                 ParentReportMetaDataId = primary.ParentReportMetaDataId ?? secondary.ParentReportMetaDataId,
                 ExternalReportKey = primary.ExternalReportKey ?? secondary.ExternalReportKey,
-                MetaData = mergedReportDetails,
+                ReportDetails = mergedReportDetails,
                 OwnerContactId = primary.OwnerContactId ?? secondary.OwnerContactId,
                 TenantId = primary.TenantId ?? secondary.TenantId
             };
@@ -231,15 +231,6 @@ namespace Traffk.Bal.ReportVisuals
             {
                 var tableauReportVisuals = TableauRestService.DownloadViewsForSite().Views.OrderBy(x => x.ViewName).ToList();
 
-                //Placeholder for Risk Index tags
-                var riskIndexReportNames = new HashSet<string>(Comparers.CaseInsensitiveStringComparer);
-                const string riskIndex = "RiskIndex";
-                var reportNames = new List<string> { "tables", "age", "urbanicity", "occupations", "diseaseincidence" };
-                foreach (var name in reportNames)
-                {
-                    riskIndexReportNames.Add(riskIndex + name);
-                }
-
                 return tableauReportVisuals;
             }
             else
@@ -252,12 +243,16 @@ namespace Traffk.Bal.ReportVisuals
         {
             var relevantReportMetaDatas =
                 Rdb.ReportMetaData.Where(
-                        x => TableauReportIds.Contains(x.ExternalReportKey) &&
-                        x.MetaData.VisualContext == visualContext &&
-                        (tag == null || x.MetaData.Tags.Contains(tag)) &&
-                            ((x.ParentReportMetaDataId == null //Traffk supplied metadata
-                            || (x.OwnerContactId == CurrentUser.ContactId) //User's metadata
-                            || (x.OwnerContactId != CurrentUser.ContactId && x.MetaData.Shared))) //Shared metadata
+                        x =>
+                        TableauReportIds.Contains(x.ExternalReportKey)
+                        &&
+                        x.ReportDetails.VisualContext == visualContext
+                        &&
+                        (tag == null || x.ReportDetails.Tags.Contains(tag))
+                        &&
+                        ((x.ParentReportMetaDataId == null //Traffk supplied metadata
+                        || ((long)x.OwnerContactId == CurrentUser.ContactId) //User's metadata
+                        || (x.OwnerContactId != CurrentUser.ContactId && x.ReportDetails.Shared))) //Shared metadata
                     );
 
             return relevantReportMetaDatas;

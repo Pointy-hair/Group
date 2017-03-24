@@ -21,7 +21,9 @@
 
 @section listingTable
 {
-    @{ await Html.RenderPartialAsync("~/Views/Shared/_ReportResourceTreeNodePartial.cshtml", Model.Children); }
+    <div id="reports-container">
+        @{ await Html.RenderPartialAsync("~/Views/Shared/_ReportResourceTreeNodePartial.cshtml", Model.Children); }
+    </div>
     @{await Html.RenderPartialAsync("~/Views/Reporting/_ExportReportPartial.cshtml"); }
 }
 

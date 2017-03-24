@@ -67,9 +67,13 @@ namespace Traffk.Bal.ReportVisuals
         {
             get
             {
-                var regex = new Regex(@"^\\(?<folderName>[^\\]+)$");
+                var regex = new Regex(@"^\/(?<folderName>[^\\]+)$");
                 var folderNameMatch = regex.Match(FolderPath);
                 var folderName = folderNameMatch.Groups["folderName"].Value;
+                if (String.IsNullOrEmpty(folderName))
+                {
+                    folderName = "Traffk Reports";
+                }
                 return folderName;
             }
 
