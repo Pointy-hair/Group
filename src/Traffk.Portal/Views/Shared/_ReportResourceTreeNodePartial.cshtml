@@ -17,9 +17,9 @@
             }
         </div>
     }
-    else if (reportResource is ReportVisual)
+    else if (reportResource is IReportVisual)
     {
-        var view = reportResource as ReportVisual;
+        var view = reportResource as IReportVisual;
         var urlName = BasePageController.CreateAnchorName(view);
         <div class="col-md-3 col-sm-4">
             <div class="mini-panel">

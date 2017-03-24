@@ -1,5 +1,16 @@
 ﻿<SchemaMeta>
   <Tables>
+    <Table schema="CmsGov" name="BerensonEggersTypeOfServices" tableType="BASE TABLE">
+      <Columns>
+        <Column name="BetosId" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="BetosCode" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="5" />
+        <Column name="Category" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" />
+        <Column name="SubCategory" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="200" />
+      </Columns>
+      <Collections>
+        <Collection schema="health" table="MedicalClaimLines" column="BetosId" />
+      </Collections>
+    </Table>
     <Table schema="CmsGov" name="HealthcareCommonProcedureCodingSystemCodes" tableType="BASE TABLE">
       <Columns>
         <Column name="HcpcsId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
@@ -625,6 +636,7 @@
         <Collection schema="health" table="Pharmacy" column="ContactId" />
         <Collection schema="health" table="Pharmacy" column="PrescriberProviderContactId" />
         <Collection schema="health" table="MillimanScores" column="ContactId" />
+        <Collection schema="dbo" table="ReportMetaData" column="OwnerContactId" />
         <Collection schema="health" table="CareAlerts" column="ContactId" />
         <Collection schema="deerwalk" table="Eligibility" column="ContactId" />
         <Collection schema="deerwalk" table="Pharmacy" column="ContactId" />
@@ -643,11 +655,10 @@
         <Collection schema="deerwalk" table="CareAlerts" column="ContactId" />
         <Collection schema="health" table="Participation" column="ContactId" />
         <Collection schema="health" table="Eligibility" column="ContactId" />
-        <Collection schema="dbo" table="ReportMetaData" column="OwnerContactId" />
-        <Collection schema="health" table="MedicalClaimLines" column="ContactId" />
         <Collection schema="health" table="Visits" column="ContactId" />
         <Collection schema="dbo" table="AspNetUsers" column="ContactId" />
         <Collection schema="health" table="MedicalClaims" column="ContactId" />
+        <Collection schema="health" table="MedicalClaimLines" column="ContactId" />
         <Collection schema="health" table="Members" column="PersonContactId" />
         <Collection schema="health" table="Members" column="CarrierContactId" />
       </Collections>
@@ -790,6 +801,7 @@
       </Columns>
       <Collections>
         <Collection schema="deerwalk" table="Eligibility" column="InsLtdEffDateDateDimId" />
+        <Collection schema="health" table="MedicalClaimLines" column="AdjudicationDdim" />
         <Collection schema="deerwalk" table="Eligibility" column="InsLtdTermDateDateDimId" />
         <Collection schema="deerwalk" table="Eligibility" column="InsStdEffDateDateDimId" />
         <Collection schema="deerwalk" table="Eligibility" column="InsStdTermDateDateDimId" />
@@ -839,13 +851,9 @@
         <Collection schema="health" table="Eligibility" column="PrescriptionEffDdim" />
         <Collection schema="health" table="Eligibility" column="PrescriptionTermDdim" />
         <Collection schema="health" table="Eligibility" column="DentalEffDdim" />
-        <Collection schema="health" table="MedicalClaimLines" column="ServiceFromDdim" />
         <Collection schema="health" table="Eligibility" column="DentalTermDdim" />
-        <Collection schema="health" table="MedicalClaimLines" column="ServiceToDdim" />
         <Collection schema="health" table="Eligibility" column="VisionEffDdim" />
-        <Collection schema="health" table="MedicalClaimLines" column="PaidDdim" />
         <Collection schema="health" table="Eligibility" column="VisionTermDdim" />
-        <Collection schema="health" table="MedicalClaimLines" column="AdjudicationDdim" />
         <Collection schema="health" table="Eligibility" column="LongTermDisabilityEffDdim" />
         <Collection schema="health" table="Visits" column="VisitStartDdim" />
         <Collection schema="health" table="Eligibility" column="LongTermDisabilityTermDdim" />
@@ -861,8 +869,11 @@
         <Collection schema="deerwalk" table="Eligibility" column="InsRxTermDateDateDimId" />
         <Collection schema="deerwalk" table="Eligibility" column="InsDenEffDateDateDimId" />
         <Collection schema="deerwalk" table="Eligibility" column="InsDenTermDateDateDimId" />
+        <Collection schema="health" table="MedicalClaimLines" column="ServiceFromDdim" />
         <Collection schema="deerwalk" table="Eligibility" column="InsVisEffDateDateDimId" />
+        <Collection schema="health" table="MedicalClaimLines" column="ServiceToDdim" />
         <Collection schema="deerwalk" table="Eligibility" column="InsVisTermDateDateDimId" />
+        <Collection schema="health" table="MedicalClaimLines" column="PaidDdim" />
       </Collections>
     </Table>
     <Table schema="dbo" name="InflationRates" tableType="BASE TABLE">
@@ -1063,7 +1074,7 @@
             <Property name="MS_Description" value="Datetime when this entity was created." />
           </Properties>
         </Column>
-        <Column name="MetaData" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="-1">
+        <Column name="ReportDetails" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="-1">
           <Properties>
             <Property name="JsonSettingsClass" value="Bal.ReportVisuals.ReportDetails" />
           </Properties>
@@ -1112,6 +1123,7 @@
       <Collections>
         <Collection schema="health" table="Pharmacy" column="TenantId" />
         <Collection schema="health" table="MillimanScores" column="TenantId" />
+        <Collection schema="dbo" table="ReportMetaData" column="TenantId" />
         <Collection schema="dbo" table="Communications" column="TenantId" />
         <Collection schema="dbo" table="CommunicationBlasts" column="TenantId" />
         <Collection schema="health" table="CareAlerts" column="TenantId" />
@@ -1142,8 +1154,6 @@
         <Collection schema="health" table="Participation" column="TenantId" />
         <Collection schema="dbo" table="CommunicationPieceVisits" column="TenantId" />
         <Collection schema="health" table="Eligibility" column="TenantId" />
-        <Collection schema="health" table="MedicalClaimLines" column="TenantId" />
-        <Collection schema="dbo" table="ReportMetaData" column="TenantId" />
         <Collection schema="dbo" table="Tenants" column="ParentTenantId" />
         <Collection schema="dbo" table="AspNetUsers" column="TenantId" />
         <Collection schema="health" table="Visits" column="TenantId" />
@@ -1152,6 +1162,7 @@
         <Collection schema="health" table="MedicalClaims" column="TenantId" />
         <Collection schema="dbo" table="Applications" column="TenantId" />
         <Collection schema="dbo" table="DateDimensions" column="TenantId" />
+        <Collection schema="health" table="MedicalClaimLines" column="TenantId" />
         <Collection schema="health" table="MedicalClaimDiagnoses" column="TenantId" />
         <Collection schema="health" table="Members" column="TenantId" />
       </Collections>
@@ -5413,22 +5424,23 @@
         <Column name="ProcedureCode" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="10" />
         <Column name="ProcedureDescription" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" />
         <Column name="ProcedureHcpcsId" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="CmsGov" refTable="HealthcareCommonProcedureCodingSystemCodes" />
-        <Column name="ServiceFromDdim" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="DateDimensions" />
-        <Column name="ServiceToDdim" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="DateDimensions" />
-        <Column name="PaidDdim" position="15" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="DateDimensions" />
-        <Column name="AdjudicationDdim" position="16" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="DateDimensions" />
-        <Column name="AllowedAmount" position="17" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
-        <Column name="BilledAmount" position="18" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
-        <Column name="CoordinationOfBenefitsAmount" position="19" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
-        <Column name="CoinsuranceAmount" position="20" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
-        <Column name="CopayAmount" position="21" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
-        <Column name="CoverageChargeAmount" position="22" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
-        <Column name="DeductibleAmount" position="23" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
-        <Column name="NotCoveredAmount" position="24" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
-        <Column name="PPOSavings" position="25" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
-        <Column name="OtherSavingsGenerated" position="26" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
-        <Column name="PaidAmount" position="27" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
-        <Column name="MedicalClaimLineDetails" position="28" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
+        <Column name="BetosId" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="CmsGov" refTable="BerensonEggersTypeOfServices" />
+        <Column name="ServiceFromDdim" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="DateDimensions" />
+        <Column name="ServiceToDdim" position="15" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="DateDimensions" />
+        <Column name="PaidDdim" position="16" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="DateDimensions" />
+        <Column name="AdjudicationDdim" position="17" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="DateDimensions" />
+        <Column name="AllowedAmount" position="18" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="BilledAmount" position="19" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="CoordinationOfBenefitsAmount" position="20" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="CoinsuranceAmount" position="21" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="CopayAmount" position="22" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="CoverageChargeAmount" position="23" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="DeductibleAmount" position="24" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="NotCoveredAmount" position="25" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="PPOSavings" position="26" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="OtherSavingsGenerated" position="27" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="PaidAmount" position="28" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" />
+        <Column name="MedicalClaimLineDetails" position="29" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
       </Columns>
     </Table>
     <Table schema="health" name="MedicalClaims" tableType="BASE TABLE">
@@ -5501,9 +5513,9 @@
         <Collection schema="health" table="MillimanScores" column="MemberId" />
         <Collection schema="health" table="Participation" column="MemberId" />
         <Collection schema="health" table="Eligibility" column="MemberId" />
-        <Collection schema="health" table="MedicalClaimLines" column="MemberId" />
         <Collection schema="health" table="Visits" column="MemberId" />
         <Collection schema="health" table="MedicalClaims" column="MemberId" />
+        <Collection schema="health" table="MedicalClaimLines" column="MemberId" />
       </Collections>
     </Table>
     <Table schema="health" name="MillimanScores" tableType="BASE TABLE">

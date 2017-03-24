@@ -78,7 +78,7 @@ namespace Traffk.Bal.ReportVisuals
             {
                 var currentReportVisual = node.Data as ReportVisual;
                 if (currentReportVisual == null) return;
-                var urlFriendlyReportName = CreateAnchorName(currentReportVisual);
+                var urlFriendlyReportName = CreateAnchorName(currentReportVisual as IReportVisual);
                 if (id == currentReportVisual.Id || id == currentReportVisual.ParentId)
                 {
                     matchingReportVisual = currentReportVisual;
@@ -269,6 +269,7 @@ namespace Traffk.Bal.ReportVisuals
         }
 
         public static string CreateAnchorName(IReportResource resource) => CreateAnchorName(resource.Title);
+        public static string CreateAnchorName(IReportVisual visual) => CreateAnchorName(visual.Title);
         private static string CreateAnchorName(string name) => name.Trim()?.ToLower()?.RemoveSpecialCharacters() ?? "";
 
         public byte[] DownloadPreviewImageForTableauVisual(string workbookId, string viewId)

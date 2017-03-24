@@ -596,14 +596,14 @@ create table ReportMetaData
 	OwnerContactId bigint null references Contacts(ContactId),
 	TenantId int null references Tenants(TenantId),
 	CreatedAtUtc datetime not null default (getutcdate()),
-	MetaData dbo.JsonObject not null
+	ReportDetails dbo.JsonObject not null
 );
 
 GO
 
 exec db.TablePropertySet  'ReportMetaData', '1', @propertyName='AddToDbContext'
 exec db.TablePropertySet  'ReportMetaData', '1', @propertyName='GeneratePoco'
-exec db.ColumnPropertySet 'ReportMetaData', 'MetaData', 'Bal.ReportVisuals.ReportDetails', @propertyName='JsonSettingsClass'
+exec db.ColumnPropertySet 'ReportMetaData', 'ReportDetails', 'Bal.ReportVisuals.ReportDetails', @propertyName='JsonSettingsClass'
 exec db.ColumnPropertySet 'ReportMetaData', 'RowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
 exec db.ColumnPropertySet 'ReportMetaData', 'RowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
 exec db.ColumnPropertySet 'ReportMetaData', 'CreatedAtUtc', 'Datetime when this entity was created.'
