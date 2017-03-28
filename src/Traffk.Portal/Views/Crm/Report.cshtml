@@ -12,9 +12,9 @@
 
 
 @section breadCrumbItems {
-<li><a asp-controller="@CrmController.Name" asp-action="Index" id="IndexLink">Contacts</a> <span>></span> </li>
-<li><a asp-controller="@CrmController.Name" asp-action="ContactBackground" asp-route-id="@ViewData["ContactId"]">@ViewData["ContactName"]</a> <span>></span> </li>
-
+    <li><a asp-controller="@CrmController.Name" asp-action="Index" id="IndexLink">Contacts</a> <span>></span> </li>
+    <li><a asp-controller="@CrmController.Name" asp-action="ContactBackground" asp-route-id="@ViewData["ContactId"]">@ViewData["ContactName"]</a> <span>></span> </li>
+    <li><a asp-controller="@CrmController.Name" asp-action="ReportIndex" asp-route-id="@ViewData["ContactId"]">Member Reports</a> <span>></span> </li>
 }
 
 @section pageActionItems {

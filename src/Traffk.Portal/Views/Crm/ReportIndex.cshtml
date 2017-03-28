@@ -9,8 +9,13 @@
     var filters = ViewBag.ListingFilters as ListingFilters;
     var hasFilters = filters != null;
     ViewData.HasPageActions(true);
+    ViewData.HasBreadcrumbItems(true);
 }
 
+@section breadCrumbItems {
+    <li><a asp-controller="@CrmController.Name" asp-action="Index" id="IndexLink">Contacts</a> <span>></span> </li>
+    <li><a asp-controller="@CrmController.Name" asp-action="ContactBackground" asp-route-id="@ViewData["ContactId"]">@ViewData["ContactName"]</a> <span>></span> </li>
+}
 @section pageAlerts {
     <div class="alert alert-info alert-dismissable" id="message-exported-alert" style="display: none">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
