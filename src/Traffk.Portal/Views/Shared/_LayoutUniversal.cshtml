@@ -55,6 +55,12 @@ else
         @if (hasFilters || showListingActions || ViewData.HasSelectableItems())
         {
             <div class="row border-bottom">
+                @if (ViewData.HasPageMenuItems())
+                    {
+                        <ul id="personal-page-nav">
+                            @RenderSection("pageNavItems", false)
+                        </ul>
+                }
                 <div class="col-sm-2">
                     @if (hasFilters)
                     {

@@ -8,12 +8,12 @@
     ViewData.HasPageActions(true);
     ViewData.SetTitleAndHeading("Reusable Values");
 }
+
 @section pageActionItems {
 <li>
-    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    <a class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
         Create
-        <span class="caret"></span>
-    </button>
+    </a>
     <ul class="dropdown-menu">
         <li><a asp-action="CreateReusableValue" asp-route-tenantId="@ViewContext.GetRouteValue("tenantId")" asp-route-type='@ReusableValueTypes.Color'>Color</a></li>
         <li><a asp-action="CreateReusableValue" asp-route-tenantId="@ViewContext.GetRouteValue("tenantId")" asp-route-type='@ReusableValueTypes.EmailAddress'>Email Address</a></li>
