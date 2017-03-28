@@ -356,7 +356,9 @@ input.form-text:focus ~ .highlight {
 	from { background:#5264AE; }
   to 	{ width:0; background:transparent; }
 }
+
 /* Traffk */
+
 @font-face {
     font-family: 'Bauhaus';
     src: url('../fonts/BAUHS93.TTF');
@@ -1145,6 +1147,24 @@ ul.navbar-left {
     padding-left: 0px;
 }
 
+.report-preview-image-container {
+    height: 300px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+    Begin screen-size specific CSS
+*/
+@media (max-width: 500px) {
+    #primary-subnav-logo, #primary-subnav-logo a {
+        width: auto;
+    }
+
+    #primary-subnav-logo a {
+        font-size: 22px;
+    }
+}
+
 @media (min-width: 1200px) {
         .container {
         width: 90%;
@@ -1230,6 +1250,10 @@ ul.navbar-left {
 	#primary-subnav .dropdown-menu li a:nth-child(odd) {
 	  border-right: 1px solid #eee;
 	}
+    #primary-subnav-logo {
+        position: absolute;
+        top: 0;
+    }
 	.navbar-right {
 
 	}
@@ -1389,10 +1413,4 @@ ul.navbar-left {
 	  position: relative;
 	  top: 2px;
 	}
-}
-
-.report-preview-image-container {
-    height: 300px;
-    background-repeat: no-repeat;
-    background-position: center; 
 }
