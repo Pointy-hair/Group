@@ -96,11 +96,6 @@ namespace TraffkPortal.Controllers
                             }
                         }
                         Log.Information("User logged in.");
-                        //HttpContext.Items["UserId"] = user.Id;
-                        //HttpContext.Items["UserName"] = user.UserName;
-                        //HttpContext.Items["TenantId"] = user.TenantId.ToString();
-                        ////HttpContext.Session.SetString("UserName", user.UserName);
-                        ////HttpContext.Session.SetString("TenantId", user.TenantId.ToString());
 
                         Uri u;
                         if (Uri.TryCreate(returnUrl, UriKind.Absolute, out u))
@@ -112,6 +107,13 @@ namespace TraffkPortal.Controllers
                             return RedirectToLocal(returnUrl);
                         }
                     }
+
+                    if (!result.Succeeded)
+                    {
+                        ModelState.AddModelError(string.Empty, "You've entered an incorrect username or password.");
+                        return View(model);
+                    }
+
                     if (result.RequiresTwoFactor || Current.Tenant.TenantSettings.RequiresTwoFactorAuthentication)
                     {
                         return RedirectToAction(nameof(SendCode), new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });

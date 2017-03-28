@@ -14,7 +14,7 @@
         }
         else
         {
-            <p class="subheading">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            <p class="subheading">Sign in to continue to the Traffk Health Information Portal</p>
         }
     </div>
 </div>
@@ -25,6 +25,9 @@
         <div class="col-sm-12">
             <div class="panel container-internal large-padding" id="login-container">
                 <form form asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" id="form-login">
+                    <div class="form-row">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                    </div>
                     <div class="group form-row">
                         <input type="text" asp-for="Email" class="form-text" required tabindex=1/>
                         <span class="highlight"></span>
