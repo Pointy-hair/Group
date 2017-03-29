@@ -14,8 +14,8 @@ namespace Traffk.Tableau.Tests
         {
             var optionsMock = new Mock<IOptions<TableauSignInOptions>>();
             optionsMock.Setup(x => x.Value)
-                .Returns(new TableauSignInOptions("https://tableau-dev.traffk.com/#/projects",
-                    "Test", "TraffkTestTableau"));
+                .Returns(new TableauSignInOptions("https://tableau-dev.traffk.com",
+                    "Darren Alfonso", "DarrenTraffkTableau"));
 
             return optionsMock;
         }

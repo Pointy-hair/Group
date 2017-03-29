@@ -56,6 +56,7 @@ namespace Traffk.Tableau.REST
         private readonly string urlListViewsInSite;
         private readonly string urlListWorkbooksInSite;
         private readonly string urlDownloadPreviewImageForView;
+        private readonly string urlCreateSite;
 
         /// <summary>
         /// Server url with protocol
@@ -119,6 +120,7 @@ namespace Traffk.Tableau.REST
             this.urlListViewsInSite                    = serverNameWithProtocol + "/api/2.2/sites/{{iwsSiteId}}/views?pageSize={{iwsPageSize}}&pageNumber={{iwsPageNumber}}";
             this.urlListWorkbooksInSite                = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/workbooks?pageSize={{iwsPageSize}}&pageNumber={{iwsPageNumber}}";
             this.urlDownloadPreviewImageForView        = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/workbooks/{{iwsWorkbookId}}/views/{{iwsViewId}}/previewImage";
+            this.urlCreateSite = serverNameWithProtocol + "/api/2.4/sites";
 
             //Any server version specific things we want to do?
             switch (serverVersion)
@@ -502,6 +504,13 @@ namespace Traffk.Tableau.REST
             string workingText = urlDownloadPreviewImageForView.Replace("{{iwsSiteId}}", logInInfo.SiteId);
             workingText = workingText.Replace("{{iwsWorkbookId}}", workbookId);
             workingText = workingText.Replace("{{iwsViewId}}", viewId);
+            ValidateTemplateReplaceComplete(workingText);
+            return workingText;
+        }
+
+        public string UrlCreateSite()
+        {
+            string workingText = urlCreateSite;
             ValidateTemplateReplaceComplete(workingText);
             return workingText;
         }

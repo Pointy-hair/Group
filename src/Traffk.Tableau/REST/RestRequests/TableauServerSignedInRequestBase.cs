@@ -11,6 +11,8 @@ namespace Traffk.Tableau.REST
     public abstract class TableauServerSignedInRequestBase : TableauServerRequestBase
     {
         protected readonly TableauServerSignIn onlineSession;
+        protected readonly string TableauXmlNamespaceName = "iwsOnline";
+        protected readonly string TableauXmlNamespaceUrl = "http://tableau.com/api";
 
         /// <summary>
         /// Constructor

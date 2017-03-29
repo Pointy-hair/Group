@@ -69,6 +69,19 @@ namespace Traffk.Tableau.REST
             return workbooksList;
         }
 
+        SiteinfoSite ITableauRestService.CreateSite(string tenantName, out string url)
+        {
+            var addSite = new CreateSite(Urls, Login);
+            var siteInfo = addSite.ExecuteRequest(tenantName);
+            url = GetNewSiteUrl(siteInfo);
+            return siteInfo;
+        }
+
+        private string GetNewSiteUrl(SiteinfoSite site)
+        {
+            return Options.RestApiUrl + "site/" + site.ContentUrl;
+        }
+        
         byte[] ITableauRestService.DownloadPreviewImageForView(string workbookId, string viewId)
         {
             var downloadPreviewImage = new DownloadPreviewImageForView(Urls, Login);
@@ -202,5 +215,7 @@ namespace Traffk.Tableau.REST
 
         private void AddStringContent(MultipartContent m, string name, bool value)
             => AddStringContent(m, name, value ? "true" : "false");
+
+        
     }
 }

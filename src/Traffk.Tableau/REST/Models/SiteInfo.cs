@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using Microsoft.Extensions.Options;
+using Traffk.Tableau.REST.RestRequests;
+
 /// <summary>
 /// Information about a Site in Server
 /// </summary>
