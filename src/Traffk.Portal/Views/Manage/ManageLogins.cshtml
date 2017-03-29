@@ -1,9 +1,14 @@
 ﻿@model ManageLoginsViewModel
 @using Microsoft.AspNetCore.Http.Authentication
 @{
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
     ViewData.SetTitleAndHeading("Manage your external logins");
+    ViewData.HasBreadcrumbItems(true);
 }
-
+@section breadcrumbItems
+{
+    <li><a asp-controller="@ManageController.Name" asp-action="@ManageController.ActionNames.Index">Manage</a> <span>></span> </li>
+}
 <p class="text-success">@ViewData["StatusMessage"]</p>
 @if (Model.CurrentLogins.Count > 0)
 {

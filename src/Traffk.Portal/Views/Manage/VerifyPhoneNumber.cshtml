@@ -1,9 +1,14 @@
 ﻿@model VerifyPhoneNumberViewModel
 @{
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
     ViewData.SetTitleAndHeading("Verify Phone Number");
     ViewData.IsFormPage(true);
+    ViewData.HasBreadcrumbItems(true);
 }
-
+@section breadcrumbItems
+{
+    <li><a asp-controller="@ManageController.Name" asp-action="@ManageController.ActionNames.Index">Manage</a> <span>></span> </li>
+}
 <form asp-controller="Manage" asp-action="VerifyPhoneNumber" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="inline-form">
     <div asp-validation-summary="All" class="text-danger"></div>
 

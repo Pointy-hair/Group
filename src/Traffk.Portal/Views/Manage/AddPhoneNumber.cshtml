@@ -3,6 +3,12 @@
     Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
     ViewData.SetTitleAndHeading("Add Phone Number");
     ViewData.IsFormPage(true);
+    ViewData.HasBreadcrumbItems(true);
+}
+
+@section breadcrumbItems
+{
+    <li><a asp-controller="@ManageController.Name" asp-action="@ManageController.ActionNames.Index">Manage</a> <span>></span> </li>
 }
 
 <form asp-controller="Manage" asp-action="AddPhoneNumber" method="post" class="inline-form">
