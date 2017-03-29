@@ -47,11 +47,11 @@ namespace Traffk.Tableau.REST.RestRequests
         {
             int pageSize = urls.PageSize;
             //Create a web request, in including the users logged-in auth information in the request headers
-            var urlQuery = urls.UrlDownloadViewsForSite(onlineSession, pageSize, pageToRequest);
+            var urlQuery = urls.UrlDownloadViewsForSite(Login, pageSize, pageToRequest);
             var webRequest = CreateLoggedInWebRequest(urlQuery);
             webRequest.Method = "GET";
 
-            onlineSession.StatusLog.AddStatus("Web request: " + urlQuery, -10);
+            Login.StatusLog.AddStatus("Web request: " + urlQuery, -10);
             var response = GetWebReponseLogErrors(webRequest, "get views list");
             var xmlDoc = GetWebResponseAsXml(response);
 
@@ -86,7 +86,7 @@ namespace Traffk.Tableau.REST.RestRequests
             }
             catch
             {
-                onlineSession.StatusLog.AddError("Error parsing project: " + element.ToString());
+                Login.StatusLog.AddError("Error parsing project: " + element.ToString());
             }
 
             return null;
@@ -96,7 +96,7 @@ namespace Traffk.Tableau.REST.RestRequests
         {
             if (string.IsNullOrWhiteSpace(view.Id))
             {
-                onlineSession.StatusLog.AddError(view.Name + " is missing a view ID. Not returned from server! xml=" + xmlNode.OuterXml);
+                Login.StatusLog.AddError(view.Name + " is missing a view ID. Not returned from server! xml=" + xmlNode.OuterXml);
             }
         }
     }

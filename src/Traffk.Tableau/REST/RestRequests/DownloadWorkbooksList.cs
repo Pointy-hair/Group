@@ -68,7 +68,7 @@ namespace Traffk.Tableau.REST.RestRequests
             //Sanity check
             if(string.IsNullOrWhiteSpace(userId))
             {
-                onlineSession.StatusLog.AddError("User ID required to query workbooks");            
+                Login.StatusLog.AddError("User ID required to query workbooks");            
             }
 
             var onlineWorkbooks = new List<SiteWorkbook>();
@@ -104,11 +104,11 @@ namespace Traffk.Tableau.REST.RestRequests
                 pageToRequest = 1;
             }
             //Create a web request, in including the users logged-in auth information in the request headers
-            var urlQuery = urls.UrlDownloadWorkbooksForSite(onlineSession, pageSize, pageToRequest);
+            var urlQuery = urls.UrlDownloadWorkbooksForSite(Login, pageSize, pageToRequest);
             var webRequest = CreateLoggedInWebRequest(urlQuery);
             webRequest.Method = "GET";
 
-            onlineSession.StatusLog.AddStatus("Web request: " + urlQuery, -10);
+            Login.StatusLog.AddStatus("Web request: " + urlQuery, -10);
             var response = GetWebReponseLogErrors(webRequest, "get workbooks list");
             var xmlDoc = GetWebResponseAsXml(response);
 
@@ -126,7 +126,7 @@ namespace Traffk.Tableau.REST.RestRequests
                 }
                 catch
                 {
-                    onlineSession.StatusLog.AddError("Error parsing workbook: " + element.Value);
+                    Login.StatusLog.AddError("Error parsing workbook: " + element.Value);
                 }
             } //end: foreach
 

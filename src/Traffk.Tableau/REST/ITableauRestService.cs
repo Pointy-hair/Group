@@ -16,6 +16,7 @@ namespace Traffk.Tableau.REST
         byte[] DownloadPreviewImageForView(string workbookId, string viewId);
         Task<UnderlyingDataTable> GetUnderlyingDataAsync(GetUnderlyingDataOptions options, string workbookName, string viewName);
         SiteinfoSite CreateSite(string tenantName, out string url);
+        void AddUserToSite(string siteId, string userName);
     }
 
     public class VisualId

@@ -10,17 +10,27 @@ namespace Traffk.Tableau.REST
     /// </summary>
     public abstract class TableauServerSignedInRequestBase : TableauServerRequestBase
     {
-        protected readonly TableauServerSignIn onlineSession;
+        protected readonly TableauServerSignIn Login;
         protected readonly string TableauXmlNamespaceName = "iwsOnline";
         protected readonly string TableauXmlNamespaceUrl = "http://tableau.com/api";
+        protected readonly TableauServerUrls Urls;
+        protected readonly string XmlNamespace;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="login"></param>
-        public TableauServerSignedInRequestBase(TableauServerSignIn login)
+        protected TableauServerSignedInRequestBase(TableauServerSignIn login)
         {
-            onlineSession = login;
+            Login = login;
+        }
+
+        protected TableauServerSignedInRequestBase(TableauServerUrls urls, TableauServerSignIn login)
+        {
+            Login = login;
+            Urls = urls;
+            var nsManager = XmlHelper.CreateTableauXmlNamespaceManager(TableauXmlNamespaceName, TableauXmlNamespaceUrl);
+            XmlNamespace = nsManager.LookupNamespace(TableauXmlNamespaceName);
         }
 
         /// <summary>
@@ -32,7 +42,7 @@ namespace Traffk.Tableau.REST
         /// <returns></returns>
         protected WebRequest CreateLoggedInWebRequest(string url, string protocol = "GET", Nullable<int> requestTimeout = null)
         {
-            onlineSession.StatusLog.AddStatus("Attempt web request: " + url, -10);
+            Login.StatusLog.AddStatus("Attempt web request: " + url, -10);
 
             var webRequest = WebRequest.Create(url);
             webRequest.Method = protocol;
@@ -53,8 +63,8 @@ namespace Traffk.Tableau.REST
         /// <param name="webHeaders"></param>
         private void AppendLoggedInHeadersForRequest(WebRequest request)
         {
-            request.Headers["X-Tableau-Auth"] = onlineSession.LogInAuthToken;
-            onlineSession.StatusLog.AddStatus("Append header X-Tableau-Auth: " + onlineSession.LogInAuthToken, -20);
+            request.Headers["X-Tableau-Auth"] = Login.LogInAuthToken;
+            Login.StatusLog.AddStatus("Append header X-Tableau-Auth: " + Login.LogInAuthToken, -20);
         }
 
         /// <summary>

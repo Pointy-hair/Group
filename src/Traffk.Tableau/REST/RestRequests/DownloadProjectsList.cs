@@ -79,11 +79,11 @@ namespace Traffk.Tableau.REST
         {
             int pageSize = _onlineUrls.PageSize;
             //Create a web request, in including the users logged-in auth information in the request headers
-            var urlQuery = _onlineUrls.Url_ProjectsList(onlineSession, pageSize, pageToRequest);
+            var urlQuery = _onlineUrls.Url_ProjectsList(Login, pageSize, pageToRequest);
             var webRequest = CreateLoggedInWebRequest(urlQuery);
             webRequest.Method = "GET";
 
-            onlineSession.StatusLog.AddStatus("Web request: " + urlQuery, -10);
+            Login.StatusLog.AddStatus("Web request: " + urlQuery, -10);
             var response = GetWebReponseLogErrors(webRequest, "get projects list");
             var xmlDoc = GetWebResponseAsXml(response);
 
@@ -106,7 +106,7 @@ namespace Traffk.Tableau.REST
                 catch
                 {
                     //AppDiagnostics.Assert(false, "Project parse error");
-                    onlineSession.StatusLog.AddError("Error parsing project: " + element.ToString());
+                    Login.StatusLog.AddError("Error parsing project: " + element.ToString());
                 }
             } //end: foreach
 
@@ -128,7 +128,7 @@ namespace Traffk.Tableau.REST
         {
             if(string.IsNullOrWhiteSpace(project.Id))
             {
-                onlineSession.StatusLog.AddError(project.Name + " is missing a project ID. Not returned from server! xml=" + xmlNode.OuterXml);
+                Login.StatusLog.AddError(project.Name + " is missing a project ID. Not returned from server! xml=" + xmlNode.OuterXml);
             }
         }
 

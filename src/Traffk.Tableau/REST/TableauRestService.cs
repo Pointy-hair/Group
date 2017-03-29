@@ -81,6 +81,12 @@ namespace Traffk.Tableau.REST
         {
             return Options.RestApiUrl + "site/" + site.ContentUrl;
         }
+
+        void ITableauRestService.AddUserToSite(string siteId, string userName)
+        {
+            var addUserToSite = new AddUserToSite(Urls, Login);
+            addUserToSite.ExecuteRequest(siteId, userName);
+        }
         
         byte[] ITableauRestService.DownloadPreviewImageForView(string workbookId, string viewId)
         {

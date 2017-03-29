@@ -27,11 +27,11 @@ namespace Traffk.Tableau.REST.RestRequests
         public void ExecuteRequest(string workbookId, string viewId)
         {
             //Create a web request, in including the users logged-in auth information in the request headers
-            var urlQuery = urls.UrlDownloadPreviewImageForView(onlineSession, workbookId, viewId);
+            var urlQuery = urls.UrlDownloadPreviewImageForView(Login, workbookId, viewId);
             var webRequest = CreateLoggedInWebRequest(urlQuery);
             webRequest.Method = "GET";
 
-            onlineSession.StatusLog.AddStatus("Web request: " + urlQuery, -10);
+            Login.StatusLog.AddStatus("Web request: " + urlQuery, -10);
             var response = GetWebReponseLogErrors(webRequest, "get preview image for view");
             var responseStream = response.GetResponseStream();
 

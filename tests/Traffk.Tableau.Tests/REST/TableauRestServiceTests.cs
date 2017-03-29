@@ -22,7 +22,7 @@ namespace Traffk.Tableau.Tests.REST
         }
 
         [TestClass]
-        public class AddSiteMethodTests : TableauRestServiceTests
+        public class CreateSiteMethodTests : TableauRestServiceTests
         {
             [Ignore]
             [TestMethod]
@@ -33,6 +33,28 @@ namespace Traffk.Tableau.Tests.REST
                 var site = ((ITableauRestService)testService).CreateSite("Test Tenant", out url);
                 Assert.IsNotNull(site);
                 StringAssert.Contains(url, "tableau-dev.traffk.com");
+            }
+        }
+
+        [TestClass]
+        public class AddUserToSiteMethodTests : TableauRestServiceTests
+        {
+            [TestMethod]
+            public void WhenGivenTenantNameCreateSiteAndAddUser()
+            {
+                Random rnd = new Random();
+                int tenantNumber = rnd.Next(1, 50);
+                var siteName = "Test Tenant" + tenantNumber;
+                var testService = new TableauRestService(new TrustedTicketGetter(Options), Options);
+                string url;
+                var site = ((ITableauRestService)testService).CreateSite(siteName, out url);
+                Assert.IsNotNull(site);
+                StringAssert.Contains(url, "tableau-dev.traffk.com");
+
+                var newSiteOptions = MockEnvironment.TableauSignInOptions(url,
+                    "Darren Alfonso", "DarrenTraffkTableau").Object;
+                testService = new TableauRestService(new TrustedTicketGetter(newSiteOptions), newSiteOptions);
+                ((ITableauRestService)testService).AddUserToSite(site.Id, "Test");
             }
         }
 

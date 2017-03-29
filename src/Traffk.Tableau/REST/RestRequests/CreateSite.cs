@@ -12,9 +12,6 @@ namespace Traffk.Tableau.REST.RestRequests
     {
         private readonly string TableauObjectName = "site";
         private readonly string TableauOperationDescription = "add site";
-        private readonly TableauServerUrls Urls;
-        private readonly string UserId;
-        private readonly string XmlNamespace;
 
         private enum AdminMode
         {
@@ -22,12 +19,9 @@ namespace Traffk.Tableau.REST.RestRequests
         }
 
         public CreateSite(TableauServerUrls onlineUrls, TableauServerSignIn login)
-            : base(login)
+            : base(onlineUrls, login)
         {
-            Urls = onlineUrls;
-            UserId = login.UserId;
-            var nsManager = XmlHelper.CreateTableauXmlNamespaceManager(TableauXmlNamespaceName, TableauXmlNamespaceUrl);
-            XmlNamespace = nsManager.LookupNamespace(TableauXmlNamespaceName);
+
         }
         
         public SiteinfoSite ExecuteRequest(string tenantName)
@@ -46,11 +40,10 @@ namespace Traffk.Tableau.REST.RestRequests
             var xmlText = sb.ToString();
 
             var urlQuery = Urls.UrlCreateSite();
-            var webRequest = CreateLoggedInWebRequest(urlQuery);
-            webRequest.Method = "POST";
+            var webRequest = CreateLoggedInWebRequest(urlQuery, "POST");
             TableauServerRequestBase.SendPostContents(webRequest, xmlText);
 
-            onlineSession.StatusLog.AddStatus("Web request: " + urlQuery, -10);
+            Login.StatusLog.AddStatus("Web request: " + urlQuery, -10);
             var response = GetWebReponseLogErrors(webRequest, TableauOperationDescription);
 
             using (response)
