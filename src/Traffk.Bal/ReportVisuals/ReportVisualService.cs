@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using RevolutionaryStuff.Core.Collections;
@@ -40,7 +41,6 @@ namespace Traffk.Bal.ReportVisuals
         private TraffkRdbContext Rdb;
         private ITableauTenantFinder TableauTenantFinder;
         private ApplicationUser CurrentUser;
-        private AuthorizationHandlerContext AuthorizationHandlerContext;
         private bool CanAccessPhi;
         private IEnumerable<string> TableauReportIds;
         private ICacher Cacher;
@@ -59,7 +59,9 @@ namespace Traffk.Bal.ReportVisuals
             TableauTenantId = TableauTenantFinder.GetTenantIdAsync().Result;
             CurrentUser = currentUser.User;
 
-            CanAccessPhi = true;
+            var role = Rdb.UserRoles.SingleOrDefault(x => x.UserId == CurrentUser.Id);
+            var phiClaimType = PermissionHelpers.CreateClaimType(PermissionNames.ProtectedHealthInformation);
+            CanAccessPhi = Rdb.RoleClaims.Any(x => x.ClaimType == phiClaimType && x.RoleId == role.RoleId);
         }
 
         IEnumerable<IReportVisual> IReportVisualService.GetReportVisuals(VisualContext visualContext, string reportTagFilter) 
@@ -90,7 +92,7 @@ namespace Traffk.Bal.ReportVisuals
 
         public TreeNode<IReportResource> GetReportFolderTreeRoot(VisualContext visualContext, string reportTagFilter = null)
         {
-            var rootKey = visualContext.ToString() + reportTagFilter;
+            var rootKey = CurrentUser.UserName + visualContext.ToString() + reportTagFilter;
             return Cacher.FindOrCreate(rootKey, key => GetTreeCacheEntry(visualContext, reportTagFilter)).Value;
         }
         
@@ -245,6 +247,8 @@ namespace Traffk.Bal.ReportVisuals
             var relevantReportMetaDatas =
                 Rdb.ReportMetaData.Where(
                         x =>
+                        (!x.ReportDetails.ContainsPhi || x.ReportDetails.ContainsPhi == CanAccessPhi)
+                        &&
                         TableauReportIds.Contains(x.ExternalReportKey)
                         &&
                         x.ReportDetails.VisualContext == visualContext

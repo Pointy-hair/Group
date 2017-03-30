@@ -543,7 +543,7 @@ namespace TraffkPortal.Controllers
             var reportVisual = ReportVisualService.GetReportVisual(ReportVisualContext, Parse.ParseInt32(id));
             if (reportVisual == null)
             {
-                RedirectToAction(ActionNames.ContactBackground);
+                return RedirectToAction(ActionNames.ContactList);
             }
             Log.Information(reportVisual.Id + " ContactId: " + contactId);
             var tableauReportViewModel = new TableauReportViewModel(reportVisual);

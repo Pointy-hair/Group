@@ -68,7 +68,7 @@ namespace TraffkPortal.Controllers
             var reportVisual = ReportVisualService.GetReportVisual(ReportVisualContext, Parse.ParseInt32(id));
             if (reportVisual == null)
             {
-                RedirectToAction(ActionNames.Index);
+                return RedirectToAction(ActionNames.Index);
             }
             Log.Information(reportVisual.Id.ToString());
             var tableauReportViewModel = new TableauReportViewModel(reportVisual);
