@@ -79,7 +79,7 @@ namespace Traffk.Bal.ReportVisuals
                 var currentReportVisual = node.Data as ReportVisual;
                 if (currentReportVisual == null) return;
                 var urlFriendlyReportName = CreateAnchorName(currentReportVisual as IReportVisual);
-                if (id == currentReportVisual.Id || id == currentReportVisual.ParentId)
+                if (id == ((IReportVisual)currentReportVisual).Id || id == ((IReportVisual)currentReportVisual).ParentId)
                 {
                     matchingReportVisual = currentReportVisual;
                 }
@@ -174,27 +174,27 @@ namespace Traffk.Bal.ReportVisuals
                 siteId,
             };
 
-            var visual = new ReportVisual()
-            {
-                CanExport = reportMetaData.ReportDetails.CanExport,
-                ContainsPhi = reportMetaData.ReportDetails.ContainsPhi,
-                Description = reportMetaData.ReportDetails.Description ?? "No description available",
-                ExternalReportId = tableauReportVisual.Id,
-                Favorite = reportMetaData.ReportDetails.Favorite,
-                FolderPath = reportMetaData.ReportDetails.FolderPath ?? "/",
-                Id = reportMetaData.ReportMetaDataId,
-                LastEdit = reportMetaData.ReportDetails.LastEdit,
-                LastEditedField = reportMetaData.ReportDetails.LastEditedField,
-                OwnerContactId = reportMetaData.OwnerContactId,
-                Parameters = reportMetaData.ReportDetails.Parameters ?? parameters,
-                ParentId = reportMetaData.ParentReportMetaDataId,
-                PreviewImageUrl = reportMetaData.ReportDetails.PreviewImageUrl ??
-                                  $"/Reporting/PreviewImage/{tableauReportVisual.WorkbookId}/{tableauReportVisual.Id}",
-                Shared = reportMetaData.ReportDetails.Shared,
-                Tags = reportMetaData.ReportDetails.Tags,
-                Title = reportMetaData.ReportDetails.Title ?? tableauReportVisual.ViewName,
-                VisualContext = reportMetaData.ReportDetails.VisualContext               
-            };
+            var visual = new ReportVisual();
+
+            ((IReportVisual) visual).CanExport = reportMetaData.ReportDetails.CanExport;
+            ((IReportVisual)visual).ContainsPhi = reportMetaData.ReportDetails.ContainsPhi;
+            ((IReportVisual)visual).Description = reportMetaData.ReportDetails.Description ?? "No description available";
+            ((IReportVisual)visual).ExternalReportKey = tableauReportVisual.Id;
+            ((IReportVisual)visual).Favorite = reportMetaData.ReportDetails.Favorite;
+            ((IReportVisual)visual).FolderPath = reportMetaData.ReportDetails.FolderPath ?? "/";
+            ((IReportVisual)visual).Id = reportMetaData.ReportMetaDataId;
+            ((IReportVisual)visual).LastEdit = reportMetaData.ReportDetails.LastEdit;
+            ((IReportVisual)visual).LastEditedField = reportMetaData.ReportDetails.LastEditedField;
+            ((IReportVisual)visual).OwnerContactId = reportMetaData.OwnerContactId;
+            ((IReportVisual)visual).Parameters = reportMetaData.ReportDetails.Parameters ?? parameters;
+            ((IReportVisual)visual).ParentId = reportMetaData.ParentReportMetaDataId;
+            ((IReportVisual)visual).PreviewImageUrl = reportMetaData.ReportDetails.PreviewImageUrl ??
+                                  $"/Reporting/PreviewImage/{tableauReportVisual.WorkbookId}/{tableauReportVisual.Id}";
+            ((IReportVisual)visual).Shared = reportMetaData.ReportDetails.Shared;
+            ((IReportVisual)visual).Tags = reportMetaData.ReportDetails.Tags;
+            ((IReportVisual)visual).Title = reportMetaData.ReportDetails.Title ?? tableauReportVisual.ViewName;
+            ((IReportVisual)visual).VisualContext = reportMetaData.ReportDetails.VisualContext;      
+            ((IReportVisual)visual).RenderingAttributes = reportMetaData.ReportDetails.RenderingAttributes;
 
             return visual;
         }
@@ -210,7 +210,8 @@ namespace Traffk.Bal.ReportVisuals
                 Parameters = primary.ReportDetails.Parameters ?? secondary.ReportDetails.Parameters,
                 VisualContext = primary.ReportDetails.VisualContext,
                 FolderPath = primary.ReportDetails.FolderPath,
-                CanExport = primary.ReportDetails.CanExport
+                CanExport = primary.ReportDetails.CanExport,
+                RenderingAttributes = primary.ReportDetails.RenderingAttributes ?? secondary.ReportDetails.RenderingAttributes
             };
 
             var mergedRmd = new ReportMetaData

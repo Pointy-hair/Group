@@ -9,60 +9,50 @@ namespace Traffk.Bal.ReportVisuals
 {
     internal class ReportVisual : IReportVisual, IReportResource
     {
-        public long Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public string ExternalReportId { get; set; }
-        public string FolderPath { get; set; }
-        public string PreviewImageUrl { get; set; }
-        public ICollection<string> Tags { get; set; }
-        public bool ContainsPhi { get; set; }
-        public int? ParentId { get; set; }
-        public long? OwnerContactId { get; set; }
-        public bool Shared { get; set; }
-        public bool Favorite { get; set; }
-        public ICollection<KeyValuePair<string, string>> Parameters { get; set; }
-        public bool CanExport { get; set; }
-        public DateTime LastEdit { get; set; }
-        public string LastEditedField { get; set; }
-        public VisualContext VisualContext { get; set; }
-
-        bool IReportVisual.CanExport
+        long IReportVisual.Id { get; set; }
+        string IReportResource.Title
         {
-            get { return CanExport; }
-            set { CanExport = value; }
+            get { return Title; }
+            set { Title = value; }
         }
-
-        bool IReportVisual.ContainsPhi
-        {
-            get { return ContainsPhi; }
-            set { ContainsPhi = value; }
-        }
-
-        long IReportVisual.Id
-        {
-            get { return Id; }
-            set { Id = value; }
-        }
-
-        string IReportVisual.Description
+        string IReportResource.Description
         {
             get { return Description; }
             set { Description = value; }
         }
 
-        string IReportVisual.ExternalReportKey
+        string IReportVisual.Title
         {
-            get { return ExternalReportId; }
-            set { ExternalReportId = value; }
+            get { return Title; }
+            set { Title = value; }
         }
-
-        bool IReportVisual.Favorite
+        string IReportVisual.Description
         {
-            get { return Favorite; }
-            set { Favorite = value; }
+            get { return Description; }
+            set { Description = value; }
         }
-
+        string IReportVisual.ExternalReportKey { get; set; }
+        public string FolderPath { get; set; }
+        string IReportVisual.FolderPath
+        {
+            get { return FolderPath; }
+            set { FolderPath = value; }
+        }
+        string IReportVisual.PreviewImageUrl { get; set; }
+        ICollection<string> IReportVisual.Tags { get; set; }
+        bool IReportVisual.ContainsPhi { get; set; }
+        int? IReportVisual.ParentId { get; set; }
+        long? IReportVisual.OwnerContactId { get; set; }
+        bool IReportVisual.Shared { get; set; }
+        bool IReportVisual.Favorite { get; set; }
+        ICollection<KeyValuePair<string, string>> IReportVisual.Parameters { get; set; }
+        bool IReportVisual.CanExport { get; set; }
+        DateTime IReportVisual.LastEdit { get; set; }
+        string IReportVisual.LastEditedField { get; set; }
+        VisualContext IReportVisual.VisualContext { get; set; }
+        ReportDetails.RenderingAttributeFlags? IReportVisual.RenderingAttributes { get; set; }
         public string FolderName
         {
             get

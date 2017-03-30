@@ -22,10 +22,18 @@ namespace Traffk.Bal.ReportVisuals
         public VisualContext VisualContext { get; set; }
         public DateTime LastEdit { get; set; }
         public string LastEditedField { get; set; }
+        public RenderingAttributeFlags? RenderingAttributes { get; set; }
 
-        public void Merge(IReportMetaData reportMetaData)
+        [Flags]
+        public enum RenderingAttributeFlags
         {
-            //Could be useful if merging in recent changes from parent RMD
+            Vertical = 0x1,
+            //B = 0x2,
+            //C = 0x4,
+            //D = 0x8,
+            //E = 0x10,
+            //F = 0x20,
+            //G = 0x40,
         }
 
         public static ReportDetails CreateFromJson(string json)

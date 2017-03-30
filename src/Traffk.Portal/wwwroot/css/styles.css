@@ -1153,8 +1153,14 @@ ul.navbar-left {
     background-position: center;
 }
 
-    Begin screen-size specific CSS
+.report-tall {
+    min-height: 900px;
+}
+
+/*
+    Screen size specific CSS
 */
+
 @media (max-width: 500px) {
     #primary-subnav-logo, #primary-subnav-logo a {
         width: auto;

@@ -20,7 +20,7 @@
 }
 
 
-@{     await Html.RenderPartialAsync("~/Views/Shared/_ReportFramePartial.cshtml"); }
+@{     await Html.RenderPartialAsync("~/Views/Shared/_ReportFramePartial.cshtml", Model); }
 
 <!--
 <button class="btn" id="getData" onclick="getUnderlyingData()">Get Data</button>

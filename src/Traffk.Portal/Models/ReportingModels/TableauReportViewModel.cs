@@ -17,6 +17,10 @@ namespace TraffkPortal.Models.ReportingModels
             FolderName = reportVisual.FolderName;
             Description = reportVisual.Description;
             Title = reportVisual.Title;
+            if (reportVisual.RenderingAttributes != null)
+            {
+                RenderingAttributes = reportVisual.RenderingAttributes.Value;
+            }
         }
 
         public string Title { get; private set; }
@@ -24,16 +28,6 @@ namespace TraffkPortal.Models.ReportingModels
         public string WorkbookName { get; private set; }
         public string ViewName { get; private set; }
         public string Description { get; private set; }
+        public ReportDetails.RenderingAttributeFlags RenderingAttributes { get; private set; }
     }
-
-    //public class TableauContactReportViewModel : TableauReportViewModel
-    //{
-    //    public TableauContactReportViewModel(ReportVisual reportVisual, Contact contact) : base(reportVisual)
-    //    {
-    //        Requires.NonNull(contact, nameof(contact));
-    //        ContactId = contact.ContactId;
-    //    }
-
-    //    public long ContactId { get; private set; }
-    //}
 }

@@ -24,6 +24,7 @@ namespace Traffk.Bal.ReportVisuals
         string LastEditedField { get; set; } //For user convenience
         VisualContext VisualContext { get; set; }
         string FolderName { get; }
+        ReportDetails.RenderingAttributeFlags? RenderingAttributes { get; set; }
     }
 
     public enum VisualContext

@@ -1,4 +1,7 @@
-﻿@section pageAlerts {
+﻿@using Traffk.Bal.ReportVisuals
+@model TraffkPortal.Models.ReportingModels.TableauReportViewModel
+
+@section pageAlerts {
     <div class="alert alert-info alert-dismissable" id="message-exported-alert" style="display: none">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
         <i class="fa fa-check" aria-hidden="true"></i> You exported report @Model.ViewName
@@ -9,11 +12,10 @@
     </div>
 }    
 
-
 <div class="panel medium-padding">
-        <div class="panel-body report-embed-container" id="reportContainer">
-        </div>
+    <div class="panel-body report-embed-container @(Model != null && Model.RenderingAttributes.HasFlag(ReportDetails.RenderingAttributeFlags.Vertical) ? "report-tall" : "")" id="reportContainer">
     </div>
+</div>
 @*<div id="userInteractionDiv">This is where user interaction messages will go.</div>*@
 
 

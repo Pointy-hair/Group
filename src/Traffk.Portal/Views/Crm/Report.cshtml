@@ -22,7 +22,7 @@
     <li><a href="#" class="popup-send-report-message_open">Send Message</a></li>
 }
 
-@{     await Html.RenderPartialAsync("~/Views/Shared/_ReportFramePartial.cshtml"); }
+@{     await Html.RenderPartialAsync("~/Views/Shared/_ReportFramePartial.cshtml", Model); }
 
 
 @section Scripts {
