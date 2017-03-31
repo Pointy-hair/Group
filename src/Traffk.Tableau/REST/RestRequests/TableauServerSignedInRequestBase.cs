@@ -155,7 +155,7 @@ namespace Traffk.Tableau.REST.RestRequests
                 var response = webClient.DownloadFile(urlDownload, starterName); //Download the file
 
                 //Look up the correct file extension based on the content type downloaded
-                var contentType = response.Headers.GetValues("Content-Type").FirstOrDefault();
+                var contentType = response.Content.Headers.ContentType.ToString();
                 var fileExtension = downloadTypeMapper.GetFileExtension(contentType);
                 var finishName = System.IO.Path.Combine(downloadToDirectory, baseFilename + fileExtension);
 

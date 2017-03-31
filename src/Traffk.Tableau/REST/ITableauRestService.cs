@@ -1,5 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 using System.Threading.Tasks;
+using Traffk.Tableau.REST.Models;
 using Traffk.Tableau.REST.RestRequests;
 using Traffk.Tableau.VQL;
 
@@ -17,6 +19,9 @@ namespace Traffk.Tableau.REST
         Task<UnderlyingDataTable> GetUnderlyingDataAsync(GetUnderlyingDataOptions options, string workbookName, string viewName);
         SiteinfoSite CreateSite(string tenantName, out string url);
         void AddUserToSite(string siteId, string userName);
+
+        ICollection<SiteWorkbook> DownloadWorkbooks(IEnumerable<SiteWorkbook> workbooksToDownload, string localSavePath,
+            bool generateInfoFile);
     }
 
     public class VisualId

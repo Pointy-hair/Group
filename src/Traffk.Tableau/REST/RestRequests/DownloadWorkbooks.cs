@@ -24,7 +24,7 @@ namespace Traffk.Tableau.REST.RestRequests
             TableauServerSignIn login,
             IEnumerable<SiteWorkbook> workbooksToDownload, 
             string localSavePath,
-            bool generateInfoFile)
+            bool generateInfoFile = false)
             : base(onlineUrls, login)
         {
             WorkbooksToDownload = workbooksToDownload;

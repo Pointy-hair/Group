@@ -10,6 +10,7 @@ using System.Net.Http;
 using RevolutionaryStuff.Core;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using Traffk.Tableau.REST.Models;
 using Traffk.Tableau.VQL;
 
 namespace Traffk.Tableau.REST
@@ -87,7 +88,17 @@ namespace Traffk.Tableau.REST
             var addUserToSite = new AddUserToSite(Urls, Login);
             addUserToSite.ExecuteRequest(siteId, userName);
         }
-        
+
+        ICollection<SiteWorkbook> ITableauRestService.DownloadWorkbooks(IEnumerable<SiteWorkbook> workbooksToDownload,
+            string localSavePath,
+            bool generateInfoFile)
+        {
+            var downloadWorkbooksRequest = new DownloadWorkbooks(Urls, Login, workbooksToDownload, localSavePath, generateInfoFile);
+            var downloadedWorkbooks = downloadWorkbooksRequest.ExecuteRequest();
+            return downloadedWorkbooks;
+        }
+
+
         byte[] ITableauRestService.DownloadPreviewImageForView(string workbookId, string viewId)
         {
             var downloadPreviewImage = new DownloadPreviewImageForView(Urls, Login);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http.Features.Authentication;
@@ -8,6 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Traffk.Tableau.REST;
 using Traffk.Tableau.REST.RestRequests;
 using Moq;
+using Traffk.Tableau.REST.Models;
 
 namespace Traffk.Tableau.Tests.REST
 {
@@ -39,6 +41,7 @@ namespace Traffk.Tableau.Tests.REST
         [TestClass]
         public class AddUserToSiteMethodTests : TableauRestServiceTests
         {
+            [Ignore]
             [TestMethod]
             public void WhenGivenTenantNameCreateSiteAndAddUser()
             {
@@ -68,6 +71,15 @@ namespace Traffk.Tableau.Tests.REST
                 var workbookRequest = ((ITableauRestService) testService).DownloadWorkbooksList();
                 workbookRequest.ExecuteRequest();
                 var workbooks = workbookRequest.Workbooks;
+
+                var workbooksToDownload = new List<SiteWorkbook> {workbooks.First()};
+
+
+
+                string path = System.IO.Path.GetTempPath(); //Path.GetPathRoot(Directory.GetCurrentDirectory());
+                var downloadedWorkbooks = ((ITableauRestService) testService).DownloadWorkbooks(workbooksToDownload, path, false);
+                Assert.IsNotNull(downloadedWorkbooks);
+                Assert.AreNotEqual(downloadedWorkbooks.Count, 0);
             }
         }
 
