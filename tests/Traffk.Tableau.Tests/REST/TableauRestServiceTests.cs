@@ -58,6 +58,19 @@ namespace Traffk.Tableau.Tests.REST
             }
         }
 
+        [TestClass]
+        public class DownloadWorkbookMethodTests : TableauRestServiceTests
+        {
+            [TestMethod]
+            public void WhenGivenListOfSingleWorkbookDownloadWorkbook()
+            {
+                var testService = new TableauRestService(new TrustedTicketGetter(Options), Options);
+                var workbookRequest = ((ITableauRestService) testService).DownloadWorkbooksList();
+                workbookRequest.ExecuteRequest();
+                var workbooks = workbookRequest.Workbooks;
+            }
+        }
+
         //[TestClass]
         //public class SignInMethodTests : TableauRestServiceTests
         //{

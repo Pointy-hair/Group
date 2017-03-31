@@ -1,5 +1,6 @@
 ﻿using RevolutionaryStuff.Core.Caching;
 using System;
+using Traffk.Tableau.REST.Models;
 using Traffk.Tableau.REST.RestRequests;
 
 namespace Traffk.Tableau.REST
@@ -529,15 +530,15 @@ namespace Traffk.Tableau.REST
         /// </summary>
         /// <param name="siteUrlSegment"></param>
         /// <returns></returns>
-        //public string Url_WorkbookDownload(TableauServerSignIn session, SiteWorkbook contentInfo)
-        //{
-        //    string workingText = _urlDownloadWorkbookTemplate;
-        //    workingText = workingText.Replace("{{iwsSiteId}}", session.SiteId);
-        //    workingText = workingText.Replace("{{iwsRepositoryId}}", contentInfo.Id);
+        public string Url_WorkbookDownload(TableauServerSignIn session, SiteWorkbook contentInfo)
+        {
+            string workingText = _urlDownloadWorkbookTemplate;
+            workingText = workingText.Replace("{{iwsSiteId}}", session.SiteId);
+            workingText = workingText.Replace("{{iwsRepositoryId}}", contentInfo.Id);
 
-        //    ValidateTemplateReplaceComplete(workingText);
-        //    return workingText;
-        //}
+            ValidateTemplateReplaceComplete(workingText);
+            return workingText;
+        }
 
         /// <summary>
         /// URL to download a datasource
