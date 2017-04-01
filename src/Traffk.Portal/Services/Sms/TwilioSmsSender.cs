@@ -36,6 +36,12 @@ namespace TraffkPortal.Services.Sms
                 });
 
                 var response = await client.PostAsync(Options.RequestUri, content).ConfigureAwait(false);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var e = new Exception("Twilio Error: " + response.ReasonPhrase);
+                    throw e;
+                }
             }
         }
     }
