@@ -128,6 +128,22 @@
         <Column name="SchemaMeta" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="xml" maxLen="-1" />
       </Columns>
     </Table>
+    <Table schema="db" name="SchemaTables" tableType="VIEW">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+      </Properties>
+      <Columns>
+        <Column name="ObjectId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="CustomAttribute" value="Key" />
+          </Properties>
+        </Column>
+        <Column name="SchemaName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="TableName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="TableType" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="10" />
+      </Columns>
+    </Table>
     <Table schema="db" name="SchemaUpgraderLog" tableType="BASE TABLE">
       <Columns>
         <Column name="SchemaUpgraderLogId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
@@ -637,6 +653,7 @@
         <Collection schema="health" table="Pharmacy" column="PrescriberProviderContactId" />
         <Collection schema="health" table="MillimanScores" column="ContactId" />
         <Collection schema="dbo" table="ReportMetaData" column="OwnerContactId" />
+        <Collection schema="dbo" table="Notes" column="CreatedByContactId" />
         <Collection schema="health" table="CareAlerts" column="ContactId" />
         <Collection schema="deerwalk" table="Eligibility" column="ContactId" />
         <Collection schema="deerwalk" table="Pharmacy" column="ContactId" />
@@ -1023,6 +1040,50 @@
         <Column name="CreativeTitle" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" />
       </Columns>
     </Table>
+    <Table schema="dbo" name="Notes" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+        <Property name="Implements" value="ITraffkTenanted" />
+      </Properties>
+      <Columns>
+        <Column name="NoteId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="CreatedAtUtc" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())" />
+        <Column name="TenantId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Tenants" />
+        <Column name="RowStatus" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')">
+          <Properties>
+            <Property name="AccessModifier" value="missing" />
+            <Property name="ImplementsRowStatusSemantics" value="1" />
+          </Properties>
+        </Column>
+        <Column name="CreatedByContactId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bigint" refSchema="dbo" refTable="Contacts" />
+        <Column name="Title" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" />
+        <Column name="Body" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
+      </Columns>
+      <Collections>
+        <Collection schema="dbo" table="NoteTargets" column="NoteId" />
+      </Collections>
+    </Table>
+    <Table schema="dbo" name="NoteTargets" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+        <Property name="Implements" value="ITraffkTenanted" />
+      </Properties>
+      <Columns>
+        <Column name="NoteTargetId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Tenants" />
+        <Column name="RowStatus" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')">
+          <Properties>
+            <Property name="AccessModifier" value="missing" />
+            <Property name="ImplementsRowStatusSemantics" value="1" />
+          </Properties>
+        </Column>
+        <Column name="NoteId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Notes" />
+        <Column name="TableObjectId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="TablePkIntVal" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+      </Columns>
+    </Table>
     <Table schema="dbo" name="ReleaseChanges" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
@@ -1125,8 +1186,10 @@
         <Collection schema="health" table="MillimanScores" column="TenantId" />
         <Collection schema="dbo" table="ReportMetaData" column="TenantId" />
         <Collection schema="dbo" table="Communications" column="TenantId" />
+        <Collection schema="dbo" table="Notes" column="TenantId" />
         <Collection schema="dbo" table="CommunicationBlasts" column="TenantId" />
         <Collection schema="health" table="CareAlerts" column="TenantId" />
+        <Collection schema="dbo" table="NoteTargets" column="TenantId" />
         <Collection schema="deerwalk" table="Eligibility" column="TenantId" />
         <Collection schema="dbo" table="InsurancePlans" column="TenantId" />
         <Collection schema="dbo" table="CommunicationPieces" column="TenantId" />
@@ -6472,7 +6535,7 @@
     <Table schema="jamie" name="Zip5" tableType="BASE TABLE">
       <Columns>
         <Column name="Zip5Id" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
-        <Column name="ZipCode" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="5" />
+        <Column name="ZipCode" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="5" />
         <Column name="PrimaryRecord" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bit" />
         <Column name="Population" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
         <Column name="HouseholdsPerZipcode" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
@@ -6883,211 +6946,47 @@
     </Table>
     <Table schema="jamie" name="Zip9" tableType="BASE TABLE">
       <Columns>
-        <Column name="Zip9Id" position="1" isPrimaryKey="0" isIdentity="1" isNullable="0" sqlType="int">
-          <Properties>
-            <Property name="MS_Description" value="Auto generated primary key" />
-          </Properties>
-        </Column>
-        <Column name="ZipCode" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="5">
-          <Properties>
-            <Property name="MS_Description" value="00000-99999 Five digit numeric ZIP Code of the area." />
-          </Properties>
-        </Column>
-        <Column name="UpdateKey" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10">
-          <Properties>
-            <Property name="MS_Description" value="A unique key number identifying this record for updates." />
-          </Properties>
-        </Column>
-        <Column name="ActionType" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1">
-          <Properties>
-            <Property name="MS_Description" value="A or D, meaning add or delete this record. Always an A for Base File." />
-          </Properties>
-        </Column>
-        <Column name="RecordType" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1">
-          <Properties>
-            <Property name="MS_Description" value="A flag indicating which type of record this is. Ex: Firm, General Delivery, High Rise, PO Box, Rural Route, or Street." />
-          </Properties>
-        </Column>
-        <Column name="CarrierRoute" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="4">
-          <Properties>
-            <Property name="MS_Description" value="Carrier identification code or number for a given delivery route or PO box presentation." />
-          </Properties>
-        </Column>
-        <Column name="StPreDirAbbr" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="2">
-          <Properties>
-            <Property name="MS_Description" value="The directional abbreviation that comes before an address: Ex: The N meaning North in “123 N MAIN ST”" />
-          </Properties>
-        </Column>
-        <Column name="StName" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="28">
-          <Properties>
-            <Property name="MS_Description" value="The official name of the street as assigned by a local governing authority for this record." />
-          </Properties>
-        </Column>
-        <Column name="StSuffixAbbr" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="4">
-          <Properties>
-            <Property name="MS_Description" value="Code that is the standard USPS abbreviation for the trailing designator in a street address." />
-          </Properties>
-        </Column>
-        <Column name="StPostDirAbbr" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="2">
-          <Properties>
-            <Property name="MS_Description" value="A geographic direction that follows the street name. Ex: The N meaning North in “123 MAIN ST N”" />
-          </Properties>
-        </Column>
-        <Column name="AddressPrimaryLowNumber" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10">
-          <Properties>
-            <Property name="MS_Description" value="The low number in a range of numeric or alphanumeric components to an address preceding the street name." />
-          </Properties>
-        </Column>
-        <Column name="AddressPrimaryHighNumber" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10">
-          <Properties>
-            <Property name="MS_Description" value="The high number in a range of numeric or alphanumeric components to an address preceding the street name." />
-          </Properties>
-        </Column>
-        <Column name="AddressPrimaryOddEven" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1">
-          <Properties>
-            <Property name="MS_Description" value="Code that identifies the side or sides of a street for which a given address range is applicable. O = Odd, E = Even." />
-          </Properties>
-        </Column>
-        <Column name="BuildingFirmName" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="40">
-          <Properties>
-            <Property name="MS_Description" value="The name of a company, building, apartment complex, shopping center, or other distinguishing secondary address information." />
-          </Properties>
-        </Column>
-        <Column name="AddressSecondaryAbbr" position="15" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="4">
-          <Properties>
-            <Property name="MS_Description" value="Only Applicable to Record Types F and H." />
-          </Properties>
-        </Column>
-        <Column name="AddressSecondaryLowNumber" position="16" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10">
-          <Properties>
-            <Property name="MS_Description" value="The low-end secondary address component in a range of secondary addresses. Only Applicable to Record Types F and H." />
-          </Properties>
-        </Column>
-        <Column name="AddressSecondaryHighNumber" position="17" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10">
-          <Properties>
-            <Property name="MS_Description" value="The high-end secondary address component in a range of secondary addresses. Only Applicable to Record Types F and H." />
-          </Properties>
-        </Column>
-        <Column name="AddressSecondaryOddEven" position="18" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1">
-          <Properties>
-            <Property name="MS_Description" value="Code that identifies the side or sides of a street for which a given address range is applicable. O = Odd, E = Even. Only Applicable to Record Types F and H." />
-          </Properties>
-        </Column>
-        <Column name="Plus4Low" position="19" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="4">
-          <Properties>
-            <Property name="MS_Description" value="ZIP Add-On Low Number in the range. Also known as the +4." />
-          </Properties>
-        </Column>
-        <Column name="Plus4High" position="20" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="4">
-          <Properties>
-            <Property name="MS_Description" value="ZIP Add-On High Number in the range. Also know nas the +4." />
-          </Properties>
-        </Column>
-        <Column name="BaseAlternateCode" position="21" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1">
-          <Properties>
-            <Property name="MS_Description" value="Code that specifies whether a record is a base (preferred) or alternate record. B= Base, A = Alternate" />
-          </Properties>
-        </Column>
-        <Column name="LACSStatus" position="22" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1">
-          <Properties>
-            <Property name="MS_Description" value="L = LACS Converted, Blank = Not Applicable" />
-          </Properties>
-        </Column>
-        <Column name="GovernmentBuilding" position="23" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1">
-          <Properties>
-            <Property name="MS_Description" value="This indicates what type of Government building this is if applicable." />
-          </Properties>
-        </Column>
-        <Column name="FinanceNumber" position="24" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="6">
-          <Properties>
-            <Property name="MS_Description" value="A code assigned to Postal Service facilities (primarily post offices) to collect cost and statistical data and compile revenue and expense data." />
-          </Properties>
-        </Column>
-        <Column name="State" position="25" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="2">
-          <Properties>
-            <Property name="MS_Description" value="A 2-character abbreviation for the name of a state, U.S. territory, or armed forces ZIP Code designation." />
-          </Properties>
-        </Column>
-        <Column name="CountyFIPS" position="26" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="3">
-          <Properties>
-            <Property name="MS_Description" value="The 3-digit (FIPS) code assigned to counties in sequence within each state. Match this code with the County Table for county based info." />
-          </Properties>
-        </Column>
-        <Column name="CongressionalDistrict" position="27" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="2">
-          <Properties>
-            <Property name="MS_Description" value="The Congressional District this record is assigned to." />
-          </Properties>
-        </Column>
-        <Column name="MunicipalityKey" position="28" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="6">
-          <Properties>
-            <Property name="MS_Description" value="Reserved for future use." />
-          </Properties>
-        </Column>
-        <Column name="UrbanizationKey" position="29" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="6">
-          <Properties>
-            <Property name="MS_Description" value="An index to the Deluxe ZIP Code Database file that provides the urbanization name for this delivery range." />
-          </Properties>
-        </Column>
-        <Column name="PreferredLastLineCityStateKey" position="30" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="6">
-          <Properties>
-            <Property name="MS_Description" value="Match this field to our Deluxe ZIP Code Database for City name, City alias, Area Code, Time Zone, and more." />
-          </Properties>
-        </Column>
-        <Column name="ToLatitude" position="31" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="decimal">
-          <Properties>
-            <Property name="MS_Description" value="The north/south measurement indicating the end of this record." />
-          </Properties>
-        </Column>
-        <Column name="FromLatitude" position="32" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="decimal">
-          <Properties>
-            <Property name="MS_Description" value="The north/south measurement indicating the beginning for this record." />
-          </Properties>
-        </Column>
-        <Column name="ToLongitude" position="33" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="decimal">
-          <Properties>
-            <Property name="MS_Description" value="The east/west measurement indicating the end of this record." />
-          </Properties>
-        </Column>
-        <Column name="FromLongitude" position="34" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="decimal">
-          <Properties>
-            <Property name="MS_Description" value="The east/west measurement indicating the beginning for this record." />
-          </Properties>
-        </Column>
-        <Column name="CensusTract" position="35" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="6">
-          <Properties>
-            <Property name="MS_Description" value="Small, locally delineated statistical areas within selected counties, generally having stable boundaries and, when first established by local communities, designed to have relatively homogeneous demographic characteristics." />
-          </Properties>
-        </Column>
-        <Column name="CensusBlock" position="36" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="4">
-          <Properties>
-            <Property name="MS_Description" value="Blocks are numbered uniquely within each census tract with a 4-character number that identifies the collection block used in the census and a character block suffix. This character block suffix is often blank." />
-          </Properties>
-        </Column>
-        <Column name="TLID" position="37" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="10">
-          <Properties>
-            <Property name="MS_Description" value="Tiger Line Identification (TLID) is a universal number associated with Census Bureau products." />
-          </Properties>
-        </Column>
-        <Column name="LatLonMultiMatch" position="38" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1">
-          <Properties>
-            <Property name="MS_Description" value="Code that specifies if a ZIP+4 has more than 1 Latitude/Longitude Match. Y = Yes, Blank = No" />
-          </Properties>
-        </Column>
-        <Column name="CenLat" position="39" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="decimal">
-          <Properties>
-            <Property name="MS_Description" value="Latitude of the ZIP+4 Centroid" />
-          </Properties>
-        </Column>
-        <Column name="CenLon" position="40" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="decimal">
-          <Properties>
-            <Property name="MS_Description" value="Longitude of the ZIP+4 Centroid" />
-          </Properties>
-        </Column>
-        <Column name="CensusBlockGroup" position="41" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="12">
-          <Properties>
-            <Property name="MS_Description" value="Census block group code (state, county, tract and block group codes)" />
-          </Properties>
-        </Column>
+        <Column name="Zip9Id" position="1" isPrimaryKey="0" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="ZipCode" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="5" />
+        <Column name="UpdateKey" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10" />
+        <Column name="ActionType" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1" />
+        <Column name="RecordType" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1" />
+        <Column name="CarrierRoute" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="4" />
+        <Column name="StPreDirAbbr" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="2" />
+        <Column name="StName" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="28" />
+        <Column name="StSuffixAbbr" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="4" />
+        <Column name="StPostDirAbbr" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="2" />
+        <Column name="AddressPrimaryLowNumber" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10" />
+        <Column name="AddressPrimaryHighNumber" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10" />
+        <Column name="AddressPrimaryOddEven" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1" />
+        <Column name="BuildingFirmName" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="40" />
+        <Column name="AddressSecondaryAbbr" position="15" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="4" />
+        <Column name="AddressSecondaryLowNumber" position="16" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10" />
+        <Column name="AddressSecondaryHighNumber" position="17" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10" />
+        <Column name="AddressSecondaryOddEven" position="18" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1" />
+        <Column name="Plus4Low" position="19" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="4" />
+        <Column name="Plus4High" position="20" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="4" />
+        <Column name="BaseAlternateCode" position="21" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1" />
+        <Column name="LACSStatus" position="22" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1" />
+        <Column name="GovernmentBuilding" position="23" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1" />
+        <Column name="FinanceNumber" position="24" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="6" />
+        <Column name="State" position="25" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="2" />
+        <Column name="CountyFIPS" position="26" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="3" />
+        <Column name="CongressionalDistrict" position="27" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="2" />
+        <Column name="MunicipalityKey" position="28" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="6" />
+        <Column name="UrbanizationKey" position="29" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="6" />
+        <Column name="PreferredLastLineCityStateKey" position="30" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="6" />
+        <Column name="ToLatitude" position="31" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="decimal" />
+        <Column name="FromLatitude" position="32" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="decimal" />
+        <Column name="ToLongitude" position="33" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="decimal" />
+        <Column name="FromLongitude" position="34" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="decimal" />
+        <Column name="CensusTract" position="35" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="6" />
+        <Column name="CensusBlock" position="36" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="4" />
+        <Column name="TLID" position="37" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="10" />
+        <Column name="LatLonMultiMatch" position="38" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="1" />
+        <Column name="CenLat" position="39" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="20" />
+        <Column name="CenLon" position="40" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="char" maxLen="20" />
+        <Column name="CensusBlockGroup" position="41" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="12" />
       </Columns>
     </Table>
     <Table schema="jamie" name="ZipMultiCounty" tableType="BASE TABLE">
@@ -8304,15 +8203,13 @@
       </Args>
       <ResultSets>
         <ResultSet resultSetNumber="0" colCount="0" isError="1">
-          <Error>
-            The metadata could not be determined because statement 'INSERT #sessions
-            (
-            recursion,
-            session_id,
-            request_id,
-            session_number,
-            elapsed' in procedure 'WhoIsActive' uses a temp table.
-          </Error>
+          <Error>The metadata could not be determined because statement 'INSERT #sessions
+		(
+			recursion,
+			session_id,
+			request_id,
+			session_number,
+			elapsed' in procedure 'WhoIsActive' uses a temp table.</Error>
         </ResultSet>
       </ResultSets>
     </Sproc>
@@ -8347,10 +8244,8 @@
       </Args>
       <ResultSets>
         <ResultSet resultSetNumber="0" colCount="0" isError="1">
-          <Error>
-            The metadata could not be determined because statement 'insert into datedimensions
-            (TenantId, calendarDate, FiscalYear, FiscalQuarter, FiscalMonth, Fiscal' in procedure 'DateDimensionsForTenantCreate' uses a temp table.
-          </Error>
+          <Error>The metadata could not be determined because statement 'insert into datedimensions
+	(TenantId, calendarDate, FiscalYear, FiscalQuarter, FiscalMonth, Fiscal' in procedure 'DateDimensionsForTenantCreate' uses a temp table.</Error>
         </ResultSet>
       </ResultSets>
     </Sproc>
@@ -8363,14 +8258,12 @@
       </Args>
       <ResultSets>
         <ResultSet resultSetNumber="0" colCount="0" isError="1">
-          <Error>
-            The metadata could not be determined because statement 'insert into #z
-            values
-            (
-            @cd,
-            @baselineFiscalYear,
-            'FY'+cast(@baselineFiscalYear' in procedure 'FiscalYearsConfigure' uses a temp table.
-          </Error>
+          <Error>The metadata could not be determined because statement 'insert into #z 
+		values 
+		(
+			@cd,
+			@baselineFiscalYear, 
+			'FY'+cast(@baselineFiscalYear' in procedure 'FiscalYearsConfigure' uses a temp table.</Error>
         </ResultSet>
       </ResultSets>
     </Sproc>
@@ -8388,10 +8281,8 @@
       </Args>
       <ResultSets>
         <ResultSet resultSetNumber="0" colCount="0" isError="1">
-          <Error>
-            The metadata could not be determined because statement 'insert into #cnts
-            exec(@sql)' in procedure 'GetFieldCounts' uses a temp table.
-          </Error>
+          <Error>The metadata could not be determined because statement 'insert into #cnts
+		exec(@sql)' in procedure 'GetFieldCounts' uses a temp table.</Error>
         </ResultSet>
       </ResultSets>
     </Sproc>
@@ -8414,13 +8305,11 @@
       </Args>
       <ResultSets>
         <ResultSet resultSetNumber="0" colCount="0" isError="1">
-          <Error>
-            The metadata could not be determined because statement 'update j
-            set
-            jobstatus='Dequeued',
-            dequeuedAtutc=@dt,
-            ServiceRoleMachineName=@serviceRol' in procedure 'JobDequeue' uses a temp table.
-          </Error>
+          <Error>The metadata could not be determined because statement 'update j
+	set 
+		jobstatus='Dequeued',
+		dequeuedAtutc=@dt,
+		ServiceRoleMachineName=@serviceRol' in procedure 'JobDequeue' uses a temp table.</Error>
         </ResultSet>
       </ResultSets>
     </Sproc>
@@ -8551,10 +8440,8 @@
       </Args>
       <ResultSets>
         <ResultSet resultSetNumber="0" colCount="0" isError="1">
-          <Error>
-            The metadata could not be determined because statement 'insert into #m
-            exec(@sql)' in procedure 'ContactsCreateFromDeerwalkSetContactIds' uses a temp table.
-          </Error>
+          <Error>The metadata could not be determined because statement 'insert into #m
+	exec(@sql)' in procedure 'ContactsCreateFromDeerwalkSetContactIds' uses a temp table.</Error>
         </ResultSet>
       </ResultSets>
     </Sproc>

@@ -817,7 +817,19 @@ from
 	for xml path('SchemaMeta'), type
 ) x(SchemaMeta)
 
-
-
 GO
 
+create view db.SchemaTables
+as
+select e.object_id ObjectId, s.name SchemaName, e.name TableName, e.Table_type TableType
+from
+	(
+		select object_id, name, schema_id, 'VIEW' table_type from sys.views v (nolock)
+		union all
+		select object_id, name, schema_id, 'BASE TABLE' table_type from sys.tables t (nolock)
+	) e
+		inner join
+	sys.schemas s  (nolock)
+		on s.schema_id=e.schema_id
+
+GO
