@@ -34,7 +34,7 @@ namespace TraffkPortal.Services.Logging
                     if (acc != null)
                     {
                         var httpContext = acc.HttpContext;
-                        if (httpContext != null)
+                        if (httpContext != null && httpContext.Items.ContainsKey(TenantServices.TenantFinderService.HttpContextTenantIdKey))
                         {
                             int tenantId = (int)httpContext.Items[TenantServices.TenantFinderService.HttpContextTenantIdKey];
                             logEvent.AddPropertyValueIfAbsent(propertyFactory, TenantIdPropertyName, tenantId);

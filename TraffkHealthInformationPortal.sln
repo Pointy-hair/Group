@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.4
+VisualStudioVersion = 15.0.26228.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RevolutionaryStuff.Core", "src\RevolutionaryStuff.Core\RevolutionaryStuff.Core.csproj", "{F2DAFFF8-89E5-45B4-A7BE-1EAB1E843D72}"
 EndProject
@@ -30,6 +30,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Traffk.CommunicationBlaster", "src\Traffk.CommunicationBlaster\Traffk.CommunicationBlaster.csproj", "{28322F08-EB95-415B-8ECF-4B25DAB12E16}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Traffk.CommunicationBlaster.Tests", "tests\Traffk.CommunicationBlaster.Tests\Traffk.CommunicationBlaster.Tests.csproj", "{F3D583B4-ADEA-41A6-86EE-B6272B1BA38B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevolutionaryStuff.SSIS", "src\RevolutionaryStuff.SSIS\RevolutionaryStuff.SSIS.csproj", "{0FD20B12-8248-40AA-89D2-E9109F0D6E88}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,6 +79,10 @@ Global
 		{F3D583B4-ADEA-41A6-86EE-B6272B1BA38B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3D583B4-ADEA-41A6-86EE-B6272B1BA38B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3D583B4-ADEA-41A6-86EE-B6272B1BA38B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FD20B12-8248-40AA-89D2-E9109F0D6E88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FD20B12-8248-40AA-89D2-E9109F0D6E88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FD20B12-8248-40AA-89D2-E9109F0D6E88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FD20B12-8248-40AA-89D2-E9109F0D6E88}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -92,5 +98,6 @@ Global
 		{562D7A47-AC94-4F4A-B430-31D514064154} = {D5AB1A3B-756E-4823-80F8-9A91ECB492AE}
 		{28322F08-EB95-415B-8ECF-4B25DAB12E16} = {2D992A1D-203B-461A-B1C1-312F64C77810}
 		{F3D583B4-ADEA-41A6-86EE-B6272B1BA38B} = {D5AB1A3B-756E-4823-80F8-9A91ECB492AE}
+		{0FD20B12-8248-40AA-89D2-E9109F0D6E88} = {6FAADEB9-B702-4FEE-8B56-58C2A80CEAAF}
 	EndGlobalSection
 EndGlobal

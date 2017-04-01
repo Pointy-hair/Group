@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using RevolutionaryStuff.Core;
+using RevolutionaryStuff.Core.Caching;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -33,12 +34,75 @@ namespace Traffk.Bal.Data.Rdb
             var sso = optionsBuilder.Options.FindExtension<SqlServerOptionsExtension>();
             if (sso != null && Configger!=null)
             {
-                var connectionString = Configger.Transform(sso.ConnectionString);
-                optionsBuilder.UseSqlServer(connectionString);
+                ConnectionString = Configger.Transform(sso.ConnectionString);
+                optionsBuilder.UseSqlServer(ConnectionString);
             }
             else
             {
                 base.OnConfiguring(optionsBuilder);
+            }
+        }
+
+        private string ConnectionString;
+
+        private int GetTableObjectId(IRdbDataEntity e)
+            => GetDatabaseObjectId(AttributeStuff.GetCustomAttribute<TableAttribute>(e.GetType()));
+
+        private int GetDatabaseObjectId(TableAttribute ta)
+            => Cache.DataCacher.FindOrCreate(
+                Cache.CreateKey(ConnectionString, ta.Schema.ToLower(), ta.Name.ToLower()),
+                () => SchemaTables.ConvertAll(z => Tuple.Create(
+                        Cache.CreateKey(ConnectionString, z.SchemaName.ToLower(), z.TableName.ToLower()),
+                        new CacheEntry<int>(z.ObjectId)
+                        ))
+                ).Value;
+
+        public void AttachNote(Contact creator, string title, string body, params IRdbDataEntity[] attachmentSites)
+        {
+            Requires.NonNull(creator, nameof(creator));
+            Requires.Between(attachmentSites.Length, nameof(attachmentSites), 1);
+
+            var n = new Note
+            {
+                CreatedByContact = creator,
+                Body = body,
+                Title = title,
+            };
+            Notes.Add(n);
+            foreach (var site in attachmentSites)
+            {
+                try
+                {
+                    int pk = Convert.ToInt32(((IPrimaryKey)site).Key);
+                    NoteTargets.Add(new NoteTarget
+                    {
+                        Note = n,
+                        TableObjectId = GetTableObjectId(site),
+                        TablePkIntVal = pk
+                    });
+                }
+                catch (Exception)
+                { }
+            }
+        }
+
+        public IQueryable<Note> GetAttachedNotes(IRdbDataEntity attachmentSite)
+        {
+            try
+            {
+                int pk = Convert.ToInt32(((IPrimaryKey)attachmentSite).Key);
+                var tid = GetTableObjectId(attachmentSite);
+
+                return
+                    (
+                    from nt in this.NoteTargets
+                    where nt.TableObjectId == tid && nt.TablePkIntVal == pk
+                    select nt.Note
+                    ).Include(n => n.CreatedByContact);
+            }
+            catch (Exception)
+            {
+                return Note.None.ToList().AsQueryable();
             }
         }
 

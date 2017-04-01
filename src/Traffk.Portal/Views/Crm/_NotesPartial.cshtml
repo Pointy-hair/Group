@@ -8,7 +8,10 @@
                 @Html.SortableHeaderFor(z => z.CreatedAt)
             </th>
             <th>
-                @Html.SortableHeaderFor(z => z.Content)
+                @Html.SortableHeaderFor(z => z.CreatedByContact)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.Body)
             </th>
         </tr>
     </thead>
@@ -20,7 +23,10 @@
                     @Html.DisplayFor(modelItem => item.CreatedAt)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Content)
+                    @Html.DisplayFor(modelItem => item.CreatedByContact.FullName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Body)
                 </td>
             </tr>
         }

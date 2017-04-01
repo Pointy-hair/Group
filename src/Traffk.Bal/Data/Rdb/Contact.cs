@@ -61,26 +61,6 @@ namespace Traffk.Bal.Data.Rdb
         public List<ApplicationUser> Users { get; set; } = new List<ApplicationUser>();
 
 
-        public Note FindNoteById(string noteId)
-        {
-            return FindNoteById(noteId, ContactDetails.Notes);
-        }
-
-        private static Note FindNoteById(string noteId, IEnumerable<Note> notes)
-        {
-            if (notes == null) return null;
-            foreach (var n in notes)
-            {
-                if (n.NoteId == noteId) return n;
-                if (n.Children != null)
-                {
-                    var z = FindNoteById(noteId, n.Children);
-                    if (z != null) return z;
-                }
-            }
-            return null;
-        }
-
         public class ContactDetails_
         {
             public static ContactDetails_ CreateFromJson(string json) => TraffkHelpers.JsonConvertDeserializeObjectOrFallback<ContactDetails_>(json);
@@ -89,7 +69,6 @@ namespace Traffk.Bal.Data.Rdb
 
             public ContactDetails_()
             {
-                Notes = Notes ?? new List<Note>();
                 Addresses = Addresses ?? new List<ContactAddress>();
                 PhoneNumbers = PhoneNumbers ?? new List<ContactPhone>();
             }
@@ -97,10 +76,6 @@ namespace Traffk.Bal.Data.Rdb
             [JsonProperty("tags")]
             [ConstrainedData]
             public List<string> Tags { get; set; }
-
-            [JsonProperty("notes")]
-            [FreeFormData]
-            public List<Note> Notes { get; set; }
 
             [JsonProperty("addresses")]
             public List<ContactAddress> Addresses { get; set; }

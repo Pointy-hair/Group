@@ -219,19 +219,7 @@ namespace TraffkPortal.Controllers
         {
             var contact = await FindContactByIdAsync(id);
             if (contact == null) return NotFound();
-            var note = new Note { Content = content, CreatedAtUtc = DateTime.UtcNow, CreatedByUserId = Current.User.Id };
-            if (parentNoteId == null)
-            {
-                contact.ContactDetails.Notes.Add(note);
-            }
-            else
-            {
-                var parent = contact.FindNoteById(parentNoteId);
-                if (parent == null) return NotFound();
-                parent.Children = parent.Children ?? new List<Note>();
-                parent.Children.Add(note);
-            }
-            Rdb.Update(contact);
+            Rdb.AttachNote(Current.User.Contact, null, content, contact);
             await Rdb.SaveChangesAsync();
             return Ok();
         }
@@ -249,7 +237,8 @@ namespace TraffkPortal.Controllers
         {
             return RawContactRecordInfo(id, PageKeys.Notes, nameof(ContactNotes), m =>
             {
-                m.Contact.ContactDetails.Notes = ApplyBrowse(m.Contact.ContactDetails.Notes.AsQueryable(), sortCol ?? nameof(Note.CreatedAtUtc), sortDir, page, pageSize).ToList();
+                var notes = Rdb.GetAttachedNotes(m.Contact);
+                m.Notes = ApplyBrowse(notes, sortCol ?? nameof(Note.CreatedAtUtc), sortDir, page, pageSize).ToList();
             });
         }
 
@@ -543,7 +532,7 @@ namespace TraffkPortal.Controllers
             var reportVisual = ReportVisualService.GetReportVisual(ReportVisualContext, Parse.ParseInt32(id));
             if (reportVisual == null)
             {
-                return RedirectToAction(ActionNames.ContactList);
+                RedirectToAction(ActionNames.ContactBackground);
             }
             Log.Information(reportVisual.Id + " ContactId: " + contactId);
             var tableauReportViewModel = new TableauReportViewModel(reportVisual);

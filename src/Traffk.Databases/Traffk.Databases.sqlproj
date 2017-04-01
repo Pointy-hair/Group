@@ -61,11 +61,28 @@
     <Folder Include="TraffkModel" />
     <Folder Include="Foundations" />
     <Folder Include="Foundations\Build" />
+    <Folder Include="PostEF" />
+    <Folder Include="PostEF\0001.Traffk" />
+    <Folder Include="PostEF\0002.Deerwalk" />
+    <Folder Include="PostEF\0003.Migrate" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Foundations\Build\0001.ChangeLog.sql" />
     <None Include="Foundations\Build\0002.Descriptive.sql" />
     <Build Include="TraffkModel\0001.ImportExternalTable.sql" />
+    <Build Include="Foundations\Build\0006.StringSplit.cs.sql" />
+    <Build Include="PostEF\0001.Traffk\002.Structure.sql" />
+    <Build Include="PostEF\0001.Traffk\003.Bootstrap.sql" />
+    <Build Include="PostEF\0001.Traffk\004.Sprocs.sql" />
+    <Build Include="PostEF\0001.Traffk\005.Security.sql" />
+    <Build Include="PostEF\0001.Traffk\050.NationalDrugCode.sql" />
+    <Build Include="PostEF\0001.Traffk\051.InternationalClassificationDiseases.sql" />
+    <Build Include="PostEF\0001.Traffk\100.Health.sql" />
+    <Build Include="PostEF\0002.Deerwalk\002.Structure.sql" />
+    <Build Include="PostEF\0002.Deerwalk\003.Converters.sql" />
+    <Build Include="PostEF\0003.Migrate\002.Sprocs.sql" />
+    <Build Include="TraffkModel\0002.Aspnet.sql" />
+    <Build Include="TraffkModel\0003.TraffkCoreStructure.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Foundations\Build\0003.Asserts.sql" />
@@ -73,5 +90,13 @@
     <None Include="Foundations\Build\0005.WhoIsActive.sql" />
     <None Include="TraffkGlobal\000X.Iso3166.sql" />
     <None Include="TraffkGlobal\0001.Externalize.sql" />
+    <None Include="PostEF\0001.Traffk\001.Requirements.txt" />
+    <None Include="PostEF\0002.Deerwalk\~%24DeerwalkFields.xlsx" />
+    <None Include="PostEF\0002.Deerwalk\~%24neric_PA_Extract_0.8.docx" />
+    <None Include="PostEF\0002.Deerwalk\001.Requirements.txt" />
+    <None Include="PostEF\0002.Deerwalk\DeerwalkFields.xlsx" />
+    <None Include="PostEF\0002.Deerwalk\Generic_PA_Extract_0.8.docx" />
+    <None Include="PostEF\0002.Deerwalk\phi_fields_med_elig_rx.csv" />
+    <None Include="PostEF\0003.Migrate\001.Requirements.txt" />
   </ItemGroup>
 </Project>

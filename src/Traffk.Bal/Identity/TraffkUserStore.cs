@@ -23,7 +23,7 @@ namespace Traffk.Bal.Identity
         public override async Task<ApplicationUser> FindByIdAsync(string userId, CancellationToken cancellationToken = default(CancellationToken))
         {
             var tenantId = await TenantFinder.GetTenantIdAsync();
-            return await Context.Users.FirstOrDefaultAsync(u =>
+            return await Context.Users.Include(u=>u.Contact).FirstOrDefaultAsync(u =>
             (u.Id == userId) &&
             (u.TenantId == tenantId),
             cancellationToken);
@@ -32,7 +32,7 @@ namespace Traffk.Bal.Identity
         public override async Task<ApplicationUser> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken = default(CancellationToken))
         {
             var tenantId = await TenantFinder.GetTenantIdAsync();
-            return await Context.Users.FirstOrDefaultAsync(u =>
+            return await Context.Users.Include(u => u.Contact).FirstOrDefaultAsync(u =>
             (u.NormalizedEmail == normalizedEmail) &&
             (u.TenantId == tenantId),
             cancellationToken);
@@ -47,7 +47,7 @@ namespace Traffk.Bal.Identity
         public override async Task<ApplicationUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken = default(CancellationToken))
         {
             var tenantId = await TenantFinder.GetTenantIdAsync();
-            return await Context.Users.FirstOrDefaultAsync(u => 
+            return await Context.Users.Include(u => u.Contact).FirstOrDefaultAsync(u => 
             (u.NormalizedUserName == normalizedUserName) && 
             (u.TenantId == tenantId), 
             cancellationToken);

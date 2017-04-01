@@ -10,6 +10,8 @@ namespace TraffkPortal.Models.CrmModels
 
         public CommunicationPiece[] CommunicationPieces { get; set; } = CommunicationPiece.None;
 
+        public IList<Note> Notes { get; set; } = new List<Note>();
+
 //        public CommunicationOpting[] Optings { get; set; }
 
         public ContactModel() { }

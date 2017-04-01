@@ -250,14 +250,16 @@ namespace TraffkPortal
 
         public static T Get<T>(this ViewDataDictionary v, string key, T fallback = default(T))
         {
-            try
+            if (v.ContainsKey(key))
             {
-                return (T)v[key];
+                try
+                {
+                    return (T)v[key];
+                }
+                catch (Exception)
+                { }
             }
-            catch (Exception)
-            {
-                return fallback;
-            }
+            return fallback;
         }
 
         public static void SetTitleAndHeading(this ViewDataDictionary v, string fallbackTitle, string subHeading = null)
