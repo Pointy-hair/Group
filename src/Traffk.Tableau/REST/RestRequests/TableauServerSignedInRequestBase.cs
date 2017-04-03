@@ -177,5 +177,24 @@ namespace Traffk.Tableau.REST.RestRequests
             AppendLoggedInHeadersForClient(webClient);
             return webClient;
         }
+
+        protected WebRequest CreateAndSendMimeLoggedInRequest(string url, string protocol, MimeWriterBase mimeToSend, Nullable<int> requestTimeout = null)
+        {
+            var webRequest = this.CreateLoggedInWebRequest(url, protocol, requestTimeout);
+
+            //var uploadChunkAsMime = new OnlineMimeUploadChunk(uploadDataBuffer, numBytes);
+            var uploadMimeChunk = mimeToSend.GenerateMimeEncodedChunk();
+
+            //webRequest. = uploadMimeChunk.Length;
+            webRequest.ContentType = "multipart/mixed; boundary=" + mimeToSend.MimeBoundaryMarker;
+
+            //Write out the request
+            var requestStream = webRequest.GetRequestStreamAsync().Result;
+            requestStream.Write(uploadMimeChunk, 0, uploadMimeChunk.Length);
+
+            return webRequest;
+        }
+
+
     }
 }
