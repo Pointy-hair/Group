@@ -590,9 +590,13 @@ namespace TraffkPortal.Controllers
                     }
 
                     Rdb.Update(tenant);
+                    var fiscalYearConversionJob = Job.CreateFiscalYearConversionJob(tenant, tenant.TenantSettings.FiscalYearSettings);
+                    Rdb.Jobs.Add(fiscalYearConversionJob);
+
                     var saveTask = Rdb.SaveChangesAsync();
                     SetToast(AspHelpers.ToastMessages.Saved);
                     await saveTask;
+
                     return RedirectToAction(ActionNames.FiscalYearSettings);
 
                 }

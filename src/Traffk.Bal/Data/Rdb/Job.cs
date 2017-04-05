@@ -1,4 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using Traffk.Bal.Settings;
 
 namespace Traffk.Bal.Data.Rdb
 {
@@ -39,6 +42,18 @@ namespace Traffk.Bal.Data.Rdb
                         return false;
                 }
             }
+        }
+
+        public static Job CreateFiscalYearConversionJob(Tenant tenant, FiscalYearSettings jobData)
+        {
+            var jobResult = new Job
+            {
+                Tenant = tenant,
+                JobStatus = JobStatuses.Queued,
+                JobType = JobTypes.FiscalYearConversion,
+                JobData = jobData.ToJson()
+            };
+            return jobResult;
         }
     }
 }
