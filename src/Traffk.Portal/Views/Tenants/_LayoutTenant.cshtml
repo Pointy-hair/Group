@@ -14,10 +14,11 @@
 }
 @section breadcrumbItems
 {
+    <li><a asp-controller="@TenantsController.Name" asp-action="@TenantsController.ActionNames.TenantEdit">@ViewData["TenantName"]</a> <span>></span> </li>
     @RenderSection("breadcrumbItems", false)
 }
 @section pageNavItems {
-    <li><a asp-action="Edit" asp-route-id="@entityId" class="@(pageKey==PageKeys.Basics?"current-section":"")">Main</a></li>
+    <li><a asp-action="Edit" asp-route-id="@entityId" class="@(pageKey==PageKeys.Basics?"active":"")">Main</a></li>
     @if (entityId == TenantFinder.TenantId)
     {
         <li class="dropdown @(pageKey == PageKeys.Applications ? "current-section" : "")" role="presentation">
@@ -35,12 +36,14 @@
             </ul>
         </li>
         @*
-        <li><a asp-action="@ActionNames.DeerwalkSettings" asp-route-tenantId="@entityId" class="@(pageKey==PageKeys.DeerwalkSettings? "current-section" : "")">Deerwalk Settings</a></li>
+    <li><a asp-action="@ActionNames.DeerwalkSettings" asp-route-tenantId="@entityId" class="@(pageKey==PageKeys.DeerwalkSettings? "active" : "")">Deerwalk Settings</a></li>
         *@
-        <li><a asp-action="@ActionNames.PasswordSettings" asp-route-tenantId="@entityId" class="@(pageKey==PageKeys.PasswordSettings? "current-section" : "")">Password Policy</a></li>
-        <li><a asp-action="@ActionNames.ReusableValuesList" asp-route-tenantId="@entityId" class="@(pageKey==PageKeys.ReusableValues? "current-section" : "")">Reusable Values</a></li>
-        <li><a asp-action="@ActionNames.SmtpSettings" asp-route-tenantId="@entityId" class="@(pageKey==PageKeys.SmtpSettings? "current-section" : "")">Smtp Settings</a></li>
-    }
+        <li><a asp-action="@ActionNames.PasswordSettings" asp-route-tenantId="@entityId" class="@(pageKey==PageKeys.PasswordSettings? "active" : "")">Password Policy</a></li>
+        <li><a asp-action="@ActionNames.ReusableValuesList" asp-route-tenantId="@entityId" class="@(pageKey==PageKeys.ReusableValues? "active" : "")">Reusable Values</a></li>
+        <li><a asp-action="@ActionNames.SmtpSettings" asp-route-tenantId="@entityId" class="@(pageKey==PageKeys.SmtpSettings? "active" : "")">Smtp Settings</a></li>
+        <li><a asp-action="@TenantsController.ActionNames.FiscalYearSettings" asp-route-tenantId="@entityId" class="@(pageKey== TenantsController.PageKeys.FiscalYearSettings ? "active" : "")">Fiscal Year Settings</a></li>
+
+                    }
     @RenderSection("pageNavItems", false)
 }
 @section pageAlerts {

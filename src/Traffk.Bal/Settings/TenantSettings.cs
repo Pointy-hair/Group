@@ -172,6 +172,9 @@ namespace Traffk.Bal.Settings
         }
         private List<ReusableValue> ReusableValues_p;
 
+        [DataMember(Name = "FiscalYearSettings")]
+        public FiscalYearSettings FiscalYearSettings { get; set; }
+
         public TenantSettings()
         { }
 
@@ -190,6 +193,7 @@ namespace Traffk.Bal.Settings
             Deerwalk = Deerwalk ?? new DeerwalkSettings();
             Smtp = Smtp ?? new SmtpOptions();
             Password = Password ?? new PasswordOptions();
+            FiscalYearSettings = FiscalYearSettings ?? new FiscalYearSettings();
         }
     }
 }

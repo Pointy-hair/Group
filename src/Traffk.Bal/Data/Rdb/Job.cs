@@ -6,6 +6,7 @@ namespace Traffk.Bal.Data.Rdb
     {
         CommunicationBlast,
         CreateContactsFromEligibility,
+        FiscalYearConversion
     }
 
     public enum JobStatuses

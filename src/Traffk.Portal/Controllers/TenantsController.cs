@@ -15,6 +15,8 @@ using System.Collections.Generic;
 using System;
 using Traffk.Bal.Services;
 using RevolutionaryStuff.Core;
+using Serilog;
+using Traffk.Portal.Models.TenantModels;
 
 namespace TraffkPortal.Controllers
 {
@@ -58,6 +60,9 @@ namespace TraffkPortal.Controllers
             public const string SmtpSettingsSubmission = "SmtpSettingSubmission";
             public const string DeerwalkSettings = "DeerwalkSettings";
             public const string DeerwalkSettingsSubmission = "DeerwalkSettingsSubmission";
+            public const string FiscalYearSettings = "FiscalYearSettings";
+            public const string FiscalYearSettingsSubmission = "FiscalYearSettingsSubmission";
+
         }
 
         public enum PageKeys
@@ -68,6 +73,7 @@ namespace TraffkPortal.Controllers
             PasswordSettings,
             ReusableValues,
             SmtpSettings,
+            FiscalYearSettings
         }
 
         private readonly UserManager<ApplicationUser> UserManager;
@@ -541,5 +547,64 @@ namespace TraffkPortal.Controllers
         }
 
         #endregion
+
+        [Route("{tenantId}/FiscalYearSettings")]
+        [ActionName(ActionNames.FiscalYearSettings)]
+        public async Task<IActionResult> FiscalYearSettings(int tenantId)
+        {
+            var tenant = await GetTenantAsync(tenantId);
+            if (tenant == null) return NotFound();
+            SetHeroLayoutViewData(tenant, PageKeys.FiscalYearSettings);
+            return View(new FiscalYearSettingsModel(tenant.TenantSettings.FiscalYearSettings));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("{tenantId}/FiscalYearSettings")]
+        [ActionName(ActionNames.FiscalYearSettingsSubmission)]
+        public async Task<IActionResult> FiscalYearSettings(
+            int tenantId,
+            [Bind(
+                nameof(FiscalYearSettingsModel.CalendarYear),
+                nameof(FiscalYearSettingsModel.CalendarMonth),
+                nameof(FiscalYearSettingsModel.FiscalYear))]
+            FiscalYearSettingsModel f)
+        {
+            var tenant = await GetTenantAsync(tenantId);
+            if (tenant == null) return NotFound();
+            SetHeroLayoutViewData(tenant, PageKeys.FiscalYearSettings);
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    if (tenant.TenantSettings.FiscalYearSettings != null)
+                    {
+                        tenant.TenantSettings.FiscalYearSettings.CalendarYear = f.CalendarYear;
+                        tenant.TenantSettings.FiscalYearSettings.CalendarMonth = f.CalendarMonth;
+                        tenant.TenantSettings.FiscalYearSettings.FiscalYear = f.FiscalYear;
+                    }
+                    else
+                    {
+                        tenant.TenantSettings.FiscalYearSettings = f;
+                    }
+
+                    Rdb.Update(tenant);
+                    var saveTask = Rdb.SaveChangesAsync();
+                    SetToast(AspHelpers.ToastMessages.Saved);
+                    await saveTask;
+                    return RedirectToAction(ActionNames.FiscalYearSettings);
+
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e, "Fiscal Year Settings save error");
+                    throw;
+                }
+            }
+
+            return View(f);
+        }
+
     }
 }
