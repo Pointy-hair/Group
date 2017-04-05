@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using System.Xml.Linq;
 using Traffk.Tableau.REST.Helpers;
 
 namespace Traffk.Tableau.REST.RestRequests
@@ -136,7 +138,10 @@ namespace Traffk.Tableau.REST.RestRequests
                 var xmlDoc = GetWebResponseAsXml(response);
 
                 //Get all the workbook nodes
-                var chunkUploadXml = xmlDoc.SelectSingleNode("//iwsOnline:fileUpload", XmlNamespace);
+                var xDoc = xmlDoc.ToXDocument();
+                var uploadInfo = xDoc.Root.Descendants(XName.Get("fileUpload", XmlNamespace)).FirstOrDefault();
+                var chunkUploadXml = uploadInfo.ToXmlNode();
+
                 var verifySessionId = chunkUploadXml.Attributes["uploadSessionId"].Value;
                 var fileSizeMB = chunkUploadXml.Attributes["fileSize"].Value;
 
@@ -165,8 +170,10 @@ namespace Traffk.Tableau.REST.RestRequests
             var xmlDoc = GetWebResponseAsXml(response);
 
             //Get all the workbook nodes
-            var uploadInfo = xmlDoc.SelectSingleNode("//iwsOnline:fileUpload", XmlNamespace);
-            var sessionId = uploadInfo.Attributes["uploadSessionId"].Value;
+            var xDoc = xmlDoc.ToXDocument();
+            var uploadInfo = xDoc.Root.Descendants(XName.Get("fileUpload", XmlNamespace)).FirstOrDefault();
+            var uploadInfoNode = uploadInfo.ToXmlNode();
+            var sessionId = uploadInfoNode.Attributes["uploadSessionId"].Value;
 
             return sessionId;
         }

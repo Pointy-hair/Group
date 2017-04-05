@@ -19,9 +19,9 @@ namespace Traffk.Tableau.REST
         Task<UnderlyingDataTable> GetUnderlyingDataAsync(GetUnderlyingDataOptions options, string workbookName, string viewName);
         SiteinfoSite CreateSite(string tenantName, out string url);
         void AddUserToSite(string siteId, string userName);
-
         ICollection<SiteWorkbook> DownloadWorkbooks(IEnumerable<SiteWorkbook> workbooksToDownload, string localSavePath,
             bool generateInfoFile);
+        void UploadWorkbooks(string localUploadPath, string localPathTempWorkspace);
     }
 
     public class VisualId

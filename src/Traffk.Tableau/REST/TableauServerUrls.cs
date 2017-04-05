@@ -110,10 +110,10 @@ namespace Traffk.Tableau.REST
             this._urlDownloadDatasourceTemplate        = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/datasources/{{iwsRepositoryId}}/content";
             this._urlDownloadWorkbookTemplate          = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/workbooks/{{iwsRepositoryId}}/content";
             this._urlSiteInfoTemplate                  = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}";
-            this._urlInitiateUploadTemplate            = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/fileUploads";
-            this._urlAppendUploadChunkTemplate         = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/fileUploads/{{iwsUploadSession}}";
+            this._urlInitiateUploadTemplate            = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/fileUploads";
+            this._urlAppendUploadChunkTemplate         = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/fileUploads/{{iwsUploadSession}}";
             this._urlFinalizeUploadDatasourceTemplate  = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/datasources?uploadSessionId={{iwsUploadSession}}&datasourceType={{iwsDatasourceType}}&overwrite=true";
-            this._urlFinalizeUploadWorkbookTemplate    = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/workbooks?uploadSessionId={{iwsUploadSession}}&workbookType={{iwsWorkbookType}}&overwrite=true";
+            this._urlFinalizeUploadWorkbookTemplate    = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/workbooks?uploadSessionId={{iwsUploadSession}}&workbookType={{iwsWorkbookType}}&overwrite=true";
             this._urlCreateProjectTemplate             = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/projects";
             this._urlDeleteWorkbookTagTemplate         = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/workbooks/{{iwsWorkbookId}}/tags/{{iwsTagText}}";
             this._urlDeleteDatasourceTagTemplate       = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/datasources/{{iwsDatasourceId}}/tags/{{iwsTagText}}";

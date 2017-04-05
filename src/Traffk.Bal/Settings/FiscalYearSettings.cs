@@ -17,17 +17,17 @@ namespace Traffk.Bal.Settings
         [Required]
         [DisplayName("Calendar Year")]
         [DataMember(Name = "CalendarYear")]
-        public Int32 CalendarYear { get; set; }
+        public int CalendarYear { get; set; }
 
         [Required]
         [DisplayName("Calendar Month")]
         [DataMember(Name = "CalendarMonth")]
-        public Int32 CalendarMonth { get; set; }
+        public int CalendarMonth { get; set; }
 
         [Required]
         [DisplayName("Fiscal Year")]
         [DataMember(Name = "FiscalYear")]
-        public Int16 FiscalYear { get; set; }
+        public int FiscalYear { get; set; }
 
         public FiscalYearSettings()
         { }
@@ -47,7 +47,7 @@ namespace Traffk.Bal.Settings
 
         void IValidate.Validate()
         {
-            Requires.True(CalendarMonth > 0 && CalendarMonth < 13, nameof(CalendarMonth));
+            Requires.Between(CalendarMonth, nameof(CalendarMonth), 1, 12);
         }
     }
 }

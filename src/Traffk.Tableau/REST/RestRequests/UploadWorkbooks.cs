@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 using Traffk.Tableau.REST.Helpers;
 using Traffk.Tableau.REST.Models;
 
@@ -41,6 +43,8 @@ namespace Traffk.Tableau.REST.RestRequests
         /// </summary>
         private readonly IEnumerable<SiteUser> SiteUsers;
 
+        private readonly ProjectFindCreateHelper ProjectFindCreateHelper;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -58,25 +62,26 @@ namespace Traffk.Tableau.REST.RestRequests
         public UploadWorkbooks(
             TableauServerUrls onlineUrls, 
             TableauServerSignIn login,
-            CredentialManager credentialManager,
             string localUploadPath,
             string localPathTempWorkspace,
-            bool attemptOwnershipAssignment,
-            IEnumerable<SiteUser> siteUsers,
             int uploadChunkSizeBytes = TableauServerUrls.UploadFileChunkSize,
             int uploadChunkDelaySeconds = 0)
             : base(onlineUrls, login)
         {
             LocalUploadPath = localUploadPath;
             LocalPathTempWorkspace = localPathTempWorkspace;
-            CredentialManager = credentialManager; 
+            CredentialManager = new CredentialManager(); 
+
             //If we are going to attempt to reassign ownership after publication we'll need this information
-            AttemptOwnershipAssignment = attemptOwnershipAssignment;
-            SiteUsers = siteUsers;
+            //Not implemented for now
+            AttemptOwnershipAssignment = false;
+            SiteUsers = new List<SiteUser>();
 
             //Test parameters
             UploadChunkSizeBytes = uploadChunkSizeBytes;
             UploadChunkDelaySeconds = uploadChunkDelaySeconds;
+
+            ProjectFindCreateHelper = new ProjectFindCreateHelper(Urls, Login);
         }
 
         /// <summary>
@@ -90,7 +95,7 @@ namespace Traffk.Tableau.REST.RestRequests
             int countFailure = 0;
 
             statusLog.AddStatus("Uploading workbooks");
-            UploadDirectoryToServer(LocalUploadPath, LocalUploadPath, true, out countSuccess, out countFailure);
+            UploadDirectoryToServer(LocalUploadPath, LocalUploadPath, ProjectFindCreateHelper, true, out countSuccess, out countFailure);
             Login.StatusLog.AddStatus("Workbooks upload done.  Success: " + countSuccess.ToString() + ", Failure: " + countFailure.ToString());
         }
 
@@ -123,7 +128,8 @@ namespace Traffk.Tableau.REST.RestRequests
         /// <param name="recurseDirectories"></param>
         private void UploadDirectoryToServer(
             string rootContentPath, 
-            string currentContentPath, 
+            string currentContentPath,
+            ProjectFindCreateHelper projectsList,
             bool recurseDirectories, 
             out int countSuccess, out int countFailure)
         {
@@ -155,6 +161,11 @@ namespace Traffk.Tableau.REST.RestRequests
 
                 if (isValidUploadFile)
                 {
+                    //If we don't yet have a project ID, then get one
+                    if (string.IsNullOrWhiteSpace(projectIdForUploads))
+                    {
+                        projectIdForUploads = projectsList.GetProjectIdForUploads(projectName);
+                    }
 
                     try
                     {
@@ -184,7 +195,7 @@ namespace Traffk.Tableau.REST.RestRequests
                 int subDirFailure;
                 foreach(var subDirectory in Directory.GetDirectories(currentContentPath))
                 {
-                    UploadDirectoryToServer(rootContentPath, subDirectory, true, out subDirSuccess, out subDirFailure);
+                    UploadDirectoryToServer(rootContentPath, subDirectory, ProjectFindCreateHelper, true, out subDirSuccess, out subDirFailure);
                     countSuccess += subDirSuccess;
                     countFailure += subDirFailure;
                 }
@@ -338,6 +349,10 @@ namespace Traffk.Tableau.REST.RestRequests
             Traffk.Tableau.REST.Helpers.CredentialManager.Credential dbCredentials,
             Traffk.Tableau.REST.Helpers.WorkbookPublishSettings publishSettings)
         {
+            if (projectId == null)
+            {
+                projectId = "";
+            }
             //See definition: http://onlinehelp.tableau.com/current/api/rest_api/en-us/help.htm#REST/rest_api_ref.htm#Publish_Workbook%3FTocPath%3DAPI%2520Reference%7C_____29
             var sb = new StringBuilder();
 
@@ -379,16 +394,15 @@ namespace Traffk.Tableau.REST.RestRequests
             using (response)
             {
                 var xmlDoc = GetWebResponseAsXml(response);
-
-                var workbookXml = xmlDoc.SelectSingleNode("//iwsOnline:workbook", XmlNamespace);
-
+                var xDoc = xmlDoc.ToXDocument();
+                var workbookXml = xDoc.Root.Descendants(XName.Get("workbook", XmlNamespace)).FirstOrDefault();
                 try
                 {
-                    return new SiteWorkbook(workbookXml, XmlNamespace);
+                    return new SiteWorkbook(workbookXml.ToXmlNode(), XmlNamespace);
                 }
                 catch(Exception parseXml)
                 {
-                    Login.StatusLog.AddError("Workbook upload, error parsing XML response " + parseXml.Message + "\r\n" + workbookXml.InnerXml);
+                    Login.StatusLog.AddError("Workbook upload, error parsing XML response " + parseXml.Message + "\r\n" + workbookXml.ToXmlNode().InnerXml);
                     return null;
                 }
             }

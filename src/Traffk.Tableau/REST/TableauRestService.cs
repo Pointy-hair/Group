@@ -98,6 +98,12 @@ namespace Traffk.Tableau.REST
             return downloadedWorkbooks;
         }
 
+        void ITableauRestService.UploadWorkbooks(string localUploadPath,
+            string localPathTempWorkspace)
+        {
+            var uploadWorkbooksRequest = new UploadWorkbooks(Urls, Login, localUploadPath, localPathTempWorkspace);
+            uploadWorkbooksRequest.ExecuteRequest();
+        }
 
         byte[] ITableauRestService.DownloadPreviewImageForView(string workbookId, string viewId)
         {

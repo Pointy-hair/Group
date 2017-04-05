@@ -30,6 +30,11 @@ namespace TraffkPortal.Controllers
         private readonly ISmsSender SmsSender;
         private readonly bool IsSigninPersistent;
 
+        private static class SignInResultStrings
+        {
+            public static string Failed = "Failed";
+        }
+
         public AccountController(
             TraffkRdbContext db,
             UserManager<ApplicationUser> userManager,
@@ -95,6 +100,7 @@ namespace TraffkPortal.Controllers
                                 }
                             }
                         }
+
                         Log.Information("User logged in.");
 
                         Uri u;
@@ -108,7 +114,7 @@ namespace TraffkPortal.Controllers
                         }
                     }
 
-                    if (!result.Succeeded)
+                    if (result.ToString() == SignInResultStrings.Failed)
                     {
                         ModelState.AddModelError(string.Empty, "You've entered an incorrect username or password.");
                         return View(model);
@@ -118,16 +124,15 @@ namespace TraffkPortal.Controllers
                     {
                         return RedirectToAction(nameof(SendCode), new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                     }
+
                     if (result.IsLockedOut)
                     {
                         Log.Information("User account locked out.");
                         return View("Lockout");
                     }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                        return View(model);
-                    }
+
+                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    return View(model);
                 }
                 finally
                 {

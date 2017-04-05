@@ -83,6 +83,22 @@ namespace Traffk.Tableau.Tests.REST
             }
         }
 
+        [TestClass]
+        public class UploadWorkbookMethodTests : TableauRestServiceTests
+        {
+            [TestMethod]
+            public void WhenGivenPathUploadWorkbooks()
+            {
+                var newSiteOptions = MockEnvironment.TableauSignInOptions("https://tableau-dev.traffk.com/#/site/TestTenant36", "Darren Alfonso", "DarrenTraffkTableau").Object;
+                var testService = new TableauRestService(new TrustedTicketGetter(newSiteOptions), newSiteOptions);
+
+                string path = System.IO.Path.GetTempPath();
+                path = path + @"TableauUploadTestFiles";
+                ((ITableauRestService)testService).UploadWorkbooks(path, path);
+
+            }
+        }
+
         //[TestClass]
         //public class SignInMethodTests : TableauRestServiceTests
         //{

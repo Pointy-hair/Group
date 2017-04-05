@@ -41,7 +41,7 @@ namespace Traffk.Bal.ReportVisuals
         private TraffkRdbContext Rdb;
         private ITableauTenantFinder TableauTenantFinder;
         private ApplicationUser CurrentUser;
-        private bool CanAccessPhi;
+        private bool CanSeePhi;
         private IEnumerable<string> TableauReportIds;
         private ICacher Cacher;
 
@@ -49,19 +49,19 @@ namespace Traffk.Bal.ReportVisuals
         public string TableauTenantId { get; private set; }
 
         public ReportVisualService(ITableauRestService tableauRestService, TraffkRdbContext rdb, 
-            ITableauTenantFinder tableauTenantFinder, ICurrentUser currentUser, ICacher cacher = null)
+            ITableauTenantFinder tableauTenantFinder, ICurrentUser currentUser, IPhiAuthorizer phiAuthorizer,
+            ICacher cacher = null)
         {
+            CanSeePhi = phiAuthorizer.CanSeePhi;
+
             TableauRestService = tableauRestService;
             Rdb = rdb;
             TableauTenantFinder = tableauTenantFinder;
-            Cacher = cacher;
-
-            TableauTenantId = TableauTenantFinder.GetTenantIdAsync().Result;
             CurrentUser = currentUser.User;
 
-            var role = Rdb.UserRoles.SingleOrDefault(x => x.UserId == CurrentUser.Id);
-            var phiClaimType = PermissionHelpers.CreateClaimType(PermissionNames.ProtectedHealthInformation);
-            CanAccessPhi = Rdb.RoleClaims.Any(x => x.ClaimType == phiClaimType && x.RoleId == role.RoleId);
+            Cacher = cacher.CreateScope(CurrentUser.UserName, CanSeePhi);
+
+            TableauTenantId = TableauTenantFinder.GetTenantIdAsync().Result;
         }
 
         IEnumerable<IReportVisual> IReportVisualService.GetReportVisuals(VisualContext visualContext, string reportTagFilter) 
@@ -92,11 +92,11 @@ namespace Traffk.Bal.ReportVisuals
 
         public TreeNode<IReportResource> GetReportFolderTreeRoot(VisualContext visualContext, string reportTagFilter = null)
         {
-            var rootKey = CurrentUser.UserName + visualContext.ToString() + reportTagFilter;
+            var rootKey = visualContext.ToString() + reportTagFilter;
             return Cacher.FindOrCreate(rootKey, key => GetTreeCacheEntry(visualContext, reportTagFilter)).Value;
         }
         
-        public IEnumerable<IReportVisual> GetReportVisuals(VisualContext visualContext, string reportTagFilter = null)
+        private IEnumerable<IReportVisual> GetReportVisuals(VisualContext visualContext, string reportTagFilter = null)
         {
             var tableauReports = GetTableauReportVisuals();
             var tableauReportVisuals = tableauReports as IList<ITableauReportVisual> ?? tableauReports.ToList();
@@ -154,7 +154,6 @@ namespace Traffk.Bal.ReportVisuals
             }
             return new CacheEntry<TreeNode<IReportResource>>(root).Value;
         }
-
 
         private static IReportVisual Merge(ITableauReportVisual tableauReportVisual, ReportMetaData reportMetaData)
         {
@@ -247,7 +246,7 @@ namespace Traffk.Bal.ReportVisuals
             var relevantReportMetaDatas =
                 Rdb.ReportMetaData.Where(
                         x =>
-                        (!x.ReportDetails.ContainsPhi || x.ReportDetails.ContainsPhi == CanAccessPhi)
+                        (!x.ReportDetails.ContainsPhi || this.CanSeePhi)
                         &&
                         TableauReportIds.Contains(x.ExternalReportKey)
                         &&
