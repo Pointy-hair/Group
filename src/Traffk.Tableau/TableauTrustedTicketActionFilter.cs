@@ -17,11 +17,11 @@ namespace Traffk.Tableau
     public sealed class TableauTrustedTicketActionFilter : IAsyncActionFilter
     {
         private const string TrustedTicketCookieName = "trustedTicket";
-        private readonly ITableauServices TableauServices;
+        private readonly ITableauVisualServices TableauVisualServices;
 
-        public TableauTrustedTicketActionFilter(ITableauServices tableauServices)
+        public TableauTrustedTicketActionFilter(ITableauVisualServices tableauVisualServices)
         {
-            TableauServices = tableauServices;
+            TableauVisualServices = tableauVisualServices;
         }
 
         async Task IAsyncActionFilter.OnActionExecutionAsync(ActionExecutingContext context,
@@ -31,7 +31,7 @@ namespace Traffk.Tableau
             string trustedTicket = null;
             try
             {
-                trustedTicket = await TableauServices.GetTrustedTicket();
+                trustedTicket = await TableauVisualServices.GetTrustedTicket();
             }
             catch (Exception ex)
             {

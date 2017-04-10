@@ -8,12 +8,12 @@ using Microsoft.Extensions.Options;
 
 namespace Traffk.Tableau
 {
-    public class TableauServices : ITableauServices
+    public class TableauVisualServices : ITableauVisualServices
     {
         private readonly ITrustedTicketGetter TrustedTicketGetter;
         private readonly TableauSignInOptions TableauSignInOptions;
 
-        public TableauServices(ITrustedTicketGetter trustedTicketGetter, IOptions<TableauSignInOptions> tableauSignInOptions)
+        public TableauVisualServices(ITrustedTicketGetter trustedTicketGetter, IOptions<TableauSignInOptions> tableauSignInOptions)
         {
             Requires.NonNull(trustedTicketGetter, nameof(trustedTicketGetter));
             Requires.NonNull(tableauSignInOptions, nameof(tableauSignInOptions));

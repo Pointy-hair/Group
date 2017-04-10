@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
@@ -10,6 +11,7 @@ using System.Net.Http;
 using RevolutionaryStuff.Core;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using Traffk.Tableau.REST.Helpers;
 using Traffk.Tableau.REST.Models;
 using Traffk.Tableau.VQL;
 
@@ -63,11 +65,11 @@ namespace Traffk.Tableau.REST
             return views;
         }
 
-        DownloadWorkbooksList ITableauRestService.DownloadWorkbooksList()
+        ICollection<SiteWorkbook> ITableauRestService.DownloadWorkbooksList()
         {
             var workbooksList = new DownloadWorkbooksList(Urls, Login);
             workbooksList.ExecuteRequest();
-            return workbooksList;
+            return workbooksList.Workbooks;
         }
 
         SiteinfoSite ITableauRestService.CreateSite(string tenantName, out string url)
@@ -89,6 +91,12 @@ namespace Traffk.Tableau.REST
             addUserToSite.ExecuteRequest(siteId, userName);
         }
 
+        void ITableauRestService.RemoveUserFromSite(SiteUser userToRemove)
+        {
+            var removeUserRequest = new RemoveUserFromSite(Urls, Login);
+            removeUserRequest.ExecuteRequest(userToRemove);
+        }
+
         ICollection<SiteWorkbook> ITableauRestService.DownloadWorkbooks(IEnumerable<SiteWorkbook> workbooksToDownload,
             string localSavePath,
             bool generateInfoFile)
@@ -98,11 +106,50 @@ namespace Traffk.Tableau.REST
             return downloadedWorkbooks;
         }
 
-        void ITableauRestService.UploadWorkbooks(string localUploadPath,
-            string localPathTempWorkspace)
+        void ITableauRestService.UploadWorkbooks(string projectName, string datasourceUsername, string datasourcePassword, bool isEmbedded, string path)
         {
-            var uploadWorkbooksRequest = new UploadWorkbooks(Urls, Login, localUploadPath, localPathTempWorkspace);
+            var credentialManager = new CredentialManager();
+            foreach (var thisFilePath in Directory.GetFiles(path))
+            {
+                credentialManager.AddWorkbookCredential(Path.GetFileName(thisFilePath), projectName, datasourceUsername, datasourcePassword, isEmbedded);
+            }
+            var uploadWorkbooksRequest = new UploadWorkbooks(Urls, Login, credentialManager, path, path);
             uploadWorkbooksRequest.ExecuteRequest();
+        }
+
+        ICollection<SiteDatasource> ITableauRestService.DownloadDatasourceList()
+        {
+            var downloadDataSourceListRequest = new DownloadDatasourcesList(Urls, Login);
+            downloadDataSourceListRequest.ExecuteRequest();
+            return downloadDataSourceListRequest.Datasources;
+        }
+
+        ICollection<SiteConnection> ITableauRestService.DownloadConnectionsForDatasource(string datasourceId)
+        {
+            var downloadConnectionRequest = new DownloadDatasourceConnections(Urls, Login, datasourceId);
+            downloadConnectionRequest.ExecuteRequest();
+            return downloadConnectionRequest.Connections;
+        }
+
+        void ITableauRestService.DownloadDatasourceFiles(IEnumerable<SiteDatasource> datasources, string savePath)
+        {
+            var projectRequest = new DownloadProjectsList(Urls, Login);
+            projectRequest.ExecuteRequest();
+            var downloadDatasources = new DownloadDatasources(Urls, Login, datasources, savePath, projectRequest, false, new KeyedLookup<SiteUser>(new List<SiteUser>()) );
+           downloadDatasources.ExecuteRequest();
+        }
+
+        ICollection<SiteDatasource> ITableauRestService.UploadDatasourceFiles(string projectName, string datasourceUsername, string datasourcePassword, bool isEmbedded, string path)
+        {
+            var credentialManager = new CredentialManager();
+            foreach (var thisFilePath in Directory.GetFiles(path))
+            {
+                credentialManager.AddDatasourceCredential(Path.GetFileName(thisFilePath), projectName, datasourceUsername, datasourcePassword, isEmbedded);
+            }
+
+            var uploadRequest = new UploadDatasources(Urls, Login, credentialManager, path, false, new List<SiteUser>());
+            uploadRequest.ExecuteRequest();
+            return uploadRequest.UploadeDatasources;
         }
 
         byte[] ITableauRestService.DownloadPreviewImageForView(string workbookId, string viewId)
@@ -110,6 +157,52 @@ namespace Traffk.Tableau.REST
             var downloadPreviewImage = new DownloadPreviewImageForView(Urls, Login);
             downloadPreviewImage.ExecuteRequest(workbookId, viewId);
             return downloadPreviewImage.PreviewImage;
+        }
+
+        void ITableauRestService.UpdateDatasourceConnection(SiteDatasource datasourceToUpdate, SiteConnection connectionToUpdate, string newServerAddress)
+        {
+            var updateDatasourceRequest = new UpdateDatasourceConnection(Urls, Login);
+            updateDatasourceRequest.UpdateServerAddress(datasourceToUpdate, connectionToUpdate, newServerAddress);
+        }
+
+        void ITableauRestService.CreateNewTableauTenant(CreateTableauTenantRequest request)
+        {
+            var masterRestService = this as ITableauRestService;
+
+            //1. Create the site
+            var newSiteUrl = "";
+            var newSite = masterRestService.CreateSite(request.TenantName, out newSiteUrl);
+
+            //2. Download datasources from master site
+            var dataSources = masterRestService.DownloadDatasourceList();
+            masterRestService.DownloadDatasourceFiles(dataSources, request.TemporaryFilePath);
+            
+            //3. Upload datasources to new site
+            var newSiteSignInOptions = ConfigurationHelpers.CreateOptions(new TableauSignInOptions(newSiteUrl, Options.Username, Options.Password));
+            var newSiteRestService =
+                new TableauRestService(new TrustedTicketGetter(newSiteSignInOptions), newSiteSignInOptions) as
+                    ITableauRestService;
+            var uploadedDataSources = newSiteRestService.UploadDatasourceFiles("Default", request.MasterDatabaseUserName, request.MasterDatabasePassword, true, request.TemporaryFilePath);
+            
+            //Can't change connection string yet otherwise workbooks won't upload
+            //4. Download workbooks from master site
+            var workbooksToDownload =
+                masterRestService.DownloadWorkbooksList();
+            masterRestService.DownloadWorkbooks(workbooksToDownload, request.TemporaryFilePath, false);
+
+            //5. Upload workbooks to new site
+            newSiteRestService.UploadWorkbooks("Default", request.MasterDatabaseUserName, request.MasterDatabasePassword, true, request.TemporaryFilePath);
+
+            //6. Change connection server address of newly updated datasources
+            foreach (var ds in uploadedDataSources)
+            {
+                var siteConnections = newSiteRestService.DownloadConnectionsForDatasource(ds.Id);
+                foreach (var connection in siteConnections)
+                {
+                    newSiteRestService.UpdateDatasourceConnection(ds, connection, request.NewDatabaseServerAddress);
+                }
+            }
+
         }
 
         private static readonly Regex CurrentWorkbookIdExpr = new Regex(@"\Wcurrent_workbook_id:\s*""(\d+)""", RegexOptions.Compiled);

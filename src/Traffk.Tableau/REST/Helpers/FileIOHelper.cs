@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using System.IO;
+using Traffk.Tableau.REST.Models;
 
 /// <summary>
 /// Helper for file io
@@ -150,37 +151,37 @@ static class FileIOHelper
         return rootName + "_" + subNameDateTime + extension;
     }
 
-    //    /// <summary>
-    ///// If we have Project Mapping information, generate a project based path for the download
-    ///// </summary>
-    ///// <param name="basePath"></param>
-    ///// <param name="projectList"></param>
-    ///// <param name="projectId"></param>
-    ///// <returns></returns>
-    //public static string EnsureProjectBasedPath(string basePath, IProjectsList projectList, IHasProjectId project, TaskStatusLogs statusLog)
-    //{
-    //    //If we have no project list to do lookups in then just return the base path
-    //    if (projectList == null) return basePath;
+    /// <summary>
+    /// If we have Project Mapping information, generate a project based path for the download
+    /// </summary>
+    /// <param name="basePath"></param>
+    /// <param name="projectList"></param>
+    /// <param name="projectId"></param>
+    /// <returns></returns>
+    public static string EnsureProjectBasedPath(string basePath, IProjectsList projectList, IHasProjectId project, TaskStatusLogs statusLog)
+    {
+        //If we have no project list to do lookups in then just return the base path
+        if (projectList == null) return basePath;
 
-    //    //Look up the project name
-    //    var projWithId = projectList.FindProjectWithId(project.ProjectId);
-    //    if(projWithId == null)
-    //    {
-    //        statusLog.AddError("Project not found with id " + project.ProjectId);
-    //        return basePath;
-    //    }
+        //Look up the project name
+        var projWithId = projectList.FindProjectWithId(project.ProjectId);
+        if (projWithId == null)
+        {
+            statusLog.AddError("Project not found with id " + project.ProjectId);
+            return basePath;
+        }
 
-    //    //Turn the project name into a directory name
-    //    var safeDirectoryName = GenerateWindowsSafeFilename(projWithId.Name);
+        //Turn the project name into a directory name
+        var safeDirectoryName = GenerateWindowsSafeFilename(projWithId.Name);
 
-    //    var pathWithProject = Path.Combine(basePath, safeDirectoryName);
-    //    //If needed, create the directory
-    //    if(!Directory.Exists(pathWithProject))
-    //    {
-    //        Directory.CreateDirectory(pathWithProject);
-    //    }
+        var pathWithProject = Path.Combine(basePath, safeDirectoryName);
+        //If needed, create the directory
+        if (!Directory.Exists(pathWithProject))
+        {
+            Directory.CreateDirectory(pathWithProject);
+        }
 
-    //    return pathWithProject;
-    //}
+        return pathWithProject;
+    }
 
 }

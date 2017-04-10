@@ -10,11 +10,11 @@ namespace TraffkPortal.Controllers
 {
     public class DataVisualizationController : Controller
     {
-        private readonly ITableauServices TableauServices;
+        private readonly ITableauVisualServices TableauVisualServices;
 
-        public DataVisualizationController(ITableauServices tableauServices)
+        public DataVisualizationController(ITableauVisualServices tableauVisualServices)
         {
-            TableauServices = tableauServices;
+            TableauVisualServices = tableauVisualServices;
         }
 
         [Produces("text/html")]
@@ -25,7 +25,7 @@ namespace TraffkPortal.Controllers
             {
                 trustedTicket = Request.Cookies["tableauTicket"];
             }
-            var reportHttpContent = TableauServices.GetVisualization(workbook, view, trustedTicket);
+            var reportHttpContent = TableauVisualServices.GetVisualization(workbook, view, trustedTicket);
             return reportHttpContent.Result;
         }
 

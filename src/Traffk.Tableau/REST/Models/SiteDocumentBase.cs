@@ -7,7 +7,7 @@ namespace Traffk.Tableau.REST.Models
     /// <summary>
     /// Base class for information common to Workbooks and Data Sources, so we don't have lots of redundant code
     /// </summary>
-    public class SiteDocumentBase : IHasSiteItemId
+    public class SiteDocumentBase : IHasProjectId, IHasSiteItemId
     {
         public readonly string Id;
         public readonly string Name;
@@ -88,6 +88,10 @@ namespace Traffk.Tableau.REST.Models
         string IHasSiteItemId.Id
         {
             get { return this.Id; }
+        }
+
+        string IHasProjectId.ProjectId {
+            get { return this.ProjectId; }
         }
     }
 }

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using Traffk.Tableau.REST;
+
 /// <summary>
 /// Information about a Data connection that is embedded in a Workbook or Data Source
 /// </summary>

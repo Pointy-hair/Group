@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using System.Xml;
+using Traffk.Tableau.REST;
+
 /// <summary>
 /// Efficent lookup for unevenly distributed sets of data
 /// </summary>
-class KeyedLookup<T> where T : IHasSiteItemId
+public class KeyedLookup<T> where T : IHasSiteItemId
 {
     Dictionary<string, T> _dictionary = new Dictionary<string, T>();
     public void AddItem(string key, T item)

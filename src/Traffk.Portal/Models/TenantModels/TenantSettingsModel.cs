@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using Traffk.Bal;
 using Traffk.Bal.Data.Rdb;
 
-namespace TraffkPortal.Models.TenantModels
+namespace Traffk.Portal.Models.TenantModels
 {
     public class TenantSettingsModel
     {

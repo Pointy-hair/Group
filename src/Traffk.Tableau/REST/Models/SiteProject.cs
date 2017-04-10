@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using Traffk.Tableau.REST;
+
 /// <summary>
 /// Information about a Project in a Server's site
 /// </summary>

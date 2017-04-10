@@ -2,7 +2,7 @@
 {
     partial class CredentialManager
     {
-        internal class Credential
+        public class Credential
         {
             public readonly string Name;
             public readonly string Password;

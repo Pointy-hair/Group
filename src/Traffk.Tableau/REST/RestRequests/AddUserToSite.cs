@@ -11,7 +11,6 @@ namespace Traffk.Tableau.REST.RestRequests
     public class AddUserToSite : TableauServerSignedInRequestBase
     {
         private readonly string TableauOperationDescription = "add user to site";
-        private readonly string TableauObjectName = "user";
 
         private enum SiteRole
         {

@@ -12,6 +12,12 @@ namespace Traffk.Bal.Settings
         [DataMember(Name = "PortalOptions")]
         public PortalOptions PortalOptions { get; set; }
 
+        [DataMember(Name = "TableauUserName")]
+        public string TableauUserName { get; set; }
+
+        [DataMember(Name = "TableauPassword")]
+        public string TableauPassword { get; set; }
+
         public UserSettings()
         { }
 

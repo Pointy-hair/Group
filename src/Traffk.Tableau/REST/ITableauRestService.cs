@@ -14,14 +14,26 @@ namespace Traffk.Tableau.REST
         TableauServerSignIn SignIn(TableauServerUrls onlineUrls, string userName, string password, TaskStatusLogs statusLog = null);
         DownloadProjectsList DownloadProjectsList();
         DownloadViewsForSite DownloadViewsForSite();
-        DownloadWorkbooksList DownloadWorkbooksList();
+        ICollection<SiteWorkbook> DownloadWorkbooksList();
         byte[] DownloadPreviewImageForView(string workbookId, string viewId);
         Task<UnderlyingDataTable> GetUnderlyingDataAsync(GetUnderlyingDataOptions options, string workbookName, string viewName);
         SiteinfoSite CreateSite(string tenantName, out string url);
         void AddUserToSite(string siteId, string userName);
+        void RemoveUserFromSite(SiteUser userToRemove);
         ICollection<SiteWorkbook> DownloadWorkbooks(IEnumerable<SiteWorkbook> workbooksToDownload, string localSavePath,
             bool generateInfoFile);
-        void UploadWorkbooks(string localUploadPath, string localPathTempWorkspace);
+
+        void UploadWorkbooks(string projectName, string datasourceUsername, string datasourcePassword,
+            bool isEmbedded, string path);
+        ICollection<SiteDatasource> DownloadDatasourceList();
+        ICollection<SiteConnection> DownloadConnectionsForDatasource(string datasourceId);
+        void DownloadDatasourceFiles(IEnumerable<SiteDatasource> datasources, string savePath);
+        ICollection<SiteDatasource> UploadDatasourceFiles(string projectName, string datasourceUsername,
+            string datasourcePassword, bool isEmbedded, string path);
+        void UpdateDatasourceConnection(SiteDatasource datasourceToUpdate, SiteConnection connectionToUpdate,
+            string newServerAddress);
+
+        void CreateNewTableauTenant(CreateTableauTenantRequest request);
     }
 
     public class VisualId

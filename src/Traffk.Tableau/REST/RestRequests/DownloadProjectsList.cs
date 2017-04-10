@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
+using Traffk.Tableau.REST.Models;
 using Traffk.Tableau.REST.RestRequests;
 
 namespace Traffk.Tableau.REST
@@ -12,12 +13,6 @@ namespace Traffk.Tableau.REST
     /// </summary>
     public class DownloadProjectsList : TableauServerSignedInRequestBase, IProjectsList
     {
-
-        /// <summary>
-        /// URL manager
-        /// </summary>
-        private readonly TableauServerUrls _onlineUrls;
-
         /// <summary>
         /// Projects we've parsed from server results
         /// </summary>
@@ -39,9 +34,9 @@ namespace Traffk.Tableau.REST
         /// <param name="onlineUrls"></param>
         /// <param name="login"></param>
         public DownloadProjectsList(TableauServerUrls onlineUrls, TableauServerSignIn login)
-            : base(login)
+            : base(onlineUrls,login)
         {
-            _onlineUrls = onlineUrls;
+
         }
 
         /// <summary>
@@ -77,9 +72,9 @@ namespace Traffk.Tableau.REST
         /// <param name="totalNumberPages">Total # of pages of data that Server can return us</param>
         private void ExecuteRequest_ForPage(List<SiteProject> onlineProjects, int pageToRequest, out int totalNumberPages)
         {
-            int pageSize = _onlineUrls.PageSize;
+            int pageSize = Urls.PageSize;
             //Create a web request, in including the users logged-in auth information in the request headers
-            var urlQuery = _onlineUrls.Url_ProjectsList(Login, pageSize, pageToRequest);
+            var urlQuery = Urls.Url_ProjectsList(Login, pageSize, pageToRequest);
             var webRequest = CreateLoggedInWebRequest(urlQuery);
             webRequest.Method = "GET";
 
@@ -88,9 +83,8 @@ namespace Traffk.Tableau.REST
             var xmlDoc = GetWebResponseAsXml(response);
 
             //Get all the project nodes
-            var nsManager = XmlHelper.CreateTableauXmlNamespaceManager("iwsOnline");
             var xDoc = xmlDoc.ToXDocument();
-            var projectElements = xDoc.Root.Descendants(XName.Get("project", nsManager.LookupNamespace("iwsOnline")));        
+            var projectElements = xDoc.Root.Descendants(XName.Get("project", XmlNamespace));        
 
             //Get information for each of the data sources
             foreach (var element in projectElements)
@@ -114,10 +108,8 @@ namespace Traffk.Tableau.REST
             //Get the updated page-count
             //-------------------------------------------------------------------
 
-            var paginationElement = xDoc.Root.Descendants(XName.Get("pagination", nsManager.LookupNamespace("iwsOnline"))).FirstOrDefault();
-            var paginationNode = paginationElement.ToXmlNode();
-            totalNumberPages = DownloadPaginationHelper.GetNumberOfPagesFromPagination(paginationNode, pageSize);
-
+            var paginationElement = xDoc.Root.Descendants(XName.Get("pagination", XmlNamespace)).FirstOrDefault();
+            totalNumberPages = GetPageCount(paginationElement, pageSize);
         }
 
         /// <summary>

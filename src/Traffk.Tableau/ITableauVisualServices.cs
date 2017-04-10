@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Traffk.Tableau
 {
-    public interface ITableauServices
+    public interface ITableauVisualServices
     {
         Task<string> GetTrustedTicket();
 

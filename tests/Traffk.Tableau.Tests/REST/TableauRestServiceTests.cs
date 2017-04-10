@@ -64,19 +64,19 @@ namespace Traffk.Tableau.Tests.REST
         [TestClass]
         public class DownloadWorkbookMethodTests : TableauRestServiceTests
         {
+            [Ignore]
             [TestMethod]
             public void WhenGivenListOfSingleWorkbookDownloadWorkbook()
             {
                 var testService = new TableauRestService(new TrustedTicketGetter(Options), Options);
-                var workbookRequest = ((ITableauRestService) testService).DownloadWorkbooksList();
-                workbookRequest.ExecuteRequest();
-                var workbooks = workbookRequest.Workbooks;
+                var workbooks = ((ITableauRestService) testService).DownloadWorkbooksList();
 
-                var workbooksToDownload = new List<SiteWorkbook> {workbooks.First()};
+                var workbooksToDownload = new List<SiteWorkbook> {workbooks.SingleOrDefault(x => x.Name == "MyFirstReport")};
 
 
 
                 string path = System.IO.Path.GetTempPath(); //Path.GetPathRoot(Directory.GetCurrentDirectory());
+                path = path + @"TableauTestDownloadWorkbookFiles";
                 var downloadedWorkbooks = ((ITableauRestService) testService).DownloadWorkbooks(workbooksToDownload, path, false);
                 Assert.IsNotNull(downloadedWorkbooks);
                 Assert.AreNotEqual(downloadedWorkbooks.Count, 0);
@@ -86,6 +86,7 @@ namespace Traffk.Tableau.Tests.REST
         [TestClass]
         public class UploadWorkbookMethodTests : TableauRestServiceTests
         {
+            [Ignore]
             [TestMethod]
             public void WhenGivenPathUploadWorkbooks()
             {
@@ -93,11 +94,124 @@ namespace Traffk.Tableau.Tests.REST
                 var testService = new TableauRestService(new TrustedTicketGetter(newSiteOptions), newSiteOptions);
 
                 string path = System.IO.Path.GetTempPath();
-                path = path + @"TableauUploadTestFiles";
-                ((ITableauRestService)testService).UploadWorkbooks(path, path);
-
+                path = path + @"TableauUploadTestWorkbooks";
+                ((ITableauRestService)testService).UploadWorkbooks("Default", "Darren",
+                    "1keylimecakeballs2MAGICBARS3currentjellycookies4", true, path);
             }
         }
+
+        [TestClass]
+        public class DownloadDatasourceMethodsTests : TableauRestServiceTests
+        {
+            [Ignore]
+            [TestMethod]
+            public void WhenGivenSiteDownloadDatasourceList()
+            {
+                var testOptions = MockEnvironment.TableauSignInOptions().Object;
+                var testService = new TableauRestService(new TrustedTicketGetter(testOptions), testOptions);
+
+                var sources = ((ITableauRestService) testService).DownloadDatasourceList();
+                Assert.IsNotNull(sources);
+                Assert.AreEqual(1, sources.Count);
+            }
+
+            [Ignore]
+            [TestMethod]
+            public void WhenGivenSiteDownloadDatasourceAndConnections()
+            {
+                var testOptions = MockEnvironment.TableauSignInOptions().Object;
+                var testService = new TableauRestService(new TrustedTicketGetter(testOptions), testOptions);
+
+                var sources = ((ITableauRestService)testService).DownloadDatasourceList();
+                Assert.IsNotNull(sources);
+                Assert.AreEqual(1, sources.Count);
+
+                var connections =
+                    ((ITableauRestService) testService).DownloadConnectionsForDatasource(sources.First().Id);
+                Assert.IsNotNull(connections);
+                Assert.AreEqual(1, connections.Count);
+            }
+
+            [Ignore]
+            [TestMethod]
+            public void WhenGivenSiteDownloadDatasourceFiles()
+            {
+                var testOptions = MockEnvironment.TableauSignInOptions().Object;
+                var testService = new TableauRestService(new TrustedTicketGetter(testOptions), testOptions);
+                var sources = ((ITableauRestService)testService).DownloadDatasourceList();
+                string path = System.IO.Path.GetTempPath();
+                path = path + @"TableauTestDownloadDatasourceFiles";
+                ((ITableauRestService) testService).DownloadDatasourceFiles(sources, path);
+            }
+        }
+
+        [TestClass]
+        public class UploadDatasourceMethodsTests : TableauRestServiceTests
+        {
+            [Ignore]
+            [TestMethod]
+            public void WhenGivenDatasourceFileUpload()
+            {
+                var newSiteOptions = MockEnvironment.TableauSignInOptions("https://tableau-dev.traffk.com/#/site/TestTenant36", "Darren Alfonso", "DarrenTraffkTableau").Object;
+                var testService = new TableauRestService(new TrustedTicketGetter(newSiteOptions), newSiteOptions);
+
+                string path = System.IO.Path.GetTempPath();
+                path = path + @"TableauUploadTestFiles";
+                ((ITableauRestService) testService).UploadDatasourceFiles("Default", "Darren",
+                    "1keylimecakeballs2MAGICBARS3currentjellycookies4", true, path);
+            }
+
+            [Ignore]
+            [TestMethod]
+            public void WhenGivenDatasourceAndServerAddressUpdate()
+            {
+                var newSiteOptions = MockEnvironment.TableauSignInOptions("https://tableau-dev.traffk.com/#/site/TestTenant36", "Darren Alfonso", "DarrenTraffkTableau").Object;
+                var testService = new TableauRestService(new TrustedTicketGetter(newSiteOptions), newSiteOptions) as ITableauRestService;
+
+                var datasources = testService.DownloadDatasourceList();
+                var datasourceToUpdate = datasources.First();
+
+                var connection = testService.DownloadConnectionsForDatasource(datasourceToUpdate.Id).First();
+
+                ((ITableauRestService)testService).UpdateDatasourceConnection(datasourceToUpdate, connection, connection.ServerAddress + @"/test");
+            }
+        }
+
+        [TestClass]
+        public class CreateNewTenantMethodsTests : TableauRestServiceTests
+        {
+            [Ignore]
+            [TestMethod]
+            public void WhenGivenCreateTenantRequestCreate()
+            {
+                var testMasterOptions = MockEnvironment.TableauSignInOptions().Object;
+                var testMasterService =
+                    new TableauRestService(new TrustedTicketGetter(testMasterOptions), testMasterOptions) as
+                        ITableauRestService;
+
+                var dbUserName = "Darren";
+                var dbPassword = "1keylimecakeballs2MAGICBARS3currentjellycookies4";
+                var testNewServerAddress = "traffkrdb-dev.database.windows.net/test";
+                string path = System.IO.Path.GetTempPath();
+                path = path + @"TableauIntegrationTestFiles";
+
+                var testCreateTenantRequest = new CreateTableauTenantRequest("IntegrationTestTenant", dbUserName, dbPassword, testNewServerAddress, dbUserName, dbPassword, path);
+
+                testMasterService.CreateNewTableauTenant(testCreateTenantRequest);
+                
+                System.IO.DirectoryInfo di = new DirectoryInfo(path);
+
+                foreach (FileInfo file in di.GetFiles())
+                {
+                    file.Delete();
+                }
+                foreach (DirectoryInfo dir in di.GetDirectories())
+                {
+                    dir.Delete(true);
+                }
+            }
+        }
+
 
         //[TestClass]
         //public class SignInMethodTests : TableauRestServiceTests

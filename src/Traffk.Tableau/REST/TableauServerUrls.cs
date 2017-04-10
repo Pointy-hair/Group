@@ -10,7 +10,7 @@ namespace Traffk.Tableau.REST
     /// </summary>
     public class TableauServerUrls : ITableauServerSiteInfo
     {
-        private readonly ServerVersion _serverVersion;
+        private readonly ServerVersion ServerVersion_p;
         /// <summary>
         /// What version of Server do we thing we are talking to? (URLs and APIs may differ)
         /// </summary>
@@ -18,7 +18,7 @@ namespace Traffk.Tableau.REST
         {
             get
             {
-                return _serverVersion;
+                return ServerVersion_p;
             }
         }
 
@@ -35,30 +35,33 @@ namespace Traffk.Tableau.REST
         /// <summary>
         /// Template for URL to acess workbooks list
         /// </summary>
-        private readonly string _urlListWorkbooksForUserTemplate;
-        private readonly string _urlListWorkbookConnectionsTemplate;
-        private readonly string _urlListDatasourcesTemplate;
-        private readonly string _urlListProjectsTemplate;
-        private readonly string _urlListGroupsTemplate;
-        private readonly string _urlListUsersTemplate;
-        private readonly string _urlListUsersInGroupTemplate;
-        private readonly string _urlDownloadWorkbookTemplate;
-        private readonly string _urlDownloadDatasourceTemplate;
-        private readonly string _urlSiteInfoTemplate;
-        private readonly string _urlInitiateUploadTemplate;
-        private readonly string _urlAppendUploadChunkTemplate;
-        private readonly string _urlFinalizeUploadDatasourceTemplate;
-        private readonly string _urlFinalizeUploadWorkbookTemplate;
-        private readonly string _urlCreateProjectTemplate;
-        private readonly string _urlDeleteWorkbookTagTemplate;
-        private readonly string _urlDeleteDatasourceTagTemplate;
-        private readonly string _urlUpdateWorkbookTemplate;
-        private readonly string _urlUpdateDatasourceTemplate;
-        private readonly string urlListViewsInSite;
-        private readonly string urlListWorkbooksInSite;
-        private readonly string urlDownloadPreviewImageForView;
-        private readonly string urlCreateSite;
-        private readonly string urlAddUserToSite;
+        private readonly string UrlListWorkbooksForUserTemplate;
+        private readonly string UrlListWorkbookConnectionsTemplate;
+        private readonly string UrlListDatasourcesTemplate;
+        private readonly string UrlListProjectsTemplate;
+        private readonly string UrlListGroupsTemplate;
+        private readonly string UrlListUsersTemplate;
+        private readonly string UrlListUsersInGroupTemplate;
+        private readonly string UrlDownloadWorkbookTemplate;
+        private readonly string UrlDownloadDatasourceTemplate;
+        private readonly string UrlSiteInfoTemplate;
+        private readonly string UrlInitiateUploadTemplate;
+        private readonly string UrlAppendUploadChunkTemplate;
+        private readonly string UrlFinalizeUploadDatasourceTemplate;
+        private readonly string UrlFinalizeUploadWorkbookTemplate;
+        private readonly string UrlCreateProjectTemplate;
+        private readonly string UrlDeleteWorkbookTagTemplate;
+        private readonly string UrlDeleteDatasourceTagTemplate;
+        private readonly string UrlUpdateWorkbookTemplate;
+        private readonly string UrlUpdateDatasourceTemplate;
+        private readonly string UrlListViewsInSite;
+        private readonly string UrlListWorkbooksInSite;
+        private readonly string UrlDownloadPreviewImageForView_p;
+        private readonly string UrlCreateSite_p;
+        private readonly string UrlAddUserToSite_p;
+        private readonly string UrlDownloadDatasourceConnections;
+        private readonly string UrlRemoveUserFromSite_p;
+        private readonly string UrlUpdateDatasourceConnection_p;
 
         /// <summary>
         /// Server url with protocol
@@ -85,45 +88,52 @@ namespace Traffk.Tableau.REST
         /// <param name="siteUrlSegment"></param>
         public TableauServerUrls(string protocol, string serverName, string siteUrlSegment, int pageSize, ServerVersion serverVersion)
         {
+            string currentApiVersion = "2.4";
+
             //Cannonicalize the protocol
             protocol = protocol.ToLower();
 
             CacheKey = Cache.CreateKey(protocol, serverName, siteUrlSegment, pageSize, serverVersion);
 
-            this.ServerProtocol = protocol;
+            ServerProtocol = protocol;
 
-            this.PageSize = pageSize;
+            PageSize = pageSize;
+
             string serverNameWithProtocol = protocol + serverName;
-            this._serverVersion = serverVersion;
-            this.SiteUrlSegement = siteUrlSegment;
-            this.ServerName = serverName;
-            this.ServerUrlWithProtocol                 = serverNameWithProtocol;
-            this.UrlLogin                              = serverNameWithProtocol + "/api/2.0/auth/signin";
-            this.UrlLogout                             = serverNameWithProtocol + "/api/2.0/auth/signout";
-            this._urlListWorkbooksForUserTemplate      = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/users/{{iwsUserId}}/workbooks?pageSize={{iwsPageSize}}&pageNumber={{iwsPageNumber}}";
-            this._urlListWorkbookConnectionsTemplate   = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/workbooks/{{iwsWorkbookId}}/connections";
-            this._urlListDatasourcesTemplate           = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/datasources?pageSize={{iwsPageSize}}&pageNumber={{iwsPageNumber}}";
-            this._urlListProjectsTemplate              = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/projects?pageSize={{iwsPageSize}}&pageNumber={{iwsPageNumber}}";
-            this._urlListGroupsTemplate                = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/groups?pageSize={{iwsPageSize}}&pageNumber={{iwsPageNumber}}";
-            this._urlListUsersTemplate                 = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/users?pageSize={{iwsPageSize}}&pageNumber={{iwsPageNumber}}";
-            this._urlListUsersInGroupTemplate          = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/groups/{{iwsGroupId}}/users?pageSize={{iwsPageSize}}&pageNumber={{iwsPageNumber}}"; 
-            this._urlDownloadDatasourceTemplate        = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/datasources/{{iwsRepositoryId}}/content";
-            this._urlDownloadWorkbookTemplate          = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/workbooks/{{iwsRepositoryId}}/content";
-            this._urlSiteInfoTemplate                  = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}";
-            this._urlInitiateUploadTemplate            = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/fileUploads";
-            this._urlAppendUploadChunkTemplate         = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/fileUploads/{{iwsUploadSession}}";
-            this._urlFinalizeUploadDatasourceTemplate  = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/datasources?uploadSessionId={{iwsUploadSession}}&datasourceType={{iwsDatasourceType}}&overwrite=true";
-            this._urlFinalizeUploadWorkbookTemplate    = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/workbooks?uploadSessionId={{iwsUploadSession}}&workbookType={{iwsWorkbookType}}&overwrite=true";
-            this._urlCreateProjectTemplate             = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/projects";
-            this._urlDeleteWorkbookTagTemplate         = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/workbooks/{{iwsWorkbookId}}/tags/{{iwsTagText}}";
-            this._urlDeleteDatasourceTagTemplate       = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/datasources/{{iwsDatasourceId}}/tags/{{iwsTagText}}";
-            this._urlUpdateWorkbookTemplate            = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/workbooks/{{iwsWorkbookId}}";
-            this._urlUpdateDatasourceTemplate          = serverNameWithProtocol + "/api/2.0/sites/{{iwsSiteId}}/datasources/{{iwsDatasourceId}}";
-            this.urlListViewsInSite                    = serverNameWithProtocol + "/api/2.2/sites/{{iwsSiteId}}/views?pageSize={{iwsPageSize}}&pageNumber={{iwsPageNumber}}";
-            this.urlListWorkbooksInSite                = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/workbooks?pageSize={{iwsPageSize}}&pageNumber={{iwsPageNumber}}";
-            this.urlDownloadPreviewImageForView        = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/workbooks/{{iwsWorkbookId}}/views/{{iwsViewId}}/previewImage";
-            this.urlCreateSite = serverNameWithProtocol + "/api/2.4/sites";
-            this.urlAddUserToSite = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/users";
+            ServerVersion_p = serverVersion;
+
+            SiteUrlSegement = siteUrlSegment;
+            ServerName = serverName;
+            ServerUrlWithProtocol                 = serverNameWithProtocol;
+            UrlLogin                              = serverNameWithProtocol + "/api/2.0/auth/signin";
+            UrlLogout                             = serverNameWithProtocol + "/api/2.0/auth/signout";
+            UrlListWorkbooksForUserTemplate      = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/users/{{iwsUserId}}/workbooks?pageSize={{iwsPageSize}}&pageNumber={{iwsPageNumber}}";
+            UrlListWorkbookConnectionsTemplate   = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/workbooks/{{iwsWorkbookId}}/connections";
+            UrlListDatasourcesTemplate           = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/datasources?pageSize={{iwsPageSize}}&pageNumber={{iwsPageNumber}}";
+            UrlListProjectsTemplate              = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/projects?pageSize={{iwsPageSize}}&pageNumber={{iwsPageNumber}}";
+            UrlListGroupsTemplate                = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/groups?pageSize={{iwsPageSize}}&pageNumber={{iwsPageNumber}}";
+            UrlListUsersTemplate                 = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/users?pageSize={{iwsPageSize}}&pageNumber={{iwsPageNumber}}";
+            UrlListUsersInGroupTemplate          = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/groups/{{iwsGroupId}}/users?pageSize={{iwsPageSize}}&pageNumber={{iwsPageNumber}}"; 
+            UrlDownloadDatasourceTemplate        = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/datasources/{{iwsRepositoryId}}/content";
+            UrlDownloadWorkbookTemplate          = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/workbooks/{{iwsRepositoryId}}/content";
+            UrlSiteInfoTemplate                  = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}";
+            UrlInitiateUploadTemplate            = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/fileUploads";
+            UrlAppendUploadChunkTemplate         = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/fileUploads/{{iwsUploadSession}}";
+            UrlFinalizeUploadDatasourceTemplate  = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/datasources?uploadSessionId={{iwsUploadSession}}&datasourceType={{iwsDatasourceType}}&overwrite=true";
+            UrlFinalizeUploadWorkbookTemplate    = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/workbooks?uploadSessionId={{iwsUploadSession}}&workbookType={{iwsWorkbookType}}&overwrite=true";
+            UrlCreateProjectTemplate             = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/projects";
+            UrlDeleteWorkbookTagTemplate         = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/workbooks/{{iwsWorkbookId}}/tags/{{iwsTagText}}";
+            UrlDeleteDatasourceTagTemplate       = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/datasources/{{iwsDatasourceId}}/tags/{{iwsTagText}}";
+            UrlUpdateWorkbookTemplate            = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/workbooks/{{iwsWorkbookId}}";
+            UrlUpdateDatasourceTemplate          = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/datasources/{{iwsDatasourceId}}";
+            UrlListViewsInSite                    = serverNameWithProtocol + "/api/2.2/sites/{{iwsSiteId}}/views?pageSize={{iwsPageSize}}&pageNumber={{iwsPageNumber}}";
+            UrlListWorkbooksInSite                = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/workbooks?pageSize={{iwsPageSize}}&pageNumber={{iwsPageNumber}}";
+            UrlDownloadPreviewImageForView_p        = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/workbooks/{{iwsWorkbookId}}/views/{{iwsViewId}}/previewImage";
+            UrlCreateSite_p = serverNameWithProtocol + "/api/2.4/sites";
+            UrlAddUserToSite_p = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/users";
+            UrlDownloadDatasourceConnections = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/datasources/{{iwsDatasourceId}}/connections";
+            UrlRemoveUserFromSite_p = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/users/{{iwsUserId}}";
+            UrlUpdateDatasourceConnection_p = serverNameWithProtocol + "/api/2.4/sites/{{iwsSiteId}}/datasources/{{iwsDatasourceId}}/connections/{{iwsConnectionId}}";
 
             //Any server version specific things we want to do?
             switch (serverVersion)
@@ -202,7 +212,7 @@ namespace Traffk.Tableau.REST
         /// <returns></returns>
         public string Url_SiteInfo(TableauServerSignIn logInInfo)
         {
-            string workingText = _urlSiteInfoTemplate.Replace("{{iwsSiteId}}", logInInfo.SiteId);
+            string workingText = UrlSiteInfoTemplate.Replace("{{iwsSiteId}}", logInInfo.SiteId);
             ValidateTemplateReplaceComplete(workingText);
 
             return workingText;
@@ -215,7 +225,7 @@ namespace Traffk.Tableau.REST
         /// <returns></returns>
         public string Url_InitiateFileUpload(TableauServerSignIn logInInfo)
         {
-            string workingText = _urlInitiateUploadTemplate.Replace("{{iwsSiteId}}", logInInfo.SiteId);
+            string workingText = UrlInitiateUploadTemplate.Replace("{{iwsSiteId}}", logInInfo.SiteId);
             ValidateTemplateReplaceComplete(workingText);
 
             return workingText;
@@ -228,7 +238,7 @@ namespace Traffk.Tableau.REST
         /// <returns></returns>
         public string Url_AppendFileUploadChunk(TableauServerSignIn logInInfo, string uploadSession)
         {
-            string workingText = _urlAppendUploadChunkTemplate.Replace("{{iwsSiteId}}", logInInfo.SiteId);
+            string workingText = UrlAppendUploadChunkTemplate.Replace("{{iwsSiteId}}", logInInfo.SiteId);
             workingText = workingText.Replace("{{iwsUploadSession}}", uploadSession);
             ValidateTemplateReplaceComplete(workingText);
 
@@ -246,7 +256,7 @@ namespace Traffk.Tableau.REST
         public string Url_FinalizeDataSourcePublish(TableauServerSignIn logInInfo, string uploadSession, string datasourceType)
         {
 
-            string workingText = _urlFinalizeUploadDatasourceTemplate.Replace("{{iwsSiteId}}", logInInfo.SiteId);
+            string workingText = UrlFinalizeUploadDatasourceTemplate.Replace("{{iwsSiteId}}", logInInfo.SiteId);
             workingText = workingText.Replace("{{iwsUploadSession}}", uploadSession);
             workingText = workingText.Replace("{{iwsDatasourceType}}", datasourceType);
             ValidateTemplateReplaceComplete(workingText);
@@ -264,7 +274,7 @@ namespace Traffk.Tableau.REST
         public string Url_FinalizeWorkbookPublish(TableauServerSignIn logInInfo, string uploadSession, string workbookType)
         {
 
-            string workingText = _urlFinalizeUploadWorkbookTemplate.Replace("{{iwsSiteId}}", logInInfo.SiteId);
+            string workingText = UrlFinalizeUploadWorkbookTemplate.Replace("{{iwsSiteId}}", logInInfo.SiteId);
             workingText = workingText.Replace("{{iwsUploadSession}}", uploadSession);
             workingText = workingText.Replace("{{iwsWorkbookType}}", workbookType);
             ValidateTemplateReplaceComplete(workingText);
@@ -279,7 +289,7 @@ namespace Traffk.Tableau.REST
         /// <returns></returns>
         public string Url_WorkbooksListForUser(TableauServerSignIn session, string userId, int pageSize, int pageNumber = 1)
         {
-            string workingText = _urlListWorkbooksForUserTemplate;
+            string workingText = UrlListWorkbooksForUserTemplate;
             workingText = workingText.Replace("{{iwsSiteId}}", session.SiteId);
             workingText = workingText.Replace("{{iwsUserId}}", userId);
             workingText = workingText.Replace("{{iwsPageSize}}", pageSize.ToString());
@@ -296,7 +306,7 @@ namespace Traffk.Tableau.REST
         /// <returns></returns>
         public string Url_WorkbookConnectionsList(TableauServerSignIn session, string workbookId)
         {
-            string workingText = _urlListWorkbookConnectionsTemplate;
+            string workingText = UrlListWorkbookConnectionsTemplate;
             workingText = workingText.Replace("{{iwsSiteId}}", session.SiteId);
             workingText = workingText.Replace("{{iwsWorkbookId}}", workbookId);
             ValidateTemplateReplaceComplete(workingText);
@@ -312,7 +322,12 @@ namespace Traffk.Tableau.REST
         /// <returns></returns>
         internal string Url_DatasourceConnectionsList(TableauServerSignIn session, string datasourceId)
         {
-            throw new NotImplementedException("2015-11-16, Tableau Server does not yet have a REST API to support this call");
+            string workingText = UrlDownloadDatasourceConnections;
+            workingText = workingText.Replace("{{iwsSiteId}}", session.SiteId);
+            workingText = workingText.Replace("{{iwsDatasourceId}}", datasourceId);
+            ValidateTemplateReplaceComplete(workingText);
+
+            return workingText;
         }
 
 
@@ -323,7 +338,7 @@ namespace Traffk.Tableau.REST
         /// <returns></returns>
         public string Url_DatasourcesList(TableauServerSignIn session, int pageSize, int pageNumber = 1)
         {
-            string workingText = _urlListDatasourcesTemplate;
+            string workingText = UrlListDatasourcesTemplate;
             workingText = workingText.Replace("{{iwsSiteId}}", session.SiteId);
             workingText = workingText.Replace("{{iwsPageSize}}", pageSize.ToString());
             workingText = workingText.Replace("{{iwsPageNumber}}", pageNumber.ToString());
@@ -339,7 +354,7 @@ namespace Traffk.Tableau.REST
         /// <returns></returns>
         public string Url_CreateProject(TableauServerSignIn session)
         {
-            string workingText = _urlCreateProjectTemplate;
+            string workingText = UrlCreateProjectTemplate;
             workingText = workingText.Replace("{{iwsSiteId}}", session.SiteId);
             ValidateTemplateReplaceComplete(workingText);
 
@@ -355,7 +370,7 @@ namespace Traffk.Tableau.REST
         /// <returns></returns>
         public string Url_DeleteWorkbookTag(TableauServerSignIn session, string workbookId, string tagText)
         {
-            string workingText = _urlDeleteWorkbookTagTemplate;
+            string workingText = UrlDeleteWorkbookTagTemplate;
             workingText = workingText.Replace("{{iwsSiteId}}", session.SiteId);
             workingText = workingText.Replace("{{iwsWorkbookId}}", workbookId);
             workingText = workingText.Replace("{{iwsTagText}}", tagText);
@@ -373,7 +388,7 @@ namespace Traffk.Tableau.REST
         /// <returns></returns>
         public string Url_UpdateWorkbook(TableauServerSignIn session, string workbookId)
         {
-            string workingText = _urlUpdateWorkbookTemplate;
+            string workingText = UrlUpdateWorkbookTemplate;
             workingText = workingText.Replace("{{iwsSiteId}}", session.SiteId);
             workingText = workingText.Replace("{{iwsWorkbookId}}", workbookId);
             ValidateTemplateReplaceComplete(workingText);
@@ -390,7 +405,7 @@ namespace Traffk.Tableau.REST
         /// <returns></returns>
         public string Url_UpdateDatasource(TableauServerSignIn session, string datasourceId)
         {
-            string workingText = _urlUpdateDatasourceTemplate;
+            string workingText = UrlUpdateDatasourceTemplate;
             workingText = workingText.Replace("{{iwsSiteId}}", session.SiteId);
             workingText = workingText.Replace("{{iwsDatasourceId}}", datasourceId);
             ValidateTemplateReplaceComplete(workingText);
@@ -407,7 +422,7 @@ namespace Traffk.Tableau.REST
         /// <returns></returns>
         public string Url_DeleteDatasourceTag(TableauServerSignIn session, string datasourceId, string tagText)
         {
-            string workingText = _urlDeleteDatasourceTagTemplate;
+            string workingText = UrlDeleteDatasourceTagTemplate;
             workingText = workingText.Replace("{{iwsSiteId}}", session.SiteId);
             workingText = workingText.Replace("{{iwsDatasourceId}}", datasourceId);
             workingText = workingText.Replace("{{iwsTagText}}", tagText);
@@ -424,7 +439,7 @@ namespace Traffk.Tableau.REST
         /// <returns></returns>
         public string Url_ProjectsList(TableauServerSignIn session, int pageSize, int pageNumber = 1)
         {
-            string workingText = _urlListProjectsTemplate;
+            string workingText = UrlListProjectsTemplate;
             workingText = workingText.Replace("{{iwsSiteId}}", session.SiteId);
             workingText = workingText.Replace("{{iwsPageSize}}", pageSize.ToString());
             workingText = workingText.Replace("{{iwsPageNumber}}", pageNumber.ToString());
@@ -440,7 +455,7 @@ namespace Traffk.Tableau.REST
         /// <returns></returns>
         public string Url_GroupsList(TableauServerSignIn session, int pageSize, int pageNumber = 1)
         {
-            string workingText = _urlListGroupsTemplate;
+            string workingText = UrlListGroupsTemplate;
             workingText = workingText.Replace("{{iwsSiteId}}", session.SiteId);
             workingText = workingText.Replace("{{iwsPageSize}}", pageSize.ToString());
             workingText = workingText.Replace("{{iwsPageNumber}}", pageNumber.ToString());
@@ -456,7 +471,7 @@ namespace Traffk.Tableau.REST
         /// <returns></returns>
         public string Url_UsersList(TableauServerSignIn logInInfo, int pageSize, int pageNumber = 1)
         {
-            string workingText = _urlListUsersTemplate.Replace("{{iwsSiteId}}", logInInfo.SiteId);
+            string workingText = UrlListUsersTemplate.Replace("{{iwsSiteId}}", logInInfo.SiteId);
             workingText = workingText.Replace("{{iwsPageSize}}", pageSize.ToString());
             workingText = workingText.Replace("{{iwsPageNumber}}", pageNumber.ToString());
             ValidateTemplateReplaceComplete(workingText);
@@ -474,7 +489,7 @@ namespace Traffk.Tableau.REST
         /// <returns></returns>
         public string Url_UsersListInGroup(TableauServerSignIn logInInfo, string groupId, int pageSize, int pageNumber = 1)
         {
-            string workingText = _urlListUsersInGroupTemplate.Replace("{{iwsSiteId}}", logInInfo.SiteId);
+            string workingText = UrlListUsersInGroupTemplate.Replace("{{iwsSiteId}}", logInInfo.SiteId);
             workingText = workingText.Replace("{{iwsGroupId}}", groupId);
             workingText = workingText.Replace("{{iwsPageSize}}", pageSize.ToString());
             workingText = workingText.Replace("{{iwsPageNumber}}", pageNumber.ToString());
@@ -485,7 +500,7 @@ namespace Traffk.Tableau.REST
 
         public string UrlDownloadViewsForSite(TableauServerSignIn logInInfo, int pageSize, int pageNumber = 1)
         {
-            string workingText = urlListViewsInSite.Replace("{{iwsSiteId}}", logInInfo.SiteId);
+            string workingText = UrlListViewsInSite.Replace("{{iwsSiteId}}", logInInfo.SiteId);
             workingText = workingText.Replace("{{iwsPageSize}}", pageSize.ToString());
             workingText = workingText.Replace("{{iwsPageNumber}}", pageNumber.ToString());
             ValidateTemplateReplaceComplete(workingText);
@@ -495,7 +510,7 @@ namespace Traffk.Tableau.REST
 
         public string UrlDownloadWorkbooksForSite(TableauServerSignIn logInInfo, int pageSize, int pageNumber = 1)
         {
-            string workingText = urlListWorkbooksInSite.Replace("{{iwsSiteId}}", logInInfo.SiteId);
+            string workingText = UrlListWorkbooksInSite.Replace("{{iwsSiteId}}", logInInfo.SiteId);
             workingText = workingText.Replace("{{iwsPageSize}}", pageSize.ToString());
             workingText = workingText.Replace("{{iwsPageNumber}}", pageNumber.ToString());
             ValidateTemplateReplaceComplete(workingText);
@@ -504,7 +519,7 @@ namespace Traffk.Tableau.REST
 
         public string UrlDownloadPreviewImageForView(TableauServerSignIn logInInfo, string workbookId, string viewId)
         {
-            string workingText = urlDownloadPreviewImageForView.Replace("{{iwsSiteId}}", logInInfo.SiteId);
+            string workingText = UrlDownloadPreviewImageForView_p.Replace("{{iwsSiteId}}", logInInfo.SiteId);
             workingText = workingText.Replace("{{iwsWorkbookId}}", workbookId);
             workingText = workingText.Replace("{{iwsViewId}}", viewId);
             ValidateTemplateReplaceComplete(workingText);
@@ -513,14 +528,14 @@ namespace Traffk.Tableau.REST
 
         public string UrlCreateSite()
         {
-            string workingText = urlCreateSite;
+            string workingText = UrlCreateSite_p;
             ValidateTemplateReplaceComplete(workingText);
             return workingText;
         }
 
         public string UrlAddUserToSite(string siteId)
         {
-            string workingText = urlAddUserToSite;
+            string workingText = UrlAddUserToSite_p;
             workingText = workingText.Replace("{{iwsSiteId}}", siteId);
             return workingText;
         }
@@ -532,7 +547,7 @@ namespace Traffk.Tableau.REST
         /// <returns></returns>
         public string Url_WorkbookDownload(TableauServerSignIn session, SiteWorkbook contentInfo)
         {
-            string workingText = _urlDownloadWorkbookTemplate;
+            string workingText = UrlDownloadWorkbookTemplate;
             workingText = workingText.Replace("{{iwsSiteId}}", session.SiteId);
             workingText = workingText.Replace("{{iwsRepositoryId}}", contentInfo.Id);
 
@@ -545,16 +560,35 @@ namespace Traffk.Tableau.REST
         /// </summary>
         /// <param name="siteUrlSegment"></param>
         /// <returns></returns>
-        //public string Url_DatasourceDownload(TableauServerSignIn session, SiteDatasource contentInfo)
-        //{
-        //    string workingText = _urlDownloadDatasourceTemplate;
-        //    workingText = workingText.Replace("{{iwsSiteId}}", session.SiteId);
-        //    workingText = workingText.Replace("{{iwsRepositoryId}}", contentInfo.Id);
+        public string Url_DatasourceDownload(TableauServerSignIn session, SiteDatasource contentInfo)
+        {
+            string workingText = UrlDownloadDatasourceTemplate;
+            workingText = workingText.Replace("{{iwsSiteId}}", session.SiteId);
+            workingText = workingText.Replace("{{iwsRepositoryId}}", contentInfo.Id);
 
-        //    ValidateTemplateReplaceComplete(workingText);
-        //    return workingText;
-        //}
+            ValidateTemplateReplaceComplete(workingText);
+            return workingText;
+        }
 
+        public string UrlRemoveUserFromSite(TableauServerSignIn session, SiteUser userToRemove)
+        {
+            string workingText = UrlRemoveUserFromSite_p;
+            workingText = workingText.Replace("{{iwsSiteId}}", session.SiteId);
+            workingText = workingText.Replace("{{iwsUserId}}", userToRemove.Id);
+            ValidateTemplateReplaceComplete(workingText);
+            return workingText;
+        }
+
+        public string UrlUpdateDatasourceConnection(TableauServerSignIn session, SiteDatasource datasourceToUpdate, SiteConnection connectionToUpdate)
+        {
+            string workingText = UrlUpdateDatasourceConnection_p;
+            workingText = workingText.Replace("{{iwsSiteId}}", session.SiteId);
+            workingText = workingText.Replace("{{iwsDatasourceId}}", datasourceToUpdate.Id);
+            workingText = workingText.Replace("{{iwsConnectionId}}", connectionToUpdate.Id);
+
+            ValidateTemplateReplaceComplete(workingText);
+            return workingText;
+        }
 
 
         /// <summary>

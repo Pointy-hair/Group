@@ -62,6 +62,7 @@ namespace Traffk.Tableau.REST.RestRequests
         public UploadWorkbooks(
             TableauServerUrls onlineUrls, 
             TableauServerSignIn login,
+            CredentialManager credentialManager,
             string localUploadPath,
             string localPathTempWorkspace,
             int uploadChunkSizeBytes = TableauServerUrls.UploadFileChunkSize,
@@ -70,7 +71,7 @@ namespace Traffk.Tableau.REST.RestRequests
         {
             LocalUploadPath = localUploadPath;
             LocalPathTempWorkspace = localPathTempWorkspace;
-            CredentialManager = new CredentialManager(); 
+            CredentialManager = credentialManager; 
 
             //If we are going to attempt to reassign ownership after publication we'll need this information
             //Not implemented for now
@@ -142,7 +143,7 @@ namespace Traffk.Tableau.REST.RestRequests
             string projectName;
             if (rootContentPath == currentContentPath) //If we are in the root upload directory, then assume any content goes to the Default project
             {
-                projectName = ""; //Default project
+                projectName = "Default"; //Default project
             }
             else
             {
@@ -375,7 +376,6 @@ namespace Traffk.Tableau.REST.RestRequests
             xmlWriter.WriteAttributeString("id", projectId);
             xmlWriter.WriteEndElement();            //</project>
             xmlWriter.WriteEndElement(); // </workbook>
-            //Currently not supporting <connectionCredentials>
             xmlWriter.WriteEndElement(); // </tsRequest>
             xmlWriter.Dispose();
 

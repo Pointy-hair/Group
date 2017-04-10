@@ -2,7 +2,7 @@
 
 namespace Traffk.Tableau.REST.Helpers
 {
-    partial class CredentialManager
+    public partial class CredentialManager
     {
 
         List<CredentialNode> _workbookCredentials = new List<CredentialNode>();
@@ -41,6 +41,7 @@ namespace Traffk.Tableau.REST.Helpers
         {
             foreach (var credentialNode in list)
             {
+
                 if(credentialNode.IsMatch(contentName, projectName))
                 {
                     return credentialNode.Credential;
