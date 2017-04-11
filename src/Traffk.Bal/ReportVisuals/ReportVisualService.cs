@@ -16,6 +16,7 @@ using RevolutionaryStuff.Core.Collections;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Permissions;
 using Traffk.Bal.Services;
+using Traffk.Tableau;
 using Traffk.Tableau.REST;
 using Traffk.Tableau.REST.Models;
 

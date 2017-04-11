@@ -9,17 +9,23 @@ using System.Linq;
 using Traffk.Bal;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Services;
+using Traffk.Tableau;
 using Traffk.Tableau.REST.RestRequests;
+using RevolutionaryStuff.Core.ApplicationParts;
+using System;
+using System.Threading.Tasks;
+using Traffk.Portal.Permissions;
 
 namespace TraffkPortal.Services
 {
-    public class CurrentContextServices : CurrentTenantServices, ICurrentUser, ICurrentContextServices
+    public class CurrentContextServices : CurrentTenantServices, ICurrentUser, ICurrentContextServices, ITableauUserCredentials
     {
         private readonly IHostingEnvironment Env;
         private readonly ITraffkTenantFinder TenantFinder;
         private readonly TraffkRdbContext Rdb;
         private readonly IHttpContextAccessor HttpContextAccessor;
         private readonly UserManager<ApplicationUser> UserManager;
+        private readonly TableauAuthorizationService TableauAuthorizationService;
 
         private static readonly ICache<string, AzureActiveDirectoryResourceAuthorizationGetter.AuthenticationResult>
             BearerCache = CachingServices.Instance.CreateSynchronized<string, AzureActiveDirectoryResourceAuthorizationGetter.AuthenticationResult>(CachingServices.FlushPeriods.Medium);
@@ -57,7 +63,8 @@ namespace TraffkPortal.Services
             TraffkRdbContext rdb, 
             IHttpContextAccessor httpContextAccessor, 
             UserManager<ApplicationUser> userManager,
-            IOptions<TableauSignInOptions> tableauSigninOptions
+            IOptions<TableauSignInOptions> tableauSigninOptions,
+            TableauAuthorizationService tableauAuthorizationService
             )
             : base(tenantFinder, rdb)
         {
@@ -67,6 +74,12 @@ namespace TraffkPortal.Services
             Rdb = rdb;
             HttpContextAccessor = httpContextAccessor;
             UserManager = userManager;
+            TableauAuthorizationService = tableauAuthorizationService;
         }
+
+        string ITableauUserCredentials.UserName => User.Settings.TableauUserName ?? TableauAuthorizationService.GetTableauUserCredentials(User, Tenant).UserName;
+
+        string ITableauUserCredentials.Password => User.Settings.TableauPassword ?? TableauAuthorizationService.GetTableauUserCredentials(User, Tenant).Password;
+
     }
 }

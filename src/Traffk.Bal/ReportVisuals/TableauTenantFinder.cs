@@ -4,14 +4,10 @@ using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core.ApplicationParts;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Settings;
+using Traffk.Tableau;
 
 namespace Traffk.Bal.ReportVisuals
 {
-    public interface ITableauTenantFinder : ITenantFinder<string>
-    {
-
-    }
-
     public class TableauTenantFinder : ITableauTenantFinder
     {
         public IOptions<TenantSettings> Options { get; private set; }

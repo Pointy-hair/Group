@@ -12,12 +12,22 @@ namespace Traffk.Tableau
     public class TrustedTicketGetter : ITrustedTicketGetter
     {
         private readonly TableauSignInOptions TableauSignInOptions;
+        private readonly ITableauUserCredentials TableauUserCredentials;
 
-        public TrustedTicketGetter(IOptions<TableauSignInOptions> tableauSignInOptions)
+        public TrustedTicketGetter(IOptions<TableauSignInOptions> tableauSignInOptions, 
+            ITableauUserCredentials tableauUserCredentials,
+            ITableauTenantFinder tableauTenantFinder)
         {
             Requires.NonNull(tableauSignInOptions, nameof(tableauSignInOptions));
-
+            Requires.NonNull(tableauUserCredentials, nameof(tableauUserCredentials));
+            
             TableauSignInOptions = tableauSignInOptions.Value;
+            TableauUserCredentials = tableauUserCredentials;
+            var tenantId = tableauTenantFinder.GetTenantIdAsync().ExecuteSynchronously();
+            if (tenantId != null)
+            {
+                TableauSignInOptions.UpdateForTenant(tenantId);
+            }
         }
 
         [DataContract]
@@ -45,7 +55,7 @@ namespace Traffk.Tableau
                     var datas = new FormUrlEncodedContent(new[]
                     {
                         //TODO: May change this to either WebServer or tenant based
-                        new KeyValuePair<string, string>("username", TableauSignInOptions.Username)
+                        new KeyValuePair<string, string>("username", TableauUserCredentials.UserName)
                     });
                     var response = await client.PostAsync(uri, datas);
                     var token = await response.Content.ReadAsStringAsync();

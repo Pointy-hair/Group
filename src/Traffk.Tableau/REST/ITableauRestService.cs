@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
-using System.Threading.Tasks;
 using Traffk.Tableau.REST.Models;
 using Traffk.Tableau.REST.RestRequests;
-using Traffk.Tableau.VQL;
 
 namespace Traffk.Tableau.REST
 {
@@ -16,7 +14,6 @@ namespace Traffk.Tableau.REST
         DownloadViewsForSite DownloadViewsForSite();
         ICollection<SiteWorkbook> DownloadWorkbooksList();
         byte[] DownloadPreviewImageForView(string workbookId, string viewId);
-        Task<UnderlyingDataTable> GetUnderlyingDataAsync(GetUnderlyingDataOptions options, string workbookName, string viewName);
         SiteinfoSite CreateSite(string tenantName, out string url);
         void AddUserToSite(string siteId, string userName);
         void RemoveUserFromSite(SiteUser userToRemove);

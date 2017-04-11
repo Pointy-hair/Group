@@ -12,12 +12,12 @@ namespace Traffk.Tableau.Tests
     [TestClass]
     public class TrustedTicketGetterTests
     {
-        public IOptions<TableauSignInOptions> Options { get; set; }
+        //public IOptions<TableauSignInOptions> Options { get; set; }
 
-        public TrustedTicketGetterTests()
-        {
-            Options = MockEnvironment.TableauSignInOptions().Object;
-        }
+        //public TrustedTicketGetterTests()
+        //{
+        //    Options = MockEnvironment.TableauSignInOptions().Object;
+        //}
 
         //[TestClass]
         //public class AuthorizeMethodTests : TrustedTicketGetterTests

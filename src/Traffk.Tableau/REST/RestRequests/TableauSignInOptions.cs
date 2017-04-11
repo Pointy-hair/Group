@@ -10,20 +10,37 @@ namespace Traffk.Tableau.REST.RestRequests
         public TableauSignInOptions()
         { }
 
-        public TableauSignInOptions(string url, string username, string password)
+        public TableauSignInOptions(string url)
         {
             Url = url;
-            Username = username;
-            Password = password;
             Host = url.Replace("https://", "");
         }
 
+        public void UpdateForTenant(string tenantId)
+        {
+            TenantId = tenantId;
+            Url = RestApiUrl + "site/" + tenantId;
+        }
+
         public string TrustedUrl => Url + "/trusted/";
-        public string RestApiUrl => Url + "/#/";
-        public string RestApiTrustedUrl => Url + "/#/trusted/";
+
+        public string RestApiUrl
+        {
+            get
+            {
+                if (TenantId != null)
+                {
+                    return Url;
+                }
+                else
+                {
+                    return Url + "/#/";
+                }
+            }
+        }
         public string Host { get; set; }
         public string Url { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
+        public string TenantId { get; set; }
+
     }
 }

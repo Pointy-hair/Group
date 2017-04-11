@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using Traffk.Tableau.REST.Helpers;
@@ -156,6 +157,7 @@ namespace Traffk.Tableau.REST.RestRequests
             //-------------------------------------------------------------------------------------
             //Upload the files from local directory to server
             //-------------------------------------------------------------------------------------
+            //TODO: Convert to Parallel.ForEach()
             foreach (var thisFilePath in Directory.GetFiles(currentContentPath))
             {
                 bool isValidUploadFile = IsValidUploadFile(thisFilePath);

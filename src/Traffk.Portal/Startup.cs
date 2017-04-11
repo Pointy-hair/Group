@@ -107,6 +107,7 @@ namespace TraffkPortal
             services.Configure<BlobStorageServices.BlobStorageServicesOptions>(Configuration.GetSection(nameof(BlobStorageServices.BlobStorageServicesOptions)));
             services.Configure<TwilioSmsSenderOptions>(Configuration.GetSection(nameof(TwilioSmsSenderOptions)));
             services.Configure<TableauSignInOptions>(Configuration.GetSection(nameof(TableauSignInOptions)));
+            services.Configure<TableauAdminSignInOptions>(Configuration.GetSection(nameof(TableauAdminSignInOptions)));
             services.Configure<DataProtectionTokenProviderOptions>(Configuration.GetSection(nameof(DataProtectionTokenProviderOptions)));
             services.Configure<TraffkHttpHeadersFilter.TraffkHttpHeadersFilterOptions>(Configuration.GetSection(nameof(TraffkHttpHeadersFilter.TraffkHttpHeadersFilterOptions)));
 
@@ -184,6 +185,8 @@ namespace TraffkPortal
             services.AddScoped<ITrustedTicketGetter, TrustedTicketGetter>();
             services.AddScoped<ITableauRestService, TableauRestService>();
             services.AddScoped<ITableauTenantFinder, TableauTenantFinder>();
+            services.AddScoped<ITableauUserCredentials, CurrentContextServices>();
+            services.AddScoped<TableauAuthorizationService>();
             services.AddScoped<IReportVisualService, ReportVisualService>();
 
             services.AddScoped<TableauTrustedTicketActionFilter>();
