@@ -29,10 +29,8 @@ namespace Traffk.Bal.ReportVisuals
 
     public interface IReportVisualService
     {
-        TreeNode<IReportResource> GetReportFolderTreeRoot(VisualContext visualContext, string reportTagFilter = null);
-        IEnumerable<IReportVisual> GetReportVisuals(VisualContext visualContext, string reportTagFilter);
-        IReportVisual GetReportVisual(VisualContext context, int id);
-
+        TreeNode<IReportResource> GetReportFolderTreeRoot(ReportSearchCriteria reportSearchCriteria);
+        IReportVisual GetReportVisual(ReportSearchCriteria reportSearchCriteria);
         byte[] DownloadPreviewImageForTableauVisual(string workbookId, string viewId);
     }
 
@@ -65,18 +63,12 @@ namespace Traffk.Bal.ReportVisuals
             TableauTenantId = TableauTenantFinder.GetTenantIdAsync().Result;
         }
 
-        IEnumerable<IReportVisual> IReportVisualService.GetReportVisuals(VisualContext visualContext, string reportTagFilter) 
-            => GetReportVisuals(visualContext, reportTagFilter);
-
-        TreeNode<IReportResource> IReportVisualService.GetReportFolderTreeRoot(VisualContext context, string reportTagFilter)
-            => GetReportFolderTreeRoot(context, reportTagFilter);
-        IReportVisual IReportVisualService.GetReportVisual(VisualContext context, int id) 
-            => GetReportVisual(context, id);
-
-        public IReportVisual GetReportVisual(VisualContext context, int id)
+        IReportVisual IReportVisualService.GetReportVisual(ReportSearchCriteria reportSearchCriteria)
         {
-            var root = GetReportFolderTreeRoot(context);
+            var iReportVisualService = this as IReportVisualService;
+            var root = iReportVisualService.GetReportFolderTreeRoot(reportSearchCriteria);
             ReportVisual matchingReportVisual = null;
+            var id = reportSearchCriteria.ReportId;
             root.Walk((node, depth) =>
             {
                 var currentReportVisual = node.Data as ReportVisual;
@@ -91,19 +83,28 @@ namespace Traffk.Bal.ReportVisuals
             return matchingReportVisual;
         }
 
-        public TreeNode<IReportResource> GetReportFolderTreeRoot(VisualContext visualContext, string reportTagFilter = null)
+        TreeNode<IReportResource> IReportVisualService.GetReportFolderTreeRoot(ReportSearchCriteria reportSearchCriteria)
         {
+            var visualContext = reportSearchCriteria.VisualContext;
+            var reportTagFilter = reportSearchCriteria.TagFilter;
+
             var rootKey = visualContext.ToString() + reportTagFilter;
-            return Cacher.FindOrCreate(rootKey, key => GetTreeCacheEntry(visualContext, reportTagFilter)).Value;
+            return Cacher.FindOrCreate(rootKey, key => GetTreeCacheEntry(reportSearchCriteria)).Value;
         }
-        
-        private IEnumerable<IReportVisual> GetReportVisuals(VisualContext visualContext, string reportTagFilter = null)
+
+        byte[] IReportVisualService.DownloadPreviewImageForTableauVisual(string workbookId, string viewId)
+        {
+            return TableauRestService.DownloadPreviewImageForView(workbookId, viewId);
+        }
+
+        //Private methods
+        private IEnumerable<IReportVisual> GetReportVisuals(ReportSearchCriteria searchCriteria)
         {
             var tableauReports = GetTableauReportVisuals();
             var tableauReportVisuals = tableauReports as IList<ITableauReportVisual> ?? tableauReports.ToList();
             TableauReportIds = tableauReportVisuals.Select(t => t.Id);
 
-            var relevantReportMetaDatas = new HashSet<ReportMetaData>(GetRelevantReportMetaDatas(visualContext, reportTagFilter));
+            var relevantReportMetaDatas = new HashSet<ReportMetaData>(GetRelevantReportMetaDatas(searchCriteria));
 
             List<ReportVisual> visuals = new List<ReportVisual>();
             foreach (var rmd in relevantReportMetaDatas)
@@ -116,11 +117,11 @@ namespace Traffk.Bal.ReportVisuals
             return visuals;
         }
 
-        private TreeNode<IReportResource> GetTreeCacheEntry(VisualContext visualContext, string reportTagFilter)
+        private TreeNode<IReportResource> GetTreeCacheEntry(ReportSearchCriteria reportSearchCriteria)
         {
             var root = new TreeNode<IReportResource>(new ReportVisualFolder("Root"));
-            var reportVisuals = (ICollection<IReportVisual>)(GetReportVisuals(visualContext, reportTagFilter) as ICollection<IReportVisual> ??
-                                GetReportVisuals(visualContext, reportTagFilter).ToList());
+            var reportVisuals = (ICollection<IReportVisual>)(GetReportVisuals(reportSearchCriteria) as ICollection<IReportVisual> ??
+                                GetReportVisuals(reportSearchCriteria).ToList());
 
             if (reportVisuals.Any())
             {
@@ -242,7 +243,7 @@ namespace Traffk.Bal.ReportVisuals
             }
         }
 
-        private IEnumerable<ReportMetaData> GetRelevantReportMetaDatas(VisualContext visualContext, string tag = null)
+        private IEnumerable<ReportMetaData> GetRelevantReportMetaDatas(ReportSearchCriteria reportSearchCriteria)
         {
             var relevantReportMetaDatas =
                 Rdb.ReportMetaData.Where(
@@ -251,9 +252,9 @@ namespace Traffk.Bal.ReportVisuals
                         &&
                         TableauReportIds.Contains(x.ExternalReportKey)
                         &&
-                        x.ReportDetails.VisualContext == visualContext
+                        x.ReportDetails.VisualContext == reportSearchCriteria.VisualContext
                         &&
-                        (tag == null || x.ReportDetails.Tags.Contains(tag))
+                        (reportSearchCriteria.TagFilter == null || x.ReportDetails.Tags.Contains(reportSearchCriteria.TagFilter))
                         &&
                         ((x.ParentReportMetaDataId == null //Traffk supplied metadata
                         || ((long)x.OwnerContactId == CurrentUser.ContactId) //User's metadata
@@ -265,16 +266,12 @@ namespace Traffk.Bal.ReportVisuals
 
         private IEnumerable<ReportMetaData> GetReportMetaData(string externalReportKey)
         {
-            return Rdb.ReportMetaData.Where(x => x.ExternalReportKey == externalReportKey); //missing check for delete bit
+            return Rdb.ReportMetaData.Where(x => x.ExternalReportKey == externalReportKey);
         }
 
         public static string CreateAnchorName(IReportResource resource) => CreateAnchorName(resource.Title);
         public static string CreateAnchorName(IReportVisual visual) => CreateAnchorName(visual.Title);
         private static string CreateAnchorName(string name) => name.Trim()?.ToLower()?.RemoveSpecialCharacters() ?? "";
 
-        public byte[] DownloadPreviewImageForTableauVisual(string workbookId, string viewId)
-        {
-            return TableauRestService.DownloadPreviewImageForView(workbookId, viewId);
-        }
     }
 }

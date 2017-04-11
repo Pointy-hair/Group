@@ -54,7 +54,12 @@ namespace TraffkPortal.Controllers
         [ActionName(ActionNames.Index)]
         public IActionResult Index()
         {
-            var root = ReportVisualService.GetReportFolderTreeRoot(ReportVisualContext, ReportTagFilters.RiskIndex);
+            var reportSearchCriteria = new ReportSearchCriteria
+            {
+                VisualContext = ReportVisualContext,
+                TagFilter = ReportTagFilters.RiskIndex
+            };
+            var root = ReportVisualService.GetReportFolderTreeRoot(reportSearchCriteria);
             return View(root);
         }
 
@@ -63,7 +68,12 @@ namespace TraffkPortal.Controllers
         [ActionName(ActionNames.Report)]
         public IActionResult Report(string id, string anchorName)
         {
-            var reportVisual = ReportVisualService.GetReportVisual(ReportVisualContext, Parse.ParseInt32(id));
+            var reportSearchCriteria = new ReportSearchCriteria
+            {
+                VisualContext = ReportVisualContext,
+                ReportId = Parse.ParseInt32(id)
+            };
+            var reportVisual = ReportVisualService.GetReportVisual(reportSearchCriteria);
             if (reportVisual == null)
             {
                 return RedirectToAction(ActionNames.Index);

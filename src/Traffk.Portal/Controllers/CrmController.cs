@@ -517,7 +517,11 @@ namespace TraffkPortal.Controllers
             if (contact == null) return NotFound();
             SetHeroLayoutViewData(contact, PageKeys.Reports);
 
-            var root = ReportVisualService.GetReportFolderTreeRoot(ReportVisualContext);
+            var reportSearchCriteria = new ReportSearchCriteria
+            {
+                VisualContext = ReportVisualContext
+            };
+            var root = ReportVisualService.GetReportFolderTreeRoot(reportSearchCriteria);
             return View(root);
         }
 
@@ -529,7 +533,12 @@ namespace TraffkPortal.Controllers
             var contact = await FindContactByIdAsync(Convert.ToInt64(contactId));
             SetHeroLayoutViewData(contact, PageKeys.Messages);
 
-            var reportVisual = ReportVisualService.GetReportVisual(ReportVisualContext, Parse.ParseInt32(id));
+            var reportSearchCriteria = new ReportSearchCriteria
+            {
+                VisualContext = ReportVisualContext,
+                ReportId = Parse.ParseInt32(id)
+            };
+            var reportVisual = ReportVisualService.GetReportVisual(reportSearchCriteria);
             if (reportVisual == null)
             {
                 RedirectToAction(ActionNames.ContactBackground);

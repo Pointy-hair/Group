@@ -5,6 +5,11 @@ using System.Threading.Tasks;
 
 namespace Traffk.Bal.ReportVisuals
 {
+    public interface IReportVisualFolder
+    {
+        string Title { get; set; }
+    }
+
     public class ReportVisualFolder : IReportVisualFolder, IReportResource
     {
         public ReportVisualFolder(string title)
