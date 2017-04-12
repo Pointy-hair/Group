@@ -115,7 +115,7 @@ namespace Traffk.Bal.Data.Rdb
             Configger = configger;
         }
 
-        public async Task<bool> AddNextScheduledBlasts(int? specificBlastId=null, bool allTenants=false, bool deleteUpcomingNonConformantBlasts=true)
+        public Task<bool> AddNextScheduledBlasts(int? specificBlastId=null, bool allTenants=false, bool deleteUpcomingNonConformantBlasts=true)
         {
             throw new NotImplementedException();
             /*

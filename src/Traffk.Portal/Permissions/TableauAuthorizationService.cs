@@ -34,18 +34,6 @@ namespace Traffk.Portal.Permissions
             Rdb.Update(user);
             Rdb.SaveChangesAsync();
             return TableauAdminCredentials;
-
-            throw new NotImplementedException();
-
-            if (tenant.TenantSettings.TableauTenantId != null)
-            {
-                Options.UpdateForTenant(tenant.TenantSettings.TableauTenantId);
-                var tenantSiteSignInOptions = ConfigurationHelpers.CreateOptions(Options);
-                var tenantTableauRestService = 
-                    new TableauRestService(tenantSiteSignInOptions, TableauAdminCredentials);
-                
-                //Logic for getting an available username and assigning it as user to the specific tableau tenant
-            }
         }
 
         public void RemoveTableauUserCredentials(ApplicationUser user, Tenant tenant)

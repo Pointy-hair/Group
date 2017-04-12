@@ -45,8 +45,6 @@ namespace TraffkPortal.Models.UserModels
 
         public DateTimeOffset? LockoutEnd { get; set; }
 
-        private readonly IAuthorizationService AuthorizationService;
-
         public bool? CanAccessProtectedHealthInformation { get; set; }
 
         public UserModel()

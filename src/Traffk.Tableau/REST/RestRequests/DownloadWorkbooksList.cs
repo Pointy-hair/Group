@@ -76,15 +76,7 @@ namespace Traffk.Tableau.REST.RestRequests
             //Get subsequent pages
             for (int thisPage = 1; thisPage <= numberPages; thisPage++)
             {
-                try
-                {
-                    ExecuteRequest_ForPage(onlineWorkbooks, thisPage, out numberPages);
-                }
-                catch (Exception exPageRequest)
-                {
-                    //TODO:Serilog
-                    // .AddError("Workbooks error during page request: " + exPageRequest.Message);
-                }
+                ExecuteRequest_ForPage(onlineWorkbooks, thisPage, out numberPages);
             }
 
             _workbooks = onlineWorkbooks;

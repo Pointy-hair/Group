@@ -11,7 +11,7 @@ namespace TraffkCommunicationBlastRunner
 {
     public class CommunicationBlastRunner : JobRunner<ContactsFromEligibilityJobResult>
     {
-        private readonly int MessagesPerBlock = 2;
+        //private readonly int MessagesPerBlock = 2;
         private readonly TraffkRdbContext Rdb;
         private readonly ITrackingEmailer Emailer;
         private readonly BlobStorageServices Blobs;

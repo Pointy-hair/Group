@@ -57,7 +57,7 @@ namespace Traffk.Tableau.REST
                 }
                 catch (Exception exPageRequest)
                 {
-                    //StatusLog.AddError("Projects error during page request: " + exPageRequest.Message);
+                    Login.StatusLog.AddError("Projects error during page request: " + exPageRequest.Message);
                 }
             }
 

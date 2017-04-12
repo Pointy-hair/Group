@@ -20,7 +20,6 @@ namespace TraffkPortal.Services
 {
     public class CurrentContextServices : CurrentTenantServices, ICurrentUser, ICurrentContextServices, ITableauUserCredentials
     {
-        private readonly IHostingEnvironment Env;
         private readonly ITraffkTenantFinder TenantFinder;
         private readonly TraffkRdbContext Rdb;
         private readonly IHttpContextAccessor HttpContextAccessor;

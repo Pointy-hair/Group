@@ -30,14 +30,7 @@ namespace Traffk.Tableau.REST.RestRequests
             //Get subsequent pages
             for (int thisPage = 1; thisPage <= numberPages; thisPage++)
             {
-                try
-                {
-                    ExecuteRequestForPage(views, thisPage, out numberPages);
-                }
-                catch (Exception e)
-                {
-                    //TODO: Add logging
-                }
+                ExecuteRequestForPage(views, thisPage, out numberPages);
             }
 
             Views = views;

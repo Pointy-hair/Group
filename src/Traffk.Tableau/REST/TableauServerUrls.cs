@@ -88,8 +88,6 @@ namespace Traffk.Tableau.REST
         /// <param name="siteUrlSegment"></param>
         public TableauServerUrls(string protocol, string serverName, string siteUrlSegment, int pageSize, ServerVersion serverVersion)
         {
-            string currentApiVersion = "2.4";
-
             //Cannonicalize the protocol
             protocol = protocol.ToLower();
 

@@ -30,7 +30,7 @@ namespace Traffk.Tableau.REST.Models
         public readonly string ContentUrl;
         public string WorkbookId { get; }
         public readonly string OwnerId;
-        public new string Description = "";//"No desc, Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+        public string Description = "";//"No desc, Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
 
         public TableauReportVisual()
         {
