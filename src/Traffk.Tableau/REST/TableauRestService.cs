@@ -2,7 +2,6 @@
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using Traffk.Tableau.REST.Helpers;
 using Traffk.Tableau.REST.Models;
