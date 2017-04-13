@@ -41,7 +41,20 @@ namespace Traffk.Tableau.REST.RestRequests
         public string Host { get; set; }
         public string Url { get; set; }
         public string TenantId { get; set; }
-        public string BaseUrl { get; set; }
+        public string BaseUrl
+        {
+            get
+            {
+                if (Url.Contains("site"))
+                {
+                    return Url.Split(new string[] { @"/site/" }, StringSplitOptions.None)[0];
+                }
+                else
+                {
+                    return Url;
+                }
+            }
+        }
 
     }
 }

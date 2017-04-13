@@ -1,16 +1,12 @@
-﻿using System;
+﻿using Microsoft.Extensions.Options;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http.Features.Authentication;
-using Microsoft.Extensions.Options;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Traffk.Tableau.REST;
-using Traffk.Tableau.REST.RestRequests;
-using Moq;
 using Traffk.Tableau.REST.Helpers;
 using Traffk.Tableau.REST.Models;
+using Traffk.Tableau.REST.RestRequests;
 
 namespace Traffk.Tableau.Tests.REST
 {
@@ -96,7 +92,7 @@ namespace Traffk.Tableau.Tests.REST
             [TestMethod]
             public void WhenGivenPathUploadWorkbooks()
             {
-                var newSiteOptions = MockEnvironment.TableauSignInOptions("https://tableau-dev.traffk.com/#/site/TestTenant36").Object;
+                var newSiteOptions = MockEnvironment.TableauSignInOptions("https://tableau-dev.traffk.com/#/site/TestMasterTenant").Object;
                 var testService = new TableauRestService(newSiteOptions, TableauAdminCredentials);
 
                 string path = System.IO.Path.GetTempPath();
@@ -152,10 +148,11 @@ namespace Traffk.Tableau.Tests.REST
         [TestClass]
         public class UploadDatasourceMethodsTests : TableauRestServiceTests
         {
+            [Ignore]
             [TestMethod]
             public void WhenGivenDatasourceFileUpload()
             {
-                var newSiteOptions = MockEnvironment.TableauSignInOptions("https://tableau-dev.traffk.com/#/site/TestTenant36").Object;
+                var newSiteOptions = MockEnvironment.TableauSignInOptions("https://tableau-dev.traffk.com/#/site/TestMasterTenant").Object;
                 var testService = new TableauRestService(newSiteOptions, TableauAdminCredentials);
 
                 string path = System.IO.Path.GetTempPath();
@@ -168,7 +165,7 @@ namespace Traffk.Tableau.Tests.REST
             [TestMethod]
             public void WhenGivenDatasourceAndServerAddressUpdate()
             {
-                var newSiteOptions = MockEnvironment.TableauSignInOptions("https://tableau-dev.traffk.com/#/site/TestTenant36").Object;
+                var newSiteOptions = MockEnvironment.TableauSignInOptions("https://tableau-dev.traffk.com/#/site/TestMasterTenant").Object;
                 var testService = new TableauRestService(newSiteOptions, TableauAdminCredentials) as ITableauRestService;
 
                 var datasources = testService.DownloadDatasourceList();
@@ -179,6 +176,7 @@ namespace Traffk.Tableau.Tests.REST
                 ((ITableauRestService)testService).UpdateDatasourceConnection(datasourceToUpdate, connection, connection.ServerAddress + @"/test");
             }
 
+            [Ignore]
             [TestMethod]
             public void WhenGivenDatasourceUpdateDbName()
             {
@@ -188,6 +186,7 @@ namespace Traffk.Tableau.Tests.REST
                 TableauFileEditor.UpdateDatasourceDatabaseName(path, "TraffkHip2", path);
             }
 
+            [Ignore]
             [TestMethod]
             public void WhenGivenReportFileUpdateSiteReferences()
             {
@@ -201,6 +200,7 @@ namespace Traffk.Tableau.Tests.REST
         [TestClass]
         public class CreateNewTenantMethodsTests : TableauRestServiceTests
         {
+            [Ignore]
             [TestMethod]
             public void WhenGivenCreateTenantRequestCreate()
             {
@@ -237,6 +237,7 @@ namespace Traffk.Tableau.Tests.REST
         [TestClass]
         public class SignInMethodTests : TableauRestServiceTests
         {
+            [Ignore]
             [TestMethod]
             public void WhenGivenUrlSignIn()
             {

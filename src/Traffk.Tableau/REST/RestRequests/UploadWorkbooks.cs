@@ -21,12 +21,6 @@ namespace Traffk.Tableau.REST.RestRequests
         /// </summary>
         private readonly string LocalUploadPath;
 
-        /// <summary>
-        /// File system path to perform temp work in (e.g. file remapping)
-        /// </summary>
-        private readonly string LocalPathTempWorkspace;
-
-
         private readonly int UploadChunkSizeBytes;  //Max size of upload chunks
         private readonly int UploadChunkDelaySeconds; //Delay afte reach chunk
         /// <summary>
@@ -43,8 +37,9 @@ namespace Traffk.Tableau.REST.RestRequests
         /// List of users in the site (used for looking up user-ids, based on the user names and mapping ownership)
         /// </summary>
         private readonly IEnumerable<SiteUser> SiteUsers;
-
         private readonly ProjectFindCreateHelper ProjectFindCreateHelper;
+        public int UploadSuccesses { get; private set; }
+        public int UploadFailures { get; private set; }
 
         /// <summary>
         /// Constructor
@@ -65,13 +60,11 @@ namespace Traffk.Tableau.REST.RestRequests
             TableauServerSignIn login,
             CredentialManager credentialManager,
             string localUploadPath,
-            string localPathTempWorkspace,
             int uploadChunkSizeBytes = TableauServerUrls.UploadFileChunkSize,
             int uploadChunkDelaySeconds = 0)
             : base(onlineUrls, login)
         {
             LocalUploadPath = localUploadPath;
-            LocalPathTempWorkspace = localPathTempWorkspace;
             CredentialManager = credentialManager; 
 
             //If we are going to attempt to reassign ownership after publication we'll need this information
@@ -79,11 +72,13 @@ namespace Traffk.Tableau.REST.RestRequests
             AttemptOwnershipAssignment = false;
             SiteUsers = new List<SiteUser>();
 
-            //Test parameters
             UploadChunkSizeBytes = uploadChunkSizeBytes;
             UploadChunkDelaySeconds = uploadChunkDelaySeconds;
 
             ProjectFindCreateHelper = new ProjectFindCreateHelper(Urls, Login);
+
+            UploadSuccesses = 0;
+            UploadFailures = 0;
         }
 
         /// <summary>
@@ -108,17 +103,13 @@ namespace Traffk.Tableau.REST.RestRequests
         /// <param name="contentFileName">Filename without path</param>
         /// <param name="projectName"></param>
         /// <returns></returns>
-        private Traffk.Tableau.REST.Helpers.CredentialManager.Credential helper_DetermineContentCredential(
+        private CredentialManager.Credential helper_DetermineContentCredential(
             string contentFileName, 
             string projectName)
         {
             var credentialManager = CredentialManager;
             //If there is no credential manager, there can be no credentials for any uploaded content
-            if (credentialManager == null) 
-            { 
-                return null; 
-            }
-            return credentialManager.FindWorkbookCredential(
+            return credentialManager?.FindWorkbookCredential(
                 contentFileName,
                 projectName);
         }
@@ -157,8 +148,7 @@ namespace Traffk.Tableau.REST.RestRequests
             //-------------------------------------------------------------------------------------
             //Upload the files from local directory to server
             //-------------------------------------------------------------------------------------
-            //TODO: Convert to Parallel.ForEach()
-            foreach (var thisFilePath in Directory.GetFiles(currentContentPath))
+            Parallel.ForEach(Directory.GetFiles(currentContentPath), thisFilePath =>
             {
                 bool isValidUploadFile = IsValidUploadFile(thisFilePath);
 
@@ -180,16 +170,20 @@ namespace Traffk.Tableau.REST.RestRequests
                         //See what content specific settings there may be for this workbook
                         var publishSettings = helper_DetermineContentPublishSettings(thisFilePath);
 
-                        bool wasFileUploaded = AttemptUploadSingleFile(thisFilePath, projectIdForUploads, dbCredentialsIfAny, publishSettings);
-                        if (wasFileUploaded) { countSuccess++; }
+                        bool wasFileUploaded = AttemptUploadSingleFile(thisFilePath, projectIdForUploads,
+                            dbCredentialsIfAny, publishSettings);
+                        if (wasFileUploaded)
+                        {
+                            UploadSuccesses++;
+                        }
                     }
                     catch (Exception ex)
                     {
-                        countFailure++;
+                        UploadFailures++;
                         Login.StatusLog.AddError("Error uploading workbook " + thisFilePath + ". " + ex.Message);
                     }
                 }
-            }
+            });
 
             //If we are running recursive , then look in the subdirectories too
             if(recurseDirectories)
@@ -211,9 +205,9 @@ namespace Traffk.Tableau.REST.RestRequests
         /// </summary>
         /// <param name="workbookWithPath"></param>
         /// <returns></returns>
-        Traffk.Tableau.REST.Helpers.WorkbookPublishSettings helper_DetermineContentPublishSettings(string workbookWithPath)
+        WorkbookPublishSettings helper_DetermineContentPublishSettings(string workbookWithPath)
         {
-            return Traffk.Tableau.REST.Helpers.WorkbookPublishSettings.GetSettingsForSavedWorkbook(workbookWithPath);
+            return WorkbookPublishSettings.GetSettingsForSavedWorkbook(workbookWithPath);
         }
 
         /// <summary>
@@ -224,7 +218,7 @@ namespace Traffk.Tableau.REST.RestRequests
         bool IsValidUploadFile(string localFilePath)
         {
             //If the file is a custom settings file for the workbook, then ignore it
-            if(Traffk.Tableau.REST.Helpers.WorkbookPublishSettings.IsSettingsFile(localFilePath))
+            if(WorkbookPublishSettings.IsSettingsFile(localFilePath))
             {
                 return false; //Nothing to do, it's just a settings file
             }
@@ -257,8 +251,8 @@ namespace Traffk.Tableau.REST.RestRequests
         private bool AttemptUploadSingleFile(
             string thisFilePath, 
             string projectIdForUploads,
-            Traffk.Tableau.REST.Helpers.CredentialManager.Credential dbCredentials,
-            Traffk.Tableau.REST.Helpers.WorkbookPublishSettings publishSettings)
+            CredentialManager.Credential dbCredentials,
+            WorkbookPublishSettings publishSettings)
         {
             return AttemptUploadSingleFile_Inner(thisFilePath, projectIdForUploads, dbCredentials, publishSettings);
         }
@@ -271,8 +265,8 @@ namespace Traffk.Tableau.REST.RestRequests
         private bool AttemptUploadSingleFile_Inner(
             string localFilePath, 
             string projectId, 
-            Traffk.Tableau.REST.Helpers.CredentialManager.Credential dbCredentials,
-            Traffk.Tableau.REST.Helpers.WorkbookPublishSettings publishSettings)
+            CredentialManager.Credential dbCredentials,
+            WorkbookPublishSettings publishSettings)
         {
             string uploadSessionId;
             try
@@ -349,8 +343,8 @@ namespace Traffk.Tableau.REST.RestRequests
             string publishedContentName, 
             string publishedContentType, 
             string projectId,
-            Traffk.Tableau.REST.Helpers.CredentialManager.Credential dbCredentials,
-            Traffk.Tableau.REST.Helpers.WorkbookPublishSettings publishSettings)
+            CredentialManager.Credential dbCredentials,
+            WorkbookPublishSettings publishSettings)
         {
             if (projectId == null)
             {
@@ -391,7 +385,7 @@ namespace Traffk.Tableau.REST.RestRequests
 
             //NOTE: The publish finalization step can take several minutes, because server needs to unpack the uploaded ZIP and file it away.
             //      For this reason, we pass in a long timeout
-            var webRequest = this.CreateAndSendMimeLoggedInRequest(urlFinalizeUpload, "POST", mimeGenerator, TableauServerWebClient.DefaultLongRequestTimeOutMs); 
+            var webRequest = CreateAndSendMimeLoggedInRequest(urlFinalizeUpload, "POST", mimeGenerator, TableauServerWebClient.DefaultLongRequestTimeOutMs); 
             var response = GetWebReponseLogErrors(webRequest, "finalize workbook publish");
             using (response)
             {

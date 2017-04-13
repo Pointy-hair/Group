@@ -2,6 +2,7 @@
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using Traffk.Tableau.REST.Helpers;
 using Traffk.Tableau.REST.Models;
@@ -76,7 +77,7 @@ namespace Traffk.Tableau.REST
 
         private string GetNewSiteUrl(SiteinfoSite site)
         {
-            return @"https://" + Options.Host + "site/" + site.ContentUrl;
+            return Options.BaseUrl + @"/site/" + site.ContentUrl;
         }
 
         void ITableauRestService.AddUserToSite(string siteId, string userName)
@@ -107,7 +108,7 @@ namespace Traffk.Tableau.REST
             {
                 credentialManager.AddWorkbookCredential(Path.GetFileName(thisFilePath), projectName, datasourceUsername, datasourcePassword, isEmbedded);
             }
-            var uploadWorkbooksRequest = new UploadWorkbooks(Urls, Login, credentialManager, path, path);
+            var uploadWorkbooksRequest = new UploadWorkbooks(Urls, Login, credentialManager, path);
             uploadWorkbooksRequest.ExecuteRequest();
         }
 
@@ -177,7 +178,7 @@ namespace Traffk.Tableau.REST
             }
 
             //3. Upload datasources to new site
-            var newSiteOptions = new TableauSignInOptions("https://tableau-dev.traffk.com/#/site/" + tenantId);
+            var newSiteOptions = new TableauSignInOptions(GetNewSiteUrl(newSite));
             var newSiteSignInOptions = ConfigurationHelpers.CreateOptions(newSiteOptions);
             var newSiteRestService =
                 new TableauRestService(newSiteSignInOptions, TableauUserCredentials) as
