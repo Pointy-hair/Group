@@ -41,6 +41,7 @@ namespace Traffk.Tableau.REST.RestRequests
         public string Host { get; set; }
         public string Url { get; set; }
         public string TenantId { get; set; }
+        public string BaseUrl { get; set; }
 
     }
 }

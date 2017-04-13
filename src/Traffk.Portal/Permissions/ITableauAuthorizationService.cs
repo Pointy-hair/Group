@@ -5,7 +5,7 @@ namespace Traffk.Portal.Permissions
 {
     public interface ITableauAuthorizationService
     {
-        ITableauUserCredentials GetTableauUserCredentials(ApplicationUser user, Tenant tenant);
-        void RemoveTableauUserCredentials(ApplicationUser user, Tenant tenant);
+        ITableauUserCredentials GetTableauUserCredentials(ApplicationUser user, string tableauTenantId);
+        void RemoveTableauUserCredentials(ApplicationUser user, string tableauTenantId);
     }
 }

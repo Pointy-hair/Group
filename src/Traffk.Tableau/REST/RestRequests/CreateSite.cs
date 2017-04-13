@@ -5,6 +5,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using RevolutionaryStuff.Core;
+using Traffk.Tableau.REST.Models;
 
 namespace Traffk.Tableau.REST.RestRequests
 {

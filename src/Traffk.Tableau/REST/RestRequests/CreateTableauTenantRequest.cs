@@ -10,6 +10,7 @@ namespace Traffk.Tableau.REST.RestRequests
         public string MasterDatabaseUserName { get; }
         public string MasterDatabasePassword { get; }
         public string NewDatabaseServerAddress { get; }
+        public string NewDatabaseName { get; }
         public string NewDatabaseUserName { get; }
         public string NewDatabasePassword { get; }
         public string TemporaryFilePath { get; }
@@ -18,6 +19,7 @@ namespace Traffk.Tableau.REST.RestRequests
             string masterDatabaseUserName,
             string masterDatabasePassword,
             string newDatabaseServerAddress,
+            string newDatabaseName,
             string newDatabaseUserName,
             string newDatabasePassword,
             string temporaryFilePath)
@@ -26,6 +28,7 @@ namespace Traffk.Tableau.REST.RestRequests
             MasterDatabaseUserName = masterDatabaseUserName;
             MasterDatabasePassword = masterDatabasePassword;
             NewDatabaseServerAddress = newDatabaseServerAddress;
+            NewDatabaseName = newDatabaseName;
             NewDatabaseUserName = newDatabaseUserName;
             NewDatabasePassword = newDatabasePassword;
             TemporaryFilePath = temporaryFilePath;

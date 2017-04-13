@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using Traffk.Tableau.REST.Helpers;
@@ -35,6 +36,9 @@ namespace Traffk.Tableau.REST.RestRequests
 
         public ICollection<SiteDatasource> UploadeDatasources { get; }
 
+        public int UploadSuccesses { get; private set; }
+        public int UploadFailures { get; private set; }
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -66,6 +70,9 @@ namespace Traffk.Tableau.REST.RestRequests
             UploadChunkDelaySeconds = uploadChunkDelaySeconds;
 
             UploadeDatasources = new List<SiteDatasource>();
+
+            UploadSuccesses = 0;
+            UploadFailures = 0;
         }
 
         /// <summary>
@@ -78,12 +85,10 @@ namespace Traffk.Tableau.REST.RestRequests
             var projectListHelper = new ProjectFindCreateHelper(Urls, Login);
 
             var statusLog = Login.StatusLog;
-            int countSuccess = 0;
-            int countFailure = 0;
 
             statusLog.AddStatus("Uploading datasources");
-            UploadDirectoryToServer(LocalUploadPath, LocalUploadPath, projectListHelper, true, out countSuccess, out countFailure);
-            Login.StatusLog.AddStatus("Datasources upload done.  Success: " + countSuccess.ToString() + ", Failure: " + countFailure.ToString());
+            UploadDirectoryToServer(LocalUploadPath, LocalUploadPath, projectListHelper, true);
+            Login.StatusLog.AddStatus("Datasources upload done.  Success: " + UploadSuccesses.ToString() + ", Failure: " + UploadFailures.ToString());
         }
 
         /// <summary>
@@ -96,12 +101,11 @@ namespace Traffk.Tableau.REST.RestRequests
             string rootContentPath, 
             string currentContentPath, 
             ProjectFindCreateHelper projectsList, 
-            bool recurseDirectories, 
-            out int countSuccess, 
-            out int countFailure)
+            bool recurseDirectories
+            //out int countSuccess, 
+            //out int countFailure
+            )
         {
-            countSuccess = 0;
-            countFailure = 0;
 
             //Look up the project name based on directory name, and creating a project on demand
             string projectName;
@@ -117,10 +121,9 @@ namespace Traffk.Tableau.REST.RestRequests
 
             //Start off with no project ID -- we'll look it up as needed
             string projectIdForUploads = null;
-            //-------------------------------------------------------------------------------------
+
             //Upload the files from local directory to server
-            //-------------------------------------------------------------------------------------
-            foreach (var thisFilePath in Directory.GetFiles(currentContentPath))
+            Parallel.ForEach(Directory.GetFiles(currentContentPath), (thisFilePath) =>
             {
                 bool isValidUploadFile = IsValidUploadFile(thisFilePath);
 
@@ -144,27 +147,26 @@ namespace Traffk.Tableau.REST.RestRequests
 
                         //Do the file upload
                         bool wasFileUploaded = AttemptUploadSingleFile(thisFilePath, projectIdForUploads, dbCredentialsIfAny, publishSettings);
-                        if (wasFileUploaded) { countSuccess++; }
+                        if (wasFileUploaded)
+                        {
+                            UploadSuccesses++;
+                        }
                     }
                     catch (Exception ex)
                     {
-                        countFailure++;
+                        UploadFailures++;
                         Login.StatusLog.AddError("Error uploading datasource " + thisFilePath + ". " + ex.Message);
-                        //LogManualAction_UploadDataSource(thisFilePath);
                     }
                 }
-            }
+            })
+            ;
 
             //If we are running recursive , then look in the subdirectories too
             if (recurseDirectories)
             {
-                int subDirSuccess;
-                int subDirFailure;
                 foreach (var subDirectory in Directory.GetDirectories(currentContentPath))
                 {
-                    UploadDirectoryToServer(rootContentPath, subDirectory, projectsList, true, out subDirSuccess, out subDirFailure);
-                    countSuccess += subDirSuccess;
-                    countFailure += subDirFailure;
+                    UploadDirectoryToServer(rootContentPath, subDirectory, projectsList, true);
                 }
             }
         }

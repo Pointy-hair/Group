@@ -15,6 +15,11 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='VSTS-CI|AnyCPU'" />
 
   <ItemGroup>
+    <None Remove="Properties\PublishProfiles\traffkSite-dev - FTP.pubxml" />
+    <None Remove="Properties\PublishProfiles\traffkSite-dev - Web Deploy.pubxml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="wwwroot\**\*;Views\**\*;Areas\**\Views">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>

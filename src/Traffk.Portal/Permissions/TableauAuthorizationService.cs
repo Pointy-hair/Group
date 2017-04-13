@@ -1,6 +1,5 @@
-﻿using System;
-using Microsoft.Extensions.Options;
-using RevolutionaryStuff.Core;
+﻿using Microsoft.Extensions.Options;
+using System;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Tableau;
 using Traffk.Tableau.REST;
@@ -16,7 +15,7 @@ namespace Traffk.Portal.Permissions
         private readonly TraffkRdbContext Rdb;
 
         public TableauAuthorizationService(IOptions<TableauSignInOptions> options,
-            IOptions<TableauAdminSignInOptions> adminSignInOptions,
+            IOptions<TableauAdminCredentials> adminSignInOptions,
             TraffkRdbContext rdb)
         {
             TableauAdminCredentials = adminSignInOptions.Value;
@@ -27,16 +26,23 @@ namespace Traffk.Portal.Permissions
             Rdb = rdb;
         }
 
-        public ITableauUserCredentials GetTableauUserCredentials(ApplicationUser user, Tenant tenant)
+        public ITableauUserCredentials GetTableauUserCredentials(ApplicationUser user, string tableauTenantId)
         {
-            user.Settings.TableauUserName = TableauAdminCredentials.UserName;
-            user.Settings.TableauPassword = TableauAdminCredentials.Password;
-            Rdb.Update(user);
-            Rdb.SaveChangesAsync();
-            return TableauAdminCredentials;
+            if (user.Settings.TableauUserName != null && user.Settings.TableauPassword != null)
+            {
+                return new TableauUserCredentials(user.Settings.TableauUserName, user.Settings.TableauPassword);
+            }
+            else
+            {
+                user.Settings.TableauUserName = TableauAdminCredentials.UserName;
+                user.Settings.TableauPassword = TableauAdminCredentials.Password;
+                Rdb.Update(user);
+                Rdb.SaveChangesAsync();
+                return TableauAdminCredentials;
+            }
         }
 
-        public void RemoveTableauUserCredentials(ApplicationUser user, Tenant tenant)
+        public void RemoveTableauUserCredentials(ApplicationUser user, string tableauTenantId)
         {
             throw new NotImplementedException();
             //Will implement in the future
