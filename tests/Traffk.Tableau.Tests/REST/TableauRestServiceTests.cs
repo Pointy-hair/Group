@@ -15,13 +15,18 @@ namespace Traffk.Tableau.Tests.REST
     {
         public IOptions<TableauSignInOptions> Options { get; set; }
         public ITableauTenantFinder TableauTenantFinder { get; set; }
-        public ITableauUserCredentials TableauAdminCredentials { get; set; }
+        public TableauAdminCredentials TableauAdminCredentials { get; set; }
 
         public TableauRestServiceTests()
         {
             Options = MockEnvironment.TableauSignInOptions().Object;
             TableauTenantFinder = MockEnvironment.TableauTenantFinder().Object;
-            TableauAdminCredentials = MockEnvironment.TableauAdminCredentials().Object;
+            var tableauAdminCredentials = MockEnvironment.TableauAdminCredentials().Object;
+            TableauAdminCredentials = new TableauAdminCredentials
+            {
+                Username = tableauAdminCredentials.UserName,
+                Password = tableauAdminCredentials.Password
+            };
         }
 
         [TestClass]
@@ -68,7 +73,7 @@ namespace Traffk.Tableau.Tests.REST
         {
             [Ignore]
             [TestMethod]
-            public void WhenGivenListOfSingleWorkbookDownloadWorkbook()
+            public void WhenGivenListOfSingleWorkbookDownloadWorkbookFile()
             {
                 var testService = new TableauRestService(Options,TableauAdminCredentials);
                 var workbooks = ((ITableauRestService)testService).DownloadWorkbooksList();
@@ -233,6 +238,40 @@ namespace Traffk.Tableau.Tests.REST
             }
         }
 
+        [TestClass]
+        public class MigrateDataMethodsTests : TableauRestServiceTests
+        {
+            [Ignore]
+            [TestMethod]
+            public void WhenGivenExistingSiteMigrateData()
+            {
+                var newSiteOptions = MockEnvironment.TableauSignInOptions("https://tableau-dev.traffk.com/#/site/TestMasterTenant").Object;
+                var tableauAdminCredentials = TableauAdminCredentials as TableauAdminCredentials;
+                var testAdminService = new TableauAdminRestService(newSiteOptions, tableauAdminCredentials);
+
+                var dbUserName = "Darren";
+                var dbPassword = "1keylimecakeballs2MAGICBARS3currentjellycookies4";
+                var testNewServerAddress = "traffkrdb-dev.database.windows.net/";
+                var testDbName = "TraffkHip2";
+                string path = Path.GetTempPath();
+                path = path + @"TableauIntegrationTestFiles";
+
+                var dataMigrationRequest = new TableauDataMigrationRequest("ExistingTestTenant", testNewServerAddress, testDbName, dbUserName, dbPassword, path);
+
+                testAdminService.MigrateDataset(dataMigrationRequest);
+
+                DirectoryInfo di = new DirectoryInfo(path);
+
+                foreach (FileInfo file in di.GetFiles())
+                {
+                    file.Delete();
+                }
+                foreach (DirectoryInfo dir in di.GetDirectories())
+                {
+                    dir.Delete(true);
+                }
+            }
+        }
 
         [TestClass]
         public class SignInMethodTests : TableauRestServiceTests
@@ -250,7 +289,7 @@ namespace Traffk.Tableau.Tests.REST
         public class DownloadProjectsListMethodTests : TableauRestServiceTests
         {
             [TestMethod]
-            public void WhenSignedInDownloadAllProjects()
+            public void WhenSignedInDownloadProjectList()
             {
                 var testService = new TableauRestService(Options, TableauAdminCredentials);
                 var projects = testService.DownloadProjectsList();
@@ -263,7 +302,7 @@ namespace Traffk.Tableau.Tests.REST
         public class DownloadViewsFromSiteMethodTests : TableauRestServiceTests
         {
             [TestMethod]
-            public void WhenSignedInDownloadAllViews()
+            public void WhenSignedInDownloadViewList()
             {
                 var testService = new TableauRestService(Options, TableauAdminCredentials) as ITableauRestService;
                 var views = testService.DownloadViewsForSite();

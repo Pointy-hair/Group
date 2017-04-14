@@ -10,18 +10,23 @@ namespace Traffk.Tableau.REST
         TableauServerSignIn Login { get; set; }
         //TODO: Remove {TableauServerUrls onlineUrls, string userName, string password} from the signature
         TableauServerSignIn SignIn(TableauServerUrls onlineUrls, string userName, string password, TaskStatusLogs statusLog = null);
+
         DownloadProjectsList DownloadProjectsList();
         DownloadViewsForSite DownloadViewsForSite();
         ICollection<SiteWorkbook> DownloadWorkbooksList();
+
         byte[] DownloadPreviewImageForView(string workbookId, string viewId);
-        SiteinfoSite CreateSite(string tenantName, out string url);
+
+        SiteInfo CreateSite(string tenantName, out string url);
+        SiteInfo GetSiteInfo();
         void AddUserToSite(string siteId, string userName);
         void RemoveUserFromSite(SiteUser userToRemove);
+
         ICollection<SiteWorkbook> DownloadWorkbooks(IEnumerable<SiteWorkbook> workbooksToDownload, string localSavePath,
             bool generateInfoFile);
-
         void UploadWorkbooks(string projectName, string datasourceUsername, string datasourcePassword,
             bool isEmbedded, string path);
+
         ICollection<SiteDatasource> DownloadDatasourceList();
         ICollection<SiteConnection> DownloadConnectionsForDatasource(string datasourceId);
         void DownloadDatasourceFiles(IEnumerable<SiteDatasource> datasources, string savePath);

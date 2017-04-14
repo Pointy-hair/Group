@@ -25,7 +25,7 @@ namespace Traffk.Tableau.REST.RestRequests
 
         }
         
-        public SiteinfoSite ExecuteRequest(string tenantName)
+        public SiteInfo ExecuteRequest(string tenantName)
         {
             var sb = new StringBuilder();
             var xmlWriter = XmlWriter.Create(sb, XmlHelper.XmlSettingsForWebRequests);
@@ -59,7 +59,7 @@ namespace Traffk.Tableau.REST.RestRequests
                 var xDoc = xmlDoc.ToXDocument();
                 var siteElement = xDoc.Root.Descendants(XName.Get(TableauObjectName, XmlNamespace)).FirstOrDefault();
 
-                return new SiteinfoSite(siteElement.ToXmlNode());
+                return new SiteInfo(siteElement.ToXmlNode());
             }
 
 

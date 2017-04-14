@@ -6,7 +6,7 @@ namespace Traffk.Tableau.REST.Models
     /// <summary>
     /// Information about a Site in Server
     /// </summary>
-    public class SiteinfoSite
+    public class SiteInfo
     {
         public readonly string Id;
         public readonly string Name;
@@ -19,7 +19,7 @@ namespace Traffk.Tableau.REST.Models
         /// </summary>
         public readonly string DeveloperNotes;
 
-        public SiteinfoSite(XmlNode content)
+        public SiteInfo(XmlNode content)
         {
             if(content.Name.ToLower() != "site")
             {

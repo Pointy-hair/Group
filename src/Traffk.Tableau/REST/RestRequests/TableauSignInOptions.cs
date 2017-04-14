@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Traffk.Tableau.REST.RestRequests
 {
     public class TableauSignInOptions
     {
+        private const string SiteUrlPortion = @"/site/";
+
         public TableauSignInOptions()
         { }
 
@@ -19,7 +18,7 @@ namespace Traffk.Tableau.REST.RestRequests
         public void UpdateForTenant(string tenantId)
         {
             TenantId = tenantId;
-            Url = RestApiUrl + "site/" + tenantId;
+            Url = BaseUrl + SiteUrlPortion + tenantId;
         }
 
         public string TrustedUrl => Url + "/trusted/";
@@ -47,7 +46,7 @@ namespace Traffk.Tableau.REST.RestRequests
             {
                 if (Url.Contains("site"))
                 {
-                    return Url.Split(new string[] { @"/site/" }, StringSplitOptions.None)[0];
+                    return Url.Split(new string[] { SiteUrlPortion }, StringSplitOptions.None)[0];
                 }
                 else
                 {

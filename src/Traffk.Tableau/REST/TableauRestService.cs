@@ -13,7 +13,7 @@ namespace Traffk.Tableau.REST
     {
         public TableauServerSignIn Login { get; set; }
 
-        private readonly TableauSignInOptions Options;
+        protected readonly TableauSignInOptions Options;
         private readonly TableauServerUrls Urls;
         private readonly ICacher Cacher;
         private readonly ITableauUserCredentials TableauUserCredentials;
@@ -21,7 +21,7 @@ namespace Traffk.Tableau.REST
         #region Constructors
 
         public TableauRestService(IOptions<TableauSignInOptions> options, 
-            ITableauUserCredentials tableauUserCredentials, 
+            ITableauUserCredentials tableauUserCredentials,
             ICacher cacher=null)
         {
             TableauUserCredentials = tableauUserCredentials;
@@ -66,7 +66,7 @@ namespace Traffk.Tableau.REST
             return workbooksList.Workbooks;
         }
 
-        SiteinfoSite ITableauRestService.CreateSite(string tenantName, out string sitePortionOfUrl)
+        SiteInfo ITableauRestService.CreateSite(string tenantName, out string sitePortionOfUrl)
         {
             var addSite = new CreateSite(Urls, Login);
             var siteInfo = addSite.ExecuteRequest(tenantName);
@@ -74,9 +74,15 @@ namespace Traffk.Tableau.REST
             return siteInfo;
         }
 
-        private string GetNewSiteUrl(SiteinfoSite site)
+        private string GetNewSiteUrl(SiteInfo site)
         {
             return Options.BaseUrl + @"/site/" + site.ContentUrl;
+        }
+
+        public SiteInfo GetSiteInfo()
+        {
+            var getSiteInfoRequest = new DownloadSiteInfo(Urls, Login);
+            return getSiteInfoRequest.ExecuteRequest();
         }
 
         void ITableauRestService.AddUserToSite(string siteId, string userName)
@@ -182,7 +188,7 @@ namespace Traffk.Tableau.REST
             var newSiteRestService =
                 new TableauRestService(newSiteSignInOptions, TableauUserCredentials) as
                     ITableauRestService;
-            var uploadedDataSources = newSiteRestService.UploadDatasourceFiles("Default", request.MasterDatabaseUserName, request.MasterDatabasePassword, true, request.TemporaryFilePath);
+            var uploadedDataSources = newSiteRestService.UploadDatasourceFiles("Default", request.SourceDatabaseUserName, request.SourceDatabasePassword, true, request.TemporaryFilePath);
             
             //4. Download workbooks from master site
             var workbooksToDownload =
@@ -195,8 +201,7 @@ namespace Traffk.Tableau.REST
             }
 
             //5. Upload workbooks to new site
-            //Break this out into a separate method that's specifically for uploading to specific site
-            newSiteRestService.UploadWorkbooks("Default", request.MasterDatabaseUserName, request.MasterDatabasePassword, true, request.TemporaryFilePath);
+            newSiteRestService.UploadWorkbooks("Default", request.SourceDatabaseUserName, request.SourceDatabasePassword, true, request.TemporaryFilePath);
             
             //TODO: Update the tenant with the new Tableau site info
         }

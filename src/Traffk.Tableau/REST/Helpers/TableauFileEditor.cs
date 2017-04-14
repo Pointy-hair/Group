@@ -60,7 +60,7 @@ namespace Traffk.Tableau.REST.Helpers
             }
         }
 
-        public static void UpdateWorkbookFileSiteReferences(string pathToWorkbookFile, SiteinfoSite site)
+        public static void UpdateWorkbookFileSiteReferences(string pathToWorkbookFile, SiteInfo site)
         {
             var siteName = site.Name;
             var fileExtension = Path.GetExtension(pathToWorkbookFile).ToLower();

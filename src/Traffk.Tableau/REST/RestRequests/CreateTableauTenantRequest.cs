@@ -7,29 +7,29 @@ namespace Traffk.Tableau.REST.RestRequests
     public class CreateTableauTenantRequest
     {
         public string TenantName { get; }
-        public string MasterDatabaseUserName { get; }
-        public string MasterDatabasePassword { get; }
+        public string SourceDatabaseUserName { get; }
+        public string SourceDatabasePassword { get; }
         public string NewDatabaseServerAddress { get; }
         public string NewDatabaseName { get; }
-        public string NewDatabaseUserName { get; }
+        public string NewDatabaseUsername { get; }
         public string NewDatabasePassword { get; }
         public string TemporaryFilePath { get; }
 
         public CreateTableauTenantRequest(string tenantName,
-            string masterDatabaseUserName,
-            string masterDatabasePassword,
+            string sourceDatabaseUserName,
+            string sourceDatabasePassword,
             string newDatabaseServerAddress,
             string newDatabaseName,
-            string newDatabaseUserName,
+            string newDatabaseUsername,
             string newDatabasePassword,
             string temporaryFilePath)
         {
             TenantName = tenantName;
-            MasterDatabaseUserName = masterDatabaseUserName;
-            MasterDatabasePassword = masterDatabasePassword;
+            SourceDatabaseUserName = sourceDatabaseUserName;
+            SourceDatabasePassword = sourceDatabasePassword;
             NewDatabaseServerAddress = newDatabaseServerAddress;
             NewDatabaseName = newDatabaseName;
-            NewDatabaseUserName = newDatabaseUserName;
+            NewDatabaseUsername = newDatabaseUsername;
             NewDatabasePassword = newDatabasePassword;
             TemporaryFilePath = temporaryFilePath;
         }
