@@ -247,6 +247,32 @@ function toastAppearDisappear(element) {
     element.fadeIn(500).delay(4000).hide(500);
 }
 
+function pinMenu(elem) {
+    var cookieName = "traffkPinnedMenu";
+
+    /* body vertical offset */
+    jQuery(elem).removeClass('fa-thumb-tack');
+    jQuery(elem).addClass('fa-chevron-up');
+    /* toggle controls */
+    jQuery('.lvl2-nav').css('cssText', jQuery('.lvl2-nav').attr('style') + 'display: block !important;');
+    jQuery('#page-wrapper').removeClass('no-padding-top');
+    jQuery('#page-wrapper').addClass('nav-padding-top');
+    setCookie(cookieName, true, 14);
+}
+
+function unpinMenu(elem) {
+    var cookieName = "traffkPinnedMenu";
+    /* body vertical offset */
+    jQuery(elem).removeClass('fa-chevron-up');
+    jQuery(elem).addClass('fa-thumb-tack');
+    /* toggle controls */
+    jQuery('.lvl2-nav').css('cssText', 'width: ' + (window.innerWidth + 20) + 'px;');
+    jQuery('#page-wrapper').removeClass('nav-open');
+    jQuery('#page-wrapper').removeClass('nav-padding-top');
+    jQuery('#page-wrapper').removeClass('no-padding-top');
+    setCookie(cookieName, false, 14);
+}
+
 $(document).ready(function () {
     // init popups
     jQuery('.popup').popup({
@@ -256,6 +282,11 @@ $(document).ready(function () {
 
     //setUI for Edge
     setUI();
+
+    var pinnedMenu = getCookie('traffkPinnedMenu');
+    if (pinnedMenu && pinnedMenu === 'true') {
+        pinMenu(jQuery('#pin-menu'));
+    }
 
     // id parent if using an img logo
     jQuery('#client-logo').parent().addClass('img-logo');
@@ -370,7 +401,7 @@ $(document).ready(function () {
     });
 
     //Shift contents down or up based on navbar
-    jQuery('.nav.navbar-left.top-nav').click(function () {
+    jQuery('a.dropdown-toggle.navbar-brand.img-logo').click(function () {
         var isUserLoggedIn = !jQuery('.account-nav')[0];
         if (jQuery('#page-wrapper').hasClass('nav-open')) {
             jQuery('#page-wrapper').removeClass('nav-open');
@@ -428,6 +459,14 @@ $(document).ready(function () {
             }, 700);
         });
     }
+
+    jQuery('#pin-menu').click(function () {
+        if (jQuery(this).hasClass('fa-chevron-up')) {
+            unpinMenu(this);
+        } else {
+            pinMenu(this);
+        }
+    });
 });
 
 // AJAX helpers vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv

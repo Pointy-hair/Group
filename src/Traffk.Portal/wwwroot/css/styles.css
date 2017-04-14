@@ -1157,6 +1157,34 @@ ul.navbar-left {
     min-height: 900px;
 }
 
+.top-nav > .open > .dropdown-menu, .lvl2-nav {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+}
+
+.nav-padding-top {
+    padding-top: 82px !important;
+}
+
+.no-padding-top {
+    padding-top: 0 !important;
+}
+
+.lvl2-nav {
+    margin-top: -1px !important;
+}
+
+#primary-subnav {
+    position: relative;
+}
+
+#pin-menu {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    padding-right: 30px;
+    cursor: pointer;
+}
+
 /*
     Screen size specific CSS
 */
