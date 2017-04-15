@@ -66,11 +66,10 @@ namespace Traffk.Tableau.REST
             return workbooksList.Workbooks;
         }
 
-        SiteInfo ITableauRestService.CreateSite(string tenantName, out string sitePortionOfUrl)
+        SiteInfo ITableauRestService.CreateSite(string tenantName)
         {
             var addSite = new CreateSite(Urls, Login);
             var siteInfo = addSite.ExecuteRequest(tenantName);
-            sitePortionOfUrl = siteInfo.ContentUrl;
             return siteInfo;
         }
 
@@ -165,45 +164,5 @@ namespace Traffk.Tableau.REST
             updateDatasourceRequest.UpdateServerAddress(datasourceToUpdate, connectionToUpdate, newServerAddress);
         }
         
-        void ITableauRestService.CreateNewTableauTenant(CreateTableauTenantRequest request)
-        {
-            var masterRestService = this as ITableauRestService;
-
-            //1. Create the site
-            var tenantId = "";
-            var newSite = masterRestService.CreateSite(request.TenantName, out tenantId);
-
-            //2. Download datasources from master site
-            var dataSources = masterRestService.DownloadDatasourceList();
-            masterRestService.DownloadDatasourceFiles(dataSources, request.TemporaryFilePath);
-
-            foreach (var datasource in Directory.GetFiles(request.TemporaryFilePath + @"\Default"))
-            {
-                TableauFileEditor.UpdateDatasourceDatabaseName(datasource, request.NewDatabaseName, request.TemporaryFilePath);
-            }
-
-            //3. Upload datasources to new site
-            var newSiteOptions = new TableauSignInOptions(GetNewSiteUrl(newSite));
-            var newSiteSignInOptions = ConfigurationHelpers.CreateOptions(newSiteOptions);
-            var newSiteRestService =
-                new TableauRestService(newSiteSignInOptions, TableauUserCredentials) as
-                    ITableauRestService;
-            var uploadedDataSources = newSiteRestService.UploadDatasourceFiles("Default", request.SourceDatabaseUserName, request.SourceDatabasePassword, true, request.TemporaryFilePath);
-            
-            //4. Download workbooks from master site
-            var workbooksToDownload =
-                masterRestService.DownloadWorkbooksList();
-            masterRestService.DownloadWorkbooks(workbooksToDownload, request.TemporaryFilePath, false);
-
-            foreach (var workbook in Directory.GetFiles(request.TemporaryFilePath))
-            {
-                TableauFileEditor.UpdateWorkbookFileSiteReferences(workbook, newSite);
-            }
-
-            //5. Upload workbooks to new site
-            newSiteRestService.UploadWorkbooks("Default", request.SourceDatabaseUserName, request.SourceDatabasePassword, true, request.TemporaryFilePath);
-            
-            //TODO: Update the tenant with the new Tableau site info
-        }
     }
 }

@@ -16,6 +16,18 @@ namespace Traffk.Tableau.REST
             TableauAdminCredentials = adminCredentials;
         }
 
+        public void CreateTableauTenant(CreateTableauTenantRequest request)
+        {
+            var masterRestService = this as ITableauRestService;
+
+            //Create the site
+            var newSite = masterRestService.CreateSite(request.TenantName);
+
+            //Migrate the data
+            var migrateDataRequest = new TableauDataMigrationRequest(request);
+            MigrateDataset(migrateDataRequest);
+        }
+
         public void MigrateDataset(TableauDataMigrationRequest request)
         {
             base.Options.UpdateForTenant(request.DestTableauTenantId);

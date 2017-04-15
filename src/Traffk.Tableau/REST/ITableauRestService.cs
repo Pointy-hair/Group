@@ -17,7 +17,7 @@ namespace Traffk.Tableau.REST
 
         byte[] DownloadPreviewImageForView(string workbookId, string viewId);
 
-        SiteInfo CreateSite(string tenantName, out string url);
+        SiteInfo CreateSite(string tenantName);
         SiteInfo GetSiteInfo();
         void AddUserToSite(string siteId, string userName);
         void RemoveUserFromSite(SiteUser userToRemove);
@@ -34,8 +34,6 @@ namespace Traffk.Tableau.REST
             string datasourcePassword, bool isEmbedded, string path);
         void UpdateDatasourceConnection(SiteDatasource datasourceToUpdate, SiteConnection connectionToUpdate,
             string newServerAddress);
-
-        void CreateNewTableauTenant(CreateTableauTenantRequest request);
     }
 
     public class VisualId

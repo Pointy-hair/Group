@@ -37,10 +37,8 @@ namespace Traffk.Tableau.Tests.REST
             public void WhenGivenTenantNameCreateSite()
             {
                 var testService = new TableauRestService(Options, TableauAdminCredentials);
-                string url;
-                var site = ((ITableauRestService)testService).CreateSite("Test Tenant", out url);
+                var site = ((ITableauRestService)testService).CreateSite("Test Tenant");
                 Assert.IsNotNull(site);
-                StringAssert.Contains(url, "tableau-dev.traffk.com");
             }
         }
 
@@ -210,20 +208,19 @@ namespace Traffk.Tableau.Tests.REST
             public void WhenGivenCreateTenantRequestCreate()
             {
                 var newSiteOptions = MockEnvironment.TableauSignInOptions("https://tableau-dev.traffk.com/#/site/TestMasterTenant").Object;
-                var testMasterService =
-                    new TableauRestService(newSiteOptions, TableauAdminCredentials) as
-                        ITableauRestService;
+                var tableauAdminCredentials = TableauAdminCredentials as TableauAdminCredentials;
+                var testAdminService = new TableauAdminRestService(newSiteOptions, tableauAdminCredentials);
 
                 var dbUserName = "Darren";
                 var dbPassword = "1keylimecakeballs2MAGICBARS3currentjellycookies4";
                 var testNewServerAddress = "traffkrdb-dev.database.windows.net/";
                 var testDbName = "TraffkHip2";
-                string path = System.IO.Path.GetTempPath();
+                string path = Path.GetTempPath();
                 path = path + @"TableauIntegrationTestFiles";
 
                 var testCreateTenantRequest = new CreateTableauTenantRequest("IntegrationTestTenant", dbUserName, dbPassword, testNewServerAddress, testDbName, dbUserName, dbPassword, path);
 
-                testMasterService.CreateNewTableauTenant(testCreateTenantRequest);
+                testAdminService.CreateTableauTenant(testCreateTenantRequest);
 
                 DirectoryInfo di = new DirectoryInfo(path);
 
