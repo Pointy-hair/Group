@@ -57,6 +57,9 @@ namespace RevolutionaryStuff.Core
         {
         }
 
+        public static string ToString(this object o) 
+            => o == null ? null : o.ToString();
+
         /// <summary>
         /// Returns the first non-null, non-blank string in the input
         /// </summary>

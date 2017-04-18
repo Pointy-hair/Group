@@ -22,7 +22,7 @@ namespace TraffkPortal.Resources
                 {
                     var builder = new ConfigurationBuilder();
                     builder.AddObject(Options.Value, nameof(PortalOptions), true);
-                    builder.AddObject(CurrentContextServices.Application.ApplicationSettings.PortalOptions, nameof(PortalOptions), true);
+                    builder.AddObject(CurrentContextServices.Application.AppSettings.PortalOptions, nameof(PortalOptions), true);
                     var u = CurrentContextServices.User;
                     if (u != null && u.Settings != null)
                     {
@@ -103,7 +103,7 @@ namespace TraffkPortal.Resources
                 {
                     ReusableValueByKey_p = new Dictionary<string, ReusableValue>();
                     CurrentContextServices.Tenant.TenantSettings.ReusableValues.ForEach(z => ReusableValueByKey_p[z.Key] = z);
-                    CurrentContextServices.Application.ApplicationSettings.ResourceValues.ForEach(z => ReusableValueByKey_p[z.Key] = z);
+                    CurrentContextServices.Application.AppSettings.ResourceValues.ForEach(z => ReusableValueByKey_p[z.Key] = z);
                 }
                 return ReusableValueByKey_p;
             }

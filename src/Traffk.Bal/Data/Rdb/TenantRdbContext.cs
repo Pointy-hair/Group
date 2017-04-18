@@ -13,19 +13,19 @@ namespace Traffk.Bal.Data.Rdb
             : base(options)
         { }
 
-        public async Task<ConnectionHelpers.Result<Traffk.Bal.Data.Rdb.ApplicationHostItem>> ApplicationFindByHostAsync(string hostName = null, ApplicationTypes? applicationType = null)
+        public async Task<ConnectionHelpers.Result<AppHostItem>> AppFindByHostname(string hostName = null, AppTypes? appType = null)
         {
             var ps = new SqlParameter[]
                 {
                     new SqlParameter("@hostName", hostName==null ? DBNull.Value:(object) hostName){Direction=ParameterDirection.Input},
-                    new SqlParameter("@applicationType", applicationType==null ? DBNull.Value:(object) applicationType.ToString()){Direction=ParameterDirection.Input},
+                    new SqlParameter("@appType", appType==null ? DBNull.Value:(object) appType.ToString()){Direction=ParameterDirection.Input},
                 };
             var conn = Database.GetDbConnection();
             if (conn.State != ConnectionState.Open)
             {
                 await conn.OpenAsync();
             }
-            return await conn.ExecuteReaderAsync<Traffk.Bal.Data.Rdb.ApplicationHostItem>(null, "dbo.ApplicationFindByHost", null, ps);
+            return await conn.ExecuteReaderAsync<AppHostItem>(null, "dbo.AppFindByHostname", null, ps);
         }
     }
 }

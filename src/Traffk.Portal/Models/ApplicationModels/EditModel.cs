@@ -26,14 +26,14 @@ namespace TraffkPortal.Models.ApplicationModels
         public EditModel()
         { }
 
-        public EditModel(Application app)
+        public EditModel(App app)
         {
             if (app == null) return;
-            ApplicationId = app.ApplicationId;
-            ApplicationType = app.ApplicationTypeStringValue;
-            ApplicationName = app.ApplicationName;
-            EmailSenderAddress = app.ApplicationSettings.EmailSenderAddress;
-            EmailSenderName = app.ApplicationSettings.EmailSenderName;
+            ApplicationId = app.AppId;
+            ApplicationType = app.AppTypeStringValue;
+            ApplicationName = app.AppName;
+            EmailSenderAddress = app.AppSettings.EmailSenderAddress;
+            EmailSenderName = app.AppSettings.EmailSenderName;
         }
     }
 }

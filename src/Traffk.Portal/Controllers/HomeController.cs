@@ -42,7 +42,7 @@ namespace TraffkPortal.Controllers
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";
-            System.Diagnostics.Trace.WriteLine(Current.Application.ApplicationSettings);
+            System.Diagnostics.Trace.WriteLine(Current.Application.AppSettings);
             System.Diagnostics.Trace.WriteLine(Current.Tenant.TenantSettings);
             Rdb.SaveChanges();
             return View();

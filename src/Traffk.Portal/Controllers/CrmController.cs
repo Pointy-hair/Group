@@ -303,13 +303,13 @@ namespace TraffkPortal.Controllers
             nameof(ContactModel.Contact)+"."+nameof(Contact.ContactType),
             nameof(ContactModel.Contact)+"."+nameof(Contact.ContactDetails),
             nameof(ContactModel.Contact)+"."+nameof(Contact.ContactDetails)+"."+nameof(Contact.ContactDetails_.Tags),
-            nameof(ContactModel.Contact)+"."+nameof(Person.DateOfBirth),
-            nameof(ContactModel.Contact)+"."+nameof(Person.Gender),
-            nameof(ContactModel.Contact)+"."+nameof(Person.Prefix),
-            nameof(ContactModel.Contact)+"."+nameof(Person.FirstName),
-            nameof(ContactModel.Contact)+"."+nameof(Person.MiddleName),
-            nameof(ContactModel.Contact)+"."+nameof(Person.LastName),
-            nameof(ContactModel.Contact)+"."+nameof(Person.Suffix),
+            nameof(ContactModel.Contact)+"."+nameof(PersonContact.DateOfBirth),
+            nameof(ContactModel.Contact)+"."+nameof(PersonContact.Gender),
+            nameof(ContactModel.Contact)+"."+nameof(PersonContact.Prefix),
+            nameof(ContactModel.Contact)+"."+nameof(PersonContact.FirstName),
+            nameof(ContactModel.Contact)+"."+nameof(PersonContact.MiddleName),
+            nameof(ContactModel.Contact)+"."+nameof(PersonContact.LastName),
+            nameof(ContactModel.Contact)+"."+nameof(PersonContact.Suffix),
             nameof(ContactModel.CommunicationPieces)
 //            nameof(ContactModel.Optings)
             )]

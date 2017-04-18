@@ -50,9 +50,9 @@ namespace TraffkPortal.Controllers
             SystemCommunications,
         }
 
-        private void SetHeroLayoutViewData(Application app, PageKeys pageKey)
+        private void SetHeroLayoutViewData(App app, PageKeys pageKey)
         {
-            SetHeroLayoutViewData(app.ApplicationId, app.ApplicationName, pageKey, app.ApplicationType);
+            SetHeroLayoutViewData(app.AppId, app.AppName, pageKey, app.AppType);
         }
 
         private readonly BlobStorageServices Blobs;
@@ -72,12 +72,12 @@ namespace TraffkPortal.Controllers
         [ActionName(ActionNames.Index)]
         public async Task<ActionResult> Index()
         {
-            return View(await Rdb.Applications.Where(a => a.TenantId == Current.TenantId).ToListAsync());
+            return View(await Rdb.Apps.Where(a => a.TenantId == Current.TenantId).ToListAsync());
         }
 
-        private async Task<Application> GetApplicationAsync(int applicationId)
+        private async Task<App> GetApplicationAsync(int appId)
         {
-            return await Rdb.Applications.FirstOrDefaultAsync(a => a.ApplicationId == applicationId && a.TenantId == TenantId);
+            return await Rdb.Apps.FirstOrDefaultAsync(a => a.AppId == appId && a.TenantId == TenantId);
         }
 
         private void PopulateViewBagWithCreativeSelectListItemsByCommunicationModel(int tenantId)
@@ -104,7 +104,7 @@ namespace TraffkPortal.Controllers
             if (app == null) return NotFound();
             PopulateViewBagWithCreativeSelectListItemsByCommunicationModel(app.TenantId);
             SetHeroLayoutViewData(app, PageKeys.SystemCommunications);
-            var model = SystemCommunicationsModel.Create(app.ApplicationSettings.CreativeIdBySystemCommunicationPurpose);
+            var model = SystemCommunicationsModel.Create(app.AppSettings.CreativeIdBySystemCommunicationPurpose);
             return View(ViewNames.SystemCommunications, model);
         }
 
@@ -117,7 +117,7 @@ namespace TraffkPortal.Controllers
             var app = await GetApplicationAsync(id);
             if (app == null) return NotFound();
 
-            var model = SystemCommunicationsModel.Create(app.ApplicationSettings.CreativeIdBySystemCommunicationPurpose);
+            var model = SystemCommunicationsModel.Create(app.AppSettings.CreativeIdBySystemCommunicationPurpose);
 
             foreach (var key in this.Request.Form.Keys)
             {
@@ -130,7 +130,7 @@ namespace TraffkPortal.Controllers
                 scm.CreativeId = creativeId;                
             }
 
-            app.ApplicationSettings.CreativeIdBySystemCommunicationPurpose = model.ToDictionary(z => z.Purpose, z => z.CreativeId);
+            app.AppSettings.CreativeIdBySystemCommunicationPurpose = model.ToDictionary(z => z.Purpose, z => z.CreativeId);
             Rdb.Update(app);
             await Rdb.SaveChangesAsync();
             SetToast(AspHelpers.ToastMessages.Saved);
@@ -197,9 +197,9 @@ namespace TraffkPortal.Controllers
             SetHeroLayoutViewData(app, PageKeys.Basics);
             if (ModelState.IsValid)
             {
-                app.ApplicationName = m.ApplicationName;
-                app.ApplicationSettings.EmailSenderAddress = m.EmailSenderAddress;
-                app.ApplicationSettings.EmailSenderName = m.EmailSenderName;
+                app.AppName = m.ApplicationName;
+                app.AppSettings.EmailSenderAddress = m.EmailSenderAddress;
+                app.AppSettings.EmailSenderName = m.EmailSenderName;
                 await Rdb.SaveChangesAsync();
                 return RedirectToIndex();
             }
@@ -237,7 +237,7 @@ namespace TraffkPortal.Controllers
             var app = await GetApplicationAsync(id);
             if (app == null) return NotFound();
             SetHeroLayoutViewData(app, PageKeys.RegistrationSettings);
-            var m = new RegistrationModel(app.ApplicationSettings.Registration);
+            var m = new RegistrationModel(app.AppSettings.Registration);
             return View(m);
         }
 
@@ -257,8 +257,8 @@ namespace TraffkPortal.Controllers
             SetHeroLayoutViewData(app, PageKeys.RegistrationSettings);
             if (ModelState.IsValid)
             {
-                app.ApplicationSettings.Registration.UsersCanSelfRegister = m.UsersCanSelfRegister;
-                app.ApplicationSettings.Registration.SelfRegistrationMandatoryEmailAddressHostnames = m.SelfRegistrationMandatoryEmailAddressHostnames;
+                app.AppSettings.Registration.UsersCanSelfRegister = m.UsersCanSelfRegister;
+                app.AppSettings.Registration.SelfRegistrationMandatoryEmailAddressHostnames = m.SelfRegistrationMandatoryEmailAddressHostnames;
                 await Rdb.SaveChangesAsync();
                 SetToast(AspHelpers.ToastMessages.Saved);
                 return RedirectToAction(ActionNames.ApplicationBasics);
@@ -272,7 +272,7 @@ namespace TraffkPortal.Controllers
             var app = await GetApplicationAsync(id);
             if (app == null) return NotFound();
             SetHeroLayoutViewData(app, PageKeys.PortalSettings);
-            return View(new PortalOptionsModel(app.ApplicationSettings.PortalOptions));
+            return View(new PortalOptionsModel(app.AppSettings.PortalOptions));
         }
 
         [HttpDelete]
@@ -281,7 +281,7 @@ namespace TraffkPortal.Controllers
         {
             var app = await GetApplicationAsync(applicationId);
             if (app == null) return NotFound();
-            var po = app.ApplicationSettings.PortalOptions ?? new PortalOptions();
+            var po = app.AppSettings.PortalOptions ?? new PortalOptions();
             switch (assetKey)
             {
                 case nameof(PortalOptions.JavascriptLink):
@@ -332,8 +332,8 @@ namespace TraffkPortal.Controllers
 
             if (ModelState.IsValid)
             {
-                var po = app.ApplicationSettings.PortalOptions ?? new PortalOptions();
-                app.ApplicationSettings.PortalOptions = po;
+                var po = app.AppSettings.PortalOptions ?? new PortalOptions();
+                app.AppSettings.PortalOptions = po;
                 po.RegisterMessage = model.RegisterMessage;
                 po.LoginMessage = model.LoginMessage;
                 po.HomeMessage = model.HomeMessage;

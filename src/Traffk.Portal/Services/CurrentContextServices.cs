@@ -24,13 +24,13 @@ namespace TraffkPortal.Services
         private static readonly ICache<string, AzureActiveDirectoryResourceAuthorizationGetter.AuthenticationResult>
             BearerCache = CachingServices.Instance.CreateSynchronized<string, AzureActiveDirectoryResourceAuthorizationGetter.AuthenticationResult>(CachingServices.FlushPeriods.Medium);
 
-        public Application Application
+        public App Application
         {
             get
             {
-                return Rdb.Applications.First(a => 
+                return Rdb.Apps.First(a => 
                 a.TenantId == TenantId && 
-                (a.ApplicationType==ApplicationTypes.Portal || a.ApplicationTypeStringValue== "urn:traffk.com/portal"));
+                a.AppType==AppTypes.Portal);
             }
         }
 

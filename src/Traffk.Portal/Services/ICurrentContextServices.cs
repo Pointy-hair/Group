@@ -5,7 +5,7 @@ namespace TraffkPortal.Services
 {
     public interface ICurrentContextServices
     {
-        Application Application { get; }
+        App Application { get; }
         ApplicationUser User { get; }
         int TenantId { get; }
         Tenant Tenant { get; }

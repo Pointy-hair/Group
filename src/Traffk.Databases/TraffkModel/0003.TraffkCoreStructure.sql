@@ -186,7 +186,7 @@ exec db.ColumnPropertySet 'Apps', 'AppType', 'Type of application'
 exec db.ColumnPropertySet 'Apps', 'AppName', 'Human readible name of the application'
 exec db.ColumnPropertySet 'Apps', 'AppSettings', 'Settings particular to this type of application'
 exec db.ColumnPropertySet 'Apps', 'AppSettings', 'Bal.Settings.ApplicationSettings', @propertyName='JsonSettingsClass'
-exec db.ColumnPropertySet 'Apps', 'AppType', 'ApplicationTypes', @propertyName='EnumType'
+exec db.ColumnPropertySet 'Apps', 'AppType', 'AppTypes', @propertyName='EnumType'
 exec db.ColumnPropertySet 'Apps', 'RowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
 exec db.ColumnPropertySet 'Apps', 'RowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
 

@@ -9,10 +9,12 @@ using Traffk.Bal.Data.Rdb;
 using RevolutionaryStuff.Core.ApplicationParts;
 using System.Threading.Tasks;
 using Traffk.Bal;
+using System;
+using System.Collections;
 
 namespace TraffkPortal.Services.TenantServices
 {
-    public class TenantFinderService : ITraffkTenantFinder
+    public class TenantFinderService : ITraffkTenantFinder, IEnumerable<KeyValuePair<string, object>>
     {
         public const string HttpContextTenantIdKey = "TenantId";
 
@@ -31,7 +33,17 @@ namespace TraffkPortal.Services.TenantServices
 
         Task<int> ITenantFinder<int>.GetTenantIdAsync() => Task.FromResult(TenantId);
 
-        private static readonly ICache<string, ApplicationHostItem> HostMapCache = CachingServices.Instance.CreateSynchronized<string, ApplicationHostItem>();
+        IEnumerator<KeyValuePair<string, object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator()
+        {
+            yield return new KeyValuePair<string, object>("DATABASENAME", this.DatabaseName);
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            yield return new KeyValuePair<string, object>("DATABASENAME", this.DatabaseName);
+        }
+
+        private static readonly ICache<string, AppHostItem> HostMapCache = CachingServices.Instance.CreateSynchronized<string, AppHostItem>();
 
         public int TenantId
         {
@@ -48,9 +60,11 @@ namespace TraffkPortal.Services.TenantServices
 
         public string PreferredHostname { get; private set; }
 
+        public string DatabaseName { get; private set; }
+
         public TenantFinderService(IOptions<TenantServiceFinderOptions> options, TenantRdbContext db, IHttpContextAccessor acc)
         {
-            PreferredHostname = ActualHostname = acc.HttpContext==null ? null : acc.HttpContext.Request.Host.Host;
+            PreferredHostname = ActualHostname = acc.HttpContext == null ? null : acc.HttpContext.Request.Host.Host;
             var tso = options.Value;
             if (tso != null)
             {
@@ -67,13 +81,14 @@ namespace TraffkPortal.Services.TenantServices
             {
                 var z = HostMapCache.Do(ActualHostname, () =>
                 {
-                    var res = db.ApplicationFindByHostAsync(ActualHostname, ApplicationTypes.Portal).ExecuteSynchronously();
-                    return res.FirstOrDefault();
+                    var res = db.AppFindByHostname(ActualHostname, AppTypes.Portal).ExecuteSynchronously().FirstOrDefault();
+                    return res;
                 });
                 if (z != null)
                 {
                     TenantId_p = z.TenantId;
                     PreferredHostname = z.PreferredHostname;
+                    DatabaseName = z.HostDatabaseName;
                 }
             }
             acc.HttpContext.Items[HttpContextTenantIdKey] = TenantId_p;

@@ -83,15 +83,13 @@ namespace Traffk.Bal.Data.Rdb
         }
 
         public void LogSignInAttempt(SignInResult res)
+            =>
+            LogActivity("SignInAttempt", res.Succeeded);
+
+        private void LogActivity(string activityType, bool result)
         {
             var logger = Log.ForContext(typeof(EventType).Name, EventType.LoggingEventTypes.Account.ToString());
-            var activity = new UserActivity
-            {
-                UserId = this.Id,
-                ActivityType = "SignInAttempt",
-                ActivityResult = res.Succeeded ? "Success" : "Failure"
-            };
-            logger.Information("Activity {@UserActivity}", activity);
+            logger.Information("Activity UserId={@Id} ContactId={@ContactId} ActivityType={@ActivityType} ActivityResult={@ActivityResult}", this.Id, this.ContactId, activityType, result);
         }
     }
 }

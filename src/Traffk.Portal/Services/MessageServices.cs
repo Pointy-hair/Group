@@ -40,7 +40,7 @@ namespace TraffkPortal.Services
             var ts = Current.Tenant.TenantSettings;
             if (message.From.Count == 0)
             {
-                var appSettings = Current.Application.ApplicationSettings;
+                var appSettings = Current.Application.AppSettings;
                 var from = new MailboxAddress(
                     Stuff.CoalesceStrings(appSettings.EmailSenderName, ts.EmailSenderName),
                     Stuff.CoalesceStrings(appSettings.EmailSenderAddress, ts.EmailSenderAddress)
@@ -53,7 +53,7 @@ namespace TraffkPortal.Services
         private async Task<Tuple<Creative, MimeMessage>> CreateMessageAsync(SystemCommunicationPurposes purpose, object model)
         {
             int creativeId;
-            var creatives = Current.Application.ApplicationSettings.CreativeIdBySystemCommunicationPurpose;
+            var creatives = Current.Application.AppSettings.CreativeIdBySystemCommunicationPurpose;
             creatives.TryGetValue(purpose, out creativeId);
             Requires.Positive(creativeId, nameof(creativeId));
             var creative = await DB.Creatives.FindAsync(creativeId);

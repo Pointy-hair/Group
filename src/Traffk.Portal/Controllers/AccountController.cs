@@ -165,7 +165,7 @@ namespace TraffkPortal.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
         {
-            if (!Current.Application.ApplicationSettings.Registration.UsersCanSelfRegister)
+            if (!Current.Application.AppSettings.Registration.UsersCanSelfRegister)
             {
                 throw new NotNowException("User self registration currently disabled");
             }

@@ -1,4 +1,4 @@
-﻿
+﻿#if false
 namespace Traffk.Bal.Data.Rdb
 {
     [ConstrainedData(
@@ -36,3 +36,4 @@ namespace Traffk.Bal.Data.Rdb
         };
     }
 }
+#endif

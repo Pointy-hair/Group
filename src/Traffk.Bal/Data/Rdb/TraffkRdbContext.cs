@@ -57,7 +57,7 @@ namespace Traffk.Bal.Data.Rdb
                         ))
                 ).Value;
 
-        public void AttachNote(Contact creator, string title, string body, params IRdbDataEntity[] attachmentSites)
+        public void AttachNote(Contact creator, string subject, string body, params IRdbDataEntity[] attachmentSites)
         {
             Requires.NonNull(creator, nameof(creator));
             Requires.Between(attachmentSites.Length, nameof(attachmentSites), 1);
@@ -66,7 +66,7 @@ namespace Traffk.Bal.Data.Rdb
             {
                 CreatedByContact = creator,
                 Body = body,
-                Title = title,
+                Subject = subject,
             };
             Notes.Add(n);
             foreach (var site in attachmentSites)

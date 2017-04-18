@@ -221,7 +221,7 @@ namespace Traffk.Bal.ReportVisuals
                 ExternalReportKey = primary.ExternalReportKey ?? secondary.ExternalReportKey,
                 ReportDetails = mergedReportDetails,
                 OwnerContactId = primary.OwnerContactId ?? secondary.OwnerContactId,
-                TenantId = primary.TenantId ?? secondary.TenantId
+                TenantId = primary.TenantId
             };
 
             return mergedRmd;

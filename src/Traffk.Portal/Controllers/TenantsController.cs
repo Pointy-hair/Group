@@ -142,11 +142,11 @@ namespace TraffkPortal.Controllers
                     TenantName = model.TenantName
                 };
                 Rdb.Tenants.Add(t);
-                Rdb.Applications.Add(new Application
+                Rdb.Apps.Add(new App
                 {
                     Tenant = t,
-                    ApplicationType = ApplicationTypes.Portal,
-                    ApplicationName = "Portal"
+                    AppType = AppTypes.Portal,
+                    AppName = "Portal"
                 });
                 await Rdb.SaveChangesAsync();
                 var role = ApplicationRole.CreateConfigurationMasterRole(t.TenantId);
@@ -181,9 +181,9 @@ namespace TraffkPortal.Controllers
             ViewData["TenantId"] = tenant.TenantId;
             ViewData["TenantName"] = tenant.TenantName;
             var applicationNameById = new Dictionary<int, string>();
-            foreach (var a in tenant.TenantApplications)
+            foreach (var a in tenant.TenantApps)
             {
-                applicationNameById[a.ApplicationId] = a.ApplicationName;
+                applicationNameById[a.AppId] = a.AppName;
             }
             ViewData["ApplicationTitleById"] = applicationNameById;
             SetHeroLayoutViewData(tenant.TenantId, tenant.TenantName, pageKey);
@@ -450,7 +450,7 @@ namespace TraffkPortal.Controllers
         protected Task<Tenant> GetTenantAsync(int? tenantId)
         {
             if (tenantId == null) return null;
-            return Rdb.Tenants.Include(t=>t.TenantApplications).SingleOrDefaultAsync(z => z.TenantId == tenantId.GetValueOrDefault(this.TenantId));
+            return Rdb.Tenants.Include(t=>t.TenantApps).SingleOrDefaultAsync(z => z.TenantId == tenantId.GetValueOrDefault(this.TenantId));
         }
 
 

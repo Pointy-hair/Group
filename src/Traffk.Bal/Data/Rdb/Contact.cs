@@ -25,15 +25,15 @@ namespace Traffk.Bal.Data.Rdb
             switch (contactType)
             {
                 case ContactTypes.Organization:
-                    return new Organization();
+                    return new OrganizationContact();
                 case ContactTypes.Person:
-                    return new Person();
+                    return new PersonContact();
                 case ContactTypes.User:
                     return new UserContact();
                 case ContactTypes.Carrier:
-                    return new Carrier();
+                    return new CarrierContact();
                 case ContactTypes.Provider:
-                    return new Provider();
+                    return new ProviderContact();
                 default:
                     throw new UnexpectedSwitchValueException(contactType);
             }
@@ -41,19 +41,19 @@ namespace Traffk.Bal.Data.Rdb
 
         [NotMapped]
         [JsonIgnore]
-        public bool IsPerson => this is Person;
+        public bool IsPerson => this is PersonContact;
 
         [NotMapped]
         [JsonIgnore]
-        public bool IsOrganization => this is Organization;
+        public bool IsOrganization => this is OrganizationContact;
 
         [NotMapped]
         [JsonIgnore]
-        public Person AsPerson => this as Person;
+        public PersonContact AsPerson => this as PersonContact;
 
         [NotMapped]
         [JsonIgnore]
-        public Organization AsOrganization => this as Organization;
+        public OrganizationContact AsOrganization => this as OrganizationContact;
 
         [InverseProperty("Contact")]
         [JsonIgnore]
@@ -69,16 +69,12 @@ namespace Traffk.Bal.Data.Rdb
 
             public ContactDetails_()
             {
-                Addresses = Addresses ?? new List<ContactAddress>();
                 PhoneNumbers = PhoneNumbers ?? new List<ContactPhone>();
             }
 
             [JsonProperty("tags")]
             [ConstrainedData]
             public List<string> Tags { get; set; }
-
-            [JsonProperty("addresses")]
-            public List<ContactAddress> Addresses { get; set; }
 
             [JsonProperty("phoneNumbers")]
             [DisplayName("Phone Numbers")]
@@ -119,30 +115,4 @@ namespace Traffk.Bal.Data.Rdb
 
         public override string ToString() => $"{this.GetType().Name} number={PhoneNumber} type={PhoneType} note={Notes}";
     }
-
-    public class ContactAddress : Address
-    {
-        [JsonProperty("addressType")]
-        [ConstrainedData]
-        public string AddressType { get; set; }
-
-        [JsonProperty("notes")]
-        [FreeFormData]
-        public string Notes { get; set; }
-
-        public ContactAddress() { }
-
-        public ContactAddress(ContactAddress other)
-            : base(other)
-        {
-            AddressType = other.AddressType;
-            Notes = other.Notes;
-        }
-        public ContactAddress(Address other)
-            : base(other)
-        { }
-
-        public override string ToString() => $"{base.ToString()} type={AddressType} note={Notes}";
-    }
-
 }

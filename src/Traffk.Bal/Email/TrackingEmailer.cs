@@ -103,8 +103,8 @@ namespace Traffk.Bal.Email
 
             var tenantId = await TenantFinder.GetTenantIdAsync();
 
-            var app = Rdb.Applications.FirstOrDefault(z => z.TenantId == tenantId && z.ApplicationType== ApplicationTypes.Portal);
-            var hostname = app.ApplicationSettings.Hosts.HostInfos[0].Hostname;
+            var app = Rdb.Apps.FirstOrDefault(z => z.TenantId == tenantId && z.AppType== AppTypes.Portal);
+            var hostname = app.AppSettings.Hosts.HostInfos[0].Hostname;
             foreach (var m in messages)
             {
                 var piece = new CommunicationPiece

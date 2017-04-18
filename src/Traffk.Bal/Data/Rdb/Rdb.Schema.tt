@@ -321,10 +321,9 @@ foreach (var f in z.XPathSelectElements("Columns/Column"))
 		}
 		bool isInheritedField = false;
 		bool isInheritedFieldInThisSubsclass = isAllFields;
-		foreach (XElement prop in f.XPathSelectElements("Properties/Property"))
+		foreach (XElement prop in f.XPathSelectElements("Properties/Property[@name='InheritanceField']"))
 		{
-			var ifcn = RightOf(prop.Attribute("name").Value, "InheritanceField:");
-			if (ifcn==null) continue;
+			var ifcn = GetAttrVal(prop, "value");
 			isInheritedField = true;
 			if (LeftOf(ifcn, ",")==className)
 			{
@@ -473,13 +472,16 @@ foreach (var f in z.XPathSelectElements("Columns/Column"))
 		<#=accessModifier#> <#=dataType#> <#=propertyName#> { get; set; }
 
 <#
-	if (GetAttrVal(f, "refTable")!=null)
+	if (GetAttrVal(f, "refTable")!=null || GetPropertyValue(f, "LinksTo")!=null)
 	{
+		var refSchema = GetAttrVal(f, "refSchema") ?? LeftOf(GetPropertyValue(f, "LinksTo"), ".");
+		var refTable = GetAttrVal(f, "refTable") ?? RightOf(LeftOf(GetPropertyValue(f, "LinksTo"), "("), ".");
 #>
+		//LinksTo:<#=refSchema#>.<#=refTable#>
 		[ForeignKey("<#=GetAttrVal(f, "name")#>")]
 		[JsonIgnore]
         [IgnoreDataMember]
-		<#=accessModifier#> <#=GetClassName(doc, GetAttrVal(f, "refSchema"), GetAttrVal(f, "refTable"))#> <#=GetPropertyNameFromColumnName(propertyName)#> { get; set; }
+		<#=accessModifier#> <#=GetClassName(doc, refSchema, refTable)#> <#=GetPropertyNameFromColumnName(propertyName)#> { get; set; }
 
 <#	
 	}
@@ -525,7 +527,7 @@ foreach (var kpn in keyPropertyNames)
 		{
 			if (other!=null)
 			{
-			<#if(primaryKeyPropertyName!=null){
+<#if(primaryKeyPropertyName!=null){
 #>
 				if (copyKey)
 				{

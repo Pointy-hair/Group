@@ -117,11 +117,11 @@ namespace TraffkPortal
             services.AddApplicationInsightsTelemetry(Configuration);
 
             services.AddDbContext<TenantRdbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("TenantServices")), ServiceLifetime.Singleton);
+                options.UseSqlServer(Configuration.GetConnectionString("TraffkTenantShards")), ServiceLifetime.Singleton);
 
             services.AddDbContext<TraffkRdbContext>((sp,options) =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("TenantXPortal"));
+                options.UseSqlServer(Configuration.GetConnectionString("TraffkTenantPortal"));
             }, ServiceLifetime.Scoped);
 
             services.Configure<IdentityOptions>(options => 

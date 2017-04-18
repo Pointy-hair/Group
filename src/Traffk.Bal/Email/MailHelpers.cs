@@ -23,7 +23,7 @@ namespace Traffk.Bal.Email
 
         #region Header Helpers
 
-        public static Int64? ContactId(this MimeMessage m) => Parse.ParseNullableInt64(m.Headers[HeaderNames.ContactIdHeader]);
+        public static int? ContactId(this MimeMessage m) => Parse.ParseNullableInt32(m.Headers[HeaderNames.ContactIdHeader]);
         public static void ContactId(this MimeMessage m, Int64 contactId) => m.Headers[HeaderNames.ContactIdHeader] = contactId.ToString();
         public static string Topic(this MimeMessage m) => m.Headers[HeaderNames.TopicHeader];
         public static void Topic(this MimeMessage m, string topic) => m.Headers[HeaderNames.TopicHeader] = topic;

@@ -37,6 +37,8 @@ namespace Traffk.Bal.ApplicationParts
                     if (w.FreeThreads > 0)
                     {
                         var db = new TraffkRdbContext(dbOptions, null, null);
+                        throw new NotImplementedException();
+#if false
                         var jobs = await db.JobDequeueAsync(JobType, Environment.MachineName, w.FreeThreads);
                         foreach (var job in jobs)
                         {
@@ -47,6 +49,7 @@ namespace Traffk.Bal.ApplicationParts
                             db.Dispose();
                             await Task.Delay(NoJobsReceivedTimeout);
                         }
+#endif
                     }
                     await Task.Delay(250);
                 }
