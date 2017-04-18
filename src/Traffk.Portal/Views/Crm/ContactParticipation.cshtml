@@ -4,6 +4,7 @@
     ViewData.SetTitleAndHeading(CrmController.ViewNames.Health.Participation.ToCrmHeading());
 }
 <dl class="dl-horizontal">
+    @Html.DescriptionListElement(model => model.dw_record_id)
     @Html.DescriptionListElement(model => model.program_type)
     @Html.DescriptionListElement(model => model.program_code)
     @Html.DescriptionListElement(model => model.program_name)

@@ -12,6 +12,9 @@
         <thead>
         <tr>
             <th>
+                @Html.SortableHeaderFor(z => z.dw_record_id)
+            </th>
+            <th>
                 @Html.SortableHeaderFor(z => z.care_alert_id)
             </th>
             <th>
@@ -30,7 +33,11 @@
             {
                 <tr>
                     <td>
-                        <a asp-action="@ActionNames.Health.CareAlert" asp-route-id="@ViewContext.GetRouteValue()" asp-route-recordId="@item.dw_record_id">@item.care_alert_id</a>
+                        <a asp-action="@ActionNames.Health.CareAlert" asp-route-id="@ViewContext.GetRouteValue()" asp-route-recordId="@item.dw_record_id">@item.dw_record_id</a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.care_alert_id)
+                        @*<a asp-action="@ActionNames.Health.CareAlert" asp-route-id="@ViewContext.GetRouteValue()" asp-route-recordId="@item.dw_record_id">@item.care_alert_id</a>*@
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.care_alert_startDate)

@@ -13,11 +13,8 @@
     <thead>
         <tr>
             <th>
-                @Html.SortableHeaderFor(z => z.svc_pos_desc)
+                @Html.SortableHeaderFor(z => z.rev_claim_id)
             </th>
-            @*<th>
-                @Html.SortableHeaderFor(z => z.prv_in_network_flag)
-            </th>*@
             <th>
                 @Html.SortableHeaderFor(z => z.svc_diag_1_desc)
             </th>
@@ -40,11 +37,8 @@
         {
             <tr>
                 <td>
-                    <a asp-action="@ActionNames.Health.MedicalClaim" asp-route-id="@ViewContext.GetRouteValue()" asp-route-medicalClaimId="@item.rev_claim_id">item.svc_pos_desc</a>
+                    <a asp-action="@ActionNames.Health.MedicalClaim" asp-route-id="@ViewContext.GetRouteValue()" asp-route-medicalClaimId="@item.rev_claim_id">@item.rev_claim_id</a>
                 </td>
-                @*<td>
-                    @Html.DisplayFor(modelItem => item.prv_in_network_flag)
-                </td>*@
                 <td>
                     @Html.DisplayFor(modelItem => item.svc_diag_1_desc)
                 </td>

@@ -4,6 +4,7 @@
     ViewData.SetTitleAndHeading(CrmController.ViewNames.Health.Pharmacy.ToCrmHeading());
 }
 <dl class="dl-horizontal">
+    @Html.DescriptionListElement(model => model.rev_transaction_num)
     @Html.DescriptionListElement(model => model.svc_filled_date)
     @Html.DescriptionListElement(model => model.rev_paid_date)
     @Html.DescriptionListElement(model => model.svc_ndc_desc)

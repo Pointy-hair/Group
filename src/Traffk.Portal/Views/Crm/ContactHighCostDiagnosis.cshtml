@@ -1,11 +1,11 @@
 ﻿@model HighCostDiagnosi
 @{
     Layout = "~/Views/Crm/_LayoutContact.cshtml";
-    ViewData.IsListingPage(true);
     ViewData.SetTitleAndHeading(CrmController.ViewNames.Health.HighCostDiagnosis.ToCrmHeading());
 
 }
 <dl class="dl-horizontal">
+    @Html.DescriptionListElement(model => model.dw_record_id)
     @Html.DescriptionListElement(model => model.Diagnosis_code)
     @Html.DescriptionListElement(model => model.Paid_Amount)
     @Html.DescriptionListElement(model => model.SuperGrouperDescription)
