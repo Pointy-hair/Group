@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.SqlServer.Dts.Pipeline;
 using Microsoft.SqlServer.Dts.Pipeline.Wrapper;
 using Microsoft.SqlServer.Dts.Runtime.Wrapper;
-using RevolutionaryStuff.Core.Crypto;
 using RevolutionaryStuff.Core.Collections;
 
 namespace RevolutionaryStuff.SSIS
@@ -15,33 +13,27 @@ namespace RevolutionaryStuff.SSIS
         ComponentType = ComponentType.Transform,
         SupportsBackPressure = true,
         IconResource = "RevolutionaryStuff.SSIS.Resources.Icon1.ico")]
-    public class MatcherTransformComponent : PipelineComponent
+    public class MatcherTransformComponent : BasePipelineComponent
     {
         private static class PropertyNames
         {
-            public static class Input
+            public static class InputProperties
             {
-                public const string Root = "Root";
+                public const string Root = "Left Input";
                 public const int RootId = 0;
-                public const string Comparison = "Comparison";
+                public const string Comparison = "Right Input";
                 public const int ComparisonId = 1;
             }
-            public static class Output
+            public static class OutputProperties
             {
-                public const string Matches = "Matches";
-                public const string Orphans = "Orphans";
+                public const string Matches = "Match Output";
+                public const string Orphans = "No Matched Output";
             }
         }
 
         public MatcherTransformComponent()
-        {
-#if false
-            for (int z=0;z<60;++z)
-            {
-                System.Threading.Thread.Sleep(1000);
-            }
-#endif
-        }
+            : base()
+        { }
 
         public override void ProvideComponentProperties()
         {
@@ -50,19 +42,18 @@ namespace RevolutionaryStuff.SSIS
 
             ComponentMetaData.Name = "The Matcher";
             ComponentMetaData.Description = "A SSIS Data Flow Transformation Component that auto joins 2 inputs (based on field name / data type) and returns the matched (union of all columns, same rows as an inner join) and orphanned (* from the left table and unmatched rows from left table) tables.";
-            ComponentMetaData.ContactInfo = "jason@jasonthomas.com";
 
             var left = ComponentMetaData.InputCollection.New();
-            left.Name = PropertyNames.Input.Root;
+            left.Name = PropertyNames.InputProperties.Root;
             var right = ComponentMetaData.InputCollection.New();
-            right.Name = PropertyNames.Input.Comparison;
+            right.Name = PropertyNames.InputProperties.Comparison;
             var matched = ComponentMetaData.OutputCollection.New();
             matched.SynchronousInputID = 0;
-            matched.Name = PropertyNames.Output.Matches;
+            matched.Name = PropertyNames.OutputProperties.Matches;
             matched.Description = "Root rows that have have corresponding matches in the Comparison";
             var notMatched = ComponentMetaData.OutputCollection.New();
             notMatched.SynchronousInputID = 0;
-            notMatched.Name = PropertyNames.Output.Orphans;
+            notMatched.Name = PropertyNames.OutputProperties.Orphans;
             notMatched.Description = "Root rows that have no corresponding matches in the Comparison";
         }
 
@@ -70,30 +61,16 @@ namespace RevolutionaryStuff.SSIS
         {
             switch (propertyName)
             {
-                case PropertyNames.Output.Matches:
+                case PropertyNames.OutputProperties.Matches:
                     AddOutputColumns(ComponentMetaData.InputCollection[0].InputColumnCollection, ComponentMetaData.OutputCollection[0].OutputColumnCollection);
                     break;
-                case PropertyNames.Output.Orphans:
+                case PropertyNames.OutputProperties.Orphans:
                     AddOutputColumns(ComponentMetaData.InputCollection[0].InputColumnCollection, ComponentMetaData.OutputCollection[1].OutputColumnCollection);
                     break;
             }
             return base.SetComponentProperty(propertyName, propertyValue);
         }
 
-        public override IDTSInputColumn100 SetUsageType(int inputID, IDTSVirtualInput100 virtualInput, int lineageID, DTSUsageType usageType)
-        {
-            return base.SetUsageType(inputID, virtualInput, lineageID, usageType);
-        }
-
-        public override IDTSCustomProperty100 SetInputProperty(int inputID, string propertyName, object propertyValue)
-        {
-            return base.SetInputProperty(inputID, propertyName, propertyValue);
-        }
-
-        public override IDTSCustomProperty100 SetInputColumnProperty(int inputID, int inputColumnID, string propertyName, object propertyValue)
-        {
-            return base.SetInputColumnProperty(inputID, inputColumnID, propertyName, propertyValue);
-        }
 
         public override void OnInputPathAttached(int inputID)
         {
@@ -105,12 +82,8 @@ namespace RevolutionaryStuff.SSIS
             }
         }
 
-        public override void OnOutputPathAttached(int outputID)
-        {
-            base.OnOutputPathAttached(outputID);
-        }
 
-        private IList<string> GetComparisonColumnKeys()
+        private IList<string> GetComparisonColumnKeys(bool fireInformationMessages=false)
         {
             var leftCols = ComponentMetaData.InputCollection[0].InputColumnCollection;
             var rightCols = ComponentMetaData.InputCollection[1].InputColumnCollection;
@@ -118,13 +91,30 @@ namespace RevolutionaryStuff.SSIS
             var rightDefs = new HashSet<string>();
             for (int z = 0; z < leftCols.Count; ++z)
             {
-                leftDefs.Add(CreateColumnFingerprint(leftCols[z]));
+                var col = leftCols[z];
+                if (fireInformationMessages)
+                {
+                    FireInformation(InformationMessageCodes.LeftColumns, col.Name);
+                }
+                leftDefs.Add(CreateColumnFingerprint(col));
             }
             for (int z = 0; z < rightCols.Count; ++z)
             {
+                var col = rightCols[z];
+                if (fireInformationMessages)
+                {
+                    FireInformation(InformationMessageCodes.RightColumns, col.Name);
+                }
                 rightDefs.Add(CreateColumnFingerprint(rightCols[z]));
             }
             var commonDefs = new HashSet<string>(leftDefs.Intersect(rightDefs));
+            if (fireInformationMessages)
+            {
+                foreach (var c in commonDefs)
+                {
+                    FireInformation(InformationMessageCodes.CommonColumns, c);
+                }
+            }
             return commonDefs.ToList();
         }
 
@@ -163,7 +153,7 @@ namespace RevolutionaryStuff.SSIS
             switch (ret)
             {
                 case DTSValidationStatus.VS_ISVALID:
-                    if (!ComponentMetaData.InputCollection[0].IsAttached || !ComponentMetaData.InputCollection[0].IsAttached)
+                    if (!ComponentMetaData.InputCollection[0].IsAttached || !ComponentMetaData.InputCollection[1].IsAttached)
                     {
                         ret = DTSValidationStatus.VS_ISBROKEN;
                     }
@@ -194,18 +184,6 @@ namespace RevolutionaryStuff.SSIS
             DefineOutputs();
         }
 
-        private class ColumnBufferMapping
-        {
-            public IList<int> ByColumnPosition = new List<int>();
-            public IDictionary<string, int> ByColumnName = new Dictionary<string, int>();
-
-            public void Add(string columnName, int offset)
-            {
-                ByColumnPosition.Add(offset);
-                ByColumnName[columnName] = offset;
-            }
-        }
-
         private ColumnBufferMapping InputRootBufferColumnIndicees;
         private ColumnBufferMapping InputComparisonBufferColumnIndicees;
         private ColumnBufferMapping OutputMatchesBufferColumnIndicees;
@@ -218,31 +196,7 @@ namespace RevolutionaryStuff.SSIS
             InputComparisonBufferColumnIndicees = GetBufferColumnIndicees(ComponentMetaData.InputCollection[1]);
             OutputMatchesBufferColumnIndicees = GetBufferColumnIndicees(ComponentMetaData.OutputCollection[0]);
             OutputOrphansBufferColumnIndicees = GetBufferColumnIndicees(ComponentMetaData.OutputCollection[1]);
-        }
-
-        private ColumnBufferMapping GetBufferColumnIndicees(IDTSInput100 input)
-        {
-            var cbm = new ColumnBufferMapping();
-            for (int x = 0; x < input.InputColumnCollection.Count; x++)
-            {
-                var column = input.InputColumnCollection[x];
-                var offset = BufferManager.FindColumnByLineageID(input.Buffer, column.LineageID);
-                cbm.Add(column.Name, offset);
-            }
-
-            return cbm;
-        }
-
-        private ColumnBufferMapping GetBufferColumnIndicees(IDTSOutput100 output)
-        {
-            var cbm = new ColumnBufferMapping();
-            for (int x = 0; x < output.OutputColumnCollection.Count; x++)
-            {
-                var column = output.OutputColumnCollection[x];
-                var offset = BufferManager.FindColumnByLineageID(output.Buffer, column.LineageID);
-                cbm.Add(column.Name, offset);
-            }
-            return cbm;
+            GetComparisonColumnKeys(true);
         }
 
         public override void ProcessInput(int inputID, PipelineBuffer buffer)
@@ -250,16 +204,16 @@ namespace RevolutionaryStuff.SSIS
             var input = ComponentMetaData.InputCollection.GetObjectByID(inputID);
             switch (input.Name)
             {
-                case PropertyNames.Input.Root:
+                case PropertyNames.InputProperties.Root:
                     if (!InputRootProcessed)
                     {
-                        ProcessInputRoot(input, buffer);
+                        ProcessLeftInput(input, buffer);
                     }
                     break;
-                case PropertyNames.Input.Comparison:
+                case PropertyNames.InputProperties.Comparison:
                     if (!InputComparisonProcessed)
                     {
-                        ProcessInputComparison(input, buffer);
+                        ProcessRightInput(input, buffer);
                     }
                     break;
                 default:
@@ -269,31 +223,13 @@ namespace RevolutionaryStuff.SSIS
             }
         }
 
-        private class Fingerprinter
-        {
-            private readonly StringBuilder Strings = new StringBuilder(8000);
 
-            public void AppendValue(object o)
-            {
-                Strings.AppendLine((o ?? "").ToString());
-            }
+        private int InputFingerprintsSampled;
+        private int ProcessInputRootHits = 0;
+        private int ProcessInputRootMisses = 0;
+        private int ProcessInputRootFanoutHits = 0;
 
-            public void Clear()
-            {
-                Strings.Clear();
-            }
-
-            public string GetFingerPrint()
-            {
-                var s = Strings.ToString();
-                if (s.Length < 100) return s;
-                var buf = Encoding.Unicode.GetBytes(s);
-                var hash = Hash.Compute(buf, Hash.CommonHashAlgorithmNames.Sha1).Urn;
-                return hash;
-            }
-        }
-
-        private void ProcessInputRoot(IDTSInput100 input, PipelineBuffer buffer)
+        private void ProcessLeftInput(IDTSInput100 input, PipelineBuffer buffer)
         {
             var matchAttached = ComponentMetaData.OutputCollection[0].IsAttached;
             var matchedCC = ComponentMetaData.OutputCollection[0].OutputColumnCollection;
@@ -312,23 +248,26 @@ namespace RevolutionaryStuff.SSIS
                     var o = GetObject(col.Name, col.DataType, z, buffer, InputComparisonBufferColumnIndicees);
                     if (commonFingerprints.Contains(colFingerprint))
                     {
-                        fingerprinter.AppendValue(o);
+                        fingerprinter.Include(col.Name, o);
                     }
                     sourceVals.Add(o);
                 }
                 var fingerprint = fingerprinter.GetFingerPrint();
                 if (AppendsByCommonFieldHash.ContainsKey(fingerprint))
                 {
+                    ++ProcessInputRootHits;
                     if (matchAttached)
                     {
                         foreach (var appends in AppendsByCommonFieldHash[fingerprint])
                         {
+                            ++ProcessInputRootFanoutHits;
                             CopyToMatchedOutput(matchedCC, sourceVals, appends);
                         }
                     }
                 }
                 else
                 {
+                    ++ProcessInputRootMisses;
                     if (orphansAttached)
                     {
                         CopyToOrphannedOutput(orhpannedCC, sourceVals);
@@ -337,7 +276,18 @@ namespace RevolutionaryStuff.SSIS
                 fingerprinter.Clear();
                 sourceVals.Clear();
                 ++rowsProcessed;
+                if (InputFingerprintsSampled < FingerprintSampleSize)
+                {
+                    ++InputFingerprintsSampled;
+                    FireInformation(InformationMessageCodes.ExampleFingerprint, fingerprint);
+                }
+                if (rowsProcessed % 100 == 0)
+                {
+                    FireInformation(InformationMessageCodes.MatchStats, $"hits={ProcessInputRootHits}, fanoutHits={ProcessInputRootFanoutHits}, misses={ProcessInputRootMisses}");
+                }
             }
+            FireInformation(InformationMessageCodes.RowsProcessed, $"{rowsProcessed}");
+            FireInformation(InformationMessageCodes.MatchStats, $"hits={ProcessInputRootHits}, fanoutHits={ProcessInputRootFanoutHits}, misses={ProcessInputRootMisses}");
             if (buffer.EndOfRowset)
             {
                 MatchedOutputBuffer.SetEndOfRowset();
@@ -354,10 +304,10 @@ namespace RevolutionaryStuff.SSIS
                 bool can;
                 switch (inputIndex)
                 {
-                    case PropertyNames.Input.RootId:
+                    case PropertyNames.InputProperties.RootId:
                         can = InputRootProcessed || InputComparisonProcessed;
                         break;
-                    case PropertyNames.Input.ComparisonId:
+                    case PropertyNames.InputProperties.ComparisonId:
                         can = true; //!InputComparisonProcessed;
                         break;
                     default:
@@ -470,39 +420,15 @@ namespace RevolutionaryStuff.SSIS
             InputComparisonProcessed = false;
         }
 
-        private object GetObject(string colName, DataType colDataType, int colIndex, PipelineBuffer buffer, ColumnBufferMapping cbm)
-        {
-            var n = colIndex;
-            if (buffer.IsNull(n)) return null;
-            switch (colDataType)
-            {
-                case DataType.DT_BOOL:
-                    return buffer.GetBoolean(n);
-                case DataType.DT_I4:
-                    return buffer.GetInt32(n);
-                case DataType.DT_I2:
-                    return buffer.GetInt16(n);
-                case DataType.DT_I8:
-                    return buffer.GetInt64(n);
-                case DataType.DT_DATE:
-                    return buffer.GetDate(n);
-                case DataType.DT_STR:
-                case DataType.DT_WSTR:
-                case DataType.DT_NTEXT:
-                case DataType.DT_TEXT:
-                    return buffer.GetString(n);
-            }
-            bool cancel = true;
-            ComponentMetaData.FireError(123, "GetObject", string.Format("GetObject(colName={0}, colDataType={1}) is not yet supported", colName, colDataType), "", 0, out cancel);
-            return null;
-        }
-
         private MultipleValueDictionary<string, object[]> AppendsByCommonFieldHash = new MultipleValueDictionary<string, object[]>();
         private bool InputComparisonProcessed = false;
         private bool InputRootProcessed = false;
+        private int ComparisonFingerprintsSampled = 0;
+        private const int FingerprintSampleSize = 10;
 
-        private void ProcessInputComparison(IDTSInput100 input, PipelineBuffer buffer)
+        private void ProcessRightInput(IDTSInput100 input, PipelineBuffer buffer)
         {
+            int rowsProcessed = 0;
             var commonFingerprints = GetComparisonColumnKeys();
             var fingerprinter = new Fingerprinter();
             var appends = new List<object>();
@@ -515,7 +441,7 @@ namespace RevolutionaryStuff.SSIS
                     var o = GetObject(col.Name, col.DataType, z, buffer, InputComparisonBufferColumnIndicees);
                     if (commonFingerprints.Contains(colFingerprint))
                     {
-                        fingerprinter.AppendValue(o);
+                        fingerprinter.Include(col.Name, o);
                     }
                     else
                     {
@@ -526,8 +452,27 @@ namespace RevolutionaryStuff.SSIS
                 AppendsByCommonFieldHash.Add(fingerprint, appends.ToArray());
                 fingerprinter.Clear();
                 appends.Clear();
+                ++rowsProcessed;
+                if (ComparisonFingerprintsSampled < FingerprintSampleSize)
+                {
+                    ++ComparisonFingerprintsSampled;
+                    FireInformation(InformationMessageCodes.ExampleFingerprint, fingerprint);
+                }
             }
+            FireInformation(InformationMessageCodes.RowsProcessed, $"{rowsProcessed}");
+            FireInformation(InformationMessageCodes.AppendsByCommonFieldHash, $"{AppendsByCommonFieldHash.Count}/{AppendsByCommonFieldHash.AtomEnumerable.Count()}");
             InputComparisonProcessed = buffer.EndOfRowset;
+        }
+
+        private enum InformationMessageCodes
+        {
+            RowsProcessed=1,
+            ExampleFingerprint=2,
+            AppendsByCommonFieldHash=3,
+            MatchStats = 4,
+            CommonColumns = 5,
+            LeftColumns = 6,
+            RightColumns = 7,
         }
 
 #region Helpers
@@ -566,22 +511,6 @@ namespace RevolutionaryStuff.SSIS
             }
             def = col.Name + ";" + def;
             return def.ToLower();
-        }
-
-        private static void CopyColumnDefinition(IDTSOutputColumnCollection100 output, IDTSInputColumn100 inCol)
-        {
-            var outCol = output.New();
-            outCol.Name = inCol.Name;
-            outCol.SetDataTypeProperties(inCol.DataType, inCol.Length, inCol.Precision, inCol.Scale, inCol.CodePage);
-        }
-
-        private static void AddOutputColumns(IDTSInputColumnCollection100 root, IDTSOutputColumnCollection100 output)
-        {
-            for (int z = 0; z < root.Count; ++z)
-            {
-                var inCol = root[z];
-                CopyColumnDefinition(output, inCol);
-            }
         }
 #endregion
     }
