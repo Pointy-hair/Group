@@ -1,4 +1,26 @@
-﻿create EXTERNAL TABLE db.TraffkGlobalCols
+﻿CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'TenantGlobalEncryptionKey%#89edfch9ew82425rt36wg';
+
+GO
+
+CREATE DATABASE SCOPED CREDENTIAL _TraffkGlobalUserCred
+WITH IDENTITY = '_TraffkGlobalUser',
+SECRET = 'dsioajmvgr3tGVer80j5qiGDoe';
+
+GO
+
+CREATE EXTERNAL DATA SOURCE TraffkGlobalDataSource
+with
+(
+	type = RDBMS,
+	location = 'traffkrdb-prod.database.windows.net',
+	database_name = 'TraffkGlobal',
+	credential = _TraffkGlobalUserCred,
+)
+
+GO
+
+
+create EXTERNAL TABLE db.TraffkGlobalCols
 (
 	[TABLE_CATALOG] nvarchar(128) null
 	,[TABLE_SCHEMA] nvarchar(128) null
@@ -24,107 +46,98 @@
 	,[DOMAIN_SCHEMA] nvarchar(128) null
 	,[DOMAIN_NAME] nvarchar(128) null
 )
-WITH (DATA_SOURCE = [DataSrc_RefData])
+WITH 
+(
+	SCHEMA_NAME = 'information_schema',
+	OBJECT_NAME = 'columns',
+	DATA_SOURCE = [TraffkGlobalDataSource]
+)
 
 GO
 
-create PROCEDURE [db].TraffkGlobalTableImport
+CREATE PROCEDURE [db].TraffkGlobalTableImport
 	@schema sysname,
-	@table sysname
+	@table sysname,
+	@srcSchema sysname=null,
+	@srcTable sysname=null
 AS
-BEGIN
+begin
 
-	declare @dataSource sysname = 'DataSrc_RefData'
+	exec db.ExternalTableImport 'TraffkGlobalDataSource', @schema, @table, 'db.TraffkGlobalCols', @srcSchema=@srcSchema, @srcTable=@srcTable 
 
-	exec db.PrintNow 'ImportExternalTable {s0}.{s1}.{s2}', @s0=@dataSource, @s1=@schema, @s2=@table
+end
 
-	declare @sql nvarchar(max)
+GO
 
-	set @sql = 'CREATE EXTERNAL TABLE '+quotename(@schema)+'.'+quotename(@table)+'('
+create schema Globals
 
-	declare @colNum int=0
-	declare @colDef nvarchar(1024)
+GO
 
-	DECLARE c CURSOR FOR 
-	select 
-		quotename(column_name)+' '+
-		data_type+
-		case 
-			when character_maximum_length = -1 then '(max)'
-			when character_maximum_length is null then ''
-			else '('+cast(character_maximum_length as varchar(10))+')'
-			end +
-		case
-			when is_nullable='NO' then ' not null'
-			else ' null'
-			end
-		colDef
-	from db.TraffkGlobalCols
-	where table_Schema=@schema and table_name=@table
-	order by ordinal_position
+exec db.TraffkGlobalTableImport 'CmsGov', 'BerensonEggersTypeOfServices'
+exec db.TraffkGlobalTableImport 'CmsGov', 'HealthCareProviderTaxonomyCodeCrosswalk'
+exec db.TraffkGlobalTableImport 'CmsGov', 'HealthcareCommonProcedureCodingSystemCodes'
+exec db.TraffkGlobalTableImport 'CmsGov', 'LabCertificationCodes'
+exec db.TraffkGlobalTableImport 'CmsGov', 'MedicareOutpatientGroupsPaymentGroupCodes'
+exec db.TraffkGlobalTableImport 'CmsGov', 'MedicareSpecialtyCodes'
+exec db.TraffkGlobalTableImport 'CmsGov', 'PricingIndicatorCodes'
+exec db.TraffkGlobalTableImport 'ISO3166', 'Countries'
+exec db.TraffkGlobalTableImport 'NationalDrugCode', 'Labelers'
+exec db.TraffkGlobalTableImport 'NationalDrugCode', 'Packages'
+exec db.TraffkGlobalTableImport 'NationalDrugCode', 'Products'
+exec db.TraffkGlobalTableImport 'InternationalClassificationDiseases', 'ICD10'
 
-	open c
 
-	NEXT_ITEM:
+exec db.TablePropertySet  'BerensonEggersTypeOfServices', '1', @propertyName='AddToDbContext', @tableSchema='CmsGov'
+exec db.TablePropertySet  'BerensonEggersTypeOfServices', '1', @propertyName='GeneratePoco', @tableSchema='CmsGov'
 
-	FETCH NEXT FROM c INTO @colDef
 
-	if @@fetch_status = 0
-	begin
 
-		set @sql = @sql + '
+GO
+
+create schema Joint
+
+GO
+
+create proc db.JointViewCreate
+	@globalSchema sysname,
+	@globalTable sysname,
+	@tenantSchema sysname,
+	@tenantTable sysname,
+	@jointSchema sysname=null,
+	@jointTable sysname=null
+as
+begin
+
+	set @jointSchema = coalesce(@jointSchema, 'Joint')
+	set @jointTable = coalesce(@tenantTable, @tenantTable)
+
+	declare @sql nvarchar(max)=''
+
+	select @sql=string_agg(column_name, ', ')
+	from information_Schema.columns
+	where table_schema=@globalSchema and table_name=@globalTable
+
+	set @sql='create view '+quotename(@jointSchema)+'.'+quotename(@jointTable)+'
+as
+
+select g.*, t.TenantId 
+from 
+	(select * from '+quotename(@globalSchema)+'.'+quotename(@globalTable)+') g,
+	tenants t with (nolock)
+
+union all
+
+select '+@sql+', TenantId 
+from '+quotename(@tenantSchema)+'.'+quotename(@tenantTable)+' with (nolock)
+
 '
-		if (@colNum>0)
-		begin
-			set @sql = @sql + ', '
-		end
-
-		set @colNum = @colNum + 1
-
-		set @sql = @sql + @colDef
-		
-		goto NEXT_ITEM
-
-	end
-
-	close c
 	
-	deallocate c	
+	exec db.PrintSql @sql
+	exec(@sql)
 
-	set @sql = @sql + '
-) with (DATA_SOURCE = '+quotename(@dataSource)+')'
-
-	select @colNum=count(*) 
-	from sys.schemas 
-	where name=@schema
-
-	if (@colNum=0)
-	begin
-
-		declare @s nvarchar(max)
-		set @s = 'create schema '+quotename(@schema)
-		exec db.PrintSql @s
-		exec(@s)
-
-	end
-
-	select @colNum=count(*) 
-	from information_Schema.tables 
-	where table_schema=@schema and table_name=@table
-
-	if (@colNum=0)
-	begin
-
-		exec db.PrintSql @sql
-		exec(@sql)
-
-	end
-
-
-END
+end
 
 GO
 
-exec [db].TraffkGlobalTableImport 'ISO3166', 'Countries'
 
-GO
+

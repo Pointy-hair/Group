@@ -65,6 +65,9 @@
     <Folder Include="PostEF\0001.Traffk" />
     <Folder Include="PostEF\0002.Deerwalk" />
     <Folder Include="PostEF\0003.Migrate" />
+    <Folder Include="TraffkTenantShards" />
+    <Folder Include="Master" />
+    <Folder Include="TraffkTenantShardManager" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Foundations\Build\0001.ChangeLog.sql" />
@@ -83,12 +86,18 @@
     <Build Include="PostEF\0003.Migrate\002.Sprocs.sql" />
     <Build Include="TraffkModel\0002.Aspnet.sql" />
     <Build Include="TraffkModel\0003.TraffkCoreStructure.sql" />
+    <Build Include="TraffkTenantShards\0001.Structure.sql" />
+    <Build Include="TraffkModel\0005.Security.sql" />
+    <Build Include="TraffkTenantShardManager\0004.Security.sql" />
+    <Build Include="TraffkGlobal\0003.Cms.sql" />
+    <Build Include="TraffkGlobal\0002.Iso3166.sql" />
+    <Build Include="TraffkGlobal\0003.Joints.sql" />
+    <Build Include="TraffkGlobal\0004.NationalDrugCode.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Foundations\Build\0003.Asserts.sql" />
     <None Include="Foundations\Build\0004.Types.sql" />
     <None Include="Foundations\Build\0005.WhoIsActive.sql" />
-    <None Include="TraffkGlobal\000X.Iso3166.sql" />
     <None Include="TraffkGlobal\0001.Externalize.sql" />
     <None Include="PostEF\0001.Traffk\001.Requirements.txt" />
     <None Include="PostEF\0002.Deerwalk\~%24DeerwalkFields.xlsx" />
@@ -98,5 +107,12 @@
     <None Include="PostEF\0002.Deerwalk\Generic_PA_Extract_0.8.docx" />
     <None Include="PostEF\0002.Deerwalk\phi_fields_med_elig_rx.csv" />
     <None Include="PostEF\0003.Migrate\001.Requirements.txt" />
+    <None Include="Foundations\Build\0007.ExternalTableImport.sql" />
+    <None Include="Master\0001.Users.sql" />
+    <None Include="TraffkTenantShards\0002.CrossTenant.sql" />
+    <None Include="TraffkModel\0006.Sprocs.sql" />
+    <None Include="TraffkModel\0004.Health.sql" />
+    <None Include="TraffkGlobal\0002.InternationalClassificationDiseases.sql" />
+    <None Include="TraffkGlobal\0003.TaxonomyCrosswalk.pdf" />
   </ItemGroup>
 </Project>

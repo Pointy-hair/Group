@@ -1,0 +1,9 @@
+﻿CREATE LOGIN _TraffkTenantShardsUser
+	WITH PASSWORD = 'dsioajmvgr3tGVer80j5qiGDoe' 
+GO
+CREATE LOGIN _TraffkGlobalUser
+	WITH PASSWORD = 'dsioajmvgr3tGVer80j5qiGDoe' 
+GO
+CREATE LOGIN _TraffkPortalApp
+	WITH PASSWORD = 'dsJFDIOMFK43IUcartwheelFENGEVW3G98chapter85R43gf39QFJ3MAr112075QGJOQQ8HF4F_fuew' 
+GO

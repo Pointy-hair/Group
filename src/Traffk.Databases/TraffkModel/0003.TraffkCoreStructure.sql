@@ -1,13 +1,14 @@
 ﻿create table Tenants
 (
-	TenantId int not null identity primary key,
+	TenantId int not null primary key,
 	ParentTenantId int null references Tenants(TenantId),
 	CreatedAtUtc datetime not null default (getutcdate()),
 	RowStatus dbo.RowStatus not null default '1',
 	TenantName dbo.Title not null,
+	HostDatabaseName as db_name(),
 	LoginDomain dbo.DeveloperName null,
-	TenantSettings dbo.JsonObject,
-	TenantType dbo.developerName not null
+	TenantType dbo.developerName not null,
+	TenantSettings dbo.JsonObject
 )
 
 GO
@@ -118,6 +119,7 @@ create table Contacts
 	LastName dbo.Title null,
 	Suffix dbo.Title null,
 
+	CarrierNumber ForeignIdType null,
 	ContactDetails dbo.JsonObject
 )
 
@@ -127,7 +129,9 @@ create unique index UX_ForeignId on Contacts(TenantId, ForeignId) where ForeignI
 exec db.TablePropertySet  'Contacts', '1', @propertyName='AddToDbContext'
 exec db.TablePropertySet  'Contacts', '1', @propertyName='GeneratePoco'
 exec db.TablePropertySet  'Contacts', 'ITraffkTenanted', @propertyName='Implements'
-exec db.ColumnPropertySet 'Contacts', 'ContactDetails', 'Traffk.Bal.Data.Rdb.ContactDetails', @propertyName='JsonSettingsClass'
+exec db.ColumnPropertySet 'Contacts', 'ContactDetails', 'Contact.ContactDetails_', @propertyName='JsonSettingsClass'
+
+
 exec db.ColumnPropertySet 'Contacts', 'CreatedAtUtc', 'Datetime when this entity was created.'
 exec db.ColumnPropertySet 'Contacts', 'RowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
 exec db.ColumnPropertySet 'Contacts', 'RowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
@@ -143,14 +147,15 @@ exec db.TablePropertySet  'Contacts', 'Person', @propertyName='InheritanceClass:
 exec db.TablePropertySet  'Contacts', 'Provider', @propertyName='InheritanceClass:ProviderContact,ProviderContacts'
 
 exec db.ColumnPropertySet 'Contacts', 'ContactType', '1', @propertyName='IsInheritanceDiscriminatorField'
-exec db.ColumnPropertySet 'Contacts', 'DateOfBirth', '1', @propertyName='InheritanceField:Person'
-exec db.ColumnPropertySet 'Contacts', 'Gender', '1', @propertyName='InheritanceField:Person'
-exec db.ColumnPropertySet 'Contacts', 'Prefix', '1', @propertyName='InheritanceField:Person,Provider'
-exec db.ColumnPropertySet 'Contacts', 'FirstName', '1', @propertyName='InheritanceField:Person,Provider'
-exec db.ColumnPropertySet 'Contacts', 'MiddleName', '1', @propertyName='InheritanceField:Person,Provider'
-exec db.ColumnPropertySet 'Contacts', 'LastName', '1', @propertyName='InheritanceField:Person,Provider'
-exec db.ColumnPropertySet 'Contacts', 'Suffix', '1', @propertyName='InheritanceField:Person,Provider'
-exec db.ColumnPropertySet 'Contacts', 'SocialSecurityNumber', '1', @propertyName='InheritanceField:Person'
+exec db.ColumnPropertySet 'Contacts', 'DateOfBirth', 'PersonContact', @propertyName='InheritanceField'
+exec db.ColumnPropertySet 'Contacts', 'Gender', 'PersonContact', @propertyName='InheritanceField'
+exec db.ColumnPropertySet 'Contacts', 'Prefix', 'PersonContact,ProviderContact', @propertyName='InheritanceField'
+exec db.ColumnPropertySet 'Contacts', 'FirstName', 'PersonContact,ProviderContact', @propertyName='InheritanceField'
+exec db.ColumnPropertySet 'Contacts', 'MiddleName', 'PersonContact,ProviderContact', @propertyName='InheritanceField'
+exec db.ColumnPropertySet 'Contacts', 'LastName', 'PersonContact,ProviderContact', @propertyName='InheritanceField'
+exec db.ColumnPropertySet 'Contacts', 'Suffix', 'PersonContact,ProviderContact', @propertyName='InheritanceField'
+exec db.ColumnPropertySet 'Contacts', 'SocialSecurityNumber', 'PersonContact', @propertyName='InheritanceField'
+exec db.ColumnPropertySet 'Contacts', 'CarrierNumber', 'CarrierContact', @propertyName='InheritanceField'
 exec db.ColumnPropertySet 'Contacts', 'ForeignId', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
 
 GO
@@ -405,7 +410,7 @@ exec db.TablePropertySet  'CommunicationPieceVisits', '1', @propertyName='Genera
 exec db.TablePropertySet  'CommunicationPieceVisits', 'ITraffkTenanted', @propertyName='Implements'
 
 GO
-
+/*
 create table InsurancePlans
 (
 	InsurancePlanId int not null identity primary key,
@@ -473,6 +478,7 @@ exec db.ColumnPropertySet 'CustomInsurancePlanEconomics', 'RowStatus', 'missing'
 exec db.TablePropertySet  'CustomInsurancePlanEconomics', 'ITraffkTenanted', @propertyName='Implements'
 
 GO
+*/
 
 create view CommunicationHistory
 AS
@@ -512,6 +518,7 @@ create table Notes
 	CreatedAtUtc datetime not null default (getutcdate()),
 	TenantId int not null references Tenants(TenantId),
 	RowStatus dbo.RowStatus not null default '1',
+	ParentNoteId int null references Notes(NoteId),
 	CreatedByContactId int not null references Contacts(ContactId),
 	Title dbo.Title null,
 	Body nvarchar(max)
@@ -533,7 +540,7 @@ create table NoteTargets
 	TenantId int not null references Tenants(TenantId),
 	RowStatus dbo.RowStatus not null default '1',
 	NoteId int not null references Notes(NoteId),
-	TableObjectId int not null references sys.objects(object_id),
+	TableObjectId int not null,-- references sys.objects(object_id),
 	TablePkIntVal int null
 )
 
@@ -559,6 +566,8 @@ create table Workflows
 
 GO
 */
+
+/*
 create table ProviderMedicareSpecialtyCodeMap
 (
 	ProviderMedicareSpecialtyCodeMap int not null identity primary key,
@@ -574,6 +583,51 @@ exec db.TablePropertySet  'ProviderMedicareSpecialtyCodeMap', '1', @propertyName
 exec db.TablePropertySet  'ProviderMedicareSpecialtyCodeMap', 'IDontCreate', @propertyName='Implements', @tableSchema='dbo'
 
 GO
+*/
+
+
+CREATE TABLE [dbo].[ReportMetaData](
+	[ReportMetaDataId] [int] IDENTITY(1,1) NOT NULL primary key,
+	[ExternalReportKey] [nvarchar](2000) NOT NULL,
+	[ParentReportMetaDataId] [int] NULL,
+	[RowStatus] [dbo].[RowStatus] NOT NULL default(1),
+	TenantId int not null references Tenants(TenantId),
+	[OwnerContactId] [bigint] NULL,
+	[CreatedAtUtc] [datetime] NOT NULL default (getutcdate()),
+	[ReportDetails] [dbo].[JsonObject] NOT NULL
+)
+
+GO
+
+exec db.TablePropertySet  'ReportMetaData', '0', @propertyName='AddToDbContext'
+exec db.TablePropertySet  'ReportMetaData', '0', @propertyName='GeneratePoco'
+exec db.TablePropertySet  'ReportMetaData', 'Tenant', @propertyName='JointPart'
+exec db.TablePropertySet  'ReportMetaData', 'ITraffkTenanted', @propertyName='Implements'
+exec db.ColumnPropertySet 'ReportMetaData', 'CreatedAtUtc', 'Datetime when this entity was created.'
+exec db.ColumnPropertySet 'ReportMetaData', 'RowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
+exec db.ColumnPropertySet 'ReportMetaData', 'RowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'ReportMetaData', 'TenantId', 'Foreign key to the tenant that owns this account'
+
+GO
+
+exec [db].[TraffkGlobalTableImport] 'globals', 'ReportMetaData', 'dbo','ReportMetaData'
+exec db.JointViewCreate 'globals', 'ReportMetaData', 'dbo', 'ReportMetaData'
+
+exec db.ViewPropertySet  'ReportMetaData', '1', @propertyName='AddToDbContext', @viewSchema='joint'
+exec db.ViewPropertySet  'ReportMetaData', '1', @propertyName='GeneratePoco', @viewSchema='joint'
+exec db.ViewPropertySet  'ReportMetaData', 'ITraffkTenanted', @propertyName='Implements', @viewSchema='joint'
+exec db.ViewColumnPropertySet 'ReportMetaData', 'ReportMetaDataId', 'Key', @propertyName='CustomAttribute', @viewSchema='joint'
+exec db.ViewColumnPropertySet 'ReportMetaData', 'CreatedAtUtc', 'Datetime when this entity was created.', @viewSchema='joint'
+exec db.ViewColumnPropertySet 'ReportMetaData', 'RowStatus', 'missing', @propertyName='AccessModifier', @viewSchema='joint'
+exec db.ViewColumnPropertySet 'ReportMetaData', 'TenantId', 'Foreign key to the tenant that owns this account', @viewSchema='joint'
+
+exec db.ViewColumnPropertySet 'ReportMetaData', 'ReportDetails', 'Traffk.Bal.ReportVisuals.ReportDetails', @propertyName='JsonSettingsClass', @viewSchema='joint'
+
+
+
+GO
+
+
 
 
 

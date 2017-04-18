@@ -1,5 +1,6 @@
-﻿create view db.TraffkGlobalCols 
-as
-select * from information_schema.columns (nolock)
-
+﻿CREATE USER _TraffkGlobalUser
+	FOR LOGIN _TraffkGlobalUser
+	WITH DEFAULT_SCHEMA = dbo
+GO
+EXEC sp_addrolemember N'db_datareader', N'_TraffkGlobalUser'
 GO
