@@ -413,7 +413,8 @@ $(document).ready(function () {
     //If clicking outside navbar it will collapse and script shift contents up
     jQuery(document).mouseup(function (e) {
         var container = jQuery('.nav.navbar-left.top-nav');
-        if (!container.is(e.target) && container.has(e.target).length === 0) {
+        var navBar = jQuery('ul.dropdown-menu.lvl2-nav');
+        if ((!container.is(e.target) || navBar.is(e.target)) && container.has(e.target).length === 0) {
             jQuery('#page-wrapper').removeClass('nav-open');
         }
     });
