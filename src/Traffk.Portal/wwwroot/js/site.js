@@ -1,4 +1,4 @@
-﻿function debugAlert(msg)
+﻿    function debugAlert(msg)
 {
     //alert("debugAlert: "+msg);
 }
@@ -284,7 +284,7 @@ $(document).ready(function () {
     setUI();
 
     var pinnedMenu = getCookie('traffkPinnedMenu');
-    if (pinnedMenu && pinnedMenu === 'true') {
+    if (pinnedMenu && pinnedMenu === 'true' && $(window).width() > 768) {
         pinMenu(jQuery('#pin-menu'));
     }
 
@@ -466,6 +466,23 @@ $(document).ready(function () {
             unpinMenu(this);
         } else {
             pinMenu(this);
+        }
+    });
+
+    jQuery('#mobile-menu li').click(function () {
+        jQuery(this).children('ul').toggle();
+        if (jQuery(this).children('a').children('.fa').hasClass('fa-caret-right')) {
+            jQuery(this).children('a').children('.fa').removeClass('fa-caret-right');
+            jQuery(this).children('a').children('.fa').addClass('fa-caret-down');
+        } else {
+            jQuery(this).children('a').children('.fa').removeClass('fa-caret-down');
+            jQuery(this).children('a').children('.fa').addClass('fa-caret-right');
+        }
+    });
+    jQuery('a.dropdown-toggle').click(function (e) {
+        if ($(window).width() < 768) {
+            jQuery('#mobile-menu').toggle();
+            jQuery('#mobile-menu, #mobile-menu li ul').width($(window).width());
         }
     });
 });

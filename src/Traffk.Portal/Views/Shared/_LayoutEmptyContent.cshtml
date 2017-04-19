@@ -120,13 +120,13 @@
                             }
                             <b class="caret"></b>
                         </a>
-                        <ul class="dropdown-menu lvl2-nav">
+                        <ul class="dropdown-menu lvl2-nav" style="width: 1942px;" id="desktop-menu">
                             <li class="dropdown" role="presentation">
                                 <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle @(mainNavPageKey == AspHelpers.MainNavigationPageKeys.Main ? "active" : "")" href="#">
                                     Main
                                     <b class="caret"></b>
                                 </a>
-                                <ul class="dropdown-menu dropdown-submenu">
+                                <ul class="dropdown-menu dropdown-submenu" style="width: auto;">
                                     <li><a asp-area="" asp-controller="@HomeController.Name" asp-action="Index">Home</a></li>
                                     <li><a asp-area="" asp-controller="@HomeController.Name" asp-action="About">About</a></li>
                                     <li><a asp-area="" asp-controller="@HomeController.Name" asp-action="Contact">Contact</a></li>
@@ -138,7 +138,7 @@
                             </li>
                             @if (await User.HasPermission(AuthorizationService, PermissionNames.BasicReporting))
                             {
-                                <li><a asp-controller="@RiskIndexController.Name" asp-action="@RiskIndexController.ActionNames.Index">Risk Index</a></li>
+                                <li><a asp-controller="@RiskIndexController.Name" asp-action="@RiskIndexController.ActionNames.Index" class="@(mainNavPageKey == AspHelpers.MainNavigationPageKeys.RiskIndex ? "active" : "")">Risk Index</a></li>
                             }
                             @if (await User.HasPermission(AuthorizationService, PermissionNames.CustomerRelationshipData))
                             {
@@ -155,7 +155,7 @@
                                         Communications
                                         <b class="caret"></b>
                                     </a>
-                                    <ul class="dropdown-menu dropdown-submenu">
+                                    <ul class="dropdown-menu dropdown-submenu" style="width: auto;">
                                         <li><a asp-controller="@CommunicationsController.Name" asp-action="@CommunicationsController.ActionNames.CommunicationsList">Communications</a></li>
                                         <li><a asp-controller="@CommunicationsController.Name" asp-action="@CommunicationsController.ActionNames.CreativesList">Creatives</a></li>
                                     </ul>
@@ -168,7 +168,7 @@
                                         Admin
                                         <b class="caret"></b>
                                     </a>
-                                    <ul class="dropdown-menu dropdown-submenu">
+                                    <ul class="dropdown-menu dropdown-submenu" style="width: auto;">
                                         @if (manageJobs)
                                         {
                                             <li><a asp-controller="@JobsController.Name" asp-action="Index">Jobs</a></li>
@@ -192,6 +192,78 @@
                                 </li>
                             }
                             <li><i class="fa fa-thumb-tack hidden-xs" id="pin-menu"></i></li>
+                        </ul>
+                        <ul id="mobile-menu">
+                            <li class="has-child-menu">
+                                <a aria-expanded="false" aria-haspopup="true" role="button" href="#" class="@(mainNavPageKey == AspHelpers.MainNavigationPageKeys.Main ? "active" : "")">
+                                    Main
+                                    <i class="fa fa-caret-right" aria-hidden="true"></i>
+                                </a>
+                                <ul style="width: auto;">
+                                    <li><a asp-area="" asp-controller="@HomeController.Name" asp-action="Index">Home</a></li>
+                                    <li><a asp-area="" asp-controller="@HomeController.Name" asp-action="About">About</a></li>
+                                    <li><a asp-area="" asp-controller="@HomeController.Name" asp-action="Contact">Contact</a></li>
+                                    @if (await User.HasPermission(AuthorizationService, PermissionNames.ReleaseLog))
+                                    {
+                                        <li><a asp-controller="Home" asp-action="Releases">Releases</a></li>
+                                    }
+                                </ul>
+                            </li>
+                            @if (await User.HasPermission(AuthorizationService, PermissionNames.BasicReporting))
+                            {
+                                <li><a asp-controller="@RiskIndexController.Name" asp-action="@RiskIndexController.ActionNames.Index" class="@(mainNavPageKey == AspHelpers.MainNavigationPageKeys.RiskIndex ? "active" : "")">Risk Index</a></li>
+                            }
+                            @if (await User.HasPermission(AuthorizationService, PermissionNames.CustomerRelationshipData))
+                            {
+                                <li><a asp-controller="@CrmController.Name" asp-action="Index" class="@(mainNavPageKey == AspHelpers.MainNavigationPageKeys.CRM ? "active" : "")">CRM</a></li>
+                            }                            
+                            @if (await User.HasPermission(AuthorizationService, PermissionNames.BasicReporting))
+                            {
+                                <li><a asp-controller="@ReportingController.Name" asp-action="Index" class="@(mainNavPageKey == AspHelpers.MainNavigationPageKeys.Reporting ? "active" : "")">Reports</a></li>
+                            }
+                            @if (await User.HasPermission(AuthorizationService, PermissionNames.Messaging))
+                            {
+                                <li class="has-child-menu">
+                                    <a aria-expanded="false" aria-haspopup="true" role="button" class="@(mainNavPageKey == AspHelpers.MainNavigationPageKeys.Messaging ? "active" : "")" href="#">
+                                        Communications
+                                        <i class="fa fa-caret-right" aria-hidden="true"></i>
+                                    </a>
+                                    <ul style="width: auto;">
+                                        <li><a asp-controller="@CommunicationsController.Name" asp-action="@CommunicationsController.ActionNames.CommunicationsList">Communications</a></li>
+                                        <li><a asp-controller="@CommunicationsController.Name" asp-action="@CommunicationsController.ActionNames.CreativesList">Creatives</a></li>
+                                    </ul>
+                                </li>
+                            }
+                            @if (manageJobs || manageTenants || manageRoles || manageUsers || manageProtectedHealthInformation || canAccessPhi)
+                            {
+                                <li class="has-child-menu">
+                                    <a aria-expanded="false" aria-haspopup="true" role="button" class="@(mainNavPageKey == AspHelpers.MainNavigationPageKeys.Setup ? "active" : "")" href="#">
+                                        Admin
+                                        <b class="caret"></b>
+                                    </a>
+                                    <ul style="width: auto;">
+                                        @if (manageJobs)
+                                        {
+                                            <li><a asp-controller="@JobsController.Name" asp-action="Index">Jobs</a></li>
+                                        }
+                                        <li class="divider" role="separator"></li>
+                                        @if (manageUsers)
+                                        {
+                                            <li><a asp-controller="@UsersController.Name" asp-action="Index">Users</a></li>
+                                        }
+                                        @if (manageRoles)
+                                        {
+                                            <li><a asp-controller="@RolesController.Name" asp-action="Index">Roles</a></li>
+                                        }
+                                        <li class="divider" role="separator"></li>
+                                        @if (manageTenants)
+                                        {
+                                            <li><a asp-controller="@ApplicationController.Name" asp-action="Index">Applications</a></li>
+                                            <li><a asp-controller="@TenantsController.Name" asp-action="Index">Tenants</a></li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
                         </ul>
                     </li>
                 }
