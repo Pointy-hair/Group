@@ -18,7 +18,7 @@ namespace Traffk.Tableau.REST.RestRequests
         public void UpdateForTenant(string tenantId)
         {
             TenantId = tenantId;
-            Url = BaseUrl + SiteUrlPortion + tenantId;
+            Url = BaseRestApiUrl + SiteUrlPortion + tenantId;
         }
 
         public string TrustedUrl => Url + "/trusted/";
@@ -40,7 +40,7 @@ namespace Traffk.Tableau.REST.RestRequests
         public string Host { get; set; }
         public string Url { get; set; }
         public string TenantId { get; set; }
-        public string BaseUrl
+        public string BaseRestApiUrl
         {
             get
             {
@@ -50,7 +50,7 @@ namespace Traffk.Tableau.REST.RestRequests
                 }
                 else
                 {
-                    return Url;
+                    return Url + @"/#";
                 }
             }
         }

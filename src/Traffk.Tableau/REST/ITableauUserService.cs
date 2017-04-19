@@ -5,35 +5,10 @@ using Traffk.Tableau.REST.RestRequests;
 
 namespace Traffk.Tableau.REST
 {
-    public interface ITableauRestService
+    public interface ITableauUserService
     {
-        TableauServerSignIn Login { get; set; }
-        //TODO: Remove {TableauServerUrls onlineUrls, string userName, string password} from the signature
-        TableauServerSignIn SignIn(TableauServerUrls onlineUrls, string userName, string password, TaskStatusLogs statusLog = null);
-
-        DownloadProjectsList DownloadProjectsList();
         DownloadViewsForSite DownloadViewsForSite();
-        ICollection<SiteWorkbook> DownloadWorkbooksList();
-
         byte[] DownloadPreviewImageForView(string workbookId, string viewId);
-
-        SiteInfo CreateSite(string tenantName);
-        SiteInfo GetSiteInfo();
-        void AddUserToSite(string siteId, string userName);
-        void RemoveUserFromSite(SiteUser userToRemove);
-
-        ICollection<SiteWorkbook> DownloadWorkbooks(IEnumerable<SiteWorkbook> workbooksToDownload, string localSavePath,
-            bool generateInfoFile);
-        void UploadWorkbooks(string projectName, string datasourceUsername, string datasourcePassword,
-            bool isEmbedded, string path);
-
-        ICollection<SiteDatasource> DownloadDatasourceList();
-        ICollection<SiteConnection> DownloadConnectionsForDatasource(string datasourceId);
-        void DownloadDatasourceFiles(IEnumerable<SiteDatasource> datasources, string savePath);
-        ICollection<SiteDatasource> UploadDatasourceFiles(string projectName, string datasourceUsername,
-            string datasourcePassword, bool isEmbedded, string path);
-        void UpdateDatasourceConnection(SiteDatasource datasourceToUpdate, SiteConnection connectionToUpdate,
-            string newServerAddress);
     }
 
     public class VisualId

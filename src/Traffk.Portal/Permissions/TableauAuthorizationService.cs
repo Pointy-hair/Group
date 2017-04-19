@@ -9,7 +9,7 @@ namespace Traffk.Portal.Permissions
 {
     public class TableauAuthorizationService : ITableauAuthorizationService
     {
-        private readonly ITableauRestService AdminTableauRestService;
+        private readonly ITableauUserService AdminTableauRestService;
         private readonly TableauSignInOptions Options;
         private readonly ITableauUserCredentials TableauAdminCredentials;
         private readonly TraffkRdbContext Rdb;
@@ -21,7 +21,7 @@ namespace Traffk.Portal.Permissions
             TableauAdminCredentials = adminSignInOptions.Value;
                 //Instead of creating a new instance here, 
                 //should we have a subclass of TableauRestService called AdminTableauRestService that uses TableauAdminSignInOptions?
-            AdminTableauRestService = new TableauRestService(options, TableauAdminCredentials);
+            AdminTableauRestService = new TableauUserService(options, TableauAdminCredentials);
             Options = options.Value;
             Rdb = rdb;
         }

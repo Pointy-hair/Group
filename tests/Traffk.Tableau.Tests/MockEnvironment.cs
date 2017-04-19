@@ -36,6 +36,14 @@ namespace Traffk.Tableau.Tests
             return mock;
         }
 
+        public static Mock<ITableauUserCredentials> TableauUserCredentials()
+        {
+            var mock = new Mock<ITableauUserCredentials>();
+            mock.Setup(x => x.UserName).Returns("Test");
+            mock.Setup(x => x.Password).Returns("TraffkTestTableau");
+            return mock;
+        }
+
         public static Mock<ITableauUserCredentials> TableauUserCredentials(string username, string password)
         {
             var mock = new Mock<ITableauUserCredentials>();

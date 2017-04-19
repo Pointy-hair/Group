@@ -10,7 +10,8 @@ namespace Traffk.Tableau.REST.Models
     {
         public readonly string Id;
         public readonly string Name;
-        public readonly string ContentUrl;
+        public string TenantId => IdentifierForUrl;
+        public readonly string IdentifierForUrl;
         public readonly string AdminMode;
         public readonly string State;
 
@@ -29,7 +30,7 @@ namespace Traffk.Tableau.REST.Models
 
             this.Name = content.Attributes["name"].Value;
             this.Id = content.Attributes["id"].Value;
-            this.ContentUrl = content.Attributes["contentUrl"].Value;
+            this.IdentifierForUrl = content.Attributes["contentUrl"].Value;
             this.AdminMode = content.Attributes["adminMode"].Value;
             this.State = content.Attributes["state"].Value;
         }

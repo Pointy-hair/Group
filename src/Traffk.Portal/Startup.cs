@@ -180,7 +180,7 @@ namespace TraffkPortal
             services.AddScoped<ConfigStringFormatter>();
             services.AddScoped<ITableauVisualServices, TableauVisualServices>();
             services.AddScoped<ITrustedTicketGetter, TrustedTicketGetter>();
-            services.AddScoped<ITableauRestService, TableauRestService>();
+            services.AddScoped<ITableauUserService, TableauUserService>();
             services.AddScoped<ITableauTenantFinder, TableauTenantFinder>();
             services.AddScoped<ITableauUserCredentials, CurrentContextServices>();
             services.AddScoped<ITableauAuthorizationService, TableauAuthorizationService>();

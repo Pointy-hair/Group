@@ -1,18 +1,9 @@
-﻿using System;
+﻿using RevolutionaryStuff.Core;
+using RevolutionaryStuff.Core.Caching;
+using RevolutionaryStuff.Core.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net.Http;
-using System.Security.Claims;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using RevolutionaryStuff.Core;
-using RevolutionaryStuff.Core.Caching;
-using RevolutionaryStuff.Core.Collections;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Permissions;
 using Traffk.Bal.Services;
@@ -36,7 +27,7 @@ namespace Traffk.Bal.ReportVisuals
 
     public class ReportVisualService : IReportVisualService
     {
-        private ITableauRestService TableauRestService;
+        private ITableauUserService TableauUserService;
         private TraffkRdbContext Rdb;
         private ITableauTenantFinder TableauTenantFinder;
         private ApplicationUser CurrentUser;
@@ -47,13 +38,13 @@ namespace Traffk.Bal.ReportVisuals
         //Do we make these private?
         public string TableauTenantId { get; private set; }
 
-        public ReportVisualService(ITableauRestService tableauRestService, TraffkRdbContext rdb, 
+        public ReportVisualService(ITableauUserService tableauUserService, TraffkRdbContext rdb, 
             ITableauTenantFinder tableauTenantFinder, ICurrentUser currentUser, IPhiAuthorizer phiAuthorizer,
             ICacher cacher = null)
         {
             CanSeePhi = phiAuthorizer.CanSeePhi;
 
-            TableauRestService = tableauRestService;
+            TableauUserService = tableauUserService;
             Rdb = rdb;
             TableauTenantFinder = tableauTenantFinder;
             CurrentUser = currentUser.User;
@@ -94,7 +85,7 @@ namespace Traffk.Bal.ReportVisuals
 
         byte[] IReportVisualService.DownloadPreviewImageForTableauVisual(string workbookId, string viewId)
         {
-            return TableauRestService.DownloadPreviewImageForView(workbookId, viewId);
+            return TableauUserService.DownloadPreviewImageForView(workbookId, viewId);
         }
 
         //Private methods
@@ -233,7 +224,7 @@ namespace Traffk.Bal.ReportVisuals
         {
             if (TableauTenantId == null)
             {
-                var tableauReportVisuals = TableauRestService.DownloadViewsForSite().Views.OrderBy(x => x.ViewName).ToList();
+                var tableauReportVisuals = TableauUserService.DownloadViewsForSite().Views.OrderBy(x => x.ViewName).ToList();
 
                 return tableauReportVisuals;
             }
