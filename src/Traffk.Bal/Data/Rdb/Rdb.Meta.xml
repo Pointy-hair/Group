@@ -221,7 +221,11 @@
         <Column name="State" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="100" />
         <Column name="PostalCode" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="50" />
         <Column name="CountryId" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
-        <Column name="AddressHash" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="binary" maxLen="20" />
+        <Column name="AddressHash" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="binary" maxLen="20">
+          <Properties>
+            <Property name="AccessModifier" value="missing" />
+          </Properties>
+        </Column>
         <Column name="CleanAddressId" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="Addresses" />
         <Column name="IsClean" position="11" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" default="((0))" />
       </Columns>

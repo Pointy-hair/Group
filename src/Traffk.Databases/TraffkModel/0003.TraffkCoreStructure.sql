@@ -94,6 +94,7 @@ exec db.TablePropertySet  'Addresses', '1', @propertyName='GeneratePoco'
 exec db.TablePropertySet  'Addresses', 'Address', @propertyName='ClassName'
 exec db.TablePropertySet  'Addresses', 'ITraffkTenanted', @propertyName='Implements'
 exec db.ColumnPropertySet 'Addresses', 'TenantId', 'Foreign key to the tenant that owns this account'
+exec db.ColumnPropertySet 'Addresses', 'AddressHash', 'missing', @propertyName='AccessModifier'
 
 GO
 
