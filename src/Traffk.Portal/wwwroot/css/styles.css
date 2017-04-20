@@ -1260,44 +1260,44 @@ ul.navbar-left {
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
     }
 
+        #mobile-menu a {
+            color: #000000 !important;
+        }
+
     #mobile-menu li {
         padding: 12px 15px;
     }
 
-        #mobile-menu li ul {
-            display: none;
-            padding-left: 0;
-            position: relative;
-            left: -15px;
-            margin-top: 5px;
-        }
+    #mobile-menu li ul {
+        display: none;
+        padding-left: 0;
+        position: relative;
+        left: -15px;
+        margin-top: 5px;
+    }
 
-        #mobile-menu li ul li {
-            border-bottom: none;
-            list-style-type: none;
-            border-bottom: 1px solid #fff;
-            padding: 0;
-        }
+    #mobile-menu li ul li {
+        border-bottom: none;
+        list-style-type: none;
+        border-bottom: 1px solid #fff;
+        padding: 0;
+    }
 
-        #mobile-menu li ul li:last-child {
-            border-bottom: none;
-        }
+    #mobile-menu li ul li:last-child {
+        border-bottom: none;
+    }
 
-        #mobile-menu li ul li:last-child a {
-            padding-bottom: 0;
-        }
+    #mobile-menu li ul li:last-child a {
+        padding-bottom: 0;
+    }
 
-        #mobile-menu li ul li a {
-            cursor: pointer;
-            font-size: .9em;
-            display: block;
-            padding: 12px 0 12px 30px;
-            list-style-type: none;
-        }
-
-        /*#mobile-menu li ul li a:before {
-            content: "» ";
-        }*/
+    #mobile-menu li ul li a {
+        cursor: pointer;
+        font-size: .9em;
+        display: block;
+        padding: 12px 0 12px 30px;
+        list-style-type: none;
+    }
 
 	.navbar-right {
 	  display: none;

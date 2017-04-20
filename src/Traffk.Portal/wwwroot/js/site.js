@@ -403,10 +403,12 @@ $(document).ready(function () {
     //Shift contents down or up based on navbar
     jQuery('a.dropdown-toggle.navbar-brand.img-logo').click(function () {
         var isUserLoggedIn = !jQuery('.account-nav')[0];
-        if (jQuery('#page-wrapper').hasClass('nav-open')) {
-            jQuery('#page-wrapper').removeClass('nav-open');
-        } else if (isUserLoggedIn) {
-            jQuery('#page-wrapper').addClass('nav-open');
+        if ($(window).width() > 768) {
+            if (jQuery('#page-wrapper').hasClass('nav-open')) {
+                jQuery('#page-wrapper').removeClass('nav-open');
+            } else if (isUserLoggedIn) {
+                jQuery('#page-wrapper').addClass('nav-open');
+            }
         }
     });
 
