@@ -26,7 +26,7 @@ namespace Traffk.Bal.Data.Rdb
         public Tenant Tenant { get; set; }
 
         [Column("ContactId")]
-        public long ContactId { get; set; }
+        public int ContactId { get; set; }
 
         [ForeignKey("ContactId")]
         [JsonIgnore]
