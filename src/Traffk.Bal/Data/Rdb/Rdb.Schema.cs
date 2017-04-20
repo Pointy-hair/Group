@@ -529,7 +529,6 @@ namespace Traffk.Bal.Data.Rdb
 		[Column("CountryId")]
 		public int? CountryId { get; set; }
 
-
 		[DisplayName("Clean Address Id")]
 		[Column("CleanAddressId")]
 		public int? CleanAddressId { get; set; }
@@ -1677,6 +1676,7 @@ namespace Traffk.Bal.Data.Rdb
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		[Column("ContactId")]
+		public int ContactId { get; set; }
 
 		[DisplayName("Tenant Id")]
 		[Column("TenantId")]
@@ -1838,7 +1838,6 @@ namespace Traffk.Bal.Data.Rdb
 	{
         public static new readonly CarrierContact[] None = new CarrierContact[0];
 
-        [NotMapped]
 		[DisplayName("Carrier Number")]
 		[MaxLength(50)]
 		[Column("CarrierNumber")]
@@ -2169,7 +2168,6 @@ namespace Traffk.Bal.Data.Rdb
 		[Column("Suffix")]
 		public string Suffix { get; set; }
 
-        [NotMapped]
 		[DisplayName("Carrier Number")]
 		[MaxLength(50)]
 		[Column("CarrierNumber")]
@@ -3172,7 +3170,7 @@ namespace Traffk.Bal.Data.Rdb
 
 		[DisplayName("Created By Contact Id")]
 		[Column("CreatedByContactId")]
-		public long CreatedByContactId { get; set; }
+		public int CreatedByContactId { get; set; }
 
 		//LinksTo:dbo.Contacts
 		[ForeignKey("CreatedByContactId")]
@@ -3856,7 +3854,7 @@ namespace Traffk.Bal.Data.Rdb
 
 		[DisplayName("Contact Id")]
 		[Column("ContactId")]
-		public long? ContactId { get; set; }
+		public int? ContactId { get; set; }
 
 		//LinksTo:dbo.Contacts
 		[ForeignKey("ContactId")]
@@ -3987,7 +3985,7 @@ namespace Traffk.Bal.Data.Rdb
 
 		[DisplayName("Contact Id")]
 		[Column("ContactId")]
-		public long? ContactId { get; set; }
+		public int? ContactId { get; set; }
 
 		//LinksTo:dbo.Contacts
 		[ForeignKey("ContactId")]
@@ -4434,7 +4432,7 @@ namespace Traffk.Bal.Data.Rdb
 
 		[DisplayName("Contact Id")]
 		[Column("ContactId")]
-		public long? ContactId { get; set; }
+		public int? ContactId { get; set; }
 
 		//LinksTo:dbo.Contacts
 		[ForeignKey("ContactId")]
@@ -4759,7 +4757,7 @@ namespace Traffk.Bal.Data.Rdb
 
 		[DisplayName("Contact Id")]
 		[Column("ContactId")]
-		public long? ContactId { get; set; }
+		public int? ContactId { get; set; }
 
 		//LinksTo:dbo.Contacts
 		[ForeignKey("ContactId")]
@@ -4954,7 +4952,7 @@ namespace Traffk.Bal.Data.Rdb
 
 		[DisplayName("Person Contact Id")]
 		[Column("PersonContactId")]
-		public long PersonContactId { get; set; }
+		public int PersonContactId { get; set; }
 
 		//LinksTo:dbo.Contacts
 		[ForeignKey("PersonContactId")]
@@ -4964,7 +4962,7 @@ namespace Traffk.Bal.Data.Rdb
 
 		[DisplayName("Carrier Contact Id")]
 		[Column("CarrierContactId")]
-		public long CarrierContactId { get; set; }
+		public int CarrierContactId { get; set; }
 
 		//LinksTo:dbo.Contacts
 		[ForeignKey("CarrierContactId")]
@@ -5092,7 +5090,7 @@ namespace Traffk.Bal.Data.Rdb
 
 		[DisplayName("Contact Id")]
 		[Column("ContactId")]
-		public long? ContactId { get; set; }
+		public int? ContactId { get; set; }
 
 		//LinksTo:dbo.Contacts
 		[ForeignKey("ContactId")]
@@ -5305,7 +5303,7 @@ namespace Traffk.Bal.Data.Rdb
 
 		[DisplayName("Contact Id")]
 		[Column("ContactId")]
-		public long? ContactId { get; set; }
+		public int? ContactId { get; set; }
 
 		//LinksTo:dbo.Contacts
 		[ForeignKey("ContactId")]
@@ -5461,7 +5459,7 @@ namespace Traffk.Bal.Data.Rdb
 
 		[DisplayName("Contact Id")]
 		[Column("ContactId")]
-		public long ContactId { get; set; }
+		public int ContactId { get; set; }
 
 		//LinksTo:dbo.Contacts
 		[ForeignKey("ContactId")]
@@ -5485,7 +5483,7 @@ namespace Traffk.Bal.Data.Rdb
 
 		[DisplayName("Prescriber Provider Contact Id")]
 		[Column("PrescriberProviderContactId")]
-		public long PrescriberProviderContactId { get; set; }
+		public int PrescriberProviderContactId { get; set; }
 
 		//LinksTo:dbo.Contacts
 		[ForeignKey("PrescriberProviderContactId")]
@@ -5747,7 +5745,7 @@ namespace Traffk.Bal.Data.Rdb
 
 		[DisplayName("Contact Id")]
 		[Column("ContactId")]
-		public long? ContactId { get; set; }
+		public int? ContactId { get; set; }
 
 		//LinksTo:dbo.Contacts
 		[ForeignKey("ContactId")]
@@ -5900,7 +5898,7 @@ namespace Traffk.Bal.Data.Rdb
 
 		[DisplayName("Contact Id")]
 		[Column("ContactId")]
-		public long? ContactId { get; set; }
+		public int? ContactId { get; set; }
 
 		//LinksTo:dbo.Contacts
 		[ForeignKey("ContactId")]
