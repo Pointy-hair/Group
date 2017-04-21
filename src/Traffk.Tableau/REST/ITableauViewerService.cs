@@ -5,7 +5,7 @@ using Traffk.Tableau.REST.RestRequests;
 
 namespace Traffk.Tableau.REST
 {
-    public interface ITableauUserService
+    public interface ITableauViewerService
     {
         DownloadViewsForSite DownloadViewsForSite();
         byte[] DownloadPreviewImageForView(string workbookId, string viewId);

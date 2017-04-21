@@ -1153,6 +1153,10 @@ ul.navbar-left {
     background-position: center;
 }
 
+.report-preview-image-container a:focus, a:hover{
+    text-decoration: none;
+}
+
 .report-tall {
     min-height: 900px;
 }

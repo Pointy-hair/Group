@@ -6,12 +6,12 @@ using Traffk.Tableau.REST.RestRequests;
 
 namespace Traffk.Tableau.REST
 {
-    public class TableauUserService : TableauBaseService, ITableauUserService
+    public class TableauViewerService : TableauBaseService, ITableauViewerService
     {
 
         #region Constructors
 
-        public TableauUserService(IOptions<TableauSignInOptions> options, 
+        public TableauViewerService(IOptions<TableauSignInOptions> options, 
             ITableauUserCredentials tableauUserCredentials,
             ICacher cacher=null) : base(options, tableauUserCredentials, cacher)
         {
@@ -20,9 +20,9 @@ namespace Traffk.Tableau.REST
 
         #endregion
 
-        DownloadViewsForSite ITableauUserService.DownloadViewsForSite() => base.DownloadViewsForSite();
+        DownloadViewsForSite ITableauViewerService.DownloadViewsForSite() => base.DownloadViewsForSite();
 
-        byte[] ITableauUserService.DownloadPreviewImageForView(string workbookId, string viewId)
+        byte[] ITableauViewerService.DownloadPreviewImageForView(string workbookId, string viewId)
         {
             var downloadPreviewImage = new DownloadPreviewImageForView(Urls, Login);
             downloadPreviewImage.ExecuteRequest(workbookId, viewId);

@@ -277,7 +277,7 @@ namespace Traffk.Tableau.Tests.REST
             [TestMethod]
             public void WhenGivenUrlSignIn()
             {
-                var testService = new TableauUserService(Options, TableauUserCredentials);
+                var testService = new TableauViewerService(Options, TableauUserCredentials);
                 Assert.IsNotNull(testService);
 
                 var testAdminService = new TableauAdminService(Options, TableauAdminCredentials);
@@ -304,7 +304,7 @@ namespace Traffk.Tableau.Tests.REST
             [TestMethod]
             public void WhenSignedInDownloadViewList()
             {
-                var testService = new TableauUserService(Options, TableauUserCredentials) as ITableauUserService;
+                var testService = new TableauViewerService(Options, TableauUserCredentials) as ITableauViewerService;
                 var views = testService.DownloadViewsForSite();
                 Assert.IsNotNull(views);
                 Assert.IsTrue(views.Views.Any());
@@ -317,7 +317,7 @@ namespace Traffk.Tableau.Tests.REST
             [TestMethod]
             public void WhenSignedInDownloadPreviewImage()
             {
-                var testService = new TableauUserService(Options, TableauUserCredentials) as ITableauUserService;
+                var testService = new TableauViewerService(Options, TableauUserCredentials) as ITableauViewerService;
                 var testImageBytes = testService.DownloadPreviewImageForView("6d8f31d9-aceb-40be-867d-1c980215b246", "c8922aac-c202-446b-8ed2-ff4dde96eaba");
 
                 Assert.IsNotNull(testImageBytes);

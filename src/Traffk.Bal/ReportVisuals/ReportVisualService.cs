@@ -27,7 +27,7 @@ namespace Traffk.Bal.ReportVisuals
 
     public class ReportVisualService : IReportVisualService
     {
-        private ITableauUserService TableauUserService;
+        private ITableauViewerService TableauViewerService;
         private TraffkRdbContext Rdb;
         private ITableauTenantFinder TableauTenantFinder;
         private ApplicationUser CurrentUser;
@@ -38,13 +38,13 @@ namespace Traffk.Bal.ReportVisuals
         //Do we make these private?
         public string TableauTenantId { get; private set; }
 
-        public ReportVisualService(ITableauUserService tableauUserService, TraffkRdbContext rdb, 
+        public ReportVisualService(ITableauViewerService tableauViewerService, TraffkRdbContext rdb, 
             ITableauTenantFinder tableauTenantFinder, ICurrentUser currentUser, IPhiAuthorizer phiAuthorizer,
             ICacher cacher = null)
         {
             CanSeePhi = phiAuthorizer.CanSeePhi;
 
-            TableauUserService = tableauUserService;
+            TableauViewerService = tableauViewerService;
             Rdb = rdb;
             TableauTenantFinder = tableauTenantFinder;
             CurrentUser = currentUser.User;
@@ -85,7 +85,7 @@ namespace Traffk.Bal.ReportVisuals
 
         byte[] IReportVisualService.DownloadPreviewImageForTableauVisual(string workbookId, string viewId)
         {
-            return TableauUserService.DownloadPreviewImageForView(workbookId, viewId);
+            return TableauViewerService.DownloadPreviewImageForView(workbookId, viewId);
         }
 
         //Private methods
@@ -224,7 +224,7 @@ namespace Traffk.Bal.ReportVisuals
         {
             if (TableauTenantId == null)
             {
-                var tableauReportVisuals = TableauUserService.DownloadViewsForSite().Views.OrderBy(x => x.ViewName).ToList();
+                var tableauReportVisuals = TableauViewerService.DownloadViewsForSite().Views.OrderBy(x => x.ViewName).ToList();
 
                 return tableauReportVisuals;
             }
