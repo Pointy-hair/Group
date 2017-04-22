@@ -39,9 +39,6 @@
                 <td>
                     <a asp-action="@ActionNames.Health.Participation" asp-route-id="@ViewContext.GetRouteValue()" asp-route-recordId="@item.ParticipationId">@item.ParticipationId</a>
                 </td>
-                @*<td>
-                    @Html.DisplayFor(modelItem => item.program_name)
-                </td>*@
                 <td>
                     @Html.DisplayFor(modelItem => item.ProgramCodeL)
                 </td>
