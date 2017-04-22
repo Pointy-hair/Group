@@ -79,8 +79,8 @@
                     @*<li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.MemberPcp" class="@(pageKey==CrmController.PageKeys.MemberPCP?"active":"")">MemberPCP</a></li>*@
                     <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.ParticipationList" class="@(pageKey==CrmController.PageKeys.Participation?"active":"")">Participation</a></li>
                     <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.PharmacyList" class="@(pageKey==CrmController.PageKeys.Pharmacy?"active":"")">Pharmacy</a></li>
-                    <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.Score" class="@(pageKey==CrmController.PageKeys.Scores?"active":"")">Score</a></li>
-                    <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.HistoricalScoreList" class="@(pageKey==CrmController.PageKeys.MillimanScoreList?"active":"")">Scores (Historical)</a></li>
+                    @*<li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.Score" class="@(pageKey==CrmController.PageKeys.Scores?"active":"")">Score</a></li>*@
+                    <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.MillimanScoreList" class="@(pageKey==CrmController.PageKeys.MillimanScoreList?"active":"")">Milliman Scores</a></li>
                     <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.QualityMetricsList" class="@(pageKey==CrmController.PageKeys.QualityMetrics?"active":"")">Quality Metrics</a></li>
                     <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.VisitList" class="@(pageKey==CrmController.PageKeys.Visit?"active":"")">Visits</a></li>
                 </ul>

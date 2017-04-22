@@ -12,7 +12,7 @@
 <table class="table table-bordered table-hover table-striped">
     <thead>
     <tr>
-        <th>
+        @*<th>
             @Html.SortableHeaderFor(z => z.dw_record_id)
         </th>
         <th>
@@ -29,6 +29,24 @@
         </th>
         <th>
             @Html.SortableHeaderFor(z => z.ip_days)
+        </th>*@
+        <th>
+            @Html.SortableHeaderFor(z => z.VisitId)
+        </th>
+        <th>
+            @Html.SortableHeaderFor(z => z.VisitType)
+        </th>
+        <th>
+            @Html.SortableHeaderFor(z => z.VisitStartDd)
+        </th>
+        <th>
+            @Html.SortableHeaderFor(z => z.VisitEndDd)
+        </th>
+        <th>
+            @Html.SortableHeaderFor(z => z.AdmissionType)
+        </th>
+        <th>
+            @Html.SortableHeaderFor(z => z.InpatientDays)
         </th>
     </tr>
     </thead>
@@ -36,7 +54,7 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>
+                @*<td>
                     <a asp-action="@ActionNames.Health.Visit" asp-route-id="@ViewContext.GetRouteValue()" asp-route-recordId="@item.dw_record_id">@item.dw_record_id</a>
                 </td>
                 <td>
@@ -53,8 +71,25 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.ip_days)
+                </td>*@
+                <td>
+                    <a asp-action="@ActionNames.Health.Visit" asp-route-id="@ViewContext.GetRouteValue()" asp-route-recordId="@item.VisitId">@item.VisitId</a>
                 </td>
-
+                <td>
+                    @Html.DisplayFor(modelItem => item.VisitType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.VisitStartDd)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.VisitEndDd)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AdmissionType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.InpatientDays)
+                </td>
             </tr>
         }
     </tbody>
