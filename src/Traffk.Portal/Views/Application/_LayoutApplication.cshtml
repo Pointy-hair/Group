@@ -1,11 +1,13 @@
 ﻿@using static TraffkPortal.Controllers.ApplicationController
+@using static TraffkPortal.Controllers.ApplicationController.PageKeys
+
 @{
     Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
     ViewData.HasBreadcrumbItems(true);
     ViewData.HasPageMenuItems(true);
     var pageKey = (PageKeys)ViewData[ViewDataKeys.PageKey];
     var entityId = (int)ViewData[ViewDataKeys.EntityId];
-    var entityType = (ApplicationTypes) ViewData[ViewDataKeys.EntityType];
+    var entityType = (AppTypes) ViewData[ViewDataKeys.EntityType];
 }
 @section listingTable
 {
@@ -18,7 +20,7 @@
 }
 @section pageNavItems {
     <li><a asp-action="Edit" asp-route-id="@entityId" class="@(pageKey==PageKeys.Basics?"active":"")">Main</a></li>
-    @if (entityType == ApplicationTypes.Portal)
+    @if (entityType == AppTypes.Portal)
     {
         <li><a asp-action="PortalSettings" asp-route-id="@entityId" class="@(pageKey==PageKeys.PortalSettings?"active":"")">Portal Settings</a></li>
     }

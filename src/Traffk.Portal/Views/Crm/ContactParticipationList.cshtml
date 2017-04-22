@@ -13,21 +13,23 @@
     <thead>
     <tr>
         <th>
-            @Html.SortableHeaderFor(z => z.dw_record_id)
+            @Html.SortableHeaderFor(z => z.ParticipationId)
         </th>
-        <th>
+        @*<th>
             @Html.SortableHeaderFor(z => z.program_name)
+        </th>*@
+        <th>
+            @Html.SortableHeaderFor(z => z.ProgramCodeL)
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.program_status)
+            @Html.SortableHeaderFor(z => z.ProgramStatus)
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.program_start_date)
+            @Html.SortableHeaderFor(z => z.ProgramStartDd)
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.program_end_date)
+            @Html.SortableHeaderFor(z => z.ProgramEndDd)
         </th>
-        <th></th>
     </tr>
     </thead>
     <tbody>
@@ -35,19 +37,22 @@
         {
             <tr>
                 <td>
-                    <a asp-action="@ActionNames.Health.Participation" asp-route-id="@ViewContext.GetRouteValue()" asp-route-recordId="@item.dw_record_id">@item.dw_record_id</a>
+                    <a asp-action="@ActionNames.Health.Participation" asp-route-id="@ViewContext.GetRouteValue()" asp-route-recordId="@item.ParticipationId">@item.ParticipationId</a>
                 </td>
-                <td>
+                @*<td>
                     @Html.DisplayFor(modelItem => item.program_name)
+                </td>*@
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProgramCodeL)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.program_status)
+                    @Html.DisplayFor(modelItem => item.ProgramStatus)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.program_start_date)
+                    @Html.DisplayFor(modelItem => item.ProgramStartDd)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.program_end_date)
+                    @Html.DisplayFor(modelItem => item.ProgramEndDd)
                 </td>
             </tr>
         }

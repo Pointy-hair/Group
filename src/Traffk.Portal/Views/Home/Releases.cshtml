@@ -22,9 +22,6 @@
                     @Html.SortableHeaderFor(z => z.ReleaseName)
                 </th>
                 <th>
-                    @Html.SortableHeaderFor(z => z.ApplicationType)
-                </th>
-                <th>
                     @Html.SortableHeaderFor(z => z.ReleaseNotes)
                 </th>
             </tr>
@@ -40,19 +37,8 @@
                         @Html.DisplayFor(modelItem => item.ReleaseName)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.ApplicationType)
-                    </td>
-                    <td colspan="4">
-                        <ul>
-                            @foreach (var change in item.ReleaseReleaseChanges)
-                            {
-                                <li>@change.Title</li>
-                            }
-                        </ul>
-                    </td>
-                    @*<td>
                         @Html.DisplayFor(modelItem => item.ReleaseNotes)
-                    </td>*@
+                    </td>
                 </tr>
             }
         </tbody>

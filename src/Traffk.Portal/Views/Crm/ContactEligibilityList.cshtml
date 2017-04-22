@@ -13,29 +13,32 @@
     <thead>
         <tr>
             <th>
-                @Html.SortableHeaderFor(z => z.mbr_id)
+                @Html.SortableHeaderFor(z => z.ContactId)
             </th>
             <th>
-                @Html.SortableHeaderFor(z => z.mbr_first_name)
+                @Html.SortableHeaderFor(z => z.Contact.AsPerson.FirstName)
             </th>
             <th>
-                @Html.SortableHeaderFor(z => z.mbr_last_name)
+                @Html.SortableHeaderFor(z => z.Contact.AsPerson.LastName)
             </th>
-            <th>
+            @*<th>
                 @Html.SortableHeaderFor(z => z.mbr_current_status)
             </th>
             <th>
                 @Html.SortableHeaderFor(z => z.mbr_relationship_desc)
+            </th>*@
+            <th>
+                @Html.SortableHeaderFor(z => z.MemberRelationshipL)
             </th>
             <th>
-                @Html.SortableHeaderFor(z => z.mbr_phone)
+                @Html.SortableHeaderFor(z => z.Contact.ContactDetails.PhoneNumbers)
             </th>
-            <th>
+            @*<th>
                 @Html.SortableHeaderFor(z => z.ins_emp_group_name)
             </th>
             <th>
                 @Html.SortableHeaderFor(z => z.mbr_state)
-            </th>
+            </th>*@
         </tr>
     </thead>
     <tbody>
@@ -43,29 +46,38 @@
         {
             <tr>
                 <td>
-                    <a asp-action="@ActionNames.Health.Eligibility" asp-route-id="@ViewContext.GetRouteValue()">@item.mbr_id</a>
+                    <a asp-action="@ActionNames.Health.Eligibility" asp-route-id="@ViewContext.GetRouteValue()">@item.ContactId</a>
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.mbr_first_name)
+                    @Html.DisplayFor(modelItem => item.Contact.AsPerson.FirstName)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.mbr_last_name)
+                    @Html.DisplayFor(modelItem => item.Contact.AsPerson.LastName)
                 </td>
-                <td>
+                @*<td>
                     @Html.DisplayFor(modelItem => item.mbr_current_status)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.mbr_relationship_desc)
+                </td>*@
+                <td>
+                    @Html.DisplayFor(modelItem => item.MemberRelationshipL)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.mbr_phone)
+                    @if (item.Contact.ContactDetails.PhoneNumbers != null)
+                    {
+                        foreach (var a in item.Contact.ContactDetails.PhoneNumbers)
+                        {
+                            <p>@String.Format("{0:(###) ###-####}", long.Parse(a.PhoneNumber))</p>
+                        }
+                    }
                 </td>
-                <td>
+                @*<td>
                     @Html.DisplayFor(modelItem => item.ins_emp_group_name)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.mbr_state)
-                </td>
+                </td>*@
             </tr>
         }
     </tbody>

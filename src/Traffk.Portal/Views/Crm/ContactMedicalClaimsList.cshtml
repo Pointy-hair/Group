@@ -12,13 +12,19 @@
 <table class="table table-bordered table-hover table-striped">
     <thead>
         <tr>
-            <th>
+            @*<th>
                 @Html.SortableHeaderFor(z => z.rev_claim_id)
+            </th>*@
+            <th>
+                @Html.SortableHeaderFor(z => z.MedicalClaimId)
             </th>
             <th>
+                @Html.SortableHeaderFor(z => z.MedicalClaimNumber)
+            </th>
+            @*<th>
                 @Html.SortableHeaderFor(z => z.svc_diag_1_desc)
-            </th>
-            <th>
+            </th>*@
+            @*<th>
                 @Html.SortableHeaderFor(z => z.rev_allowed_amt)
             </th>
             <th>
@@ -29,20 +35,26 @@
             </th>
             <th>
                 @Html.SortableHeaderFor(z => z.rev_paid_amt)
-            </th>
+            </th>*@
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
-                <td>
+                @*<td>
                     <a asp-action="@ActionNames.Health.MedicalClaim" asp-route-id="@ViewContext.GetRouteValue()" asp-route-medicalClaimId="@item.rev_claim_id">@item.rev_claim_id</a>
+                </td>*@
+                <td>
+                    <a asp-action="@ActionNames.Health.MedicalClaim" asp-route-id="@ViewContext.GetRouteValue()" asp-route-medicalClaimId="@item.MedicalClaimId">@item.MedicalClaimId</a>
                 </td>
                 <td>
+                    @Html.DisplayFor(modelItem => item.MedicalClaimNumber)
+                </td>
+                @*<td>
                     @Html.DisplayFor(modelItem => item.svc_diag_1_desc)
-                </td>
-                <td>
+                </td>*@
+                @*<td>
                     @Html.DisplayFor(modelItem => item.rev_allowed_amt)
                 </td>
                 <td>
@@ -53,7 +65,7 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.rev_paid_amt)
-                </td>
+                </td>*@
             </tr>
         }
     </tbody>

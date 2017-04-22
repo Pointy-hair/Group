@@ -12,19 +12,16 @@
         <thead>
         <tr>
             <th>
-                @Html.SortableHeaderFor(z => z.dw_record_id)
+                @Html.SortableHeaderFor(z => z.CareAlertId)
             </th>
             <th>
-                @Html.SortableHeaderFor(z => z.care_alert_id)
+                @Html.SortableHeaderFor(z => z.CareAlertDd)
             </th>
-            <th>
-                @Html.SortableHeaderFor(z => z.care_alert_startDate)
-            </th>
-            <th>
+            @*<th>
                 @Html.SortableHeaderFor(z => z.care_alert_desc)
-            </th>
+            </th>*@
             <th>
-                @Html.SortableHeaderFor(z => z.metric_name)
+                @Html.SortableHeaderFor(z => z.MetricName)
             </th>
         </tr>
         </thead>
@@ -33,20 +30,16 @@
             {
                 <tr>
                     <td>
-                        <a asp-action="@ActionNames.Health.CareAlert" asp-route-id="@ViewContext.GetRouteValue()" asp-route-recordId="@item.dw_record_id">@item.dw_record_id</a>
+                        <a asp-action="@ActionNames.Health.CareAlert" asp-route-id="@ViewContext.GetRouteValue()" asp-route-recordId="@item.CareAlertId">@item.CareAlertId</a>
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.care_alert_id)
-                        @*<a asp-action="@ActionNames.Health.CareAlert" asp-route-id="@ViewContext.GetRouteValue()" asp-route-recordId="@item.dw_record_id">@item.care_alert_id</a>*@
+                        @Html.DisplayFor(modelItem => item.CareAlertDd)
                     </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.care_alert_startDate)
-                    </td>
-                    <td>
+                    @*<td>
                         @Html.DisplayFor(modelItem => item.care_alert_desc)
-                    </td>
+                    </td>*@
                     <td>
-                        @Html.DisplayFor(modelItem => item.metric_name)
+                        @Html.DisplayFor(modelItem => item.MetricName)
                     </td>
                 </tr>
             }

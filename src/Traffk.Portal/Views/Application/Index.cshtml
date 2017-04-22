@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Application>
+﻿@model IEnumerable<App>
 @using static TraffkPortal.Controllers.ApplicationController
 @{
     Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
@@ -12,13 +12,13 @@
         <thead>
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.ApplicationId)
+                    @Html.DisplayNameFor(model => model.AppId)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.ApplicationType)
+                    @Html.DisplayNameFor(model => model.AppType)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.ApplicationName)
+                    @Html.DisplayNameFor(model => model.AppName)
                 </th>
             </tr>
         </thead>
@@ -27,14 +27,14 @@
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.ApplicationId)
+                        @Html.DisplayFor(modelItem => item.AppId)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.ApplicationType)
+                        @Html.DisplayFor(modelItem => item.AppType)
                     </td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.ApplicationId">
-                            @Html.DisplayFor(modelItem => item.ApplicationName)
+                        <a asp-action="Edit" asp-route-id="@item.AppId">
+                            @Html.DisplayFor(modelItem => item.AppName)
                         </a>                        
                     </td>
                 </tr>

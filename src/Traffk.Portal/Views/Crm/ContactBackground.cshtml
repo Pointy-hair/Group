@@ -32,7 +32,7 @@
                 <label asp-for="Contact.ContactDetails.Tags" ></label>
                 @await Html.PartialAsync("_TagEditorPartial", Model.Contact.ContactDetails.Tags, z => z.Contact)
             </div>
-            <div class="form-row">
+            @*<div class="form-row">
                 <label asp-for="Contact.ContactDetails.Addresses"></label>
                 @if (Model.Contact.ContactDetails.Addresses != null)
                 {
@@ -48,7 +48,7 @@
                         </p>
                     }
                 }
-            </div>
+            </div>*@
             <div class="form-row">
                 <label asp-for="Contact.ContactDetails.PhoneNumbers"></label>
                 @if (Model.Contact.ContactDetails.PhoneNumbers != null)

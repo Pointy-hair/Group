@@ -28,12 +28,12 @@
                 <th>
                     @Html.SortableHeaderFor(z => z.ContactType)
                 </th>
-                @if (canAccessPhi)
+                @*@if (canAccessPhi)
                 {
                     <th>
                         @Html.SortableHeaderFor(z => z.MemberId)
                     </th>
-                }
+                }*@
                 <th>
                     @Html.SortableHeaderFor(z => z.FullName)
                 </th>
@@ -51,12 +51,12 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.ContactType)
                     </td>
-                    @if (canAccessPhi)
+                    @*@if (canAccessPhi)
                     {
                         <td>
                             @Html.DisplayFor(modelItem => item.MemberId)
                         </td>
-                    }
+                    }*@
                     <td>
                         <a asp-action="ContactBackground" asp-route-id="@item.ContactId">
                             @Html.DisplayFor(modelItem => item.FullName)

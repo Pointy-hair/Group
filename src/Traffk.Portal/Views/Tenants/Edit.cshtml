@@ -1,6 +1,7 @@
 @model Traffk.Portal.Models.TenantModels.TenantSettingsModel
 @using Traffk.Portal.Models.TenantModels
-TraffkPortal.Controllers.TenantsController
+@using static TraffkPortal.Controllers.TenantsController
+
 @{
     Layout = "~/Views/Tenants/_LayoutTenant.cshtml";
     ViewData.SetTitleAndHeading(Model.TenantName);

@@ -1,29 +1,23 @@
-using RevolutionaryStuff.Core;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using TraffkPortal.Permissions;
-using Traffk.Bal.Permissions;
-using TraffkPortal.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Traffk.Bal.Data.Rdb;
-using System.Threading.Tasks;
-using TraffkPortal.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using TraffkPortal.Models.CrmModels;
-using System;
-using Traffk.Bal.Data;
-using System.Collections.Generic;
+using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
-using RevolutionaryStuff.Core.Collections;
 using Serilog;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Traffk.Bal;
 using Traffk.Bal.Communications;
+using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Permissions;
 using Traffk.Bal.ReportVisuals;
 using Traffk.Tableau;
-using Traffk.Tableau.REST.Models;
+using TraffkPortal.Models;
+using TraffkPortal.Models.CrmModels;
 using TraffkPortal.Models.ReportingModels;
+using TraffkPortal.Permissions;
+using TraffkPortal.Services;
 
 namespace TraffkPortal.Controllers
 {
@@ -48,8 +42,8 @@ namespace TraffkPortal.Controllers
             Demographics,
             Eligibility,
             EligibilityList,
-            HighCostDiagnosis,
-            HistoricalScores,
+            MedicalClaimDiagnosis,
+            MillimanScoreList,
             MedicalClaims,
             MemberPCP,
             Participation,
@@ -70,9 +64,9 @@ namespace TraffkPortal.Controllers
                 public const string Demographic = "ContactDemographic";
                 public const string Eligibility = "ContactEligibility";
                 public const string EligibilityList = "ContactEligibilityList";
-                public const string HighCostDiagnosis = "ContactHighCostDiagnosis";
-                public const string HistoricalScore = "ContactHistoricalScore";
-                public const string HistoricalScoreList = "ContactHistoricalScoresList";
+                public const string MedicalClaimDiagnosis = "ContactMedicalClaimDiagnosis";
+                public const string MillimanScore = "ContactMillimanScore";
+                public const string MillimanScoreList = "ContactMillimanScoresList";
                 public const string MedicalClaim = "ContactMedicalClaimDetail";
                 public const string MedicalClaimsList = "ContactMedicalClaimsList";
                 public const string MemberPcp = "ContactMemberPcp";
@@ -108,9 +102,9 @@ namespace TraffkPortal.Controllers
                 public const string Demographic = "ContactDemographicDetail";
                 public const string Eligibility = "ContactEligibiliityDetail";
                 public const string EligibilityList = "ContactEligibilityList";
-                public const string HighCostDiagnosis = "ContactHighCostDiagnosisDetail";
-                public const string HistoricalScore = "ContactHistoricalScoreDetail";
-                public const string HistoricalScoreList = "ContactHistoricalScoreList";
+                public const string MedicalClaimDiagnosis = "ContactMedicalClaimDiagnosisDetail";
+                public const string MillimanScore = "ContactMillimanScoreDetail";
+                public const string MillimanScoreList = "ContactMillimanScoreList";
                 public const string MedicalClaim = "ContactMedicalClaimDetail";
                 public const string MedicalClaimsList = "ContactMedicalClaimsList";
                 public const string MemberPcp = "ContactMemberPcpDetail";
@@ -196,7 +190,7 @@ namespace TraffkPortal.Controllers
         [ActionName(ActionNames.SendDirectMessage)]
         [Route("Contacts/{id}/SendDirectMessage")]
         public async Task<IActionResult> SendDirectMessage(
-            long id,
+            int id,
             int templateId,
             string subject,
             string body)
@@ -213,7 +207,7 @@ namespace TraffkPortal.Controllers
         [ActionName(ActionNames.CreateNote)]
         [Route("Contacts/{id}/CreateNote")]
         public async Task<IActionResult> CreateNote(
-            long id,
+            int id,
             string parentNoteId,
             string content)
         {
@@ -226,14 +220,14 @@ namespace TraffkPortal.Controllers
 
         [ActionName(ActionNames.ContactBackground)]
         [Route("Contacts/{id}/Background")]
-        public Task<IActionResult> ContactBackground(long id)
+        public Task<IActionResult> ContactBackground(int id)
         {
             return RawContactRecordInfo(id, PageKeys.Background, nameof(ContactBackground));
         }
 
         [ActionName(ActionNames.ContactNotes)]
         [Route("Contacts/{id}/Notes")]
-        public Task<IActionResult> ContactNotes(long id, string sortCol, string sortDir, int? page, int? pageSize)
+        public Task<IActionResult> ContactNotes(int id, string sortCol, string sortDir, int? page, int? pageSize)
         {
             return RawContactRecordInfo(id, PageKeys.Notes, nameof(ContactNotes), m =>
             {
@@ -260,7 +254,7 @@ namespace TraffkPortal.Controllers
 
         [ActionName(ActionNames.ContactMessages)]
         [Route("Contacts/{id}/Messages")]
-        public async Task<IActionResult> ContactMessages(long id, string sortCol, string sortDir, int? page, int? pageSize)
+        public async Task<IActionResult> ContactMessages(int id, string sortCol, string sortDir, int? page, int? pageSize)
         {
             var contact = await FindContactByIdAsync(id);
             if (contact == null) return NotFound();
@@ -274,7 +268,7 @@ namespace TraffkPortal.Controllers
             return View(items);
         }
 
-        private async Task<IActionResult> RawContactRecordInfo(long id, PageKeys pageKey, string viewName, Action<ContactModel> preView = null)
+        private async Task<IActionResult> RawContactRecordInfo(int id, PageKeys pageKey, string viewName, Action<ContactModel> preView = null)
         {
             var contact = await FindContactByIdAsync(id);
             if (contact == null) return NotFound();
@@ -294,7 +288,7 @@ namespace TraffkPortal.Controllers
         [ActionName(ActionNames.ContactBackground)]
         [Route("Contacts/{id}/Background")]
         public async Task<IActionResult> ContactBackground(
-            long id,
+            int id,
             [Bind(
             nameof(ContactModel.Contact),
             nameof(ContactModel.Contact)+"."+nameof(Contact.ContactId),
@@ -360,7 +354,7 @@ namespace TraffkPortal.Controllers
             return View(model);
         }
 
-        private async Task<IActionResult> ContactHealthItemDetail<THealthItem>(long contactId, PageKeys pageKey, string viewName, Func<Contact, IQueryable<THealthItem>> createModel) where THealthItem : ITraffkTenanted
+        private async Task<IActionResult> ContactHealthItemDetail<THealthItem>(int contactId, PageKeys pageKey, string viewName, Func<Contact, IQueryable<THealthItem>> createModel) where THealthItem : ITraffkTenanted
         {
             var contact = await FindContactByIdAsync(contactId);
             if (contact == null) return NotFound();
@@ -370,10 +364,10 @@ namespace TraffkPortal.Controllers
             return View(viewName, items.FirstOrDefault());
         }
 
-        private Task<IActionResult> ContactHealthItemDetail<THealthItem>(long contactId, PageKeys pageKey, string viewName, Func<long, IQueryable<THealthItem>> createModel) where THealthItem : ITraffkTenanted
+        private Task<IActionResult> ContactHealthItemDetail<THealthItem>(int contactId, PageKeys pageKey, string viewName, Func<long, IQueryable<THealthItem>> createModel) where THealthItem : ITraffkTenanted
             => ContactHealthItemDetail(contactId, pageKey, viewName, c => createModel(c.ContactId));
 
-        private async Task<IActionResult> ContactHealthItemList<THealthItem>(long contactId, string sortCol, string sortDir, int? page, int? pageSize, PageKeys pageKey, string viewName, Func<Contact, IQueryable<THealthItem>> createModel, string defaultSortCol = null) where THealthItem : ITraffkTenanted
+        private async Task<IActionResult> ContactHealthItemList<THealthItem>(int contactId, string sortCol, string sortDir, int? page, int? pageSize, PageKeys pageKey, string viewName, Func<Contact, IQueryable<THealthItem>> createModel, string defaultSortCol = null) where THealthItem : ITraffkTenanted
         {
             var contact = await FindContactByIdAsync(contactId);
             if (contact == null) return NotFound();
@@ -385,62 +379,62 @@ namespace TraffkPortal.Controllers
             return View(viewName, items);
         }
 
-        private Task<IActionResult> ContactHealthItemList<THealthItem>(long contactId, string sortCol, string sortDir, int? page, int? pageSize, PageKeys pageKey, string viewName, Func<long, IQueryable<THealthItem>> createModel, string defaultSortCol = null) where THealthItem : ITraffkTenanted
+        private Task<IActionResult> ContactHealthItemList<THealthItem>(int contactId, string sortCol, string sortDir, int? page, int? pageSize, PageKeys pageKey, string viewName, Func<long, IQueryable<THealthItem>> createModel, string defaultSortCol = null) where THealthItem : ITraffkTenanted
             => ContactHealthItemList<THealthItem>(contactId, sortCol, sortDir, page, pageSize, pageKey, viewName, c => createModel(c.ContactId), defaultSortCol);
 
         [ActionName(ActionNames.Health.CareAlert)]
         [Route("Contacts/{id}/CareAlerts/{recordId}")]
-        public Task<IActionResult> ContactCareAlert(long id, int recordId)
+        public Task<IActionResult> ContactCareAlert(int id, int recordId)
             => ContactHealthItemDetail(id, PageKeys.CareAlerts, ViewNames.Health.CareAlert, mid => Rdb.CareAlerts.Where(z => z.ContactId == mid && z.CareAlertId == recordId));
 
         [ActionName(ActionNames.Health.CareAlertsList)]
         [Route("Contacts/{id}/CareAlerts")]
-        public Task<IActionResult> ContactCareAlertsList(long id, string sortCol, string sortDir, int? page, int? pageSize)
+        public Task<IActionResult> ContactCareAlertsList(int id, string sortCol, string sortDir, int? page, int? pageSize)
             => ContactHealthItemList(id, sortCol, sortDir, page, pageSize, PageKeys.CareAlerts, ViewNames.Health.CareAlertsList, mid => Rdb.CareAlerts.Where(z => z.ContactId == mid), nameof(CareAlert.CareAlertDd));
 
-        [ActionName(ActionNames.Health.HistoricalScore)]
-        [Route("Contacts/{id}/HistoricalScores/{recordId}")]
-        public Task<IActionResult> ContactHistoricalScore(long id, int recordId)
-            => ContactHealthItemDetail(id, PageKeys.HistoricalScores, ViewNames.Health.HistoricalScore, mid => Rdb.MillimanScores.Where(z => z.ContactId == mid && z.MillimanScoreId==recordId));
+        [ActionName(ActionNames.Health.MillimanScore)]
+        [Route("Contacts/{id}/MillimanScores/{recordId}")]
+        public Task<IActionResult> ContactMillimanScore(int id, int recordId)
+            => ContactHealthItemDetail(id, PageKeys.MillimanScoreList, ViewNames.Health.MillimanScore, mid => Rdb.MillimanScores.Where(z => z.ContactId == mid && z.MillimanScoreId==recordId));
 
-        [ActionName(ActionNames.Health.HistoricalScoreList)]
-        [Route("Contacts/{id}/HistoricalScores")]
-        public Task<IActionResult> ContactHistoricalScoreList(long id, string sortCol, string sortDir, int? page, int? pageSize)
-            => ContactHealthItemList(id, sortCol, sortDir, page, pageSize, PageKeys.HistoricalScores, ViewNames.Health.HistoricalScoreList, mid => Rdb.MillimanScores.Where(z => z.ContactId == mid), nameof(MillimanScore.ScorePeriodEndDd));
+        [ActionName(ActionNames.Health.MillimanScoreList)]
+        [Route("Contacts/{id}/MillimanScores")]
+        public Task<IActionResult> ContactMillimanScoreList(int id, string sortCol, string sortDir, int? page, int? pageSize)
+            => ContactHealthItemList(id, sortCol, sortDir, page, pageSize, PageKeys.MillimanScoreList, ViewNames.Health.MillimanScoreList, mid => Rdb.MillimanScores.Where(z => z.ContactId == mid), nameof(MillimanScore.ScorePeriodEndDd));
 
         //[ActionName(ActionNames.Health.Demographic)]
         //[Route("Contacts/{id}/Demographics")]
-        //public Task<IActionResult> ContactDemographics(long id)
+        //public Task<IActionResult> ContactDemographics(int id)
         //    => ContactHealthItemDetail(id, PageKeys.Demographics, ViewNames.Health.Demographic, mid => Rdb.Demographics.Where(z => z.ContactId == mid));
 
         //[ActionName(ActionNames.Health.Score)]
         //[Route("Contacts/{id}/Scores")]
-        //public Task<IActionResult> ContactScores(long id)
+        //public Task<IActionResult> ContactScores(int id)
         //    => ContactHealthItemDetail(id, PageKeys.Scores, ViewNames.Health.Score, mid => Rdb.Scores.Where(z => z.ContactId == mid));
 
         //[ActionName(ActionNames.Health.MemberPcp)]
         //[Route("Contacts/{id}/PcP")]
-        //public Task<IActionResult> ContactPcp(long id)
+        //public Task<IActionResult> ContactPcp(int id)
         //    => ContactHealthItemDetail(id, PageKeys.MemberPCP, ViewNames.Health.MemberPcp, mid => Rdb.MemberPCP.Where(z => z.ContactId == mid));
 
         [ActionName(ActionNames.Health.Eligibility)]
         [Route("Contacts/{id}/Eligibility")]
-        public Task<IActionResult> ContactEligibility(long id)
+        public Task<IActionResult> ContactEligibility(int id)
             => ContactHealthItemDetail(id, PageKeys.Eligibility, ViewNames.Health.Eligibility, mid => Rdb.Eligibility.Where(z => z.ContactId == mid));
 
         [ActionName(ActionNames.Health.EligibilityList)]
         [Route("Contacts/{id}/EligibilityList")]
-        public Task<IActionResult> ContactEligibilityList(long id, string sortCol, string sortDir, int? page,
+        public Task<IActionResult> ContactEligibilityList(int id, string sortCol, string sortDir, int? page,
             int? pageSize)
             =>
                 ContactHealthItemList(id, sortCol, sortDir, page, pageSize, PageKeys.Eligibility,
                     ViewNames.Health.EligibilityList, mid => Rdb.Eligibility.Where(z => z.ContactId == mid),
                     nameof(Eligibility.EligibilityId));
 
-        [ActionName(ActionNames.Health.HighCostDiagnosis)]
-        [Route("Contacts/{id}/HighCostDiagnosis")]
-        public Task<IActionResult> ContactHighCostDiagnosis(long id)
-            => ContactHealthItemDetail(id, PageKeys.HighCostDiagnosis, ViewNames.Health.HighCostDiagnosis,
+        [ActionName(ActionNames.Health.MedicalClaimDiagnosis)]
+        [Route("Contacts/{id}/MedicalClaimDiagnosis")]
+        public Task<IActionResult> ContactMedicalClaimDiagnosis(int id)
+            => ContactHealthItemDetail(id, PageKeys.MedicalClaimDiagnosis, ViewNames.Health.MedicalClaimDiagnosis,
                 delegate(long mid)
                 {
                     var userMedicalClaimIds = Rdb.MedicalClaims.Where(x => x.ContactId == id).Select(m => m.MedicalClaimId);
@@ -449,32 +443,32 @@ namespace TraffkPortal.Controllers
 
         [ActionName(ActionNames.Health.Participation)]
         [Route("Contacts/{id}/Participation/{recordId}")]
-        public Task<IActionResult> ContactParticipation(long id, int recordId)
+        public Task<IActionResult> ContactParticipation(int id, int recordId)
             => ContactHealthItemDetail(id, PageKeys.Participation, ViewNames.Health.Participation, mid => Rdb.Participation.Where(z => z.ContactId == mid && z.ParticipationId == recordId));
 
         [ActionName(ActionNames.Health.ParticipationList)]
         [Route("Contacts/{id}/Participation")]
-        public Task<IActionResult> ContactParticipationList(long id, string sortCol, string sortDir, int? page, int? pageSize)
+        public Task<IActionResult> ContactParticipationList(int id, string sortCol, string sortDir, int? page, int? pageSize)
             => ContactHealthItemList(id, sortCol, sortDir, page, pageSize, PageKeys.Participation, ViewNames.Health.ParticipationList, mid => Rdb.Participation.Where(z => z.ContactId == mid), nameof(Participation.ProgramEndDd));
 
         [ActionName(ActionNames.Health.Visit)]
         [Route("Contacts/{id}/Visits/{recordId}")]
-        public Task<IActionResult> ContactVisit(long id, int recordId)
+        public Task<IActionResult> ContactVisit(int id, int recordId)
             => ContactHealthItemDetail(id, PageKeys.Visit, ViewNames.Health.Visit, mid => Rdb.Visits.Where(z => z.ContactId == mid && z.VisitId == recordId));
 
         [ActionName(ActionNames.Health.VisitList)]
         [Route("Contacts/{id}/Visits")]
-        public Task<IActionResult> ContactVisitsList(long id, string sortCol, string sortDir, int? page, int? pageSize)
+        public Task<IActionResult> ContactVisitsList(int id, string sortCol, string sortDir, int? page, int? pageSize)
             => ContactHealthItemList(id, sortCol, sortDir, page, pageSize, PageKeys.Visit, ViewNames.Health.VisitList, mid => Rdb.Visits.Where(z => z.ContactId == mid), nameof(Visit.VisitEndDd));
 
         [ActionName(ActionNames.Health.QualityMetric)]
         [Route("Contacts/{id}/QualityMetrics/{recordId}")]
-        public Task<IActionResult> ContactQualityMetric(long id, int recordId)
+        public Task<IActionResult> ContactQualityMetric(int id, int recordId)
             => ContactHealthItemDetail(id, PageKeys.QualityMetrics, ViewNames.Health.QualityMetric, mid => Rdb.QualityMetrics.Where(z => z.ContactId==mid));
 
         [ActionName(ActionNames.Health.QualityMetricsList)]
         [Route("Contacts/{id}/QualityMetrics")]
-        public Task<IActionResult> ContactQualityMetricsList(long id, string sortCol, string sortDir, int? page, int? pageSize)
+        public Task<IActionResult> ContactQualityMetricsList(int id, string sortCol, string sortDir, int? page, int? pageSize)
         {
             return ContactHealthItemList(id, sortCol, sortDir, page, pageSize, PageKeys.QualityMetrics, ViewNames.Health.QualityMetricsList, delegate (long mid)
             {
@@ -484,25 +478,25 @@ namespace TraffkPortal.Controllers
 
         [ActionName(ActionNames.Health.MedicalClaimsList)]
         [Route("Contacts/{id}/MedicalClaims")]
-        public Task<IActionResult> ContactMedicalClaimsList(long id, string sortCol, string sortDir, int? page, int? pageSize)
+        public Task<IActionResult> ContactMedicalClaimsList(int id, string sortCol, string sortDir, int? page, int? pageSize)
             => ContactHealthItemList(id, sortCol, sortDir, page, pageSize, PageKeys.MedicalClaims, ViewNames.Health.MedicalClaimsList, mid => Rdb.MedicalClaims.Where(z => z.ContactId == mid), nameof(MedicalClaim.CreatedAtUtc));
 
         [ActionName(ActionNames.Health.MedicalClaim)]
         [Route("Contacts/{id}/MedicalClaims/{medicalClaimId}")]
-        public Task<IActionResult> ContactMedicalClaimDetail(long id, int medicalClaimId)
+        public Task<IActionResult> ContactMedicalClaimDetail(int id, int medicalClaimId)
             => ContactHealthItemDetail(id, PageKeys.MedicalClaims, ViewNames.Health.MedicalClaim, mid => Rdb.MedicalClaims.Where(z => z.ContactId == mid && z.MedicalClaimId == medicalClaimId));
 
         [ActionName(ActionNames.Health.PharmacyList)]
         [Route("Contacts/{id}/Pharmacy")]
-        public Task<IActionResult> ContactPharmacyList(long id, string sortCol, string sortDir, int? page, int? pageSize)
+        public Task<IActionResult> ContactPharmacyList(int id, string sortCol, string sortDir, int? page, int? pageSize)
             => ContactHealthItemList(id, sortCol, sortDir, page, pageSize, PageKeys.Pharmacy, ViewNames.Health.PharmacyList, mid => Rdb.Pharmacy.Where(z => z.ContactId == mid), nameof(Pharmacy.PrescriptionFilledDd));
 
         [ActionName(ActionNames.Health.Pharmacy)]
         [Route("Contacts/{id}/Pharmacy/{pharmacyItemId}")]
-        public Task<IActionResult> ContactPharmacyItemDetail(long id, int pharmacyItemId)
+        public Task<IActionResult> ContactPharmacyItemDetail(int id, int pharmacyItemId)
             => ContactHealthItemDetail(id, PageKeys.Pharmacy, ViewNames.Health.Pharmacy, mid => Rdb.Pharmacy.Where(z => z.ContactId == mid && z.PharmacyId == pharmacyItemId));
         
-        private async Task<Contact> FindContactByIdAsync(long id)
+        private async Task<Contact> FindContactByIdAsync(int id)
         {
             Contact c = null;
             c = await Rdb.Contacts.FindAsync(id);
@@ -515,7 +509,7 @@ namespace TraffkPortal.Controllers
 
         [Route("Contacts/{id}/Reports")]
         [ActionName(ActionNames.Reports)]
-        public async Task<IActionResult> ReportIndex(long id)
+        public async Task<IActionResult> ReportIndex(int id)
         {
             var contact = await FindContactByIdAsync(id);
             if (contact == null) return NotFound();
@@ -532,9 +526,9 @@ namespace TraffkPortal.Controllers
         [SetTableauTrustedTicket]
         [Route("Contacts/{contactId}/Reports/{id}/{anchorName}")]
         [ActionName(ActionNames.Report)]
-        public async Task<IActionResult> Report(long contactId, string id, string anchorName)
+        public async Task<IActionResult> Report(int contactId, string id, string anchorName)
         {
-            var contact = await FindContactByIdAsync(Convert.ToInt64(contactId));
+            var contact = await FindContactByIdAsync(contactId);
             SetHeroLayoutViewData(contact, PageKeys.Messages);
 
             var reportSearchCriteria = new ReportSearchCriteria

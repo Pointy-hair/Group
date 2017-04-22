@@ -145,7 +145,5 @@ namespace Traffk.Tableau.REST
         }
 
         protected ICollection<SiteWorkbook> DownloadWorkbookList() => base.DownloadWorkbooksList();
-
-        protected DownloadViewsForSite DownloadViewsForSite() => base.DownloadViewsForSite();
     }
 }
