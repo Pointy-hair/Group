@@ -4,27 +4,6 @@
     ViewData.SetTitleAndHeading(CrmController.ViewNames.Health.Pharmacy.ToCrmHeading());
 }
 <dl class="dl-horizontal">
-    @*@Html.DescriptionListElement(model => model.rev_transaction_num)
-    @Html.DescriptionListElement(model => model.svc_filled_date)
-    @Html.DescriptionListElement(model => model.rev_paid_date)
-    @Html.DescriptionListElement(model => model.svc_ndc_desc)
-    @Html.DescriptionListElement(model => model.svc_rx_class_desc)
-    @Html.DescriptionListElement(model => model.svc_drug_name)
-    @Html.DescriptionListElement(model => model.svc_drug_strength)
-    @Html.DescriptionListElement(model => model.svc_unit_qty)
-    @Html.DescriptionListElement(model => model.svc_days_of_supply)
-    @Html.DescriptionListElement(model => model.svc_formulary_flag)
-    @Html.DescriptionListElement(model => model.svc_generic_flag)
-    @Html.DescriptionListElement(model => model.svc_mail_order_flag)
-    @Html.DescriptionListElement(model => model.rev_coinsurance_amt)
-    @Html.DescriptionListElement(model => model.rev_copay_amt)
-    @Html.DescriptionListElement(model => model.rev_deductible_amt)
-    @Html.DescriptionListElement(model => model.rev_disp_fee_amt)
-    @Html.DescriptionListElement(model => model.rev_ingred_cost_amt)
-    @Html.DescriptionListElement(model => model.rev_stax_amt)
-    @Html.DescriptionListElement(model => model.rev_usual_cust_amt)
-    @Html.DescriptionListElement(model => model.rev_paid_amt)*@
-    
     @Html.DescriptionListElement(model => model.PharmacyId)
     @Html.DescriptionListElement(model => model.TransactionNumber)
     @Html.DescriptionListElement(model => model.PrescriptionWrittenDd)

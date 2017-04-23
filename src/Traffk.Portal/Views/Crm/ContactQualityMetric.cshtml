@@ -4,20 +4,6 @@
     ViewData.SetTitleAndHeading(CrmController.ViewNames.Health.QualityMetric.ToCrmHeading());
 }
 <dl class="dl-horizontal">
-    @*@Html.DescriptionListElement(model => model.dw_record_id)
-    @Html.DescriptionListElement(model => model.dw_member_id)
-    @Html.DescriptionListElement(model => model.memberFirstName)
-    @Html.DescriptionListElement(model => model.memberLastName)
-    @Html.DescriptionListElement(model => model.memberGender)
-    @Html.DescriptionListElement(model => model.memberDOB)
-    @Html.DescriptionListElement(model => model.measureId)
-    @Html.DescriptionListElement(model => model.measureDesc)
-    @Html.DescriptionListElement(model => model.PositiveNegative)
-    @Html.DescriptionListElement(model => model.measureName)
-    @Html.DescriptionListElement(model => model.startDate)
-    @Html.DescriptionListElement(model => model.EndDate)
-    @Html.DescriptionListElement(model => model.numerator)
-    @Html.DescriptionListElement(model => model.denomenator)*@
     @Html.DescriptionListElement(model => model.QualityMetricId)
     @Html.DescriptionListElement(model => model.QualityMetricTypeLid)
     @Html.DescriptionListElement(model => model.MeasureFromDdim)
