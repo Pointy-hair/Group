@@ -1,8 +1,0 @@
-﻿@model Score
-@{
-    Layout = "~/Views/Crm/_LayoutContact.cshtml";
-    ViewData.SetTitleAndHeading(CrmController.ViewNames.Health.Score.ToCrmHeading());
-}
-<dl class="dl-horizontal">
-    @Html.DescriptionListElement(model => model.total_score)
-</dl>

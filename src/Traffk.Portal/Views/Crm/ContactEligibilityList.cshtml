@@ -21,24 +21,12 @@
             <th>
                 @Html.SortableHeaderFor(z => z.Contact.AsPerson.LastName)
             </th>
-            @*<th>
-                @Html.SortableHeaderFor(z => z.mbr_current_status)
-            </th>
-            <th>
-                @Html.SortableHeaderFor(z => z.mbr_relationship_desc)
-            </th>*@
             <th>
                 @Html.SortableHeaderFor(z => z.MemberRelationshipL)
             </th>
             <th>
                 @Html.SortableHeaderFor(z => z.Contact.ContactDetails.PhoneNumbers)
             </th>
-            @*<th>
-                @Html.SortableHeaderFor(z => z.ins_emp_group_name)
-            </th>
-            <th>
-                @Html.SortableHeaderFor(z => z.mbr_state)
-            </th>*@
         </tr>
     </thead>
     <tbody>
@@ -54,12 +42,6 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Contact.AsPerson.LastName)
                 </td>
-                @*<td>
-                    @Html.DisplayFor(modelItem => item.mbr_current_status)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.mbr_relationship_desc)
-                </td>*@
                 <td>
                     @Html.DisplayFor(modelItem => item.MemberRelationshipL)
                 </td>
@@ -72,12 +54,6 @@
                         }
                     }
                 </td>
-                @*<td>
-                    @Html.DisplayFor(modelItem => item.ins_emp_group_name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.mbr_state)
-                </td>*@
             </tr>
         }
     </tbody>

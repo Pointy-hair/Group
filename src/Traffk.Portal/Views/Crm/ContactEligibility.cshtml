@@ -4,7 +4,7 @@
     ViewData.SetTitleAndHeading(CrmController.ViewNames.Health.Eligibility.ToCrmHeading());
 }
 <dl class="dl-horizontal">
-    @Html.DescriptionListElement(model => model.mbr_id)
+    @*@Html.DescriptionListElement(model => model.mbr_id)
     @Html.DescriptionListElement(model => model.ins_policy_id)
     @Html.DescriptionListElement(model => model.mbr_first_name)
     @Html.DescriptionListElement(model => model.mbr_middle_name)
@@ -32,5 +32,39 @@
     @Html.DescriptionListElement(model => model.ins_med_eff_date)
     @Html.DescriptionListElement(model => model.ins_med_term_date)
     @Html.DescriptionListElement(model => model.ins_rx_eff_date)
-    @Html.DescriptionListElement(model => model.ins_rx_term_date)
+    @Html.DescriptionListElement(model => model.ins_rx_term_date)*@
+    @Html.DescriptionListElement(model => model.MemberId)
+    @Html.DescriptionListElement(model => model.EligibilityId)
+    @Html.DescriptionListElement(model => model.Contact.AsPerson.FirstName)
+    @Html.DescriptionListElement(model => model.Contact.AsPerson.MiddleName)
+    @Html.DescriptionListElement(model => model.Contact.AsPerson.LastName)
+    @Html.DescriptionListElement(model => model.CobraL)
+    @Html.DescriptionListElement(model => model.Contact.AsPerson.Gender)
+    @Html.DescriptionListElement(model => model.Contact.AsPerson.DateOfBirth)
+    @Html.DescriptionListElement(model => model.MemberAddress.AddressLine1)
+    @Html.DescriptionListElement(model => model.MemberAddress.AddressLine2)
+    @Html.DescriptionListElement(model => model.MemberAddress.City)
+    @Html.DescriptionListElement(model => model.MemberAddress.State)
+    @Html.DescriptionListElement(model => model.MemberAddress.PostalCode)
+    @foreach (var phoneNumber in Model.Contact.ContactDetails.PhoneNumbers)
+    {
+        <p>@String.Format("{0:(###) ###-####}", phoneNumber)</p>
+    }
+
+    @Html.DescriptionListElement(model => model.MemberRelationshipLid)
+    @Html.DescriptionListElement(model => model.MemberRelationshipL)
+    @Html.DescriptionListElement(model => model.CoverageTypeL)
+    @Html.DescriptionListElement(model => model.MedicalEffDd)
+    @Html.DescriptionListElement(model => model.MedicalTermDd)
+    @Html.DescriptionListElement(model => model.PrescriptionEffDd)
+    @Html.DescriptionListElement(model => model.PrescriptionTermDd)
+    @Html.DescriptionListElement(model => model.DentalEffDd)    
+    @Html.DescriptionListElement(model => model.DentalTermDd)
+    @Html.DescriptionListElement(model => model.VisionEffDd)
+    @Html.DescriptionListElement(model => model.VisionTermDd)
+    @Html.DescriptionListElement(model => model.LongTermDisabilityEffDd)
+    @Html.DescriptionListElement(model => model.LongTermDisabilityTermDd)
+    @Html.DescriptionListElement(model => model.ShortTermDisabilityEffDd)
+    @Html.DescriptionListElement(model => model.ShortTermDisabilityTermDd)
+
 </dl>
