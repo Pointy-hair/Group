@@ -46,14 +46,14 @@ namespace Traffk.Bal.Data.Rdb
 
         public static Job CreateFiscalYearConversionJob(Tenant tenant, FiscalYearSettings jobData)
         {
-            var jobResult = new Job
+            var job = new Job
             {
                 Tenant = tenant,
                 JobStatus = JobStatuses.Queued,
                 JobType = JobTypes.FiscalYearConversion,
                 JobData = jobData.ToJson()
             };
-            return jobResult;
+            return job;
         }
     }
 }

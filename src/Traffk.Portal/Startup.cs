@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,11 +13,6 @@ using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using Serilog;
 using System;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Serilog.Core;
-using Serilog.Events;
 using Traffk.Bal;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Email;
@@ -33,6 +30,7 @@ using TraffkPortal.Services;
 using TraffkPortal.Services.Logging;
 using TraffkPortal.Services.Sms;
 using TraffkPortal.Services.TenantServices;
+using Hangfire;
 
 namespace TraffkPortal
 {
@@ -189,6 +187,10 @@ namespace TraffkPortal
             services.AddScoped<TableauTrustedTicketActionFilter>();
 
             services.Add(new ServiceDescriptor(typeof(ICacher), Cache.DataCacher));
+
+            //Hangfire settings
+            //services.AddHangfire(
+            //    x => x.UseSqlServerStorage(Configuration["BackgroundJobEnqueuerOptions:ConnectionString"]));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -229,8 +231,7 @@ namespace TraffkPortal
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 
             app.UseSession();
-
-
+            
             CachingServices.Initialize(app.ApplicationServices);
             UserEnricher.Initialize(app.ApplicationServices);
 
