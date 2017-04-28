@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Linq;
+using RevolutionaryStuff.Core;
 using Traffk.Tableau.REST;
 using Traffk.Tableau.REST.RestRequests;
 
@@ -208,7 +209,7 @@ namespace Traffk.Tableau.Tests.REST
             public void WhenGivenCreateTenantRequestCreate()
             {
                 var newSiteOptions = MockEnvironment.TableauSignInOptions("https://tableau-dev.traffk.com/#/site/TestMasterTenant").Object;
-                var tableauAdminCredentials = TableauAdminCredentials;
+                var tableauAdminCredentials = ConfigurationHelpers.CreateOptions(TableauAdminCredentials);
                 var testAdminService =
                     new TableauAdminService(newSiteOptions, tableauAdminCredentials) as ITableauAdminService;
 
@@ -243,7 +244,8 @@ namespace Traffk.Tableau.Tests.REST
             public void WhenGivenExistingSiteMigrateData()
             {
                 var newSiteOptions = MockEnvironment.TableauSignInOptions("https://tableau-dev.traffk.com/#/site/TestMasterTenant").Object;
-                var tableauAdminCredentials = TableauAdminCredentials;
+                var tableauAdminCredentials = ConfigurationHelpers.CreateOptions(TableauAdminCredentials);
+
                 var testAdminService =
                     new TableauAdminService(newSiteOptions, tableauAdminCredentials) as ITableauAdminService;
 
@@ -280,7 +282,9 @@ namespace Traffk.Tableau.Tests.REST
                 var testService = new TableauViewerService(Options, TableauUserCredentials);
                 Assert.IsNotNull(testService);
 
-                var testAdminService = new TableauAdminService(Options, TableauAdminCredentials);
+                var tableauAdminCredentials = ConfigurationHelpers.CreateOptions(TableauAdminCredentials);
+
+                var testAdminService = new TableauAdminService(Options, tableauAdminCredentials);
                 Assert.IsNotNull(testAdminService);
             }
         }

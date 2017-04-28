@@ -13,9 +13,9 @@ namespace Traffk.Tableau.REST
         private readonly TableauAdminCredentials TableauAdminCredentials;
 
         public TableauAdminService(IOptions<TableauSignInOptions> options,
-            TableauAdminCredentials adminCredentials) : base(options, adminCredentials)
+            IOptions<TableauAdminCredentials> adminCredentials) : base(options, adminCredentials.Value)
         {
-            TableauAdminCredentials = adminCredentials;
+            TableauAdminCredentials = adminCredentials.Value;
         }
 
         void ITableauAdminService.CreateTableauTenant(CreateTableauTenantRequest request)
@@ -34,7 +34,8 @@ namespace Traffk.Tableau.REST
         {
             base.Options.UpdateForTenant(request.DestTableauTenantId);
             var destinationSiteSignInOptions = ConfigurationHelpers.CreateOptions(Options);
-            var destinationAdminService = new TableauAdminService(destinationSiteSignInOptions, TableauAdminCredentials);
+            var adminCredentialOptions = ConfigurationHelpers.CreateOptions(TableauAdminCredentials);
+            var destinationAdminService = new TableauAdminService(destinationSiteSignInOptions, adminCredentialOptions);
             var destinationSiteInfo = destinationAdminService.GetSiteInfo();
             
             var sourceAdminService = this; //not normal convention, but using this to make it clearer to future devs

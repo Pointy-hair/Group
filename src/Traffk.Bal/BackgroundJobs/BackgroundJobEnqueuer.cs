@@ -1,11 +1,12 @@
-﻿using Hangfire;
+﻿using System;
+using Hangfire;
 using Microsoft.Extensions.Options;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Settings;
 
 namespace Traffk.Bal.BackgroundJobs
 {
-    public class BackgroundJobEnqueuer
+    public class BackgroundJobEnqueuer : IBackgroundJobEnqueuer
     {
         private readonly ITraffkTenantFinder TraffkTenantFinder;
         private readonly BackgroundJobEnqueuerOptions Options;
@@ -20,10 +21,10 @@ namespace Traffk.Bal.BackgroundJobs
             BackgroundJobRunner = backgroundJobRunner;
         }
 
-        public string ConvertFiscalYear(Tenant tenant, FiscalYearSettings fiscalYearSettings)
+        string IBackgroundJobEnqueuer.ConvertFiscalYear(Tenant tenant, FiscalYearSettings fiscalYearSettings)
         {
             var job = Job.CreateFiscalYearConversionJob(tenant, fiscalYearSettings);
-            var jobId = BackgroundJob.Enqueue(() => BackgroundJobRunner.ConvertFiscalYear(job));
+            var jobId = BackgroundJob.Schedule(() => BackgroundJobRunner.ConvertFiscalYear(job), TimeSpan.FromDays(7));
             return jobId;
         }
     }

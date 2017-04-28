@@ -1,27 +1,22 @@
 using System;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using TraffkPortal.Services;
-using Microsoft.AspNetCore.Authorization;
-using TraffkPortal.Permissions;
-using RevolutionaryStuff.Core.Collections;
-using Traffk.Bal.Permissions;
-using Traffk.Bal.Data.Rdb;
-using System.Linq;
-using System.Text.RegularExpressions;
-using RevolutionaryStuff.Core.ApplicationParts;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using Serilog;
+using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Permissions;
 using Traffk.Bal.ReportVisuals;
 using Traffk.Bal.Settings;
 using Traffk.Tableau;
-using Traffk.Tableau.REST;
-using Traffk.Tableau.REST.Models;
+using TraffkPortal;
+using TraffkPortal.Controllers;
 using TraffkPortal.Models.ReportingModels;
+using TraffkPortal.Permissions;
+using TraffkPortal.Services;
 
-namespace TraffkPortal.Controllers
+namespace Traffk.Portal.Controllers
 {
     [Authorize]
     [PermissionAuthorize(PermissionNames.BasicReporting)]

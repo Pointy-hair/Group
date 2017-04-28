@@ -16,6 +16,7 @@ using System;
 using Traffk.Bal.Services;
 using RevolutionaryStuff.Core;
 using Serilog;
+using Traffk.Bal.BackgroundJobs;
 using Traffk.Portal.Models.TenantModels;
 
 namespace TraffkPortal.Controllers
@@ -78,18 +79,21 @@ namespace TraffkPortal.Controllers
 
         private readonly UserManager<ApplicationUser> UserManager;
         private readonly BlobStorageServices Blobs;
+        public readonly IBackgroundJobEnqueuer BackgroundJobEnqueuer;
 
         public TenantsController(
             BlobStorageServices blobs,
             UserManager<ApplicationUser> userManager,
             TraffkRdbContext db,
             CurrentContextServices current,
-            ILoggerFactory loggerFactory
+            ILoggerFactory loggerFactory,
+            IBackgroundJobEnqueuer backgroundJobEnqueuer
         )
             : base(AspHelpers.MainNavigationPageKeys.Setup, db, current, loggerFactory)
         {
             UserManager = userManager;
             Blobs = blobs;
+            BackgroundJobEnqueuer = backgroundJobEnqueuer;
         }
 
         [ActionName(ActionNames.TenantsList)]
@@ -589,13 +593,14 @@ namespace TraffkPortal.Controllers
                         tenant.TenantSettings.FiscalYearSettings = f;
                     }
 
-                    Rdb.Update(tenant);
-                    var fiscalYearConversionJob = Job.CreateFiscalYearConversionJob(tenant, tenant.TenantSettings.FiscalYearSettings);
-                    Rdb.Jobs.Add(fiscalYearConversionJob);
+                    //Rdb.Tenants.Update(tenant);
+                    //await Rdb.SaveChangesAsync();
+                    //BackgroundJobEnqueuer.ConvertFiscalYear(tenant, tenant.TenantSettings.FiscalYearSettings);
 
-                    var saveTask = Rdb.SaveChangesAsync();
+                    //var fiscalYearConversionJob = Job.CreateFiscalYearConversionJob(tenant, tenant.TenantSettings.FiscalYearSettings);
+                    //Rdb.Jobs.Add(fiscalYearConversionJob);
                     SetToast(AspHelpers.ToastMessages.Saved);
-                    await saveTask;
+                    
 
                     return RedirectToAction(ActionNames.FiscalYearSettings);
 

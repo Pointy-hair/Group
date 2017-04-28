@@ -14,6 +14,7 @@ using RevolutionaryStuff.Core.Caching;
 using Serilog;
 using System;
 using Traffk.Bal;
+using Traffk.Bal.BackgroundJobs;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Email;
 using Traffk.Bal.Identity;
@@ -30,7 +31,6 @@ using TraffkPortal.Services;
 using TraffkPortal.Services.Logging;
 using TraffkPortal.Services.Sms;
 using TraffkPortal.Services.TenantServices;
-using Hangfire;
 
 namespace TraffkPortal
 {
@@ -120,6 +120,9 @@ namespace TraffkPortal
                 options.UseSqlServer(Configuration.GetConnectionString("TraffkTenantPortal"));
             }, ServiceLifetime.Scoped);
 
+            services.AddDbContext<TraffkGlobalContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("TraffkGlobal")), ServiceLifetime.Singleton);
+
             services.Configure<IdentityOptions>(options => 
             {
                 options.Cookies.ApplicationCookie.SlidingExpiration = true;
@@ -179,28 +182,31 @@ namespace TraffkPortal
             services.AddScoped<ITableauVisualServices, TableauVisualServices>();
             services.AddScoped<ITrustedTicketGetter, TrustedTicketGetter>();
             services.AddScoped<ITableauViewerService, TableauViewerService>();
+            services.AddScoped<ITableauAdminService, TableauAdminService>();
             services.AddScoped<ITableauTenantFinder, TableauTenantFinder>();
             services.AddScoped<ITableauUserCredentials, CurrentContextServices>();
             services.AddScoped<ITableauAuthorizationService, TableauAuthorizationService>();
+
             services.AddScoped<IReportVisualService, ReportVisualService>();
+
+            services.AddScoped<IBackgroundJobEnqueuer, BackgroundJobEnqueuer>();
+            services.AddScoped<IBackgroundJobRunner, BackgroundJobRunner>();
+            services.AddScoped<IBackgroundJobTenantFinder, BackgroundJobTenantFinder>();
 
             services.AddScoped<TableauTrustedTicketActionFilter>();
 
             services.Add(new ServiceDescriptor(typeof(ICacher), Cache.DataCacher));
 
             //Hangfire settings
-            //services.AddHangfire(
-            //    x => x.UseSqlServerStorage(Configuration["BackgroundJobEnqueuerOptions:ConnectionString"]));
+            //services.AddHangfire(x => x.UseSqlServerStorage(Configuration.GetConnectionString("TraffkGlobal")));
+            //JobStorage.Current = new SqlServerStorage(Configuration.GetConnectionString("TraffkGlobal"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            //loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
             loggerFactory.AddSerilog(Log.Logger);
-            //loggerFactory.AddProvider();
-            //ILoggerProvider fds;
 
             app.UseApplicationInsightsRequestTelemetry();
 
@@ -227,8 +233,6 @@ namespace TraffkPortal
             {
                 app.UseCookiePolicy(new CookiePolicyOptions { Secure = CookieSecurePolicy.Always });
             }
-
-            // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 
             app.UseSession();
             

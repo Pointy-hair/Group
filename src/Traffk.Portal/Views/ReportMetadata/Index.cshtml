@@ -1,0 +1,63 @@
+﻿@using Traffk.Portal.Controllers
+@model IEnumerable<Traffk.Bal.Data.Rdb.ReportMetaData>
+
+@{
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
+    ViewData.SetTitleAndHeading("Report Metadata");
+    ViewData.IsListingPage(true);
+}
+
+@section listingTable
+{
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(z => z.ReportMetaDataId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(z => z.ReportDetails.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(z => z.ReportDetails.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(z => z.ReportDetails.ContainsPhi)
+            </th>
+            <th>
+                @Html.DisplayNameFor(z => z.ReportDetails.FolderPath)
+            </th>
+            <th>
+                @Html.DisplayNameFor(z => z.ReportDetails.RenderingAttributes)
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr contextId="@item.ReportMetaDataId">
+                    <td>
+                        <a asp-action="@ReportMetadataController.ActionNames.Edit" asp-route-id="@item.ReportMetaDataId">
+                            @Html.DisplayFor(modelItem => item.ReportMetaDataId)
+                        </a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ReportDetails.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ReportDetails.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ReportDetails.ContainsPhi)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ReportDetails.FolderPath)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ReportDetails.RenderingAttributes)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

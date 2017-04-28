@@ -1,0 +1,29 @@
+﻿@using Traffk.Portal.Controllers
+
+@model Traffk.Portal.Models.ReportMetadataModels.ReportMetadataViewModel
+
+@{
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
+    ViewData.SetTitleAndHeading("Edit Report Metadata");
+    ViewData.IsFormPage(true);
+}
+
+<form asp-action="@ReportMetadataController.ActionNames.Edit" class="inline-form">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+        <div class="col-sm-12">
+            <input type="hidden" asp-for="@Model.ReportMetadataId" />
+            <div class="form-row">
+                <label asp-for="@Model.Title"></label>
+                <input asp-for="@Model.Title" class="form-control" />
+                <span asp-validation-for="@Model.Title" class="text-danger" />
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 text-right">
+            <input type="submit" value="Save" class="btn btn-default btn-primary btn-large" />
+        </div>
+    </div>
+</form>
