@@ -7,12 +7,14 @@ using Traffk.Bal.Services;
 namespace Traffk.Bal.Data.Rdb
 {
 
-    public class TraffkGlobalContext : TraffkRdbContext
+    public class TraffkGlobalContext : DbContext
     {
-        public TraffkGlobalContext(DbContextOptions<TraffkRdbContext> options, 
-            ITraffkTenantFinder tenantFinder, 
-            ConfigStringFormatter configger) : base(options, tenantFinder, configger)
+        public const string DefaultDatabaseConnectionStringName = "TraffkGlobal";
+
+        public TraffkGlobalContext(DbContextOptions<TraffkGlobalContext> options) : base(options)
         {
         }
+
+        public DbSet<HangfireTenantMap> HangfireTenantMappings { get; set; }
     }
 }

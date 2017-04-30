@@ -5,7 +5,7 @@ using Traffk.Bal;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Settings;
 
-namespace TraffkCommunicationBlastRunner
+namespace Traffk.BackgroundJobRunner
 {
     public sealed class SmtpSettingsAdaptor : IOptions<SmtpOptions>
     {

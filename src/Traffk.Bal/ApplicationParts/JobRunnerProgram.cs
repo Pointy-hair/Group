@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Hangfire;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using RevolutionaryStuff.Core;
+using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core.ApplicationParts;
-using RevolutionaryStuff.Core.Threading;
 using System;
 using System.Threading.Tasks;
 using Traffk.Bal.Data.Rdb;
@@ -11,90 +11,36 @@ using Traffk.Bal.Services;
 
 namespace Traffk.Bal.ApplicationParts
 {
-    public static class JobRunnerProgram
+    public abstract partial class JobRunnerProgram : CommandLineProgram, ICurrentUser
     {
-        public static void Main<TProgram>(string[] args) where TProgram : CommandLineProgram => CommandLineProgram.Main<TProgram>(args);
-    }
+        public static new void Main<TProgram>(string[] args) where TProgram : CommandLineProgram => CommandLineProgram.Main<TProgram>(args);
 
-    public abstract class JobRunnerProgram<TJobRunner> : CommandLineProgram where TJobRunner : JobRunner
-    {
-        [CommandLineSwitch(CommandLineSwitchAttribute.CommonArgNames.Threads, Mandatory = false)]
-        public int ThreadCount = 1;
-
-        [CommandLineSwitch(nameof(NoJobsReceivedTimeout), Mandatory = false)]
-        public TimeSpan NoJobsReceivedTimeout = TimeSpan.FromMinutes(1);
-
-        protected abstract JobTypes JobType { get; }
-
-        protected async override Task OnGoAsync()
+        public class HangfireServerOptions
         {
-            var dbOptions = ServiceProvider.GetRequiredService<DbContextOptions<TraffkRdbContext>>();
+            public string ConnectionStringName { get; set; }
+            public BackgroundJobServerOptions BackgroundOptions { get; set; }
+        }
 
-            using (var w = new WorkQueue(ThreadCount))
+        private TraffkGlobalContext GDB;
+
+        protected override Task OnGoAsync()
+        {
+            GDB = this.ServiceProvider.GetService<TraffkGlobalContext>();
+            var o = this.ServiceProvider.GetService<IOptions<HangfireServerOptions>>().Value;
+
+            GlobalConfiguration.Configuration.UseSqlServerStorage(Configuration.GetConnectionString(o.ConnectionStringName));
+            GlobalConfiguration.Configuration.UseActivator(new MyActivator(this));
+            using (var s = new BackgroundJobServer(o.BackgroundOptions ?? new BackgroundJobServerOptions()))
             {
-                for (;;)
-                {
-                    if (w.FreeThreads > 0)
-                    {
-                        var db = new TraffkRdbContext(dbOptions, null, null);
-                        throw new NotImplementedException();
-#if false
-                        var jobs = await db.JobDequeueAsync(JobType, Environment.MachineName, w.FreeThreads);
-                        foreach (var job in jobs)
-                        {
-                            w.Enqueue(() => Do(db, job));
-                        }
-                        if (jobs.Items.Count == 0)
-                        {
-                            db.Dispose();
-                            await Task.Delay(NoJobsReceivedTimeout);
-                        }
-#endif
-                    }
-                    await Task.Delay(250);
-                }
+                ShutdownRequested.WaitOne();
             }
+            return Task.CompletedTask;
         }
 
         [ThreadStatic]
-        private Job CurrentThreadsJob;
+        private MyActivator.MyScope CurrentThreadScope;
 
-        private class ThreadStaticTenantFinder : ITraffkTenantFinder
-        {
-            private readonly JobRunnerProgram<TJobRunner> Context;
-
-            public ThreadStaticTenantFinder(JobRunnerProgram<TJobRunner> context)
-            {
-                Context = context;
-            }
-
-            Task<int> ITenantFinder<int>.GetTenantIdAsync() => Task.FromResult(Context.CurrentThreadsJob.TenantId.Value);
-        }
-
-        private class NoCurrentUser : ICurrentUser
-        {
-            ApplicationUser ICurrentUser.User => null;
-        }
-
-        private void Do(TraffkRdbContext db, Job job)
-        {
-            try
-            {
-                CurrentThreadsJob = job;
-                using (var scope = ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope())
-                {
-                    var sp = scope.ServiceProvider;
-                    using (var runner = sp.GetRequiredService<JobRunner>())
-                    {
-                        runner.GoAsync(db, job).ExecuteSynchronously();
-                    }
-                }
-            }
-            finally
-            {
-                CurrentThreadsJob = null;
-            }
-        }
+        ApplicationUser ICurrentUser.User => null;
 
         protected override void OnConfigureServices(IServiceCollection services)
         {
@@ -102,13 +48,21 @@ namespace Traffk.Bal.ApplicationParts
 
             services.Configure<BlobStorageServices.BlobStorageServicesOptions>(Configuration.GetSection(nameof(BlobStorageServices.BlobStorageServicesOptions)));
 
-            services.AddDbContext<TraffkRdbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddScoped<JobRunner, TJobRunner>();
-            services.AddSingleton<ITraffkTenantFinder>(new ThreadStaticTenantFinder(this));
+            services.AddSingleton(this);
+            services.AddSingleton<ITraffkTenantFinder, MyTraffkTenantFinder>();
+            services.AddSingleton<ICurrentUser>(this);
+            services.AddScoped<ConfigStringFormatter>();
+            services.AddDbContext<TenantRdbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString(TenantRdbContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Singleton);
+            services.AddDbContext<TraffkRdbContext>((sp, options) =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString(TraffkRdbContext.DefaultDatabaseConnectionStringName));
+            }, ServiceLifetime.Scoped);
+            services.AddDbContext<TraffkGlobalContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString(TraffkGlobalContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Singleton);
             services.AddScoped<CurrentTenantServices>();
-            services.AddSingleton<ICurrentUser>(new NoCurrentUser());
             services.AddScoped<BlobStorageServices>();
+            services.Configure<HangfireServerOptions>(Configuration.GetSection(nameof(HangfireServerOptions)));
         }
     }
 }

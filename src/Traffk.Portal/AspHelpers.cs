@@ -74,6 +74,7 @@ namespace TraffkPortal
         {
             public const string Saved = "Items saved successfully.";
             public const string Deleted = "Items deleted successfully.";
+            public const string Queued = " Your task has been queued.";
         }
 
         public static SelectListItem CreateNoneSelectedSelectListItem(bool preSelected=true) 

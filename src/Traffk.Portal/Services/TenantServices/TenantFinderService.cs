@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Traffk.Bal;
 using System;
 using System.Collections;
+using Traffk.Bal.Services;
 
 namespace TraffkPortal.Services.TenantServices
 {
@@ -35,13 +36,11 @@ namespace TraffkPortal.Services.TenantServices
 
         IEnumerator<KeyValuePair<string, object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator()
         {
-            yield return new KeyValuePair<string, object>("DATABASENAME", this.DatabaseName);
+            yield return new KeyValuePair<string, object>(ConfigStringFormatter.CommonTerms.DatabaseName, this.DatabaseName);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
-        {
-            yield return new KeyValuePair<string, object>("DATABASENAME", this.DatabaseName);
-        }
+            => CollectionHelpers.GetEnumerator(this);
 
         private static readonly ICache<string, AppHostItem> HostMapCache = CachingServices.Instance.CreateSynchronized<string, AppHostItem>();
 

@@ -6,12 +6,27 @@ namespace Traffk.Bal.Services
 {
     public class ConfigStringFormatter
     {
+        public static class CommonTerms
+        {
+            public const string DatabaseName = "DATABASENAME";
+            public const string TenantId = "TENANTID";
+            public const string Env = "ENV";
+
+            public static string ToStringReplacementToken(string term)
+                => "{" + term + "}";
+        }
+
         private readonly IHostingEnvironment Env;
         private readonly ITraffkTenantFinder Finder;
 
-        public ConfigStringFormatter(IHostingEnvironment env, ITraffkTenantFinder finder)
+        public ConfigStringFormatter(ITraffkTenantFinder finder, IHostingEnvironment env)
+            : this(finder)
         {
             Env = env;
+        }
+
+        public ConfigStringFormatter(ITraffkTenantFinder finder)
+        {
             Finder = finder;
         }
 
@@ -19,9 +34,12 @@ namespace Traffk.Bal.Services
         {
             if (s == null) return null;
             var tenantId = Finder.GetTenantIdAsync().ExecuteSynchronously();
-            s = s.Replace("{TENANTID}", tenantId.ToString());
-            s = s.Replace("{ENV}", Env.EnvironmentName);
-            s = Replace(s, Env as IEnumerable<KeyValuePair<string, object>>);
+            if (Env != null)
+            {
+                s = s.Replace(CommonTerms.ToStringReplacementToken(CommonTerms.Env), Env.EnvironmentName);
+                s = Replace(s, Env as IEnumerable<KeyValuePair<string, object>>);
+            }
+            s = s.Replace(CommonTerms.ToStringReplacementToken(CommonTerms.TenantId), tenantId.ToString());
             s = Replace(s, Finder as IEnumerable<KeyValuePair<string, object>>);
             return s;
         }

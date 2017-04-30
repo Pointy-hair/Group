@@ -70,29 +70,32 @@
     <Folder Include="TraffkTenantShardManager" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Foundations\Build\0001.ChangeLog.sql" />
+    <None Include="Foundations\Build\0001.ChangeLog.sql" />
     <None Include="Foundations\Build\0002.Descriptive.sql" />
-    <Build Include="TraffkModel\0001.ImportExternalTable.sql" />
-    <Build Include="Foundations\Build\0006.StringSplit.cs.sql" />
-    <Build Include="PostEF\0001.Traffk\002.Structure.sql" />
-    <Build Include="PostEF\0001.Traffk\003.Bootstrap.sql" />
-    <Build Include="PostEF\0001.Traffk\004.Sprocs.sql" />
-    <Build Include="PostEF\0001.Traffk\005.Security.sql" />
-    <Build Include="PostEF\0001.Traffk\050.NationalDrugCode.sql" />
-    <Build Include="PostEF\0001.Traffk\051.InternationalClassificationDiseases.sql" />
-    <Build Include="PostEF\0001.Traffk\100.Health.sql" />
-    <Build Include="PostEF\0002.Deerwalk\002.Structure.sql" />
-    <Build Include="PostEF\0002.Deerwalk\003.Converters.sql" />
-    <Build Include="PostEF\0003.Migrate\002.Sprocs.sql" />
-    <Build Include="TraffkModel\0002.Aspnet.sql" />
-    <Build Include="TraffkModel\0003.TraffkCoreStructure.sql" />
-    <Build Include="TraffkTenantShards\0001.Structure.sql" />
-    <Build Include="TraffkModel\0005.Security.sql" />
-    <Build Include="TraffkTenantShardManager\0004.Security.sql" />
-    <Build Include="TraffkGlobal\0003.Cms.sql" />
-    <Build Include="TraffkGlobal\0002.Iso3166.sql" />
-    <Build Include="TraffkGlobal\0003.Joints.sql" />
-    <Build Include="TraffkGlobal\0004.NationalDrugCode.sql" />
+    <None Include="TraffkModel\0001.ImportExternalTable.sql" />
+    <None Include="Foundations\Build\0006.StringSplit.cs.sql" />
+    <None Include="PostEF\0001.Traffk\002.Structure.sql" />
+    <None Include="PostEF\0001.Traffk\003.Bootstrap.sql" />
+    <None Include="PostEF\0001.Traffk\004.Sprocs.sql" />
+    <None Include="PostEF\0001.Traffk\005.Security.sql" />
+    <None Include="PostEF\0001.Traffk\050.NationalDrugCode.sql" />
+    <None Include="PostEF\0001.Traffk\051.InternationalClassificationDiseases.sql" />
+    <None Include="PostEF\0001.Traffk\100.Health.sql" />
+    <None Include="PostEF\0002.Deerwalk\002.Structure.sql" />
+    <None Include="PostEF\0002.Deerwalk\003.Converters.sql" />
+    <None Include="PostEF\0003.Migrate\002.Sprocs.sql" />
+    <None Include="TraffkModel\0002.Aspnet.sql" />
+    <None Include="TraffkModel\0003.TraffkCoreStructure.sql" />
+    <None Include="TraffkTenantShards\0001.Structure.sql" />
+    <None Include="TraffkModel\0005.Security.sql" />
+    <None Include="TraffkTenantShardManager\0004.Security.sql" />
+    <None Include="TraffkGlobal\0003.Cms.sql" />
+    <None Include="TraffkGlobal\0002.Iso3166.sql" />
+    <None Include="TraffkGlobal\0003.Joints.sql" />
+    <None Include="TraffkGlobal\0004.NationalDrugCode.sql" />
+    <None Include="TraffkGlobal\0005.Hangfire.sql" />
+    <None Include="TraffkGlobal\0100.Security.sql" />
+    <None Include="TraffkGlobal\0010.Structure.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Foundations\Build\0003.Asserts.sql" />

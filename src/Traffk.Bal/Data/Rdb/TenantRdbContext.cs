@@ -9,6 +9,8 @@ namespace Traffk.Bal.Data.Rdb
 {
     public class TenantRdbContext : DbContext
     {
+        public const string DefaultDatabaseConnectionStringName = "TraffkTenantShards";
+
         public TenantRdbContext(DbContextOptions<TenantRdbContext> options)
             : base(options)
         { }
@@ -26,6 +28,20 @@ namespace Traffk.Bal.Data.Rdb
                 await conn.OpenAsync();
             }
             return await conn.ExecuteReaderAsync<AppHostItem>(null, "dbo.AppFindByHostname", null, ps);
+        }
+
+        public async Task<ConnectionHelpers.Result<Tenant>> TenantFindByTenantId(int tenantId)
+        {
+            var ps = new SqlParameter[]
+                {
+                    new SqlParameter("@tenantId", tenantId){Direction=ParameterDirection.Input},
+                };
+            var conn = Database.GetDbConnection();
+            if (conn.State != ConnectionState.Open)
+            {
+                await conn.OpenAsync();
+            }
+            return await conn.ExecuteReaderAsync<Tenant>(null, "dbo.TenantFindByTenantId", null, ps);
         }
     }
 }

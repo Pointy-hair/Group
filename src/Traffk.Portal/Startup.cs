@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Hangfire;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -76,6 +77,8 @@ namespace TraffkPortal
                         writeInBatches: Parse.ParseBool(Configuration["Serilog:WriteInBatches"], true), 
                         period: Parse.ParseTimeSpan(Configuration["Serilog:LogInterval"], TimeSpan.FromSeconds(2)))
                     .CreateLogger();
+
+            GlobalConfiguration.Configuration.UseSqlServerStorage(Configuration.GetConnectionString("TraffkGlobal"));
         }
 
         public IConfigurationRoot Configuration { get; }
@@ -89,7 +92,7 @@ namespace TraffkPortal
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {
-                options.IdleTimeout = IdleLogout;
+                options.IdleTimeout = IdleLogout
             });
             */
 
@@ -106,22 +109,21 @@ namespace TraffkPortal
             services.Configure<DataProtectionTokenProviderOptions>(Configuration.GetSection(nameof(DataProtectionTokenProviderOptions)));
             services.Configure<TraffkHttpHeadersFilter.TraffkHttpHeadersFilterOptions>(Configuration.GetSection(nameof(TraffkHttpHeadersFilter.TraffkHttpHeadersFilterOptions)));
 
-
             services.AddSingleton<CachingServices>();
 
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
 
             services.AddDbContext<TenantRdbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("TraffkTenantShards")), ServiceLifetime.Singleton);
+                options.UseSqlServer(Configuration.GetConnectionString(TenantRdbContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Singleton);
 
             services.AddDbContext<TraffkRdbContext>((sp,options) =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("TraffkTenantPortal"));
+                options.UseSqlServer(Configuration.GetConnectionString(TraffkRdbContext.DefaultDatabaseConnectionStringName));
             }, ServiceLifetime.Scoped);
 
             services.AddDbContext<TraffkGlobalContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("TraffkGlobal")), ServiceLifetime.Singleton);
+                options.UseSqlServer(Configuration.GetConnectionString(TraffkGlobalContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Singleton);
 
             services.Configure<IdentityOptions>(options => 
             {
@@ -189,17 +191,11 @@ namespace TraffkPortal
 
             services.AddScoped<IReportVisualService, ReportVisualService>();
 
-            services.AddScoped<IBackgroundJobEnqueuer, BackgroundJobEnqueuer>();
-            services.AddScoped<IBackgroundJobRunner, BackgroundJobRunner>();
-            services.AddScoped<IBackgroundJobTenantFinder, BackgroundJobTenantFinder>();
+            services.AddScoped<IBackgroundJobClient, TenantedBackgroundJobClient>();
 
             services.AddScoped<TableauTrustedTicketActionFilter>();
 
             services.Add(new ServiceDescriptor(typeof(ICacher), Cache.DataCacher));
-
-            //Hangfire settings
-            //services.AddHangfire(x => x.UseSqlServerStorage(Configuration.GetConnectionString("TraffkGlobal")));
-            //JobStorage.Current = new SqlServerStorage(Configuration.GetConnectionString("TraffkGlobal"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

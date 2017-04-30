@@ -18,6 +18,7 @@ using RevolutionaryStuff.Core;
 using Serilog;
 using Traffk.Bal.BackgroundJobs;
 using Traffk.Portal.Models.TenantModels;
+using Hangfire;
 
 namespace TraffkPortal.Controllers
 {
@@ -79,7 +80,7 @@ namespace TraffkPortal.Controllers
 
         private readonly UserManager<ApplicationUser> UserManager;
         private readonly BlobStorageServices Blobs;
-        public readonly IBackgroundJobEnqueuer BackgroundJobEnqueuer;
+        private readonly IBackgroundJobClient Backgrounder;
 
         public TenantsController(
             BlobStorageServices blobs,
@@ -87,13 +88,13 @@ namespace TraffkPortal.Controllers
             TraffkRdbContext db,
             CurrentContextServices current,
             ILoggerFactory loggerFactory,
-            IBackgroundJobEnqueuer backgroundJobEnqueuer
+            IBackgroundJobClient backgrounder
         )
             : base(AspHelpers.MainNavigationPageKeys.Setup, db, current, loggerFactory)
         {
             UserManager = userManager;
             Blobs = blobs;
-            BackgroundJobEnqueuer = backgroundJobEnqueuer;
+            Backgrounder = backgrounder;
         }
 
         [ActionName(ActionNames.TenantsList)]
@@ -582,26 +583,8 @@ namespace TraffkPortal.Controllers
             {
                 try
                 {
-                    if (tenant.TenantSettings.FiscalYearSettings != null)
-                    {
-                        tenant.TenantSettings.FiscalYearSettings.CalendarYear = f.CalendarYear;
-                        tenant.TenantSettings.FiscalYearSettings.CalendarMonth = f.CalendarMonth;
-                        tenant.TenantSettings.FiscalYearSettings.FiscalYear = f.FiscalYear;
-                    }
-                    else
-                    {
-                        tenant.TenantSettings.FiscalYearSettings = f;
-                    }
-
-                    //Rdb.Tenants.Update(tenant);
-                    //await Rdb.SaveChangesAsync();
-                    //BackgroundJobEnqueuer.ConvertFiscalYear(tenant, tenant.TenantSettings.FiscalYearSettings);
-
-                    //var fiscalYearConversionJob = Job.CreateFiscalYearConversionJob(tenant, tenant.TenantSettings.FiscalYearSettings);
-                    //Rdb.Jobs.Add(fiscalYearConversionJob);
-                    SetToast(AspHelpers.ToastMessages.Saved);
-                    
-
+                    Backgrounder.Enqueue<ITenantJobs>(z => z.ReconfigureFiscalYears(f));
+                    SetToast(AspHelpers.ToastMessages.Queued);
                     return RedirectToAction(ActionNames.FiscalYearSettings);
 
                 }

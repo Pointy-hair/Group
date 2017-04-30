@@ -2,7 +2,7 @@
 	@dataSource sysname,
 	@schema sysname,
 	@table sysname,
-	@columnProviderView nvarchar(200),
+	@schemaMetaXml nvarchar(max),
 	@type sysname=null,
 	@distribution sysname=null,
 	@srcSchema sysname=null,
@@ -10,6 +10,8 @@
 AS
 BEGIN
 
+	declare @sm xml
+	set @sm = convert(xml, @schemaMetaXml)
 	set @srcSchema = coalesce(@srcSchema, @schema)
 	set @srcTable = coalesce(@srcTable, @table)
 	declare @srcSchemaTable nvarchar(200) = quotename(@srcSchema)+'.'+quotename(@srcTable)
@@ -17,57 +19,113 @@ BEGIN
 
 	exec db.PrintNow 'ImportExternalTable {s0}.{s1}=>{s2}', @s0=@dataSource, @s1=@srcSchemaTable, @s2=@destSchemaTable
 
+	;with
+	pk(TableSchema, TableName, ColumnName) as
+	(
+		select ccu.Table_schema, ccu.Table_name, ccu.Column_name
+		from 
+			INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc with (nolock)
+				inner join
+			INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu with (nolock)
+				on tc.constraint_name=ccu.constraint_name 
+				and tc.table_schema=ccu.table_schema 
+				and tc.table_name=ccu.table_name
+		where
+			tc.[CONSTRAINT_TYPE]='PRIMARY KEY' 	
+	)
+	select 
+		t.t.value('@schema', 'sysname') TableSchema,
+		t.t.value('@name', 'sysname') TableName,
+		t.t.value('@tableType', 'varchar(50)') TableType,
+		c.c.value('@name', 'sysname') ColumnName,
+		c.c.value('@position', 'int') Position,
+		c.c.value('@isPrimaryKey', 'bit') IsPrimaryKey,
+		c.c.value('@isIdentity', 'bit') IsIdentity,
+		c.c.value('@isNullable', 'bit') IsNullable,
+		c.c.value('@sqlType', 'sysname') SqlType,
+		c.c.value('@maxLen', 'int') MaxLen,
+		c.c.value('@refSchema', 'sysname') RefSchema,
+		c.c.value('@refTable', 'sysname') RefTable,
+		coalesce(pk.ColumnName, k.ColumnName) RefColumn
+	into #cols
+	from 
+		@sm.nodes('/SchemaMeta/Tables/Table') t(t)
+			cross apply
+		t.t.nodes('Columns/Column') c(c)
+			left join
+		pk
+			on pk.tableschema=c.c.value('@refSchema', 'sysname')
+			and pk.tablename=c.c.value('@refTable', 'sysname')
+			left join
+		[db].[ColumnProperties] k
+			on k.propertyname='CustomAttribute'
+			and k.propertyvalue='Key'
+			and k.SchemaName=c.c.value('@refSchema', 'sysname')
+			and k.TableName=c.c.value('@refTable', 'sysname')
+	where
+		t.t.value('@schema', 'sysname')=@srcSchema and
+		t.t.value('@name', 'sysname')=@srcTable
+	--order by 1,2,3,5
+
+	exec db.PrintNow 'New table will have {n0} cols', @@rowcount
+
+	--select * from #cols
+
+	declare @meta nvarchar(max)=''
 	declare @sql nvarchar(max)
-
-
 	declare @colNum int=0
 	declare @colDef nvarchar(1024)
-
-	create table #cols
-	(
-		table_Schema nvarchar(128) null,
-		table_name sysname not null,
-		column_name sysname not null,
-		data_type nvarchar(128) null,
-		character_maximum_length int null,
-		is_nullable varchar(3) null,
-		ordinal_position int null
-	)
-
-	set @sql = 'select table_Schema, table_name, column_name, data_type, character_maximum_length, is_nullable, ordinal_position from '+@columnProviderView
-	exec db.PrintSql @sql
-
-	insert into #cols
-	exec(@sql)
+	declare @isPrimaryKey bit
+	declare @columnName sysname
+	declare @refSchema sysname
+	declare @refTable sysname
+	declare @refColumn sysname
 
 	set @sql = 'CREATE EXTERNAL TABLE '+@destSchemaTable+'('
 
 	DECLARE c CURSOR FOR 
 	select 
-		quotename(column_name)+' '+
-		data_type+
+		ColumnName,
+		quotename(ColumnName)+' '+
+		SqlType+
 		case 
-			when character_maximum_length = -1 then '(max)'
-			when character_maximum_length is null then ''
-			else '('+cast(character_maximum_length as varchar(10))+')'
+			when MaxLen = -1 then '(max)'
+			when MaxLen is null then ''
+			else '('+cast(MaxLen as varchar(10))+')'
 			end +
 		case
-			when is_nullable='NO' then ' not null'
+			when IsNullable=0 then ' not null'
 			else ' null'
 			end
-		colDef
+		colDef,
+		IsPrimaryKey,
+		RefSchema,
+		RefTable,
+		RefColumn
 	from #cols
-	where table_Schema=@srcSchema and table_name=@srcTable
-	order by ordinal_position
+	order by Position
 
 	open c
 
 	NEXT_ITEM:
 
-	FETCH NEXT FROM c INTO @colDef
+	FETCH NEXT FROM c INTO @columnName, @colDef, @isPrimaryKey, @refSchema, @refTable, @refColumn
 
 	if @@fetch_status = 0
 	begin
+
+		if (@isPrimaryKey=1)
+		begin
+			set @meta = @meta + '
+GO
+exec db.ColumnPropertySet '''+@table+''', '''+@columnName+''', ''Key'', @propertyName=''CustomAttribute'', @tableSchema='''+@schema+''''
+		end
+		if (@refColumn is not null)
+		begin
+			set @meta = @meta + '
+GO
+exec db.ColumnPropertySet '''+@table+''', '''+@columnName+''', '''+@refSchema+'.'+@refTable+'('+@refColumn+')'', @propertyName=''LinksTo'', @tableSchema='''+@schema+''''
+		end
 
 		set @sql = @sql + '
 '
@@ -97,6 +155,80 @@ BEGIN
 	(case when @distribution is null then '' else ', DISTRIBUTION='+@distribution end)+'
 )'
 
+	declare @propertyName nvarchar(255)
+	declare @propertyVal nvarchar(max)
+
+	declare c2 cursor for
+	select 
+		c.c.value('@name', 'sysname') ColumnName,
+		p.p.value('@name', 'nvarchar(200)') PropertyName,
+		p.p.value('@value', 'nvarchar(max)') PropertyValue
+	from 
+		@sm.nodes('/SchemaMeta/Tables/Table') t(t)
+			cross apply
+		t.t.nodes('Columns/Column') c(c)
+			cross apply
+		c.c.nodes('Properties/Property') p(p)
+	where
+		t.t.value('@schema', 'sysname')=@srcSchema and
+		t.t.value('@name', 'sysname')=@srcTable
+
+	open c2
+
+	NEXT_PROP:
+
+	FETCH NEXT FROM c2 INTO @columnName, @propertyName, @propertyVal
+
+	if @@fetch_status = 0
+	begin
+
+		set @meta = @meta + '
+GO
+exec db.ColumnPropertySet '''+@table+''', '''+@columnName+''', '''+replace(@propertyVal,'''','''''')+''', @propertyName='''+@propertyName+''', @tableSchema='''+@schema+''''
+		
+
+		goto NEXT_PROP
+
+	end
+
+	close c2
+
+	deallocate c2
+
+	declare c3 cursor for
+	select 
+		p.p.value('@name', 'nvarchar(200)') PropertyName,
+		p.p.value('@value', 'nvarchar(max)') PropertyValue
+	from 
+		@sm.nodes('/SchemaMeta/Tables/Table') t(t)
+			cross apply
+		t.t.nodes('Properties/Property') p(p)
+	where
+		t.t.value('@schema', 'sysname')=@srcSchema and
+		t.t.value('@name', 'sysname')=@srcTable
+
+	open c3
+
+	NEXT_TPROP:
+
+	FETCH NEXT FROM c3 INTO @propertyName, @propertyVal
+
+	if @@fetch_status = 0
+	begin
+
+		set @meta = @meta + '
+GO
+exec db.TablePropertySet '''+@table+''', '''+replace(@propertyVal,'''','''''')+''', @propertyName='''+@propertyName+''', @tableSchema='''+@schema+''''
+		
+
+		goto NEXT_TPROP
+
+	end
+
+	close c3
+
+	deallocate c3
+
 	select @colNum=count(*) 
 	from sys.schemas 
 	where name=@schema
@@ -104,10 +236,9 @@ BEGIN
 	if (@colNum=0)
 	begin
 
-		declare @s nvarchar(max)
-		set @s = 'create schema '+quotename(@schema)
-		exec db.PrintSql @s
-		exec(@s)
+		set @sql = 'create schema '+quotename(@schema)+'
+GO
+'
 
 	end
 
@@ -118,7 +249,8 @@ BEGIN
 	if (@colNum=0)
 	begin
 
-		exec db.PrintSql @sql
+		set @sql = @sql + @meta
+		exec db.PrintSql @sql, 1
 		exec(@sql)
 
 	end

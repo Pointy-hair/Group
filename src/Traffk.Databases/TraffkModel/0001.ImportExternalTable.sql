@@ -17,40 +17,41 @@ with
 	credential = _TraffkGlobalUserCred,
 )
 
+
 GO
 
+CREATE DATABASE SCOPED CREDENTIAL _TraffkTenantShardsUserCred
+WITH IDENTITY = '_TraffkTenantShardsUser',
+SECRET = 'dsioajmvgr3tGVer80j5qiGDoe';
 
-create EXTERNAL TABLE db.TraffkGlobalCols
+GO
+
+CREATE EXTERNAL DATA SOURCE TraffkTenantShardsDataSource
+with
 (
-	[TABLE_CATALOG] nvarchar(128) null
-	,[TABLE_SCHEMA] nvarchar(128) null
-	,[TABLE_NAME] nvarchar(128) not null
-	,[COLUMN_NAME] nvarchar(128) null
-	,[ORDINAL_POSITION] int null
-	,[COLUMN_DEFAULT] nvarchar(4000) null
-	,[IS_NULLABLE] varchar(3) null
-	,[DATA_TYPE] nvarchar(128) null
-	,[CHARACTER_MAXIMUM_LENGTH] int null
-	,[CHARACTER_OCTET_LENGTH] int null
-	,[NUMERIC_PRECISION] tinyint null
-	,[NUMERIC_PRECISION_RADIX] smallint null
-	,[NUMERIC_SCALE] int null
-	,[DATETIME_PRECISION] smallint null
-	,[CHARACTER_SET_CATALOG] nvarchar(128) null
-	,[CHARACTER_SET_SCHEMA] nvarchar(128) null
-	,[CHARACTER_SET_NAME] nvarchar(128) null
-	,[COLLATION_CATALOG] nvarchar(128) null
-	,[COLLATION_SCHEMA] nvarchar(128) null
-	,[COLLATION_NAME] nvarchar(128) null
-	,[DOMAIN_CATALOG] nvarchar(128) null
-	,[DOMAIN_SCHEMA] nvarchar(128) null
-	,[DOMAIN_NAME] nvarchar(128) null
+	type = RDBMS,
+	location = 'traffkrdb-prod.database.windows.net',
+	database_name = 'TraffkTenantShards',
+	credential = _TraffkTenantShardsUserCred,
+)
+
+GO
+
+select * from sys.external_data_sources; 
+
+GO
+
+create EXTERNAL TABLE db.TraffkGlobalSchemaMeta
+(
+	HostDatabaseName sysname,
+	T nvarchar(max) null
 )
 WITH 
 (
-	SCHEMA_NAME = 'information_schema',
-	OBJECT_NAME = 'columns',
+	SCHEMA_NAME = 'db',
+	OBJECT_NAME = 'schemameta',
 	DATA_SOURCE = [TraffkGlobalDataSource]
+
 )
 
 GO
@@ -63,7 +64,10 @@ CREATE PROCEDURE [db].TraffkGlobalTableImport
 AS
 begin
 
-	exec db.ExternalTableImport 'TraffkGlobalDataSource', @schema, @table, 'db.TraffkGlobalCols', @srcSchema=@srcSchema, @srcTable=@srcTable 
+	declare @smt nvarchar(max)
+	select @smt=T from db.TraffkGlobalSchemaMeta
+
+	exec db.ExternalTableImport 'TraffkGlobalDataSource', @schema, @table, @smt, @srcSchema=@srcSchema, @srcTable=@srcTable 
 
 end
 
@@ -72,11 +76,12 @@ GO
 create schema Globals
 
 GO
-
 exec db.TraffkGlobalTableImport 'CmsGov', 'BerensonEggersTypeOfServices'
 exec db.TablePropertySet  'BerensonEggersTypeOfServices', '1', @propertyName='AddToDbContext', @tableSchema='CmsGov'
 exec db.TablePropertySet  'BerensonEggersTypeOfServices', '1', @propertyName='GeneratePoco', @tableSchema='CmsGov'
 exec db.ColumnPropertySet 'BerensonEggersTypeOfServices', 'BetosId', 'Key', @propertyName='CustomAttribute', @tableSchema='CmsGov'
+
+select * from [db].[ColumnProperties] where schemaname='CmsGov' and propertyname='Key' and propertyvalue='1'
 
 exec db.TraffkGlobalTableImport 'CmsGov', 'HealthcareCommonProcedureCodingSystemCodes'
 exec db.TablePropertySet  'HealthcareCommonProcedureCodingSystemCodes', '1', @propertyName='AddToDbContext', @tableSchema='CmsGov'
@@ -101,6 +106,10 @@ exec db.TablePropertySet  'ICD10', '1', @propertyName='AddToDbContext', @tableSc
 exec db.TablePropertySet  'ICD10', '1', @propertyName='GeneratePoco', @tableSchema='InternationalClassificationDiseases'
 exec db.ColumnPropertySet 'ICD10', 'Icd10Id', 'Key', @propertyName='CustomAttribute', @tableSchema='InternationalClassificationDiseases'
 
+
+select * from [db].[ColumnProperties] where schemaname='dbo' and propertyname='Key' and propertyvalue='1'
+drop external table dbo.ReleaseChanges
+drop external table dbo.Releases
 exec db.TraffkGlobalTableImport 'dbo', 'Releases'
 exec db.TablePropertySet  'Releases', '1', @propertyName='AddToDbContext', @tableSchema='dbo'
 exec db.TablePropertySet  'Releases', '1', @propertyName='GeneratePoco', @tableSchema='dbo'
@@ -110,6 +119,26 @@ exec db.TablePropertySet  'ReleaseChanges', '1', @propertyName='AddToDbContext',
 exec db.TablePropertySet  'ReleaseChanges', '1', @propertyName='GeneratePoco', @tableSchema='dbo'
 exec db.ColumnPropertySet 'ReleaseChanges', 'ReleaseChangeId', 'Key', @propertyName='CustomAttribute', @tableSchema='dbo'
 exec db.ColumnPropertySet 'ReleaseChanges', 'ReleaseId', 'dbo.Releases(ReleaseId)', @propertyName='LinksTo', @tableSchema='dbo'
+
+[DataSrc_RefData]
+
+CREATE EXTERNAL TABLE [dbo].[ReleaseChanges](
+[ReleaseChangeId] int not null
+, [ReleaseId] int not null
+, [ChangeType] nvarchar(255) null
+, [Title] nvarchar(255) null
+, [Order] int null
+) with (
+	DATA_SOURCE = [DataSrc_RefData],
+	SCHEMA_NAME = 'dbo',
+	OBJECT_NAME = 'ReleaseChanges'
+)
+GO
+exec db.ColumnPropertySet 'ReleaseChanges', 'ReleaseChangeId', 'Key', @propertyName='CustomAttribute', @tableSchema='dbo'
+GO
+exec db.ColumnPropertySet 'ReleaseChanges', 'ReleaseId', 'dbo.Releases(ReleaseId)', @propertyName='LinksTo', @tableSchema='dbo'
+
+select * from db.schemameta
 
 
 

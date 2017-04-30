@@ -190,6 +190,11 @@ end
 
 GO
 
+exec db.SprocPropertySet  'FiscalYearsConfigure', '1', @propertyName='AddToDbContext'
+exec db.SprocPropertySet  'FiscalYearsConfigure', 'NonQuery', @propertyName='SprocType'
+
+GO
+
 create proc GetFieldCounts
 	@schemaName sysname,
 	@tableName sysname,

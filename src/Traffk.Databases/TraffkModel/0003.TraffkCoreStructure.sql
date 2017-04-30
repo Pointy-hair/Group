@@ -226,41 +226,7 @@ create unique index UX_CalendarDate on DateDimensions (TenantId, CalendarDate)
 exec db.TablePropertySet  'DateDimensions', '1', @propertyName='AddToDbContext'
 exec db.TablePropertySet  'DateDimensions', '1', @propertyName='GeneratePoco'
 
----------------------------------------------------------
-
 GO
-
-create table Jobs
-(
-	JobId int not null identity primary key,
-	JobType dbo.developername not null,
-	TenantId int null references Tenants(TenantId),
-	CreatedAtUtc datetime not null default (getutcdate()),
-	DontRunBeforeUtc datetime null,
-	RowStatus dbo.RowStatus not null default '1',
-	JobStatus dbo.developername not null,	
-	DequeuedAtUtc datetime null,
-	CompletedAtUtc datetime null,
-	[Priority] int not null,
-	ServiceRoleMachineName dbo.developername null,
-	JobData nvarchar(max) null,
-	JobResult nvarchar(max) null
-)
-
-GO
-
-exec db.TablePropertySet  'Jobs', '1', @propertyName='AddToDbContext'
-exec db.TablePropertySet  'Jobs', '1', @propertyName='GeneratePoco'
-exec db.ColumnPropertySet 'Jobs', 'CreatedAtUtc', 'Datetime when this entity was created.'
-exec db.ColumnPropertySet 'Jobs', 'JobResult', 'Traffk.Bal.JobResult', @propertyName='JsonSettingsClass'
-exec db.ColumnPropertySet 'Jobs', 'RowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
-exec db.ColumnPropertySet 'Jobs', 'RowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
-exec db.ColumnPropertySet 'Jobs', 'JobType', 'JobTypes', @propertyName='EnumType'
-exec db.ColumnPropertySet 'Jobs', 'JobStatus', 'JobStatuses', @propertyName='EnumType'
-
-
-GO
-
 ------------------------------------------------------------
 
 
@@ -329,8 +295,11 @@ create table CommunicationBlasts
 	CommunicationBlastRowStatus dbo.RowStatus not null default '1',	
 	CommunicationId int not null references Communications(CommunicationId),
 	CreativeId int null references Creatives(CreativeId),
-	JobId int null references Jobs(JobId)
+	JobId int null references Jobs(JobId) --change to linksTo hangfire.jobs;  Also, import the hangfire.job table;
 )
+
+drop table Jobs
+
 
 GO
 

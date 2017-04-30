@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.PlatformAbstractions;
+using System.Threading;
 
 namespace RevolutionaryStuff.Core.ApplicationParts
 {
@@ -24,6 +25,9 @@ namespace RevolutionaryStuff.Core.ApplicationParts
         private void Go() => OnGoAsync().ExecuteSynchronously();
 
         protected abstract Task OnGoAsync();
+
+        private readonly ManualResetEvent ShutdownRequestedEvent = new ManualResetEvent(false);
+        protected WaitHandle ShutdownRequested => ShutdownRequestedEvent;
 
         protected virtual void OnBuildConfiguration(IConfigurationBuilder builder)
         { }

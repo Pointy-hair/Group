@@ -42,41 +42,22 @@ select * from sys.external_data_sources;
 
 GO
 
-create EXTERNAL TABLE db.ModelColumns
+create EXTERNAL TABLE db.TraffkTenantModelSchemaMeta
 (
-	[TABLE_CATALOG] nvarchar(128) null
-	,[TABLE_SCHEMA] nvarchar(128) null
-	,[TABLE_NAME] nvarchar(128) not null
-	,[COLUMN_NAME] nvarchar(128) null
-	,[ORDINAL_POSITION] int null
-	,[COLUMN_DEFAULT] nvarchar(4000) null
-	,[IS_NULLABLE] varchar(3) null
-	,[DATA_TYPE] nvarchar(128) null
-	,[CHARACTER_MAXIMUM_LENGTH] int null
-	,[CHARACTER_OCTET_LENGTH] int null
-	,[NUMERIC_PRECISION] tinyint null
-	,[NUMERIC_PRECISION_RADIX] smallint null
-	,[NUMERIC_SCALE] int null
-	,[DATETIME_PRECISION] smallint null
-	,[CHARACTER_SET_CATALOG] nvarchar(128) null
-	,[CHARACTER_SET_SCHEMA] nvarchar(128) null
-	,[CHARACTER_SET_NAME] nvarchar(128) null
-	,[COLLATION_CATALOG] nvarchar(128) null
-	,[COLLATION_SCHEMA] nvarchar(128) null
-	,[COLLATION_NAME] nvarchar(128) null
-	,[DOMAIN_CATALOG] nvarchar(128) null
-	,[DOMAIN_SCHEMA] nvarchar(128) null
-	,[DOMAIN_NAME] nvarchar(128) null
+	HostDatabaseName sysname,
+	T nvarchar(max) null
 )
-with (
-	SCHEMA_NAME = 'information_schema',
-	OBJECT_NAME = 'columns',
+WITH 
+(
+	SCHEMA_NAME = 'db',
+	OBJECT_NAME = 'schemameta',
 	DATA_SOURCE = [TraffkTenantModelDataSource]
+
 )
 
 GO
 
-select * from db.ModelColumns
+select * from db.TraffkTenantModelSchemaMeta
 
 GO
 
@@ -86,7 +67,10 @@ create PROCEDURE [db].TraffkShardTableImport
 AS
 begin
 
-	exec db.ExternalTableImport 'TraffkTenantShardsDataSource', @schema, @table, 'db.ModelColumns', @distribution='ROUND_ROBIN'
+	declare @smt nvarchar(max)
+	select @smt=T from db.TraffkTenantModelSchemaMeta
+
+	exec db.ExternalTableImport 'TraffkTenantShardsDataSource', @schema, @table, @smt, @distribution='ROUND_ROBIN'
 
 end
 
@@ -94,9 +78,70 @@ end
 GO
 
 exec db.TraffkShardTableImport 'dbo', 'tenants'
+
+GO
+
 exec db.TraffkShardTableImport 'dbo', 'apps'
 
 GO
 
 select * from dbo.tenants
 
+select * from dbo.apps
+
+GO
+
+create table TenantIds
+(
+	TenantId int not null identity primary key,
+	HostDatabaseName nvarchar(128)
+)
+
+GO
+
+CREATE proc [dbo].[TenantIdReserve]
+	@hostDatabaseName nvarchar(128)=null
+as
+begin
+
+	set nocount on
+
+	declare @tenantId int
+	declare @maxExistingTenantId int
+	select @maxExistingTenantId=max(tenantId) from tenants
+	set @maxExistingTenantId=coalesce(@maxExistingTenantId,0)
+	
+Again:
+	insert into TenantIds
+	values
+	(@hostDatabaseName)
+
+	set @tenantId=@@identity
+
+	delete from TenantIds where tenantId=@tenantId
+
+	if (@tenantId<=@maxExistingTenantId)
+	begin
+		exec db.PrintNow 'Something got hosed... Out identity value={n0}<maxExistingTenantId={n1};  Trying again', @tenantId, @maxExistingTenantId
+		goto Again
+	end
+
+	exec db.PrintNow 'Reserved tenantId={n0}', @tenantId
+
+	select @tenantId TenantId
+
+end
+
+GO
+
+CREATE USER _TraffkTenantShardsUser
+	FOR LOGIN _TraffkTenantShardsUser
+	WITH DEFAULT_SCHEMA = dbo
+GO
+
+-- Add user to the database owner role
+EXEC sp_addrolemember N'db_datareader', N'_TraffkTenantShardsUser'
+EXEC sp_addrolemember N'db_datawriter', N'_TraffkTenantShardsUser'
+grant execute on [dbo].[TenantIdReserve] to _TraffkTenantShardsUser  
+
+GO

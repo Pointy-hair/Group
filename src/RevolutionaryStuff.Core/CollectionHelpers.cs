@@ -10,6 +10,14 @@ namespace RevolutionaryStuff.Core
 {
     public static class CollectionHelpers
     {
+        public static IEnumerator GetEnumerator<K, V>(IEnumerable<KeyValuePair<K, V>> e)
+        {
+            foreach (var kvp in e)
+            {
+                yield return e;
+            }
+        }
+
         private static Expression NestedProperty(Expression arg, string fieldName)
         {
             var left = fieldName.LeftOf(".");

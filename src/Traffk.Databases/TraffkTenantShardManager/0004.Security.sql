@@ -9,4 +9,5 @@ CREATE USER _TraffkPortalApp
 	WITH DEFAULT_SCHEMA = dbo
 GO
 grant execute on [dbo].[AppFindByHostname] to _TraffkPortalApp
+grant execute on [dbo].[TenantFindByTenantId] to _TraffkPortalApp
 GO

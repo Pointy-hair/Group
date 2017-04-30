@@ -764,6 +764,7 @@
     </Table>
     <Table schema="dbo" name="Jobs" tableType="BASE TABLE">
       <Properties>
+        <Property name="CustomAttribute" value="Obsolete" />
         <Property name="AddToDbContext" value="1" />
         <Property name="GeneratePoco" value="1" />
       </Properties>
@@ -1849,6 +1850,10 @@
       </Args>
     </Sproc>
     <Sproc schema="dbo" name="FiscalYearsConfigure">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="SprocType" value="NonQuery" />
+      </Properties>
       <Args>
         <Arg position="1" mode="IN" name="@tenantId" sqlType="int" />
         <Arg position="2" mode="IN" name="@baselineFiscalYear" sqlType="int" />

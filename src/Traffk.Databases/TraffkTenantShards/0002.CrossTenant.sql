@@ -24,3 +24,22 @@ begin
 		(d.Hostname=@hostName)
 		
 end
+
+GO
+
+create proc TenantFindByTenantId
+	@tenantId int
+as
+begin
+
+	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+
+	exec db.PrintNow 
+		'DatabaseFindByTenantId tenantId=[{n0}]', 
+		@tenantId;
+
+	select * from tenants where tenantId=@tenantId
+
+end
+
+GO

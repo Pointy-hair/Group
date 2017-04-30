@@ -19,6 +19,8 @@ namespace Traffk.Bal.Data.Rdb
 {
     public partial class TraffkRdbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>, ICreativeSettingsFinder
     {
+        public const string DefaultDatabaseConnectionStringName = "TraffkTenantPortal";
+
         protected readonly ITraffkTenantFinder TenantFinder;
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess) => SaveChangesAsync().ExecuteSynchronously();

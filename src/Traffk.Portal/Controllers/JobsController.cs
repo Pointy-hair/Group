@@ -7,6 +7,8 @@ using TraffkPortal.Services;
 using Traffk.Bal.Data.Rdb;
 using Microsoft.EntityFrameworkCore;
 using System;
+using Hangfire;
+using Traffk.Bal.Settings;
 
 namespace TraffkPortal.Controllers
 {
@@ -29,13 +31,32 @@ namespace TraffkPortal.Controllers
             public const string JobList = "Jobs";
         }
 
+        private readonly IBackgroundJobClient Backgrounder;
+
         public JobsController(
             TraffkRdbContext db,
             CurrentContextServices current,
-            ILoggerFactory loggerFactory
+            ILoggerFactory loggerFactory,
+            IBackgroundJobClient backgrounder
             )
             : base(AspHelpers.MainNavigationPageKeys.Manage, db, current, loggerFactory)
-        { }
+        {
+            Backgrounder = backgrounder;
+        }
+
+        [AllowAnonymous]
+        [Route("/Jobs/FY/{fy}/{cy}/{cm}")]
+        public IActionResult FY(int fy, int cy, int cm)
+        {
+            var settings = new FiscalYearSettings
+            {
+                FiscalYear = fy,
+                CalendarYear = cy,
+                CalendarMonth = cm
+            };
+            Backgrounder.Enqueue<Traffk.Bal.BackgroundJobs.ITenantJobs>(z => z.ReconfigureFiscalYears(settings));
+            return Ok();
+        }
 
         [ActionName(ActionNames.Jobs)]
         [Route("/Jobs")]

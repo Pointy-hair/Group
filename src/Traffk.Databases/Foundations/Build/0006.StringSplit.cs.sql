@@ -1,4 +1,43 @@
-﻿CREATE FUNCTION SplitString(@csv_str NVARCHAR(4000), @delimiter nvarchar(20))
+﻿create function dbo.LeftOf(@s nvarchar(4000), @pivot nvarchar(4000))
+returns nvarchar(4000)
+begin
+
+	declare @z int
+	set @z = charindex(@pivot, @s)
+	if (@z is not null)
+	begin
+		set @s = left(@s, @z-1)
+	end
+	return @s
+
+end
+
+GO
+
+create function dbo.RightOf(@s nvarchar(4000), @pivot nvarchar(4000))
+returns nvarchar(4000)
+begin
+
+	declare @z int
+	set @z = charindex(@pivot, @s)
+	if (@z is not null)
+	begin
+		set @s = right(@s, len(@s)-@z)
+	end
+	else begin
+		set @s = null
+	end
+	return @s
+
+end
+
+GO
+
+select dbo.LeftOf('jason.thomas', '.'), dbo.RightOf('jason.thomas', '.')
+
+GO
+
+CREATE FUNCTION SplitString(@csv_str NVARCHAR(4000), @delimiter nvarchar(20))
  RETURNS @splittable table (val nvarchar(max), pos int)
 AS
 BEGIN  

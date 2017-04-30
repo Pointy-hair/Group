@@ -113,9 +113,11 @@ foreach (var z in doc.XPathSelectElements("/SchemaMeta/Tables/Table[Properties/P
 <#
 foreach (var z in doc.XPathSelectElements("/SchemaMeta/Sprocs/Sproc[Properties/Property/@name='AddToDbContext']"))
 {
-	var sprocType = GetPropertyValue(z, "SprocType") ?? "";
+	var sprocType = GetPropertyValue(z, "SprocType") ?? "NonQuery";
+	if (sprocType=="void") sprocType = "NonQuery";
 	var isCollection = sprocType.StartsWith("Collection");
 	var isSpecificCollection = sprocType.StartsWith("Collection:");
+	var tenantIdParameterName = GetPropertyValue(z, "TenantIdParameterName");
 	string collectionType = null;
 	string collectionTypeConstraint = "";
 	if (isSpecificCollection)
@@ -143,6 +145,7 @@ foreach (var a in z.XPathSelectElements("Args/Arg"))
 		nullable = false;	
 	}
 	var memberName = GetAttrVal(a, "name").Substring(1);
+	if (memberName==tenantIdParameterName) continue;
 	#><#=argNum==0?"":", "#><#=dataType#><#=nullable?"?":""#> <#=memberName#> = null<#
 	++argNum;
 }
@@ -267,6 +270,11 @@ foreach (var z in doc.XPathSelectElements("/SchemaMeta/Tables/Table[Properties/P
 #>
 	[Table("<#=GetAttrVal(z, "name")#>", Schema = "<#=GetAttrVal(z, "schema")#>")]
 <#
+	if (GetPropertyValue(z, "CustomAttribute")!=null)
+	{
+#>	[<#=GetPropertyValue(z, "CustomAttribute")#>]
+<#		
+	}
 	if (superclass==null)
 	{
 #>

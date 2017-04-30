@@ -97,3 +97,32 @@ begin
 end
 
 GO
+
+CREATE proc [db].[AssertFail]
+	@msg varchar(4000)=null
+as
+begin
+
+	set @msg = 'AssertFail: '+@msg;
+	throw 50001, @msg, 1;
+
+end
+
+GO
+
+CREATE proc [db].[AssertStringHasContent]
+	@test nvarchar(max),
+	@msg varchar(4000)=null
+as
+begin
+
+	if (@test is not null) set @test=ltrim(rtrim(@test))
+	if (@test is null or len(@test)=0)
+	begin
+		set @msg = 'AssertStringHasContent: Failed: '+@msg;
+		throw 50001, @msg, 1;
+	end
+
+end
+
+GO
