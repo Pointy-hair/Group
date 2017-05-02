@@ -1,13 +1,65 @@
-﻿@model MedicalClaimDiagnose
+﻿@model IEnumerable<MedicalClaimDiagnose>
+
 @{
     Layout = "~/Views/Crm/_LayoutContact.cshtml";
     ViewData.SetTitleAndHeading(CrmController.ViewNames.Health.MedicalClaimDiagnosis.ToCrmHeading());
-
+    ViewData.IsListingPage(true);
+    ViewData.HasPageMenuItems(true);
+    ViewData.HasCustomPageMenuItems(true);
+    var pageKey = (CrmController.PageKeys)ViewData[AspHelpers.ViewDataKeys.PageKey];
 }
-<dl class="dl-horizontal">
+
+@section pageNavItems {
+    <li><a asp-controller="@CrmController.Name" asp-action="ContactMedicalClaimDetail" asp-route-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == CrmController.PageKeys.Background ? "active" : "")">Main</a></li>
+    <li><a asp-controller="@CrmController.Name" asp-action="ContactMedicalClaimLines" asp-route-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == CrmController.PageKeys.MedicalClaimLines ? "active" : "")">Lines</a></li>
+    <li><a asp-controller="@CrmController.Name" asp-action="ContactMedicalClaimDiagnosis" asp-route-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == CrmController.PageKeys.MedicalClaimDiagnosis ? "active" : "")">Diagnoses</a></li>
+}
+
+@*<dl class="dl-horizontal">
     @Html.DescriptionListElement(model => model.dw_record_id)
     @Html.DescriptionListElement(model => model.Diagnosis_code)
     @Html.DescriptionListElement(model => model.Paid_Amount)
     @Html.DescriptionListElement(model => model.SuperGrouperDescription)
     @Html.DescriptionListElement(model => model.GrouperDescription)
-</dl>
+</dl>*@
+
+@section listingTable
+    {
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th>
+                    @Html.SortableHeaderFor(z => z.MedicalClaimDiagnosisId)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(z => z.DiagnosisNumber)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(z => z.Icd10.DiagnosisCode)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(z => z.Icd10.DiagnosisDescription)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MedicalClaimDiagnosisId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DiagnosisNumber)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Icd10.DiagnosisCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Icd10.DiagnosisDescription)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

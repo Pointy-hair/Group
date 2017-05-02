@@ -1,10 +1,20 @@
 ﻿@model Traffk.Bal.Data.Rdb.MedicalClaim
 @{
     Layout = "~/Views/Crm/_LayoutContact.cshtml";
+    ViewData.HasCustomPageMenuItems(true);
     ViewData.SetTitleAndHeading(CrmController.ViewNames.Health.MedicalClaim.ToCrmHeading());
+    var pageKey = (CrmController.PageKeys)ViewData[AspHelpers.ViewDataKeys.PageKey];
+
 }
+
+@section pageNavItems {
+    <li><a asp-controller="@CrmController.Name" asp-action="ContactMedicalClaimDetail" asp-route-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == CrmController.PageKeys.Background ? "active" : "")">Main</a></li>
+    <li><a asp-controller="@CrmController.Name" asp-action="ContactMedicalClaimLines" asp-route-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == CrmController.PageKeys.MedicalClaimLines ? "active" : "")">Lines</a></li>
+    <li><a asp-controller="@CrmController.Name" asp-action="ContactMedicalClaimDiagnosis" asp-route-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == CrmController.PageKeys.MedicalClaimDiagnosis ? "active" : "")">Diagnoses</a></li>
+}
+
 <dl class="dl-horizontal">
-    @Html.DescriptionListElement(model => model.rev_claim_id)
+    @*@Html.DescriptionListElement(model => model.rev_claim_id)
     @Html.DescriptionListElement(model => model.rev_claim_line_id)
     @Html.DescriptionListElement(model => model.rev_claim_type)
     @Html.DescriptionListElement(model => model.rev_claim_type_flag)
@@ -85,5 +95,11 @@
     @Html.DescriptionListElement(model => model.svc_benefit_desc)
     @Html.DescriptionListElement(model => model.rev_allowed_amt)
     @Html.DescriptionListElement(model => model.rev_coinsurance_amt)
-    @Html.DescriptionListElement(model => model.rev_copay_amt)
+    @Html.DescriptionListElement(model => model.rev_copay_amt)*@
+
+    @Html.DescriptionListElement(model => model.MedicalClaimNumber)
+    @Html.DescriptionListElement(model => model.DischargeL)
+    @Html.DescriptionListElement(model => model.CreatedAtUtc)
+    @Html.DescriptionListElement(model => model.ServiceFromDd)
+    @Html.DescriptionListElement(model => model.ServiceToDd)
 </dl>

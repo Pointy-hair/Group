@@ -1,0 +1,154 @@
+﻿@model IEnumerable<MedicalClaimLine>
+
+@{
+    Layout = "~/Views/Crm/_LayoutContact.cshtml";
+    ViewData.SetTitleAndHeading(CrmController.ViewNames.Health.MedicalClaimDiagnosis.ToCrmHeading());
+    ViewData.IsListingPage(true);
+    ViewData.HasPageMenuItems(true);
+    ViewData.HasCustomPageMenuItems(true);
+    var pageKey = (CrmController.PageKeys)ViewData[AspHelpers.ViewDataKeys.PageKey];
+}
+
+@section pageNavItems {
+    <li><a asp-controller="@CrmController.Name" asp-action="ContactMedicalClaimDetail" asp-route-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == CrmController.PageKeys.Background ? "active" : "")">Main</a></li>
+    <li><a asp-controller="@CrmController.Name" asp-action="ContactMedicalClaimLines" asp-route-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == CrmController.PageKeys.MedicalClaimLines ? "active" : "")">Lines</a></li>
+    <li><a asp-controller="@CrmController.Name" asp-action="ContactMedicalClaimDiagnosis" asp-route-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == CrmController.PageKeys.MedicalClaimDiagnosis ? "active" : "")">Diagnoses</a></li>
+}
+
+@section listingTable
+    {
+<table class="table table-bordered table-hover table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.SortableHeaderFor(z => z.MedicalClaimLineId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(z => z.MedicalClaimId)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.MedicalClaimLineNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(z => z.VisitId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(z => z.ProcedureType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(z => z.ProcedureCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(z => z.ProcedureDescription)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.ServiceFromDd)
+            </th>
+            <th>
+                @Html.SortableHeaderFor(z => z.ServiceToDd)
+            </th>
+            <th>
+                @Html.DisplayNameFor(z => z.AllowedAmount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(z => z.BilledAmount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(z => z.CoordinationOfBenefitsAmount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(z => z.CoinsuranceAmount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(z => z.CopayAmount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(z => z.CoverageChargeAmount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(z => z.DeductibleAmount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(z => z.NotCoveredAmount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(z => z.PPOSavings)
+            </th>
+            <th>
+                @Html.DisplayNameFor(z => z.OtherSavingsGenerated)
+            </th>
+            <th>
+                @Html.DisplayNameFor(z => z.PaidAmount)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MedicalClaimLineId)
+                </td>
+                <td>
+                    @Html.DisplayNameFor(modelItem => item.MedicalClaimId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MedicalClaimLineNumber)
+                </td>
+                <td>
+                    @Html.DisplayNameFor(modelItem => item.VisitId)
+                </td>
+                <td>
+                    @Html.DisplayNameFor(modelItem => item.ProcedureType)
+                </td>
+                <td>
+                    @Html.DisplayNameFor(modelItem => item.ProcedureCode)
+                </td>
+                <td>
+                    @Html.DisplayNameFor(modelItem => item.ProcedureDescription)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ServiceFromDd)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ServiceToDd)
+                </td>
+                <td>
+                    @Html.DisplayNameFor(modelItem => item.AllowedAmount)
+                </td>
+                <td>
+                    @Html.DisplayNameFor(modelItem => item.BilledAmount)
+                </td>
+                <td>
+                    @Html.DisplayNameFor(modelItem => item.CoordinationOfBenefitsAmount)
+                </td>
+                <td>
+                    @Html.DisplayNameFor(modelItem => item.CoinsuranceAmount)
+                </td>
+                <td>
+                    @Html.DisplayNameFor(modelItem => item.CopayAmount)
+                </td>
+                <td>
+                    @Html.DisplayNameFor(modelItem => item.CoverageChargeAmount)
+                </td>
+                <td>
+                    @Html.DisplayNameFor(modelItem => item.DeductibleAmount)
+                </td>
+                <td>
+                    @Html.DisplayNameFor(modelItem => item.NotCoveredAmount)
+                </td>
+                <td>
+                    @Html.DisplayNameFor(modelItem => item.PPOSavings)
+                </td>
+                <td>
+                    @Html.DisplayNameFor(modelItem => item.OtherSavingsGenerated)
+                </td>
+                <td>
+                    @Html.DisplayNameFor(modelItem => item.PaidAmount)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+}
+

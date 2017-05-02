@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core.Caching;
-using System.Collections.Generic;
-using Traffk.Tableau.REST.Models;
 using Traffk.Tableau.REST.RestRequests;
 
 namespace Traffk.Tableau.REST
