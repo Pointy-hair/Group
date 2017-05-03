@@ -32,38 +32,29 @@ namespace TraffkPortal.Controllers
         }
 
         private readonly IBackgroundJobClient Backgrounder;
+        private readonly TraffkGlobalContext GDB;
 
         public JobsController(
             TraffkRdbContext db,
             CurrentContextServices current,
             ILoggerFactory loggerFactory,
-            IBackgroundJobClient backgrounder
+            IBackgroundJobClient backgrounder,
+            TraffkGlobalContext gdb
             )
             : base(AspHelpers.MainNavigationPageKeys.Manage, db, current, loggerFactory)
         {
             Backgrounder = backgrounder;
-        }
-
-        [AllowAnonymous]
-        [Route("/Jobs/FY/{fy}/{cy}/{cm}")]
-        public IActionResult FY(int fy, int cy, int cm)
-        {
-            var settings = new FiscalYearSettings
-            {
-                FiscalYear = fy,
-                CalendarYear = cy,
-                CalendarMonth = cm
-            };
-            Backgrounder.Enqueue<Traffk.Bal.BackgroundJobs.ITenantJobs>(z => z.ReconfigureFiscalYears(settings));
-            return Ok();
+            GDB = gdb;
         }
 
         [ActionName(ActionNames.Jobs)]
         [Route("/Jobs")]
         public async Task<IActionResult> Jobs(string sortCol, string sortDir, int? page, int? pageSize)
         {
-            var items = Rdb.Jobs.Where(z => z.TenantId == TenantId);
-            items = ApplyBrowse(items, sortCol ?? nameof(Job.CreatedAtUtc), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
+            var jobIdsForTenant =
+                GDB.HangfireTenantMappings.Where(x => x.TenantId == Current.TenantId).Select(y => y.JobId);
+            var items = GDB.Jobs.Where(z => jobIdsForTenant.Contains(z.JobId));
+            items = ApplyBrowse(items, sortCol ?? nameof(HangfireJob.CreatedAtUtc), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
             return View(ViewNames.JobList, await items.ToListAsync());
         }
 

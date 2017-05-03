@@ -1,4 +1,4 @@
-@model IEnumerable<Job>
+@model IEnumerable<HangfireJob>
 @using static TraffkPortal.Controllers.JobsController
 @{
     Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
@@ -14,21 +14,14 @@
                 @Html.SortableHeaderFor(model => model.JobId)
             </th>
             <th>
-                @Html.SortableHeaderFor(model => model.CreatedAt)
+                @Html.SortableHeaderFor(model => model.CreatedAtUtc)
             </th>
             <th>
-                @Html.SortableHeaderFor(model => model.DontRunBefore)
+                @Html.DisplayNameFor(model => model.HangfireJobDetails.Method)
             </th>
             <th>
-                @Html.SortableHeaderFor(model => model.JobStatus)
+                @Html.DisplayNameFor(model => model.Status)
             </th>
-            <th>
-                @Html.SortableHeaderFor(model => model.JobType)
-            </th>
-            <th>
-                @Html.SortableHeaderFor(model => model.JobResult)
-            </th>
-            <th></th>
         </tr>
         </thead>
         <tbody>
@@ -37,40 +30,15 @@
             <tr jobId="@item.JobId">
                 <td>
                     @Html.DisplayFor(modelItem => item.JobId)
-                    @*
-                        <a asp-action="Edit" asp-route-id="@item.JobId">
-                            @Html.DisplayFor(modelItem => item.JobId)
-                        </a>
-                    *@
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.CreatedAt)
+                    @Html.DisplayFor(modelItem => item.CreatedAtUtc)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.DontRunBefore)
+                    @Html.DisplayFor(modelItem => item.HangfireJobDetails.Method)
                 </td>
                 <td class="job-status">
-                    @Html.DisplayFor(modelItem => item.JobStatus)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.JobType)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.JobResult)
-                </td>
-                <td class="text-center">
-                    @if (item.CanBeCancelled)
-                    {
-                        <i class="fa fa-ellipsis-h toggle" aria-hidden="true" data-toggle="row-action-@item.JobId"></i>
-                        <ul id="row-action-@item.JobId" class="floated-filter list-right">
-                            @if (item.CanBeCancelled)
-                            {
-                                <li>
-                                    <a asp-action="@ActionNames.JobCancel" asp-route-id="@item.JobId" onclick="cancelJob(this, @item.JobId)" class="confirm-on-click" confirmHeading="Are you sure?" confirmMessage="Are you sure you want to cancel job @item.JobId?">Cancel</a>
-                                </li>
-                            }
-                        </ul>
-                    }
+                    @Html.DisplayFor(modelItem => item.Status)
                 </td>
             </tr>
         }
