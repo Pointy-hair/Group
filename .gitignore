@@ -21,16 +21,16 @@
 /src/Traffk.Bal/bin
 /src/Traffk.Portal/obj
 /src/Traffk.Portal/bin
-/src/Traffk.CommunicationBlaster/obj
-/src/Traffk.CommunicationBlaster/bin
+/src/Traffk.BackgroundJobServer/obj
+/src/Traffk.BackgroundJobServer/bin
 /src/Traffk.Tableau/obj
 /src/Traffk.Tableau/bin
 /tests/Traffk.Bal.Tests/obj
 /tests/Traffk.Bal.Tests/bin
 /tests/Traffk.Portal.Tests/obj
 /tests/Traffk.Portal.Tests/bin
-/tests/Traffk.CommunicationBlaster.Tests/obj
-/tests/Traffk.CommunicationBlaster.Tests/bin
+/tests/Traffk.BackgroundJobServer.Tests/obj
+/tests/Traffk.BackgroundJobServer.Tests/bin
 /tests/Traffk.Tableau.Tests/obj
 /tests/Traffk.Tableau.Tests/bin
 *.user
@@ -49,10 +49,10 @@
 /.vs/config/applicationhost.config
 /TraffkHealthInformationPortal-Migrations/.vs/config/applicationhost.config
 /TraffkHealthInformationPortal-Migrations/Backup/RevolutionaryStuff.Core.xproj
-/TraffkHealthInformationPortal-Migrations/Backup/Traffk.CommunicationBlastRunner.xproj
+/TraffkHealthInformationPortal-Migrations/Backup/Traffk.BackgroundJobServer.xproj
 /TraffkHealthInformationPortal-Migrations/Backup/project (2).json
 /TraffkHealthInformationPortal-Migrations/Backup/project.json
-/TraffkHealthInformationPortal-Migrations/Backup1/Traffk.CommunicationBlaster.Tests.xproj
+/TraffkHealthInformationPortal-Migrations/Backup1/Traffk.BackgroundJobServer.Tests.xproj
 /TraffkHealthInformationPortal-Migrations/Backup1/Traffk.Tableau.xproj
 /TraffkHealthInformationPortal-Migrations/Backup1/project (2).json
 /TraffkHealthInformationPortal-Migrations/Backup1/project.json

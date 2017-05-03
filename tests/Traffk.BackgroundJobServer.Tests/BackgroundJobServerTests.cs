@@ -1,9 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Traffk.CommunicationBlaster.Tests
+namespace Traffk.BackgroundJobServer.Tests
 {
     [TestClass]
-    public class CommunicationBlastRunnerTests
+    public class BackgroundJobServerTests
     {
         [TestClass]
         public class OnGoTests
