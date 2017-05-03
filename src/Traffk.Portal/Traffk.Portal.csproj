@@ -17,6 +17,8 @@
   <ItemGroup>
     <None Remove="Properties\PublishProfiles\traffkSite-dev - FTP.pubxml" />
     <None Remove="Properties\PublishProfiles\traffkSite-dev - Web Deploy.pubxml" />
+    <None Remove="Properties\PublishProfiles\traffkSite-prod - FTP.pubxml" />
+    <None Remove="Properties\PublishProfiles\traffkSite-prod - Web Deploy.pubxml" />
   </ItemGroup>
 
   <ItemGroup>

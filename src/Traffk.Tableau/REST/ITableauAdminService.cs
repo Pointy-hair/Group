@@ -6,7 +6,7 @@ namespace Traffk.Tableau.REST
 {
     public interface ITableauAdminService
     {
-        void CreateTableauTenant(CreateTableauTenantRequest request);
+        SiteInfo CreateTableauTenant(CreateTableauTenantRequest request);
         void MigrateDataset(TableauDataMigrationRequest request);
         void AddUserToSite(string siteId, string userName);
         void RemoveUserFromSite(SiteUser userToRemove);  

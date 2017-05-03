@@ -15,14 +15,6 @@
     <li><a asp-controller="@CrmController.Name" asp-action="ContactMedicalClaimDiagnosis" asp-route-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == CrmController.PageKeys.MedicalClaimDiagnosis ? "active" : "")">Diagnoses</a></li>
 }
 
-@*<dl class="dl-horizontal">
-    @Html.DescriptionListElement(model => model.dw_record_id)
-    @Html.DescriptionListElement(model => model.Diagnosis_code)
-    @Html.DescriptionListElement(model => model.Paid_Amount)
-    @Html.DescriptionListElement(model => model.SuperGrouperDescription)
-    @Html.DescriptionListElement(model => model.GrouperDescription)
-</dl>*@
-
 @section listingTable
     {
     <table class="table table-bordered table-hover table-striped">

@@ -8,6 +8,9 @@ using System;
 using System.Threading.Tasks;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Services;
+using Traffk.Tableau;
+using Traffk.Tableau.REST;
+using Traffk.Tableau.REST.RestRequests;
 
 namespace Traffk.Bal.ApplicationParts
 {
@@ -63,6 +66,10 @@ namespace Traffk.Bal.ApplicationParts
             services.AddScoped<CurrentTenantServices>();
             services.AddScoped<BlobStorageServices>();
             services.Configure<HangfireServerOptions>(Configuration.GetSection(nameof(HangfireServerOptions)));
+
+            services.Configure<TableauSignInOptions>(Configuration.GetSection(nameof(TableauSignInOptions)));
+            services.Configure<TableauAdminCredentials>(Configuration.GetSection(nameof(TableauAdminCredentials)));
+            services.AddScoped<ITableauAdminService, TableauAdminService>();
         }
     }
 }
