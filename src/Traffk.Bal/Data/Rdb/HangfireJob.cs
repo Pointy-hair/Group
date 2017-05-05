@@ -2,6 +2,8 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Hangfire.States;
+using RevolutionaryStuff.Core;
 using Traffk.Bal.BackgroundJobs;
 
 namespace Traffk.Bal.Data.Rdb
@@ -29,6 +31,22 @@ namespace Traffk.Bal.Data.Rdb
 
         [Column("InvocationData")]
         public string HangfireJobDetailsJson { get; set; }
+
+        [NotMapped]
+        public bool CanBeCancelled {
+            get
+            {
+
+                if (Status.Equals(FailedState.StateName) || Status.Equals(SucceededState.StateName) || Status.Equals(DeletedState.StateName))
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
 
         [NotMapped]
         public HangfireJobDetails HangfireJobDetails

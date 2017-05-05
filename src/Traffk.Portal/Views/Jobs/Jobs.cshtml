@@ -4,6 +4,7 @@
     Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
     ViewData.SetTitleAndHeading("Jobs");
     ViewData.IsListingPage(true);
+    ViewData.HasPageActions(true);
 }
 @section listingTable
 {
@@ -40,38 +41,23 @@
                 <td class="job-status">
                     @Html.DisplayFor(modelItem => item.Status)
                 </td>
+                <td class="text-center">
+                    @if (item.CanBeCancelled)
+                    {
+                        <i class="fa fa-ellipsis-h toggle" aria-hidden="true" data-toggle="row-action-@item.JobId"></i>
+                        <ul id="row-action-@item.JobId" class="floated-filter list-right">
+                            @if (item.CanBeCancelled)
+                            {
+                                <li>
+                                    <a asp-action="@ActionNames.JobCancel" asp-route-id="@item.JobId" onclick="cancelJob(@item.JobId)" class="confirm-on-click" confirmHeading="Are you sure?" confirmMessage="Are you sure you want to delete Job @item.JobId?">Delete</a>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </td>
+
             </tr>
         }
         </tbody>
     </table>
-}
-
-@section Scripts {
-<script type="text/javascript">
-    function cancelJob(el, jobId) {
-        var url = $(el).attr("href");
-        var sel = "tr[jobId='" + jobId + "'] td.job-status";
-        //alert(url+"; "+sel);
-        $.ajax({
-            url: url,
-            dataType: "json",
-            type: "DELETE",
-            contentType: 'application/json; charset=utf-8',
-            //data: JSON.stringify({ assetKey: assetKey }),
-            async: true,
-            processData: false,
-            cache: false,
-            success: function (data) {
-                $(sel).html("Cancelling...");
-            },
-            error: function (xhr) {
-                $(sel).html("Error...");
-                alert("error:\n" + JSON.stringify(xhr));
-            }
-        });
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        return false;
-    }
-</script>
 }

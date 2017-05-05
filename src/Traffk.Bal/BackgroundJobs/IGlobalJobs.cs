@@ -4,6 +4,6 @@ namespace Traffk.Bal.BackgroundJobs
 {
     public interface IGlobalJobs
     {
-        void MigrateTableauDataset(TableauDataMigrationRequest request);
+
     }
 }

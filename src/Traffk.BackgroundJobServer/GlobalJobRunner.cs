@@ -8,16 +8,8 @@ namespace Traffk.BackgroundJobServer
 {
     public class GlobalJobRunner : IGlobalJobs
     {
-        private readonly ITableauAdminService TableauAdminService;
-
-        public GlobalJobRunner(ITableauAdminService tableauAdminService)
+        public GlobalJobRunner()
         {
-            TableauAdminService = tableauAdminService;
-        }
-
-        void IGlobalJobs.MigrateTableauDataset(TableauDataMigrationRequest request)
-        {
-            TableauAdminService.MigrateDataset(request);
         }
     }
 }

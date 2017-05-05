@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core.ApplicationParts;
 using System;
 using System.Threading.Tasks;
+using Traffk.Bal.BackgroundJobs;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Services;
 using Traffk.Tableau;
@@ -35,6 +36,10 @@ namespace Traffk.Bal.ApplicationParts
             GlobalConfiguration.Configuration.UseActivator(new MyActivator(this));
             using (var s = new BackgroundJobServer(o.BackgroundOptions ?? new BackgroundJobServerOptions()))
             {
+                //Send something to Serilog
+                //WaitOne that has a delay (TimeSpan) object
+                //TimeSpan is in AppConfig
+                //Add for or do while loop and check the result of the WaitOne
                 ShutdownRequested.WaitOne();
             }
             return Task.CompletedTask;

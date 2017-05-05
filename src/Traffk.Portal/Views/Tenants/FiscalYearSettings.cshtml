@@ -4,6 +4,16 @@
     Layout = "~/Views/Tenants/_LayoutTenant.cshtml";
     ViewData.IsFormPage(true);
     ViewData.SetTitleAndHeading("Fiscal Year Settings");
+    int calendarYear = DateTime.UtcNow.Year;
+    int calendarMonth = DateTime.UtcNow.Month;
+    int fiscalYear = DateTime.UtcNow.Year;
+
+    if (Model.CalendarMonth > 0 && Model.CalendarYear > 0 && Model.FiscalYear > 0)
+    {
+        calendarYear = Model.CalendarYear;
+        calendarMonth = Model.CalendarMonth;
+        fiscalYear = Model.FiscalYear;
+    }
 }
 
 <form asp-action="@TenantsController.ActionNames.FiscalYearSettingsSubmission" class="inline-form">
@@ -12,17 +22,17 @@
         <div class="col-sm-12">
             <div class="form-row">
                 <label asp-for="CalendarYear"></label>
-                <input asp-for="CalendarYear" class="form-control" value="@DateTime.UtcNow.Year"/>
+                <input asp-for="CalendarYear" class="form-control" value="@calendarYear"/>
                 <span asp-validation-for="CalendarYear" class="text-danger"/>
             </div>
             <div class="form-row">
                 <label asp-for="CalendarMonth"></label>
-                <input asp-for="CalendarMonth" class="form-control" value="@DateTime.UtcNow.Month"/>
+                <input asp-for="CalendarMonth" class="form-control" value="@calendarMonth"/>
                 <span asp-validation-for="CalendarMonth" class="text-danger" />
             </div>
             <div class="form-row">
                 <label asp-for="FiscalYear"></label>
-                <input asp-for="FiscalYear" class="form-control" value="@DateTime.UtcNow.Year"/>
+                <input asp-for="FiscalYear" class="form-control" value="@fiscalYear"/>
                 <span asp-validation-for="FiscalYear" class="text-danger" />
             </div>
         </div>

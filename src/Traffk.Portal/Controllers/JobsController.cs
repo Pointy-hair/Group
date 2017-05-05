@@ -8,6 +8,8 @@ using Traffk.Bal.Data.Rdb;
 using Microsoft.EntityFrameworkCore;
 using System;
 using Hangfire;
+using Hangfire.States;
+using RevolutionaryStuff.Core;
 using Traffk.Bal.Settings;
 
 namespace TraffkPortal.Controllers
@@ -49,35 +51,52 @@ namespace TraffkPortal.Controllers
 
         [ActionName(ActionNames.Jobs)]
         [Route("/Jobs")]
-        public async Task<IActionResult> Jobs(string sortCol, string sortDir, int? page, int? pageSize)
+        public IActionResult Jobs(string sortCol, string sortDir, int? page, int? pageSize)
         {
             var jobIdsForTenant =
                 GDB.HangfireTenantMappings.Where(x => x.TenantId == Current.TenantId).Select(y => y.JobId);
             var items = GDB.Jobs.Where(z => jobIdsForTenant.Contains(z.JobId));
             items = ApplyBrowse(items, sortCol ?? nameof(HangfireJob.CreatedAtUtc), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
-            return View(ViewNames.JobList, await items.ToListAsync());
+            return View(ViewNames.JobList, items);
         }
 
         [ActionName(ActionNames.Job)]
         [Route("/Jobs/{id}")]
-        public async Task<IActionResult> JobDetails(int id)
+        public IActionResult JobDetails(int id)
         {
-            var item = await Rdb.Jobs.FindAsync(id);
-            if (item == null) return NotFound();
-            return View(ViewNames.JobDetails, item);
+            return RedirectToIndex();
+
         }
 
         [ActionName(ActionNames.JobCancel)]
         [HttpDelete]
-        [Route("/Jobs/{id}/Cancel")]
-        public async Task<IActionResult> CancelJob(int id)
+        [Route("/Jobs/Cancel")]
+        public async Task<IActionResult> CancelJob()
         {
-            var job = await Rdb.Jobs.FindAsync(id);
-            if (job==null) return NotFound();
-            if (!job.CanBeCancelled) return StatusCode(System.Net.HttpStatusCode.Conflict);
-            job.JobStatus = JobStatuses.Cancelling;
-            Rdb.Update(job);
-            await Rdb.SaveChangesAsync();
+            return await JsonCancelJobAsync<int>();
+        }
+
+        private async Task<IActionResult> JsonCancelJobAsync<TId>()
+        {
+            var ids = Request.BodyAsJsonObject<TId[]>();
+            if (ids != null)
+            {
+                int numDeleted = 0;
+                foreach (var id in ids)
+                {
+                    var jobToCancel = GDB.HangfireTenantMappings.FirstOrDefaultAsync(x => x.JobId == Convert.ToInt32(id)).ExecuteSynchronously();
+                    if (jobToCancel == null) return NotFound();
+                    if (jobToCancel.TenantId == Current.TenantId)
+                    {
+                        Backgrounder.ChangeState(jobToCancel.JobId.ToString(), new DeletedState());
+                    }
+                    numDeleted++;
+                }
+                if (numDeleted > 0)
+                {
+                    SetToast(AspHelpers.ToastMessages.JobCancelled);
+                }
+            }
             return NoContent();
         }
     }

@@ -18,6 +18,7 @@ namespace Traffk.Tableau
     public class TableauVisualServices : ITableauVisualServices
     {
         //Service is responsible for all Javascript Tableau actions
+        private static readonly TimeSpan GetUnderlyingDataTimeOut = TimeSpan.FromMinutes(15);
 
         private readonly ITrustedTicketGetter TrustedTicketGetter;
         private readonly TableauSignInOptions TableauSignInOptions;
@@ -133,7 +134,7 @@ namespace Traffk.Tableau
                             response = await postLoadOperationsClient.GetAsync(new Uri($"{Options.Url}/vizql/w/{workbookName}/v/{viewName}/performPostLoadOperations/sessions/{sessionId}/layouts/{layoutId}/?sheet_id={sheetId}"));
                             Stuff.Noop(response);
                             */
-                            using (var getUnderlyingDataClient = new HttpClient(handler))
+                            using (var getUnderlyingDataClient = new HttpClient(handler) {Timeout = GetUnderlyingDataTimeOut })
                             {
                                 getUnderlyingDataClient.DefaultRequestHeaders.Referrer = uri;
                                 getUnderlyingDataClient.DefaultRequestHeaders.TryAddWithoutValidation("Origin", uri.GetComponents(UriComponents.SchemeAndServer, UriFormat.SafeUnescaped));

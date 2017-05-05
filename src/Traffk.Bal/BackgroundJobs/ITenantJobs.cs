@@ -8,5 +8,7 @@ namespace Traffk.Bal.BackgroundJobs
         void ReconfigureFiscalYears(FiscalYearSettings settings);
 
         void CreateTableauTenant(CreateTableauTenantRequest request);
+
+        //void MigrateTableauDataset(TableauDataMigrationRequest request);
     }
 }

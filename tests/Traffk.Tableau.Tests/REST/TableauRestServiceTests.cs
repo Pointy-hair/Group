@@ -1,7 +1,9 @@
-﻿using Microsoft.Extensions.Options;
+﻿using System;
+using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using RevolutionaryStuff.Core;
 using Traffk.Tableau.REST;
 using Traffk.Tableau.REST.RestRequests;
@@ -328,15 +330,68 @@ namespace Traffk.Tableau.Tests.REST
             }
         }
 
-        //[TestClass]
-        //public class GetUnderlyingDataMethodTests : TableauRestServiceTests
-        //{
-        //    [Ignore]
-        //    [TestMethod]
-        //    public void WhenSignedInGetUnderlyingData()
-        //    {
+        [TestClass]
+        public class GetUnderlyingDataMethodTests : TableauRestServiceTests
+        {
+            [TestMethod]
+            public void WhenSignedInGetUnderlyingDataUsingWorksheetName()
+            {
+                var trustedTicketGetter = new TrustedTicketGetter(Options, TableauAdminCredentials, TableauTenantFinder);
+                var testService = new TableauVisualServices(trustedTicketGetter, Options) as ITableauVisualServices;
 
-        //    }
-        //}
+                var worksheetName = "Risk by Occupation";
+                var testGetUnderlyingDataOptions = new GetUnderlyingDataOptions {WorksheetName = worksheetName };
+                var data = testService.GetUnderlyingDataAsync(testGetUnderlyingDataOptions, "RiskIndex-Occupations",
+                    "EmploymentandRisk").ExecuteSynchronously();
+                var dataTable = data.ToDataTable();
+
+                Assert.IsNotNull(data);
+                Assert.IsNotNull(dataTable);
+            }
+
+            [Ignore]
+            [TestMethod]
+            public void WhenSignedInGetUnderlyingDataUsingDashboardName()
+            {
+                var trustedTicketGetter = new TrustedTicketGetter(Options, TableauAdminCredentials, TableauTenantFinder);
+                var testService = new TableauVisualServices(trustedTicketGetter, Options) as ITableauVisualServices;
+
+                var dashboardName = "Employment and Risk";
+                var testGetUnderlyingDataOptions = new GetUnderlyingDataOptions { DashboardName = dashboardName };
+                var data = testService.GetUnderlyingDataAsync(testGetUnderlyingDataOptions, "RiskIndex-Occupations",
+                    "EmploymentandRisk").ExecuteSynchronously();
+                var dataTable = data.ToDataTable();
+
+                Assert.IsNotNull(data);
+                Assert.IsNotNull(dataTable);
+            }
+
+			[Ignore]
+            [TestMethod]
+            public async Task WhenSignedInGetUnderlyingDataWithManyRows()
+            {
+                var trustedTicketGetter = new TrustedTicketGetter(Options, TableauAdminCredentials, TableauTenantFinder);
+                var testService = new TableauVisualServices(trustedTicketGetter, Options) as ITableauVisualServices;
+
+                var worksheetName = "Avg Risk by Mbr Relationship";
+
+                var testGetUnderlyingDataOptions = new GetUnderlyingDataOptions { WorksheetName = worksheetName };
+                int timeout = 900000; //900000 ms = 15 minutes
+                var task = testService.GetUnderlyingDataAsync(testGetUnderlyingDataOptions, "AverageRiskScore",
+                    "1-AverageRiskScore_demo");
+
+                if (await Task.WhenAny(task, Task.Delay(timeout)) == task)
+                {
+                    var data = task.Result;
+                    var dataTable = data.ToDataTable();
+                    Assert.IsNotNull(data);
+                    Assert.IsNotNull(dataTable);
+                }
+                else
+                {
+                    throw new Exception("Timed Out");
+                }
+            }
+        }
     }
 }
