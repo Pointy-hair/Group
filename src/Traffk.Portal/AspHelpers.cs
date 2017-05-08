@@ -48,6 +48,7 @@ namespace TraffkPortal
 
             public const string PageTitle = "Title";
             public const string HasPageMenuItems = "HasSectionMenuItems";
+            public const string HasCustomPageMenuItems = "HasCustomPageMenuItems";
             public const string HasPageActions = "HasPageActions";
             public const string HasSelectableItems = "HasSelectableItems";
             public const string HasBreadcrumbItems = "HasBreadcrumbItems";
@@ -74,7 +75,8 @@ namespace TraffkPortal
         {
             public const string Saved = "Items saved successfully.";
             public const string Deleted = "Items deleted successfully.";
-            public const string Queued = " Your task has been queued.";
+            public const string Queued = "Your job has been queued.";
+            public const string JobCancelled = "Your job has been cancelled.";
         }
 
         public static SelectListItem CreateNoneSelectedSelectListItem(bool preSelected=true) 
@@ -305,6 +307,9 @@ namespace TraffkPortal
 
         public static bool HasSelectableItems(this ViewDataDictionary v, bool? newVal = null)
             => v.GetOrSetThenGet(ViewDataKeys.HasSelectableItems, newVal);
+
+        public static bool HasCustomPageMenuItems(this ViewDataDictionary v, bool? newVal = null)
+            => v.GetOrSetThenGet(ViewDataKeys.HasCustomPageMenuItems, newVal);
 
         public static void SetTitle(this ViewDataDictionary v, string fallbackTitle)
         {

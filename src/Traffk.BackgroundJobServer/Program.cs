@@ -1,10 +1,10 @@
-﻿using Traffk.Bal.Data.Rdb;
-using Traffk.Bal.ApplicationParts;
-using Microsoft.Extensions.DependencyInjection;
-using Traffk.Bal.Email;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Traffk.Bal.Settings;
+using Traffk.BackgroundJobServer;
+using Traffk.Bal.ApplicationParts;
 using Traffk.Bal.BackgroundJobs;
+using Traffk.Bal.Email;
+using Traffk.Bal.Settings;
 
 namespace Traffk.BackgroundJobRunner
 {

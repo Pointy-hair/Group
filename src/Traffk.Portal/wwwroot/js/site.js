@@ -647,4 +647,20 @@ function deleteCommunications(ids, onSuccess) {
     return deleteByIds("/communications/communications/delete", ids, onSuccess);
 }
 
+function cancelJob(id, onSuccess) {
+    cancelJobs([id], onSuccess);
+}
+
+function cancelJobs(ids, onSuccess) {
+    if (!onSuccess) {
+        onSuccess = function (data) {
+            data.forEach(function(jobId) {
+                var sel = "tr[jobId='" + jobId + "'] td.job-status";
+                $(sel).html("Deleted");
+            });
+        }
+    }
+    return deleteByIds("/jobs/cancel", ids, onSuccess);
+}
+
 // AJAX helpers ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

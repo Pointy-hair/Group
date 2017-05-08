@@ -2,15 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp1.1</TargetFramework>
-    <AssemblyName>Traffk.BackgroundJobRunner</AssemblyName>
+    <AssemblyName>Traffk.BackgroundJobServer</AssemblyName>
     <OutputType>Exe</OutputType>
-    <PackageId>Traffk.CommunicationBlaster</PackageId>
+    <PackageId>Traffk.BackgroundJobServer</PackageId>
     <PackageTargetFallback>$(PackageTargetFallback);dotnet5.6;dnxcore50;portable-net451+win8</PackageTargetFallback>
     <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <RootNamespace>Traffk.BackgroundJobRunner</RootNamespace>
+    <RootNamespace>Traffk.BackgroundJobServer</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='VSTS-CI|AnyCPU'" />

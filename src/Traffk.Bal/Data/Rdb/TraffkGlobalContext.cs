@@ -16,5 +16,7 @@ namespace Traffk.Bal.Data.Rdb
         }
 
         public DbSet<HangfireTenantMap> HangfireTenantMappings { get; set; }
+
+        public DbSet<HangfireJob> Jobs { get; set; }
     }
 }

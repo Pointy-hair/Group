@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("TraffkCommunicationBlaster")]
+[assembly: AssemblyProduct("Traffk.BackgroundJobServer.Tests")]
 [assembly: AssemblyTrademark("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
@@ -15,4 +15,4 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("5c571bb5-d107-4157-b518-3016d8a1e37b")]
+[assembly: Guid("c76c8e90-6e24-4b43-994a-99930cb0d285")]

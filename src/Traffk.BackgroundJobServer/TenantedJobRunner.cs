@@ -1,23 +1,24 @@
 ﻿using RevolutionaryStuff.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Traffk.Bal.BackgroundJobs;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
+using Traffk.Tableau.REST;
+using Traffk.Tableau.REST.RestRequests;
 
-namespace Traffk.BackgroundJobRunner
+namespace Traffk.BackgroundJobServer
 {
     public class TenantedJobRunner : ITenantJobs
     {
         private readonly TraffkRdbContext DB;
         private readonly CurrentTenantServices Current;
+        private readonly ITableauAdminService TableauAdminService;
 
-        public TenantedJobRunner(TraffkRdbContext db, CurrentTenantServices current)
+        public TenantedJobRunner(TraffkRdbContext db, CurrentTenantServices current, ITableauAdminService tableauAdminService)
         {
             DB = db;
             Current = current;
+            TableauAdminService = tableauAdminService;
         }
 
         void ITenantJobs.ReconfigureFiscalYears(FiscalYearSettings settings)
@@ -31,6 +32,13 @@ namespace Traffk.BackgroundJobRunner
                 Current.Tenant.TenantSettings.FiscalYearSettings = settings;
                 DB.SaveChanges();
             }
+        }
+
+        void ITenantJobs.CreateTableauTenant(CreateTableauTenantRequest request)
+        {
+            var siteInfo = TableauAdminService.CreateTableauTenant(request);
+            Current.Tenant.TenantSettings.TableauTenantId = siteInfo.IdentifierForUrl;
+            DB.SaveChanges();
         }
     }
 }

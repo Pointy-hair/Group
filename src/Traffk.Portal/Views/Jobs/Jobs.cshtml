@@ -1,9 +1,10 @@
-@model IEnumerable<Job>
+@model IEnumerable<HangfireJob>
 @using static TraffkPortal.Controllers.JobsController
 @{
     Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
     ViewData.SetTitleAndHeading("Jobs");
     ViewData.IsListingPage(true);
+    ViewData.HasPageActions(true);
 }
 @section listingTable
 {
@@ -14,21 +15,14 @@
                 @Html.SortableHeaderFor(model => model.JobId)
             </th>
             <th>
-                @Html.SortableHeaderFor(model => model.CreatedAt)
+                @Html.SortableHeaderFor(model => model.CreatedAtUtc)
             </th>
             <th>
-                @Html.SortableHeaderFor(model => model.DontRunBefore)
+                @Html.DisplayNameFor(model => model.HangfireJobDetails.Method)
             </th>
             <th>
-                @Html.SortableHeaderFor(model => model.JobStatus)
+                @Html.DisplayNameFor(model => model.Status)
             </th>
-            <th>
-                @Html.SortableHeaderFor(model => model.JobType)
-            </th>
-            <th>
-                @Html.SortableHeaderFor(model => model.JobResult)
-            </th>
-            <th></th>
         </tr>
         </thead>
         <tbody>
@@ -37,26 +31,15 @@
             <tr jobId="@item.JobId">
                 <td>
                     @Html.DisplayFor(modelItem => item.JobId)
-                    @*
-                        <a asp-action="Edit" asp-route-id="@item.JobId">
-                            @Html.DisplayFor(modelItem => item.JobId)
-                        </a>
-                    *@
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.CreatedAt)
+                    @Html.DisplayFor(modelItem => item.CreatedAtUtc)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.DontRunBefore)
+                    @Html.DisplayFor(modelItem => item.HangfireJobDetails.Method)
                 </td>
                 <td class="job-status">
-                    @Html.DisplayFor(modelItem => item.JobStatus)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.JobType)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.JobResult)
+                    @Html.DisplayFor(modelItem => item.Status)
                 </td>
                 <td class="text-center">
                     @if (item.CanBeCancelled)
@@ -66,44 +49,15 @@
                             @if (item.CanBeCancelled)
                             {
                                 <li>
-                                    <a asp-action="@ActionNames.JobCancel" asp-route-id="@item.JobId" onclick="cancelJob(this, @item.JobId)" class="confirm-on-click" confirmHeading="Are you sure?" confirmMessage="Are you sure you want to cancel job @item.JobId?">Cancel</a>
+                                    <a asp-action="@ActionNames.JobCancel" asp-route-id="@item.JobId" onclick="cancelJob(@item.JobId)" class="confirm-on-click" confirmHeading="Are you sure?" confirmMessage="Are you sure you want to delete Job @item.JobId?">Delete</a>
                                 </li>
                             }
                         </ul>
                     }
                 </td>
+
             </tr>
         }
         </tbody>
     </table>
-}
-
-@section Scripts {
-<script type="text/javascript">
-    function cancelJob(el, jobId) {
-        var url = $(el).attr("href");
-        var sel = "tr[jobId='" + jobId + "'] td.job-status";
-        //alert(url+"; "+sel);
-        $.ajax({
-            url: url,
-            dataType: "json",
-            type: "DELETE",
-            contentType: 'application/json; charset=utf-8',
-            //data: JSON.stringify({ assetKey: assetKey }),
-            async: true,
-            processData: false,
-            cache: false,
-            success: function (data) {
-                $(sel).html("Cancelling...");
-            },
-            error: function (xhr) {
-                $(sel).html("Error...");
-                alert("error:\n" + JSON.stringify(xhr));
-            }
-        });
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        return false;
-    }
-</script>
 }

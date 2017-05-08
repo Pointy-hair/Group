@@ -39,17 +39,15 @@ namespace TraffkPortal.Controllers
             Relationships,
             #region Health
             CareAlerts,
-            Demographics,
             Eligibility,
             EligibilityList,
             MedicalClaimDiagnosis,
+            MedicalClaimLines,
             MillimanScoreList,
             MedicalClaims,
-            MemberPCP,
             Participation,
             Pharmacy,
             QualityMetrics,
-            Scores,
             Visit,
             #endregion
             Reports
@@ -61,22 +59,20 @@ namespace TraffkPortal.Controllers
             {
                 public const string CareAlert = "ContactCareAlert";
                 public const string CareAlertsList = "ContactCareAlertsList";
-                public const string Demographic = "ContactDemographic";
                 public const string Eligibility = "ContactEligibility";
                 public const string EligibilityList = "ContactEligibilityList";
                 public const string MedicalClaimDiagnosis = "ContactMedicalClaimDiagnosis";
+                public const string MedicalClaimLines = "ContactMedicalClaimLines";
                 public const string MillimanScore = "ContactMillimanScore";
                 public const string MillimanScoreList = "ContactMillimanScoresList";
                 public const string MedicalClaim = "ContactMedicalClaimDetail";
                 public const string MedicalClaimsList = "ContactMedicalClaimsList";
-                public const string MemberPcp = "ContactMemberPcp";
                 public const string Participation = "ContactParticipation";
                 public const string ParticipationList = "ContactParticipationList";
                 public const string Pharmacy = "ContactPharmacyItemDetail";
                 public const string PharmacyList = "ContactPharmacyList";
                 public const string QualityMetric = "ContactQualityMetric";
                 public const string QualityMetricsList = "ContactQualityMetricsList";
-                public const string Score = "ContactScore";
                 public const string Visit = "ContactVisit";
                 public const string VisitList = "ContactVisitsList";
             }
@@ -99,22 +95,20 @@ namespace TraffkPortal.Controllers
             {
                 public const string CareAlert = "ContactCareAlertDetail";
                 public const string CareAlertsList = "ContactCareAlertsList";
-                public const string Demographic = "ContactDemographicDetail";
                 public const string Eligibility = "ContactEligibiliityDetail";
                 public const string EligibilityList = "ContactEligibilityList";
-                public const string MedicalClaimDiagnosis = "ContactMedicalClaimDiagnosisDetail";
+                public const string MedicalClaimDiagnosis = "ContactMedicalClaimDiagnosis";
+                public const string MedicalClaimLines = "ContactMedicalClaimLines";
                 public const string MillimanScore = "ContactMillimanScoreDetail";
                 public const string MillimanScoreList = "ContactMillimanScoreList";
                 public const string MedicalClaim = "ContactMedicalClaimDetail";
                 public const string MedicalClaimsList = "ContactMedicalClaimsList";
-                public const string MemberPcp = "ContactMemberPcpDetail";
                 public const string Participation = "ContactParticipationDetail";
                 public const string ParticipationList = "ContactParticipationList";
                 public const string Pharmacy = "ContactPharmacyItemDetail";
                 public const string PharmacyList = "ContactPharmacyList";
                 public const string QualityMetric = "ContactQualityMetricDetail";
                 public const string QualityMetricsList = "ContactQualityMetricsList";
-                public const string Score = "ContactScoreDetail";
                 public const string Visit = "ContactVisitDetail";
                 public const string VisitList = "ContactVisitsList";
             }
@@ -402,21 +396,6 @@ namespace TraffkPortal.Controllers
         public Task<IActionResult> ContactMillimanScoreList(int id, string sortCol, string sortDir, int? page, int? pageSize)
             => ContactHealthItemList(id, sortCol, sortDir, page, pageSize, PageKeys.MillimanScoreList, ViewNames.Health.MillimanScoreList, mid => Rdb.MillimanScores.Where(z => z.ContactId == mid), nameof(MillimanScore.ScorePeriodEndDd));
 
-        //[ActionName(ActionNames.Health.Demographic)]
-        //[Route("Contacts/{id}/Demographics")]
-        //public Task<IActionResult> ContactDemographics(int id)
-        //    => ContactHealthItemDetail(id, PageKeys.Demographics, ViewNames.Health.Demographic, mid => Rdb.Demographics.Where(z => z.ContactId == mid));
-
-        //[ActionName(ActionNames.Health.Score)]
-        //[Route("Contacts/{id}/Scores")]
-        //public Task<IActionResult> ContactScores(int id)
-        //    => ContactHealthItemDetail(id, PageKeys.Scores, ViewNames.Health.Score, mid => Rdb.Scores.Where(z => z.ContactId == mid));
-
-        //[ActionName(ActionNames.Health.MemberPcp)]
-        //[Route("Contacts/{id}/PcP")]
-        //public Task<IActionResult> ContactPcp(int id)
-        //    => ContactHealthItemDetail(id, PageKeys.MemberPCP, ViewNames.Health.MemberPcp, mid => Rdb.MemberPCP.Where(z => z.ContactId == mid));
-
         [ActionName(ActionNames.Health.Eligibility)]
         [Route("Contacts/{id}/Eligibility")]
         public Task<IActionResult> ContactEligibility(int id)
@@ -432,14 +411,14 @@ namespace TraffkPortal.Controllers
                     nameof(Eligibility.EligibilityId));
 
         [ActionName(ActionNames.Health.MedicalClaimDiagnosis)]
-        [Route("Contacts/{id}/MedicalClaimDiagnosis")]
-        public Task<IActionResult> ContactMedicalClaimDiagnosis(int id)
-            => ContactHealthItemDetail(id, PageKeys.MedicalClaimDiagnosis, ViewNames.Health.MedicalClaimDiagnosis,
-                delegate(long mid)
-                {
-                    var userMedicalClaimIds = Rdb.MedicalClaims.Where(x => x.ContactId == id).Select(m => m.MedicalClaimId);
-                    return Rdb.MedicalClaimDiagnoses.Where(x => userMedicalClaimIds.Contains(x.MedicalClaimId));
-                });
+        [Route("Contacts/{id}/MedicalClaimDiagnosis/{medicalClaimId}")]
+        public Task<IActionResult> ContactMedicalClaimDiagnosis(int id, int medicalClaimId)
+            => ContactHealthItemDetail(id, PageKeys.MedicalClaimDiagnosis, ViewNames.Health.MedicalClaimDiagnosis, mid => Rdb.MedicalClaimDiagnoses.Where(x => x.MedicalClaim.ContactId == mid && x.MedicalClaimId == medicalClaimId));
+
+        [ActionName(ActionNames.Health.MedicalClaimLines)]
+        [Route("Contacts/{id}/MedicalClaimLines/{medicalClaimId}")]
+        public Task<IActionResult> ContactMedicalClaimLines(int id, int medicalClaimId)
+            => ContactHealthItemDetail(id, PageKeys.MedicalClaimLines, ViewNames.Health.MedicalClaimLines, mid => Rdb.MedicalClaimLines.Where(x => x.ContactId == mid && x.MedicalClaimId == medicalClaimId));
 
         [ActionName(ActionNames.Health.Participation)]
         [Route("Contacts/{id}/Participation/{recordId}")]

@@ -41,17 +41,14 @@
     switch (pageKey)
     {
         case CrmController.PageKeys.CareAlerts:
-        case CrmController.PageKeys.Demographics:
         case CrmController.PageKeys.Eligibility:
         case CrmController.PageKeys.EligibilityList:
         case CrmController.PageKeys.MedicalClaimDiagnosis:
         case CrmController.PageKeys.MillimanScoreList:
         case CrmController.PageKeys.MedicalClaims:
-        case CrmController.PageKeys.MemberPCP:
         case CrmController.PageKeys.Participation:
         case CrmController.PageKeys.Pharmacy:
         case CrmController.PageKeys.QualityMetrics:
-        case CrmController.PageKeys.Scores:
         case CrmController.PageKeys.Visit:
             isHealthSection = true;
             break;
@@ -60,30 +57,36 @@
             break;
     }
 }
-@if (ViewData.HasPageMenuItems())
+@if (ViewData.HasPageMenuItems() && !ViewData.HasCustomPageMenuItems())
 {
     @section pageNavItems {
-        <li><a asp-controller="@CrmController.Name" asp-action="ContactBackground" asp-for-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey==CrmController.PageKeys.Background?"active":"")" data-section="personal-edit-form-container">Personal</a></li>
-        <li><a asp-action="@ActionNames.ContactNotes" asp-route-id="@entityId" class="@(pageKey==CrmController.PageKeys.Notes?"active":"")">Notes</a></li>
-        <li><a asp-action="@ActionNames.ContactMessages" asp-route-id="@entityId" class="@(pageKey==CrmController.PageKeys.Messages?"active":"")">Messages</a></li>
+        <li><a asp-controller="@CrmController.Name" asp-action="ContactBackground" asp-for-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == CrmController.PageKeys.Background ? "active" : "")" data-section="personal-edit-form-container">Personal</a></li>
+        <li><a asp-action="@ActionNames.ContactNotes" asp-route-id="@entityId" class="@(pageKey == CrmController.PageKeys.Notes ? "active" : "")">Notes</a></li>
+        <li><a asp-action="@ActionNames.ContactMessages" asp-route-id="@entityId" class="@(pageKey == CrmController.PageKeys.Messages ? "active" : "")">Messages</a></li>
         @if (isPerson)
         {
             <li>
-                <a href="javascript:void(0)" class="toggle @(isHealthSection?"active":"")" data-toggle="personal-health">Health <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+                <a href="javascript:void(0)" class="toggle @(isHealthSection ? "active" : "")" data-toggle="personal-health">Health <i class="fa fa-chevron-up" aria-hidden="true"></i></a>
                 <ul id="personal-health" class="floated-filter">
-                    <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.CareAlertsList" class="@(pageKey==CrmController.PageKeys.CareAlerts?"active":"")">Care Alerts</a></li>
-                    <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.EligibilityList" class="@(pageKey==CrmController.PageKeys.Eligibility?"active":"")">Eligibility</a></li>
-                    <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.MedicalClaimsList" class="@(pageKey==CrmController.PageKeys.MedicalClaims?"active":"")">Medical Claims</a></li>
-                    <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.ParticipationList" class="@(pageKey==CrmController.PageKeys.Participation?"active":"")">Participation</a></li>
-                    <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.PharmacyList" class="@(pageKey==CrmController.PageKeys.Pharmacy?"active":"")">Pharmacy</a></li>
-                    <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.MillimanScoreList" class="@(pageKey==CrmController.PageKeys.MillimanScoreList?"active":"")">Milliman Scores</a></li>
-                    <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.QualityMetricsList" class="@(pageKey==CrmController.PageKeys.QualityMetrics?"active":"")">Quality Metrics</a></li>
-                    <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.VisitList" class="@(pageKey==CrmController.PageKeys.Visit?"active":"")">Visits</a></li>
+                    <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.CareAlertsList" class="@(pageKey == CrmController.PageKeys.CareAlerts ? "active" : "")">Care Alerts</a></li>
+                    <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.EligibilityList" class="@(pageKey == CrmController.PageKeys.Eligibility ? "active" : "")">Eligibility</a></li>
+                    <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.MedicalClaimsList" class="@(pageKey == CrmController.PageKeys.MedicalClaims ? "active" : "")">Medical Claims</a></li>
+                    <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.ParticipationList" class="@(pageKey == CrmController.PageKeys.Participation ? "active" : "")">Participation</a></li>
+                    <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.PharmacyList" class="@(pageKey == CrmController.PageKeys.Pharmacy ? "active" : "")">Pharmacy</a></li>
+                    <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.MillimanScoreList" class="@(pageKey == CrmController.PageKeys.MillimanScoreList ? "active" : "")">Milliman Scores</a></li>
+                    <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.QualityMetricsList" class="@(pageKey == CrmController.PageKeys.QualityMetrics ? "active" : "")">Quality Metrics</a></li>
+                    <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@ActionNames.Health.VisitList" class="@(pageKey == CrmController.PageKeys.Visit ? "active" : "")">Visits</a></li>
                 </ul>
             </li>
-            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@CrmController.ActionNames.Reports" class="@(pageKey==CrmController.PageKeys.Reports?"active":"")">Reports</a></li>
+            <li><a asp-controller="Crm" asp-route-id="@entityId" asp-action="@CrmController.ActionNames.Reports" class="@(pageKey == CrmController.PageKeys.Reports ? "active" : "")">Reports</a></li>
         }
 
+        @RenderSection("pageNavItems", false)
+    }
+}
+else if (ViewData.HasCustomPageMenuItems())
+{
+    @section pageNavItems {
         @RenderSection("pageNavItems", false)
     }
 }

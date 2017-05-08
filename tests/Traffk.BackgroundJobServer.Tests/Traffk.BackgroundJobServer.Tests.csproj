@@ -21,13 +21,13 @@
     <PackageReference Include="MSTest.TestFramework" Version="1.1.14" />
     <PackageReference Include="RevolutionaryStuff.Core" Version="1.0.0-*" />
     <PackageReference Include="Traffk.Bal" Version="1.0.0-*" />
-    <PackageReference Include="Traffk.CommunicationBlaster" Version="1.0.0-*" />
+    <PackageReference Include="Traffk.BackgroundJobServer" Version="1.0.0-*" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\RevolutionaryStuff.Core\RevolutionaryStuff.Core.csproj" />
+    <ProjectReference Include="..\..\src\Traffk.BackgroundJobServer\Traffk.BackgroundJobServer.csproj" />
     <ProjectReference Include="..\..\src\Traffk.Bal\Traffk.Bal.csproj" />
-    <ProjectReference Include="..\..\src\Traffk.CommunicationBlaster\Traffk.CommunicationBlaster.csproj" />
   </ItemGroup>
 
   <ItemGroup>

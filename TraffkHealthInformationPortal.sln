@@ -27,9 +27,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RevolutionaryStuff.Core.Tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Traffk.Portal.Tests", "tests\Traffk.Portal.Tests\Traffk.Portal.Tests.csproj", "{562D7A47-AC94-4F4A-B430-31D514064154}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Traffk.CommunicationBlaster", "src\Traffk.CommunicationBlaster\Traffk.CommunicationBlaster.csproj", "{28322F08-EB95-415B-8ECF-4B25DAB12E16}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Traffk.BackgroundJobServer", "src\Traffk.BackgroundJobServer\Traffk.BackgroundJobServer.csproj", "{28322F08-EB95-415B-8ECF-4B25DAB12E16}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Traffk.CommunicationBlaster.Tests", "tests\Traffk.CommunicationBlaster.Tests\Traffk.CommunicationBlaster.Tests.csproj", "{F3D583B4-ADEA-41A6-86EE-B6272B1BA38B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Traffk.BackgroundJobServer.Tests", "tests\Traffk.BackgroundJobServer.Tests\Traffk.BackgroundJobServer.Tests.csproj", "{F3D583B4-ADEA-41A6-86EE-B6272B1BA38B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevolutionaryStuff.SSIS", "src\RevolutionaryStuff.SSIS\RevolutionaryStuff.SSIS.csproj", "{0FD20B12-8248-40AA-89D2-E9109F0D6E88}"
 EndProject
