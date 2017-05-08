@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [db].ExternalTableImport
+﻿CREATE PROCEDURE [db].[ExternalTableImport]
 	@dataSource sysname,
 	@schema sysname,
 	@table sysname,
@@ -117,13 +117,13 @@ BEGIN
 		if (@isPrimaryKey=1)
 		begin
 			set @meta = @meta + '
-GO
+
 exec db.ColumnPropertySet '''+@table+''', '''+@columnName+''', ''Key'', @propertyName=''CustomAttribute'', @tableSchema='''+@schema+''''
 		end
 		if (@refColumn is not null)
 		begin
 			set @meta = @meta + '
-GO
+
 exec db.ColumnPropertySet '''+@table+''', '''+@columnName+''', '''+@refSchema+'.'+@refTable+'('+@refColumn+')'', @propertyName=''LinksTo'', @tableSchema='''+@schema+''''
 		end
 
@@ -183,7 +183,7 @@ exec db.ColumnPropertySet '''+@table+''', '''+@columnName+''', '''+@refSchema+'.
 	begin
 
 		set @meta = @meta + '
-GO
+
 exec db.ColumnPropertySet '''+@table+''', '''+@columnName+''', '''+replace(@propertyVal,'''','''''')+''', @propertyName='''+@propertyName+''', @tableSchema='''+@schema+''''
 		
 
@@ -217,7 +217,7 @@ exec db.ColumnPropertySet '''+@table+''', '''+@columnName+''', '''+replace(@prop
 	begin
 
 		set @meta = @meta + '
-GO
+
 exec db.TablePropertySet '''+@table+''', '''+replace(@propertyVal,'''','''''')+''', @propertyName='''+@propertyName+''', @tableSchema='''+@schema+''''
 		
 

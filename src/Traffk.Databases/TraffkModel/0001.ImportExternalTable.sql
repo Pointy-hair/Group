@@ -29,10 +29,28 @@ GO
 CREATE EXTERNAL DATA SOURCE TraffkTenantShardsDataSource
 with
 (
+
 	type = RDBMS,
 	location = 'traffkrdb-prod.database.windows.net',
 	database_name = 'TraffkTenantShards',
 	credential = _TraffkTenantShardsUserCred,
+)
+
+GO
+
+CREATE DATABASE SCOPED CREDENTIAL _ReferenceDataUserCred
+WITH IDENTITY = '_TraffkPortalApp',
+SECRET = 'dsJFDIOMFK43IUcartwheelFENGEVW3G98chapter85R43gf39QFJ3MAr112075QGJOQQ8HF4F_fuew';
+
+GO
+
+CREATE EXTERNAL DATA SOURCE ReferenceDataDataSource
+with
+(
+	type = RDBMS,
+	location = 'traffkrdb-prod.database.windows.net',
+	database_name = 'ReferenceData',
+	credential = _ReferenceDataUserCred,
 )
 
 GO
@@ -56,6 +74,38 @@ WITH
 
 GO
 
+create EXTERNAL TABLE db.ReferenceDataSchemaMeta
+(
+	HostDatabaseName sysname,
+	T nvarchar(max) null
+)
+WITH 
+(
+	SCHEMA_NAME = 'db',
+	OBJECT_NAME = 'schemameta',
+	DATA_SOURCE = [ReferenceDataDataSource]
+
+)
+
+GO
+
+CREATE PROCEDURE [db].ReferenceDataTableImport
+	@schema sysname,
+	@table sysname,
+	@srcSchema sysname=null,
+	@srcTable sysname=null
+AS
+begin
+
+	declare @smt nvarchar(max)
+	select @smt=T from db.ReferenceDataSchemaMeta
+
+	exec db.ExternalTableImport 'ReferenceDataDataSource', @schema, @table, @smt, @srcSchema=@srcSchema, @srcTable=@srcTable 
+
+end
+
+GO
+
 CREATE PROCEDURE [db].TraffkGlobalTableImport
 	@schema sysname,
 	@table sysname,
@@ -76,35 +126,33 @@ GO
 create schema Globals
 
 GO
-exec db.TraffkGlobalTableImport 'CmsGov', 'BerensonEggersTypeOfServices'
+exec db.ReferenceDataTableImport 'CmsGov', 'BerensonEggersTypeOfServices'
 exec db.TablePropertySet  'BerensonEggersTypeOfServices', '1', @propertyName='AddToDbContext', @tableSchema='CmsGov'
 exec db.TablePropertySet  'BerensonEggersTypeOfServices', '1', @propertyName='GeneratePoco', @tableSchema='CmsGov'
-exec db.ColumnPropertySet 'BerensonEggersTypeOfServices', 'BetosId', 'Key', @propertyName='CustomAttribute', @tableSchema='CmsGov'
 
-select * from [db].[ColumnProperties] where schemaname='CmsGov' and propertyname='Key' and propertyvalue='1'
+select * from [db].[ColumnProperties] where schemaname='CmsGov'
 
-exec db.TraffkGlobalTableImport 'CmsGov', 'HealthcareCommonProcedureCodingSystemCodes'
+exec db.ReferenceDataTableImport 'CmsGov', 'HealthcareCommonProcedureCodingSystemCodes'
 exec db.TablePropertySet  'HealthcareCommonProcedureCodingSystemCodes', '1', @propertyName='AddToDbContext', @tableSchema='CmsGov'
 exec db.TablePropertySet  'HealthcareCommonProcedureCodingSystemCodes', '1', @propertyName='GeneratePoco', @tableSchema='CmsGov'
-exec db.ColumnPropertySet 'HealthcareCommonProcedureCodingSystemCodes', 'HcpcsId', 'Key', @propertyName='CustomAttribute', @tableSchema='CmsGov'
 
-exec db.TraffkGlobalTableImport 'CmsGov', 'HealthCareProviderTaxonomyCodeCrosswalk'
-exec db.TraffkGlobalTableImport 'CmsGov', 'LabCertificationCodes'
-exec db.TraffkGlobalTableImport 'CmsGov', 'MedicareOutpatientGroupsPaymentGroupCodes'
-exec db.TraffkGlobalTableImport 'CmsGov', 'MedicareSpecialtyCodes'
-exec db.TraffkGlobalTableImport 'CmsGov', 'PricingIndicatorCodes'
-exec db.TraffkGlobalTableImport 'ISO3166', 'Countries'
-exec db.TraffkGlobalTableImport 'NationalDrugCode', 'Labelers'
-exec db.TraffkGlobalTableImport 'NationalDrugCode', 'Packages'
+exec db.ReferenceDataTableImport 'CmsGov', 'HealthCareProviderTaxonomyCodeCrosswalk'
+exec db.ReferenceDataTableImport 'CmsGov', 'LabCertificationCodes'
+exec db.ReferenceDataTableImport 'CmsGov', 'MedicareOutpatientGroupsPaymentGroupCodes'
+exec db.ReferenceDataTableImport 'CmsGov', 'MedicareSpecialtyCodes'
+exec db.ReferenceDataTableImport 'CmsGov', 'PricingIndicatorCodes'
+exec db.ReferenceDataTableImport 'ISO3166', 'Countries'
+exec db.ReferenceDataTableImport 'NationalDrugCode', 'Labelers'
+exec db.TablePropertySet  'Labelers', '1', @propertyName='AddToDbContext', @tableSchema='NationalDrugCode'
+exec db.TablePropertySet  'Labelers', '1', @propertyName='GeneratePoco', @tableSchema='NationalDrugCode'
+exec db.ReferenceDataTableImport 'NationalDrugCode', 'Packages'
 exec db.TablePropertySet  'Packages', '1', @propertyName='AddToDbContext', @tableSchema='NationalDrugCode'
 exec db.TablePropertySet  'Packages', '1', @propertyName='GeneratePoco', @tableSchema='NationalDrugCode'
-exec db.ColumnPropertySet 'Packages', 'PackageId', 'Key', @propertyName='CustomAttribute', @tableSchema='NationalDrugCode'
 
-exec db.TraffkGlobalTableImport 'NationalDrugCode', 'Products'
-exec db.TraffkGlobalTableImport 'InternationalClassificationDiseases', 'ICD10'
+exec db.ReferenceDataTableImport 'NationalDrugCode', 'Products'
+exec db.ReferenceDataTableImport 'InternationalClassificationDiseases', 'ICD10'
 exec db.TablePropertySet  'ICD10', '1', @propertyName='AddToDbContext', @tableSchema='InternationalClassificationDiseases'
 exec db.TablePropertySet  'ICD10', '1', @propertyName='GeneratePoco', @tableSchema='InternationalClassificationDiseases'
-exec db.ColumnPropertySet 'ICD10', 'Icd10Id', 'Key', @propertyName='CustomAttribute', @tableSchema='InternationalClassificationDiseases'
 
 
 select * from [db].[ColumnProperties] where schemaname='dbo' and propertyname='Key' and propertyvalue='1'
@@ -119,8 +167,6 @@ exec db.TablePropertySet  'ReleaseChanges', '1', @propertyName='AddToDbContext',
 exec db.TablePropertySet  'ReleaseChanges', '1', @propertyName='GeneratePoco', @tableSchema='dbo'
 exec db.ColumnPropertySet 'ReleaseChanges', 'ReleaseChangeId', 'Key', @propertyName='CustomAttribute', @tableSchema='dbo'
 exec db.ColumnPropertySet 'ReleaseChanges', 'ReleaseId', 'dbo.Releases(ReleaseId)', @propertyName='LinksTo', @tableSchema='dbo'
-
-[DataSrc_RefData]
 
 CREATE EXTERNAL TABLE [dbo].[ReleaseChanges](
 [ReleaseChangeId] int not null

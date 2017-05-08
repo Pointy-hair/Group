@@ -623,6 +623,7 @@ a(X) as
 							c.data_type '@sqlType',
 							c.character_maximum_length '@maxLen',
 							c.column_default '@default',
+							case when cc.ColumnName is not null then cast (1 as bit) else cast(0 as bit) end '@isComputed',
 							ref.TABLE_SCHEMA '@refSchema',
 							ref.TABLE_NAME '@refTable',
 							(
@@ -655,6 +656,23 @@ a(X) as
 							) Properties
 						from 
 							information_Schema.columns c with (nolock)
+								left join
+							(
+								select s.name SchemaName, t.name TableName, c.name ColumnName
+								from
+									sys.tables t
+										inner join
+									sys.syscolumns c
+										on t.object_id=c.id
+										inner join
+									sys.schemas s
+										on s.schema_id=t.schema_id
+								where
+									c.iscomputed=1
+							) cc 
+								on c.table_schema=cc.schemaname 
+								and c.table_name=cc.tablename
+								and c.column_name=cc.columnName
 								outer apply
 							(
 								select 1 isPk
@@ -846,6 +864,7 @@ a(X) as
 )
 select db_name() HostDatabaseName, X, cast(X as nvarchar(max)) T
 from a
+
 
 GO
 

@@ -1,4 +1,4 @@
-﻿reate schema ISO3166
+﻿create schema ISO3166
 
 GO
 

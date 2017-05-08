@@ -68,6 +68,7 @@
     <Folder Include="TraffkTenantShards" />
     <Folder Include="Master" />
     <Folder Include="TraffkTenantShardManager" />
+    <Folder Include="ReferenceData" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Foundations\Build\0001.ChangeLog.sql" />
@@ -89,13 +90,11 @@
     <None Include="TraffkTenantShards\0001.Structure.sql" />
     <None Include="TraffkModel\0005.Security.sql" />
     <None Include="TraffkTenantShardManager\0004.Security.sql" />
-    <None Include="TraffkGlobal\0003.Cms.sql" />
-    <None Include="TraffkGlobal\0002.Iso3166.sql" />
     <None Include="TraffkGlobal\0003.Joints.sql" />
-    <None Include="TraffkGlobal\0004.NationalDrugCode.sql" />
     <None Include="TraffkGlobal\0005.Hangfire.sql" />
     <None Include="TraffkGlobal\0100.Security.sql" />
     <None Include="TraffkGlobal\0010.Structure.sql" />
+    <None Include="ReferenceData\0003.TaxonomyCrosswalk.pdf" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Foundations\Build\0003.Asserts.sql" />
@@ -115,7 +114,17 @@
     <None Include="TraffkTenantShards\0002.CrossTenant.sql" />
     <None Include="TraffkModel\0006.Sprocs.sql" />
     <None Include="TraffkModel\0004.Health.sql" />
-    <None Include="TraffkGlobal\0002.InternationalClassificationDiseases.sql" />
-    <None Include="TraffkGlobal\0003.TaxonomyCrosswalk.pdf" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReferenceData\0003.Cms.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReferenceData\0002.Iso3166.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReferenceData\0002.InternationalClassificationDiseases.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReferenceData\0004.NationalDrugCode.sql" />
   </ItemGroup>
 </Project>

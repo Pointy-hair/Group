@@ -342,8 +342,11 @@ foreach (var f in z.XPathSelectElements("Columns/Column"))
 		if (isInheritedField && !isInheritedFieldInThisSubsclass) continue;
 		if (!isInheritedField && superclass!=null) continue;
 	}
-
 	string propertyName = GetAttrVal(f, "name");
+	if (propertyName==className)
+	{
+		propertyName = propertyName + "Property";
+	}
 	comment = GetPropertyValue(f, "MS_Description");
 	var dataAnnotation = GetPropertyValue(f, "DataAnnotation");
 	var customAttributeNames = GetPropertyValue(f, "CustomAttribute");
@@ -375,12 +378,12 @@ foreach (var f in z.XPathSelectElements("Columns/Column"))
 		/// <summary>
 		/// <#=comment#>
 		/// </summary>
-		[Description("<#=comment#>")]
+		[Description("<#=EscapeForCSharpStringEmbed(comment)#>")]
 <#
 	}
 	if (displayName!=null)
 	{
-#>		[DisplayName("<#=displayName#>")]
+#>		[DisplayName("<#=EscapeForCSharpStringEmbed(displayName)#>")]
 <#	
 	}
 	string enumType = GetPropertyValue(f, "EnumType");
@@ -464,7 +467,9 @@ foreach (var f in z.XPathSelectElements("Columns/Column"))
 #>		[MaxLength(<#=maxLen#>)]
 <#
 	}
-	if (propertyName.StartsWith("CreatedAt", System.StringComparison.CurrentCultureIgnoreCase))
+	if (propertyName.StartsWith("CreatedAt", System.StringComparison.CurrentCultureIgnoreCase) ||
+		GetAttrValAsBool(f, "isComputed")
+	)
 	{
 		addToCopyConstructor = false;
 #>		[DatabaseGenerated(DatabaseGeneratedOption.Computed)]
@@ -785,6 +790,12 @@ public string SqlTypeToClrType(string sqlType)
 		default:
 			return "object";
 	}	
+}
+public static string EscapeForCSharpStringEmbed(string s)
+{
+	if (s==null) return null;
+	return s.Replace("\\","\\\\").Replace("\"", "\\\"");
+//	return System.Security.SecurityElement.Escape(s);
 }
 public static string ToTitleFriendlyString(string s)
 {
