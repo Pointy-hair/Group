@@ -9,6 +9,6 @@ namespace Traffk.Bal.BackgroundJobs
 
         void CreateTableauTenant(CreateTableauTenantRequest request);
 
-        //void MigrateTableauDataset(TableauDataMigrationRequest request);
+        void MigrateTableauDataset(TableauDataMigrationRequest request);
     }
 }

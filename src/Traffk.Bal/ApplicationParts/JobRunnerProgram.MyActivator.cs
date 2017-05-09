@@ -28,6 +28,7 @@ namespace Traffk.Bal.ApplicationParts
                 private readonly JobActivatorContext Context;
 
                 public int? TenantId { get; private set; }
+                public int? JobId { get; private set; }
 
                 public MyScope(MyActivator activator, IServiceProvider sp, JobActivatorContext context)
                 {
@@ -41,6 +42,7 @@ namespace Traffk.Bal.ApplicationParts
                         var m = this.Activator.Runner.GDB.HangfireTenantMappings.FirstOrDefaultAsync(z => z.JobId == jobId).ExecuteSynchronously();
                         if (m != null)
                         {
+                            JobId = m.JobId;
                             TenantId = m.TenantId;
                         }
                     }

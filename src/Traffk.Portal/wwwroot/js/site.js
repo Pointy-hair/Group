@@ -402,6 +402,7 @@ $(document).ready(function () {
 
     //Shift contents down or up based on navbar
     jQuery('a.dropdown-toggle.navbar-brand.img-logo').click(function () {
+        debugger;
         var isUserLoggedIn = !jQuery('.account-nav')[0];
         if ($(window).width() > 768) {
             if (jQuery('#page-wrapper').hasClass('nav-open')) {
@@ -414,6 +415,7 @@ $(document).ready(function () {
 
     //If clicking outside navbar it will collapse and script shift contents up
     jQuery(document).mouseup(function (e) {
+        debugger;
         var container = jQuery('.nav.navbar-left.top-nav');
         var navBar = jQuery('ul.dropdown-menu.lvl2-nav');
         if ((!container.is(e.target) || navBar.is(e.target)) && container.has(e.target).length === 0) {

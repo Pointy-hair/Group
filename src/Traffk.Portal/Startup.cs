@@ -19,6 +19,7 @@ using Traffk.Bal.BackgroundJobs;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Email;
 using Traffk.Bal.Identity;
+using Traffk.Bal.Logging;
 using Traffk.Bal.Permissions;
 using Traffk.Bal.ReportVisuals;
 using Traffk.Bal.Services;
