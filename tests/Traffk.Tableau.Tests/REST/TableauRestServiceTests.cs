@@ -333,6 +333,7 @@ namespace Traffk.Tableau.Tests.REST
         [TestClass]
         public class GetUnderlyingDataMethodTests : TableauRestServiceTests
         {
+            [Ignore]
             [TestMethod]
             public void WhenSignedInGetUnderlyingDataUsingWorksheetName()
             {

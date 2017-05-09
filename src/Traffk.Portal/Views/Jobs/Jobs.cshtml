@@ -6,11 +6,18 @@
     ViewData.IsListingPage(true);
     ViewData.HasPageActions(true);
 }
+@section pageActionItems
+{
+    <li class="multiselect-action">
+        <a onclick="cancelJobs()" class="confirm-on-click" confirmHeading="Are you sure?" confirmMessage="Are you sure you want to cancel these jobs?">Cancel Jobs</a>
+    </li>
+}
 @section listingTable
 {
     <table class="table table-bordered table-hover table-striped">
         <thead>
         <tr>
+            <th><input type="checkbox" id="all-items-selector" /></th>
             <th>
                 @Html.SortableHeaderFor(model => model.JobId)
             </th>
@@ -29,6 +36,7 @@
         @foreach (var item in Model)
         {
             <tr jobId="@item.JobId">
+                <td><input type="checkbox" class="item-selector" contextId="@item.JobId" /></td>
                 <td>
                     @Html.DisplayFor(modelItem => item.JobId)
                 </td>
@@ -49,7 +57,7 @@
                             @if (item.CanBeCancelled)
                             {
                                 <li>
-                                    <a asp-action="@ActionNames.JobCancel" asp-route-id="@item.JobId" onclick="cancelJob(@item.JobId)" class="confirm-on-click" confirmHeading="Are you sure?" confirmMessage="Are you sure you want to delete Job @item.JobId?">Delete</a>
+                                    <a asp-action="@ActionNames.JobCancel" asp-route-id="@item.JobId" onclick="cancelJob(@item.JobId)" class="confirm-on-click" confirmHeading="Are you sure?" confirmMessage="Are you sure you want to cancel Job @item.JobId?">Yes, Cancel Job</a>
                                 </li>
                             }
                         </ul>

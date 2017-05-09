@@ -228,14 +228,13 @@ function popupConfirmHide() {
 };
 
 function onSend(itemText) {
-    $('#sending-alert-item-text').text(itemText);
-    $("#sending-alert").fadeIn(500);
+    $('#universal-alert-item-text').text(itemText);
+    $("#universal-alert").fadeIn(500);
 }
 
 function onSentSuccess(itemText) {
-    $('#sent-alert-item-text').text(itemText);
-    toastAppearDisappear($('#sent-alert'));
-    $("#sending-alert").hide(500);
+    $('#universal-alert-item-text').text(itemText);
+    toastAppearDisappear($('#universal-alert'));
 }
 
 function setUI() {
@@ -244,7 +243,18 @@ function setUI() {
 }
 
 function toastAppearDisappear(element) {
-    element.fadeIn(500).delay(4000).hide(500);
+    if (element.is(':visible')) {
+        element.delay(4000).hide(500);
+    } else {
+        element.fadeIn(500).delay(4000).hide(500);
+    }
+}
+
+function showToast(itemText) {
+    var toast = $('#universal-alert');
+    var toastText = $('#universal-alert-item-text');
+    toastText.text(itemText);
+    toastAppearDisappear(toast);
 }
 
 function pinMenu(elem) {
@@ -402,7 +412,6 @@ $(document).ready(function () {
 
     //Shift contents down or up based on navbar
     jQuery('a.dropdown-toggle.navbar-brand.img-logo').click(function () {
-        debugger;
         var isUserLoggedIn = !jQuery('.account-nav')[0];
         if ($(window).width() > 768) {
             if (jQuery('#page-wrapper').hasClass('nav-open')) {
@@ -415,7 +424,6 @@ $(document).ready(function () {
 
     //If clicking outside navbar it will collapse and script shift contents up
     jQuery(document).mouseup(function (e) {
-        debugger;
         var container = jQuery('.nav.navbar-left.top-nav');
         var navBar = jQuery('ul.dropdown-menu.lvl2-nav');
         if ((!container.is(e.target) || navBar.is(e.target)) && container.has(e.target).length === 0) {
@@ -493,7 +501,7 @@ $(document).ready(function () {
 
 // AJAX helpers vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 function resendInvitation(id, onSuccess, onError) {
-    var itemText = "Invitation";
+    var itemText = "Sending invitation.";
     onSend(itemText);
     $('.floated-filter').hide();
     var url = "Users/" + id + "/ResendInvitation";
@@ -512,6 +520,7 @@ function resendInvitation(id, onSuccess, onError) {
             else {
                 debugAlert("success");
             }
+            itemText = "Invitation resent.";
             onSentSuccess(itemText);
         },
         error: function (xhr) {
@@ -590,7 +599,9 @@ function deleteByIds(url, ids, onSuccess) {
         if (onSuccess == null) {
             deleteRowsWithContextIds(ids);
             updateSelectionMessaging();
-            toastAppearDisappear($('#delete-alert'));
+
+            var itemText = "Items deleted successfully.";
+            showToast(itemText);
         }
         else {
             onSuccess(ids);
@@ -654,14 +665,18 @@ function cancelJob(id, onSuccess) {
 }
 
 function cancelJobs(ids, onSuccess) {
+    var itemText = "Cancelling jobs...";
+    showToast(itemText);
+    
     if (!onSuccess) {
         onSuccess = function (data) {
-            data.forEach(function(jobId) {
-                var sel = "tr[jobId='" + jobId + "'] td.job-status";
-                $(sel).html("Deleted");
+            data.forEach(function (jobId) {
+                var status = "tr[jobId='" + jobId + "'] td.job-status";
+                $(status).html("Cancelling...");
             });
         }
     }
+
     return deleteByIds("/jobs/cancel", ids, onSuccess);
 }
 

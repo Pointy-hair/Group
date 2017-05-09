@@ -7,9 +7,11 @@ using TraffkPortal.Services;
 using Traffk.Bal.Data.Rdb;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using Hangfire;
 using Hangfire.States;
 using RevolutionaryStuff.Core;
+using Traffk.Bal.BackgroundJobs;
 using Traffk.Bal.Settings;
 
 namespace TraffkPortal.Controllers
@@ -78,23 +80,23 @@ namespace TraffkPortal.Controllers
 
         private async Task<IActionResult> JsonCancelJobAsync<TId>()
         {
-            var ids = Request.BodyAsJsonObject<TId[]>();
+            var rawIds = Request.BodyAsJsonObject<TId[]>();
+            var ids = rawIds.ConvertAll(x => Convert.ToInt32(x));
+
             if (ids != null)
             {
+                var tenantsJobIdsToCancel = GDB.HangfireTenantMappings.Where(x => ids.Contains(x.JobId) && x.TenantId == Current.TenantId).Select(x => x.JobId);
+                var cancellableJobs = GDB.Jobs.Where(j => tenantsJobIdsToCancel.Contains(j.JobId) && j.CanBeCancelled);
                 int numDeleted = 0;
-                foreach (var id in ids)
+
+                foreach (var job in cancellableJobs)
                 {
-                    var jobToCancel = GDB.HangfireTenantMappings.FirstOrDefaultAsync(x => x.JobId == Convert.ToInt32(id)).ExecuteSynchronously();
-                    if (jobToCancel == null) return NotFound();
-                    if (jobToCancel.TenantId == Current.TenantId)
-                    {
-                        Backgrounder.ChangeState(jobToCancel.JobId.ToString(), new DeletedState());
-                    }
+                    Backgrounder.ChangeState(job.JobId.ToString(), new CancelledState());
                     numDeleted++;
                 }
                 if (numDeleted > 0)
                 {
-                    SetToast(AspHelpers.ToastMessages.JobCancelled);
+                    return NoContent();
                 }
             }
             return NoContent();

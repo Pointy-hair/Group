@@ -77,6 +77,7 @@ namespace TraffkPortal
             public const string Deleted = "Items deleted successfully.";
             public const string Queued = "Your job has been queued.";
             public const string JobCancelled = "Your job has been cancelled.";
+            public const string InvitationsSent = "Invitations sent successfully.";
         }
 
         public static SelectListItem CreateNoneSelectedSelectListItem(bool preSelected=true) 

@@ -37,7 +37,10 @@ namespace Traffk.Bal.Data.Rdb
             get
             {
 
-                if (Status.Equals(FailedState.StateName) || Status.Equals(SucceededState.StateName) || Status.Equals(DeletedState.StateName))
+                if (Status.Equals(FailedState.StateName) || 
+                    Status.Equals(SucceededState.StateName) || 
+                    Status.Equals(DeletedState.StateName) || 
+                    Status.Equals(CancelledState.StateName))
                 {
                     return false;
                 }
