@@ -55,5 +55,34 @@ namespace Traffk.Tableau.REST.RestRequests
             }
         }
 
+        public TimeSpan LoginCacheTimeout
+        {
+            get
+            {
+                if (LoginCacheTimeout_p == null)
+                {
+                    return TimeSpan.FromMinutes(5);
+                }
+                return LoginCacheTimeout_p.Value;
+            }
+            set { LoginCacheTimeout_p = value; }
+        }
+
+        private TimeSpan? LoginCacheTimeout_p;
+
+        public TimeSpan ReportIndexCacheTimeout
+        {
+            get
+            {
+                if (ReportIndexCacheTimeout_p == null)
+                {
+                    return TimeSpan.FromMinutes(5);
+                }
+                return ReportIndexCacheTimeout_p.Value;
+            }
+            set { ReportIndexCacheTimeout_p = value; }
+        }
+
+        private TimeSpan? ReportIndexCacheTimeout_p;
     }
 }

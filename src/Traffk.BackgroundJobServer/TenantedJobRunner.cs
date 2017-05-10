@@ -1,6 +1,4 @@
-﻿using Hangfire;
-using Hangfire.Server;
-using RevolutionaryStuff.Core;
+﻿using Serilog;
 using Traffk.Bal.ApplicationParts;
 using Traffk.Bal.BackgroundJobs;
 using Traffk.Bal.Data.Rdb;
@@ -21,7 +19,10 @@ namespace Traffk.BackgroundJobServer
             TraffkGlobalContext globalContext,
             JobRunnerProgram jobRunnerProgram,
             CurrentTenantServices current, 
-            ITableauAdminService tableauAdminService) : base(globalContext, jobRunnerProgram)
+            ITableauAdminService tableauAdminService,
+            ILogger logger) : base(globalContext, 
+                jobRunnerProgram, 
+                logger)
         {
             DB = db;
             Current = current;
@@ -30,10 +31,6 @@ namespace Traffk.BackgroundJobServer
 
         void ITenantJobs.ReconfigureFiscalYears(FiscalYearSettings settings)
         {
-            //var tenant = Current.Tenant;
-            //var tenantSettings = tenant.TenantSettings;
-            //var existingSettings = tenantSettings.FiscalYearSettings ?? new FiscalYearSettings();
-
             var existingSettings = Current.Tenant.TenantSettings.FiscalYearSettings ?? new FiscalYearSettings();
             if (existingSettings.FiscalYear != settings.FiscalYear ||
                 existingSettings.CalendarYear != settings.CalendarYear ||

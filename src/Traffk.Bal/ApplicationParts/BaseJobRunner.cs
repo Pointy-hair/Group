@@ -1,10 +1,12 @@
 ﻿using Hangfire.Server;
 using RevolutionaryStuff.Core;
-using Serilog;
-using Serilog.Context;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Newtonsoft.Json;
+using Serilog;
+using Serilog.Core;
+using Serilog.Events;
 using Traffk.Bal.Data.Rdb;
 using ILogger = Serilog.ILogger;
 
@@ -25,31 +27,28 @@ namespace Traffk.Bal.ApplicationParts
 
         private static int InstanceId_s;
 
-        protected BaseJobRunner(TraffkGlobalContext globalContext, JobRunnerProgram jobRunnerProgram)
+        protected BaseJobRunner(TraffkGlobalContext globalContext, 
+            JobRunnerProgram jobRunnerProgram, 
+            ILogger logger)
         {
             GlobalContext = globalContext;
             InstanceId = Interlocked.Increment(ref InstanceId_s);
+
             JobId = jobRunnerProgram.JobId ?? 0;
 
-            LogContextProperties.Push(LogContext.PushProperty(nameof(InstanceId), InstanceId));
-            LogContextProperties.Push(LogContext.PushProperty("JobId", JobId));
-            LogContextProperties.Push(LogContext.PushProperty("Type", this.GetType().Name));
-
-            Logger = Log.Logger;
+            Logger = new LoggerConfiguration().
+                Enrich.WithProperty(nameof(InstanceId), InstanceId).
+                Enrich.WithProperty("JobId", JobId).
+                Enrich.WithProperty("Type", this.GetType().Name).
+                WriteTo.Logger(logger).CreateLogger();
 
             Logger.Information(ConstructedText);
-
-            //Console.WriteLine("Constructed {0} Thread Id {1}", this.GetType().Name, JobId);
         }
 
         protected void PostResult(object resultObject)
         {
-            var jobResult = new HangfireJobResult
-            {
-                JobId = this.JobId,
-                JobResultDetails = resultObject
-            };
-            //GlobalContext.JobResults.Add(jobResult)
+            var serializedResult = JsonConvert.SerializeObject(resultObject);
+            PostResult(serializedResult);
         }
 
         protected void PostResult(string serializedResult)
@@ -64,12 +63,7 @@ namespace Traffk.Bal.ApplicationParts
 
         protected override void OnDispose(bool disposing)
         {
-
             Logger.Information(DisposedText);
-            while (LogContextProperties.Count > 0)
-            {
-                LogContextProperties.Pop().Dispose();
-            }
             base.OnDispose(disposing);
         }
     }

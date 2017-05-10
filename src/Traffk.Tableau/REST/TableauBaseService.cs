@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core.Caching;
 using Traffk.Tableau.REST.Models;
@@ -34,7 +35,7 @@ namespace Traffk.Tableau.REST
                 {
                     var l = new TableauServerSignIn(onlineUrls, userName, password, statusLog);
                     l.ExecuteRequest();
-                    return new CacheEntry<TableauServerSignIn>(l);
+                    return new CacheEntry<TableauServerSignIn>(l, Options.LoginCacheTimeout);
                 }).Value;
         }
 

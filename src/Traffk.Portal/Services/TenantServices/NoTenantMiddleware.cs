@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace TraffkPortal.Services.TenantServices
@@ -33,14 +34,20 @@ namespace TraffkPortal.Services.TenantServices
             {
                 await Next(context);
             }
-            catch (TenantFinderServiceException tsex)
+            catch (Exception e)
             {
+                var tenantFinderServiceException =
+                    e.InnerExceptions().FirstOrDefault(x => x.GetType() == typeof(TenantFinderServiceException)) as TenantFinderServiceException;
+
+                if (tenantFinderServiceException == null) throw;
+
                 if (Options.Value.RedirectUrl != null)
                 {
-                    var u = Options.Value.RedirectUrl.AppendParameter("from", context.Request.Host.Host).AppendParameter("code", tsex.Code.ToString());
+                    var u = Options.Value.RedirectUrl.AppendParameter("from", context.Request.Host.Host).AppendParameter("code", tenantFinderServiceException.Code.ToString());
                     context.Response.Redirect(u.ToString(), false);
                     return;
                 }
+
                 throw;
             }
         }

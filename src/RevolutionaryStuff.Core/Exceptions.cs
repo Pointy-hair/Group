@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace RevolutionaryStuff.Core
 {
@@ -174,6 +175,20 @@ namespace RevolutionaryStuff.Core
         public InvalidMappingException(object from, object to)
             : base(string.Format("Could not map {0} to {1}", from, to))
         {
+        }
+    }
+
+    public static class ExceptionExtensions
+    {
+        public static IEnumerable<Exception> InnerExceptions(this Exception exception)
+        {
+            Exception ex = exception;
+
+            while (ex != null)
+            {
+                yield return ex;
+                ex = ex.InnerException;
+            }
         }
     }
 }

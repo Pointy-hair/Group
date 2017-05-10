@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using System;
+using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core.Caching;
 using Traffk.Tableau.REST.RestRequests;
 
@@ -6,10 +7,12 @@ namespace Traffk.Tableau.REST
 {
     public class TableauViewerService : TableauBaseService, ITableauViewerService
     {
-
+        TimeSpan ITableauViewerService.ReportIndexCacheTimeout => Options.ReportIndexCacheTimeout;
+        
         #region Constructors
 
-        public TableauViewerService(IOptions<TableauSignInOptions> options, 
+        public TableauViewerService(
+            IOptions<TableauSignInOptions> options,
             ITableauUserCredentials tableauUserCredentials,
             ICacher cacher=null) : base(options, tableauUserCredentials, cacher)
         {

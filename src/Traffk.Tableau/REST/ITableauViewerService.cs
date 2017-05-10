@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using Traffk.Tableau.REST.Models;
 using Traffk.Tableau.REST.RestRequests;
@@ -7,6 +8,7 @@ namespace Traffk.Tableau.REST
 {
     public interface ITableauViewerService
     {
+        TimeSpan ReportIndexCacheTimeout { get; }
         DownloadViewsForSite DownloadViewsForSite();
         byte[] DownloadPreviewImageForView(string workbookId, string viewId);
     }

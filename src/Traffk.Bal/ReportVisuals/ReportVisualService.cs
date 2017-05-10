@@ -1,4 +1,5 @@
-﻿using RevolutionaryStuff.Core;
+﻿using System;
+using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using RevolutionaryStuff.Core.Collections;
 using System.Collections.Generic;
@@ -34,16 +35,19 @@ namespace Traffk.Bal.ReportVisuals
         private bool CanSeePhi;
         private IEnumerable<string> TableauReportIds;
         private ICacher Cacher;
+        private TimeSpan ReportIndexCacheTimeout;
 
         //Do we make these private?
         public string TableauTenantId { get; private set; }
 
-        public ReportVisualService(ITableauViewerService tableauViewerService, TraffkRdbContext rdb, 
-            ITableauTenantFinder tableauTenantFinder, ICurrentUser currentUser, IPhiAuthorizer phiAuthorizer,
+        public ReportVisualService(ITableauViewerService tableauViewerService, 
+            TraffkRdbContext rdb, 
+            ITableauTenantFinder tableauTenantFinder, 
+            ICurrentUser currentUser, 
+            IPhiAuthorizer phiAuthorizer,
             ICacher cacher = null)
         {
             CanSeePhi = phiAuthorizer.CanSeePhi;
-
             TableauViewerService = tableauViewerService;
             Rdb = rdb;
             TableauTenantFinder = tableauTenantFinder;
@@ -52,6 +56,8 @@ namespace Traffk.Bal.ReportVisuals
             Cacher = cacher.CreateScope(CurrentUser.UserName, CanSeePhi);
 
             TableauTenantId = TableauTenantFinder.GetTenantIdAsync().Result;
+
+            ReportIndexCacheTimeout = TableauViewerService.ReportIndexCacheTimeout;
         }
 
         IReportVisual IReportVisualService.GetReportVisual(ReportSearchCriteria reportSearchCriteria)
@@ -80,7 +86,8 @@ namespace Traffk.Bal.ReportVisuals
             var reportTagFilter = reportSearchCriteria.TagFilter;
 
             var rootKey = visualContext.ToString() + reportTagFilter;
-            return Cacher.FindOrCreate(rootKey, key => GetTreeCacheEntry(reportSearchCriteria)).Value;
+
+            return Cacher.FindOrCreate(rootKey, key => GetTreeCacheEntry(reportSearchCriteria), ReportIndexCacheTimeout).Value;
         }
 
         byte[] IReportVisualService.DownloadPreviewImageForTableauVisual(string workbookId, string viewId)

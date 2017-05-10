@@ -19,21 +19,5 @@ namespace Traffk.Bal.Data.Rdb
 
         [Column("JobResultDetails")]
         public string JobResultDetailsJson { get; set; }
-
-        [NotMapped]
-        public object JobResultDetails
-        {
-            get
-            {
-                if (JobResultDetails_p == null)
-                {
-                    JobResultDetails_p = TraffkHelpers.JsonConvertDeserializeObjectOrFallback<object>(JobResultDetailsJson);
-                }
-                return JobResultDetails_p;
-            }
-            set { JobResultDetailsJson  = JsonConvert.SerializeObject(value); }
-        }
-
-        private object JobResultDetails_p;
     }
 }

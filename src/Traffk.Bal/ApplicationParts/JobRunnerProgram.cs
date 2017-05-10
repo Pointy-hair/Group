@@ -9,6 +9,7 @@ using RevolutionaryStuff.Core.ApplicationParts;
 using Serilog;
 using System;
 using System.Threading.Tasks;
+using Serilog.Core;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Logging;
 using Traffk.Bal.Services;
@@ -24,6 +25,8 @@ namespace Traffk.Bal.ApplicationParts
     {
         public static new void Main<TProgram>(string[] args) where TProgram : CommandLineProgram => CommandLineProgram.Main<TProgram>(args);
 
+        public ILogger JobRunnerLogger { get; private set; }
+
         public class HangfireServerOptions
         {
             public string ConnectionStringName { get; set; }
@@ -31,54 +34,26 @@ namespace Traffk.Bal.ApplicationParts
         }
 
         private TraffkGlobalContext GDB;
-        private ILogger Logger;
 
         protected override Task OnGoAsync()
         {
             GDB = this.ServiceProvider.GetService<TraffkGlobalContext>();
             var o = this.ServiceProvider.GetService<IOptions<HangfireServerOptions>>().Value;
+            JobRunnerLogger = this.ServiceProvider.GetService<ILogger>();
 
             GlobalConfiguration.Configuration.UseSqlServerStorage(Configuration.GetConnectionString(o.ConnectionStringName));
             GlobalConfiguration.Configuration.UseActivator(new MyActivator(this));
 
-            var loggerFactory = this.ServiceProvider.GetService<ILoggerFactory>();
-            loggerFactory.AddSerilog();
-
-            Log.Logger = new LoggerConfiguration()
-                    .Enrich.WithProperty("ApplicationName", Configuration["RevolutionaryStuffCoreOptions:ApplicationName"])
-                    .Enrich.WithProperty("MachineName", Environment.MachineName)
-                    .Enrich.With<EventTimeEnricher>()
-                    .MinimumLevel.Verbose()
-                    .Enrich.FromLogContext()
-                    .WriteTo.Trace()
-                    .WriteTo.AzureTableStorageWithProperties(Configuration["BlobStorageServicesOptions:ConnectionString"],
-                        storageTableName: Configuration["Serilog:TableName"],
-                        writeInBatches: Parse.ParseBool(Configuration["Serilog:WriteInBatches"], true),
-                        period: Parse.ParseTimeSpan(Configuration["Serilog:LogInterval"], TimeSpan.FromSeconds(2)))
-                    .CreateLogger();
-
-            Logger = Log.Logger;
-
             using (var s = new BackgroundJobServer(o.BackgroundOptions ?? new BackgroundJobServerOptions()))
             {
-                var timeoutInSeconds = int.Parse(Configuration["JobRunner:TimeoutInSeconds"]);
+                var timeout = Parse.ParseTimeSpan(Configuration["JobRunner:TimeOut"], TimeSpan.FromSeconds(60));
                 do
                 {
-                    Logger.Information("Job runner started.");
-                    //Console.WriteLine("Job runner started.");
+                    JobRunnerLogger.Information("Job Runner Heartbeat.");
                 }
-                while (!ShutdownRequested.WaitOne(TimeSpan.FromSeconds(timeoutInSeconds)));
+                while (!ShutdownRequested.WaitOne(timeout));
             }
 
-            //do
-            //{
-            //    using (var s = new BackgroundJobServer(o.BackgroundOptions ?? new BackgroundJobServerOptions()))
-            //    {
-            //        Console.WriteLine("Job runner started. Thread ID {0}", Thread.CurrentThread.ManagedThreadId);
-            //        //Logger.Information("Job runner started.");
-            //    }
-            //} while (!ShutdownRequested.WaitOne(TimeSpan.FromSeconds(Convert.ToInt32(Configuration["JobRunner:TimeoutInSeconds"]))));
-            
             return Task.CompletedTask;
         }
 
@@ -115,6 +90,19 @@ namespace Traffk.Bal.ApplicationParts
             services.Configure<TableauSignInOptions>(Configuration.GetSection(nameof(TableauSignInOptions)));
             services.Configure<TableauAdminCredentials>(Configuration.GetSection(nameof(TableauAdminCredentials)));
             services.AddScoped<ITableauAdminService, TableauAdminService>();
+
+            services.AddScoped<ILogger, Logger>(logger => new LoggerConfiguration()
+                    .Enrich.WithProperty("ApplicationName", Configuration["RevolutionaryStuffCoreOptions:ApplicationName"])
+                    .Enrich.WithProperty("MachineName", Environment.MachineName)
+                    .Enrich.With<EventTimeEnricher>()
+                    .MinimumLevel.Verbose()
+                    .Enrich.FromLogContext()
+                    .WriteTo.Trace()
+                    .WriteTo.AzureTableStorageWithProperties(Configuration["BlobStorageServicesOptions:ConnectionString"],
+                        storageTableName: Configuration["Serilog:TableName"],
+                        writeInBatches: Parse.ParseBool(Configuration["Serilog:WriteInBatches"], true),
+                        period: Parse.ParseTimeSpan(Configuration["Serilog:LogInterval"], TimeSpan.FromSeconds(2)))
+                    .CreateLogger());
         }
     }
 }
