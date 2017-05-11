@@ -21,6 +21,31 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='VSTS-CI|AnyCPU'" />
 
   <ItemGroup>
+    <None Update="Data\Rdb\SchemaMeta2DbContext.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="Data\Rdb\MultipleOutputHelper.ttinclude">
+      <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
+    </None>
+    <None Update="Data\Rdb\TraffkTenantModel.SchemaMeta.xml">
+      <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
+    </None>
+    <None Update="Data\Rdb\TraffkGlobals.SchemaMeta.xml">
+      <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
+    </None>
+    <Compile Update="Data\Rdb\TraffkGlobals.DbContext.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Data\Rdb\TraffkTenantModel.DbContext.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Data\DataStoreUpgrader\DDB\**" />
     <EmbeddedResource Remove="Data\DataStoreUpgrader\DDB\**" />
     <None Remove="Data\DataStoreUpgrader\DDB\**" />
@@ -75,22 +100,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Data\Rdb\Rdb.Schema.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Rdb.Schema.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Data\Rdb\Rdb.Schema.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Rdb.Schema.tt</DependentUpon>
-    </Compile>
   </ItemGroup>
 
 </Project>

@@ -8,8 +8,16 @@ namespace Traffk.BackgroundJobServer
 {
     public class GlobalJobRunner : IGlobalJobs
     {
-        public GlobalJobRunner()
+        private readonly TraffkGlobalsContext Gdb;
+
+        public GlobalJobRunner(TraffkGlobalsContext gdb)
         {
+            Gdb = gdb;
+        }
+
+        void IGlobalJobs.DataSourceFetch(int dataSourceId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

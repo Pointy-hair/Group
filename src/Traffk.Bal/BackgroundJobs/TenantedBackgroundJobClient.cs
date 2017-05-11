@@ -8,10 +8,10 @@ namespace Traffk.Bal.BackgroundJobs
     public class TenantedBackgroundJobClient : IBackgroundJobClient
     {
         private BackgroundJobClient Inner;
-        private TraffkGlobalContext GDB;
+        private TraffkGlobalsContext GDB;
         private ITraffkTenantFinder Finder;
 
-        public TenantedBackgroundJobClient(TraffkGlobalContext gdb, ITraffkTenantFinder finder)
+        public TenantedBackgroundJobClient(TraffkGlobalsContext gdb, ITraffkTenantFinder finder)
         {
             Inner = new BackgroundJobClient();
             GDB = gdb;
@@ -25,7 +25,8 @@ namespace Traffk.Bal.BackgroundJobs
         {
             var tenantId = Finder.GetTenantIdAsync().ExecuteSynchronously();
             var jobId = Inner.Create(job, state);
-            GDB.HangfireTenantMappings.Add(new HangfireTenantMap { JobId = int.Parse(jobId), TenantId = tenantId });
+            var j = GDB.Job.Find(int.Parse(jobId));
+            j.TenantId = tenantId;
             GDB.SaveChanges();
             return jobId;
         }

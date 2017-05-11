@@ -18,7 +18,10 @@ namespace RevolutionaryStuff.Core
             return changeTracker.Entries<T>().Where(z => states.Length == 0 ? true : states.Contains(z.State)).ConvertAll(z=>z.Entity).ToList();
         }
 
-        public static void PreSaveChanges<TTenantId>(this DbContext db, Func<TTenantId> tenantIdGetter=null) where
+        public static void PreSaveChanges(this DbContext db)
+            => db.PreSaveChanges<int>(null);
+
+        public static void PreSaveChanges<TTenantId>(this DbContext db, Func<TTenantId> tenantIdGetter) where
             TTenantId : IEquatable<TTenantId>
         {
             db.ChangeTracker.EntityList<IPreSave>(EntityState.Added, EntityState.Modified, EntityState.Unchanged).ForEach(z => z.PreSave());

@@ -3,20 +3,27 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Traffk.Bal.Services;
+using System.Threading.Tasks;
+using System.Threading;
+using RevolutionaryStuff.Core;
 
 namespace Traffk.Bal.Data.Rdb
 {
 
-    public class TraffkGlobalContext : DbContext
+    public partial class TraffkGlobalsContext : DbContext
     {
         public const string DefaultDatabaseConnectionStringName = "TraffkGlobal";
 
-        public TraffkGlobalContext(DbContextOptions<TraffkGlobalContext> options) : base(options)
+        public TraffkGlobalsContext(DbContextOptions<TraffkGlobalsContext> options) : base(options)
         {
         }
 
-        public DbSet<HangfireTenantMap> HangfireTenantMappings { get; set; }
+        public override int SaveChanges(bool acceptAllChangesOnSuccess) => SaveChangesAsync().ExecuteSynchronously();
 
-        public DbSet<HangfireJob> Jobs { get; set; }
+        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            this.PreSaveChanges();
+            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
     }
 }

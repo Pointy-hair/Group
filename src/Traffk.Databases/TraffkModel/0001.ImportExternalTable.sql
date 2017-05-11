@@ -93,7 +93,9 @@ CREATE PROCEDURE [db].ReferenceDataTableImport
 	@schema sysname,
 	@table sysname,
 	@srcSchema sysname=null,
-	@srcTable sysname=null
+	@srcTable sysname=NULL,
+	@addToDbContext BIT =NULL,
+	@generatePoco BIT =NULL
 AS
 begin
 
@@ -102,6 +104,14 @@ begin
 
 	exec db.ExternalTableImport 'ReferenceDataDataSource', @schema, @table, @smt, @srcSchema=@srcSchema, @srcTable=@srcTable 
 
+	IF (@addToDbContext IS NOT NULL)
+	begin
+		EXEC db.TablePropertySet @table, @addToDbContext, @propertyName='AddToDbContext', @tableSchema=@schema
+	end
+	IF (@generatePoco IS NOT NULL)
+	begin
+		exec db.TablePropertySet @table, @generatePoco, @propertyName='GeneratePoco', @tableSchema=@schema
+	end
 end
 
 GO
@@ -126,33 +136,21 @@ GO
 create schema Globals
 
 GO
-exec db.ReferenceDataTableImport 'CmsGov', 'BerensonEggersTypeOfServices'
-exec db.TablePropertySet  'BerensonEggersTypeOfServices', '1', @propertyName='AddToDbContext', @tableSchema='CmsGov'
-exec db.TablePropertySet  'BerensonEggersTypeOfServices', '1', @propertyName='GeneratePoco', @tableSchema='CmsGov'
 
-select * from [db].[ColumnProperties] where schemaname='CmsGov'
 
-exec db.ReferenceDataTableImport 'CmsGov', 'HealthcareCommonProcedureCodingSystemCodes'
-exec db.TablePropertySet  'HealthcareCommonProcedureCodingSystemCodes', '1', @propertyName='AddToDbContext', @tableSchema='CmsGov'
-exec db.TablePropertySet  'HealthcareCommonProcedureCodingSystemCodes', '1', @propertyName='GeneratePoco', @tableSchema='CmsGov'
 
-exec db.ReferenceDataTableImport 'CmsGov', 'HealthCareProviderTaxonomyCodeCrosswalk'
-exec db.ReferenceDataTableImport 'CmsGov', 'LabCertificationCodes'
-exec db.ReferenceDataTableImport 'CmsGov', 'MedicareOutpatientGroupsPaymentGroupCodes'
-exec db.ReferenceDataTableImport 'CmsGov', 'MedicareSpecialtyCodes'
-exec db.ReferenceDataTableImport 'CmsGov', 'PricingIndicatorCodes'
-exec db.ReferenceDataTableImport 'ISO3166', 'Countries'
-exec db.ReferenceDataTableImport 'NationalDrugCode', 'Labelers'
-exec db.TablePropertySet  'Labelers', '1', @propertyName='AddToDbContext', @tableSchema='NationalDrugCode'
-exec db.TablePropertySet  'Labelers', '1', @propertyName='GeneratePoco', @tableSchema='NationalDrugCode'
-exec db.ReferenceDataTableImport 'NationalDrugCode', 'Packages'
-exec db.TablePropertySet  'Packages', '1', @propertyName='AddToDbContext', @tableSchema='NationalDrugCode'
-exec db.TablePropertySet  'Packages', '1', @propertyName='GeneratePoco', @tableSchema='NationalDrugCode'
-
-exec db.ReferenceDataTableImport 'NationalDrugCode', 'Products'
-exec db.ReferenceDataTableImport 'InternationalClassificationDiseases', 'ICD10'
-exec db.TablePropertySet  'ICD10', '1', @propertyName='AddToDbContext', @tableSchema='InternationalClassificationDiseases'
-exec db.TablePropertySet  'ICD10', '1', @propertyName='GeneratePoco', @tableSchema='InternationalClassificationDiseases'
+EXEC db.ReferenceDataTableImport 'CmsGov', 'PricingIndicatorCodes', @addToDbContext=1, @generatePoco=1
+EXEC db.ReferenceDataTableImport 'CmsGov', 'LabCertificationCodes', @addToDbContext=1, @generatePoco=1
+EXEC db.ReferenceDataTableImport 'CmsGov', 'MedicareOutpatientGroupsPaymentGroupCodes', @addToDbContext=1, @generatePoco=1
+EXEC db.ReferenceDataTableImport 'CmsGov', 'BerensonEggersTypeOfServices', @addToDbContext=1, @generatePoco=1
+EXEC db.ReferenceDataTableImport 'CmsGov', 'HealthcareCommonProcedureCodingSystemCodes', @addToDbContext=1, @generatePoco=1
+EXEC db.ReferenceDataTableImport 'CmsGov', 'MedicareSpecialtyCodes', @addToDbContext=1, @generatePoco=1
+EXEC db.ReferenceDataTableImport 'CmsGov', 'HealthCareProviderTaxonomyCodeCrosswalk', @addToDbContext=1, @generatePoco=1
+EXEC db.ReferenceDataTableImport 'InternationalClassificationDiseases', 'ICD10', @addToDbContext=1, @generatePoco=1
+EXEC db.ReferenceDataTableImport 'ISO3166', 'Countries', @addToDbContext=1, @generatePoco=1
+EXEC db.ReferenceDataTableImport 'NationalDrugCode', 'Labelers', @addToDbContext=1, @generatePoco=1
+EXEC db.ReferenceDataTableImport 'NationalDrugCode', 'Packages', @addToDbContext=1, @generatePoco=1
+EXEC db.ReferenceDataTableImport 'NationalDrugCode', 'Products', @addToDbContext=1, @generatePoco=1
 
 
 select * from [db].[ColumnProperties] where schemaname='dbo' and propertyname='Key' and propertyvalue='1'
@@ -186,6 +184,7 @@ exec db.ColumnPropertySet 'ReleaseChanges', 'ReleaseId', 'dbo.Releases(ReleaseId
 
 select * from db.schemameta
 
+--exec db.TraffkGlobalTableImport 'hangfire', 'Job'
 
 
 GO

@@ -123,8 +123,8 @@ namespace TraffkPortal
                 options.UseSqlServer(Configuration.GetConnectionString(TraffkRdbContext.DefaultDatabaseConnectionStringName));
             }, ServiceLifetime.Scoped);
 
-            services.AddDbContext<TraffkGlobalContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString(TraffkGlobalContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Singleton);
+            services.AddDbContext<TraffkGlobalsContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString(TraffkGlobalsContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Singleton);
 
             services.Configure<IdentityOptions>(options => 
             {

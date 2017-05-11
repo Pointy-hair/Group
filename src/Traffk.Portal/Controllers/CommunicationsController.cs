@@ -398,7 +398,7 @@ namespace TraffkPortal.Controllers
             var communication = await FindCommunicationByIdAsync(communicationId);
             if (communication == null) return NotFound();
 
-            var items = from z in Rdb.CommunicationBlasts.Include(z => z.Job).Include(z => z.Creative)
+            var items = from z in Rdb.CommunicationBlasts.Include(z => z.Creative)//.Include(z => z.Job)
                         where z.TenantId == TenantId && z.CommunicationId == communicationId                        
                         select z;
             items = ApplyBrowse(

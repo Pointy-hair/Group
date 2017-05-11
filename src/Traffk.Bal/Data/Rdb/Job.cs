@@ -1,59 +1,30 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using Traffk.Bal.Settings;
+﻿using Hangfire.States;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using Traffk.Bal.BackgroundJobs;
 
 namespace Traffk.Bal.Data.Rdb
 {
-    public enum JobTypes
-    {
-        CommunicationBlast,
-        CreateContactsFromEligibility,
-        FiscalYearConversion
-    }
-
-    public enum JobStatuses
-    {
-        NonYetQueued,
-        Queued,
-        Dequeued,
-        Running,
-        CompletedSuccess,
-        CompletedError,
-        Cancelled,
-        Cancelling,
-    }
-
     public partial class Job
     {
+        private static readonly HashSet<string> CancellableStateNames = new HashSet<string> { FailedState.StateName, SucceededState.StateName, DeletedState.StateName };
+
         [NotMapped]
-        public bool CanBeCancelled
+        public bool CanBeCancelled => CancellableStateNames.Contains(this.StateName);
+
+        [NotMapped]
+        public HangfireJobDetails HangfireJobDetails
         {
             get
             {
-                switch (JobStatus)
+                if (HangfireJobDetails_p == null)
                 {
-                    case JobStatuses.NonYetQueued:
-                    case JobStatuses.Queued:
-                    case JobStatuses.Dequeued:
-                    case JobStatuses.Running:
-                        return true;
-                    default:
-                        return false;
+                    HangfireJobDetails_p = HangfireJobDetails.CreateFromJson(InvocationData) ?? new HangfireJobDetails();
                 }
+                return HangfireJobDetails_p;
             }
         }
 
-        public static Job CreateFiscalYearConversionJob(Tenant tenant, FiscalYearSettings jobData)
-        {
-            var job = new Job
-            {
-                Tenant = tenant,
-                JobStatus = JobStatuses.Queued,
-                JobType = JobTypes.FiscalYearConversion,
-                JobData = jobData.ToJson()
-            };
-            return job;
-        }
+        private HangfireJobDetails HangfireJobDetails_p;
     }
 }

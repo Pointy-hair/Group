@@ -39,11 +39,10 @@ namespace Traffk.Bal.ApplicationParts
                     try
                     {
                         var jobId = int.Parse(context.BackgroundJob.Id);
-                        var m = this.Activator.Runner.GDB.HangfireTenantMappings.FirstOrDefaultAsync(z => z.JobId == jobId).ExecuteSynchronously();
-                        if (m != null)
+                        var j = this.Activator.Runner.GDB.Job.Find(jobId);
+                        if (j != null)
                         {
-                            JobId = m.JobId;
-                            TenantId = m.TenantId;
+                            TenantId = j.TenantId; 
                         }
                     }
                     catch (Exception) { }

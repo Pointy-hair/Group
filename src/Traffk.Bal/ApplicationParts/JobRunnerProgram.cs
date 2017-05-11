@@ -33,11 +33,11 @@ namespace Traffk.Bal.ApplicationParts
             public BackgroundJobServerOptions BackgroundOptions { get; set; }
         }
 
-        private TraffkGlobalContext GDB;
+        private TraffkGlobalsContext GDB;
 
         protected override Task OnGoAsync()
         {
-            GDB = this.ServiceProvider.GetService<TraffkGlobalContext>();
+            GDB = this.ServiceProvider.GetService<TraffkGlobalsContext>();
             var o = this.ServiceProvider.GetService<IOptions<HangfireServerOptions>>().Value;
             JobRunnerLogger = this.ServiceProvider.GetService<ILogger>();
 
@@ -80,8 +80,8 @@ namespace Traffk.Bal.ApplicationParts
             {
                 options.UseSqlServer(Configuration.GetConnectionString(TraffkRdbContext.DefaultDatabaseConnectionStringName));
             }, ServiceLifetime.Scoped);
-            services.AddDbContext<TraffkGlobalContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString(TraffkGlobalContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Singleton);
+            services.AddDbContext<TraffkGlobalsContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString(TraffkGlobalsContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Singleton);
             services.AddScoped<CurrentTenantServices>();
             services.AddScoped<BlobStorageServices>();
             services.Configure<HangfireServerOptions>(Configuration.GetSection(nameof(HangfireServerOptions)));

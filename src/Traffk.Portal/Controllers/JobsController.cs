@@ -33,14 +33,14 @@ namespace TraffkPortal.Controllers
         }
 
         private readonly IBackgroundJobClient Backgrounder;
-        private readonly TraffkGlobalContext GDB;
+        private readonly TraffkGlobalsContext GDB;
 
         public JobsController(
             TraffkRdbContext db,
             CurrentContextServices current,
             ILoggerFactory loggerFactory,
             IBackgroundJobClient backgrounder,
-            TraffkGlobalContext gdb
+            TraffkGlobalsContext gdb
             )
             : base(AspHelpers.MainNavigationPageKeys.Manage, db, current, loggerFactory)
         {
@@ -52,10 +52,8 @@ namespace TraffkPortal.Controllers
         [Route("/Jobs")]
         public IActionResult Jobs(string sortCol, string sortDir, int? page, int? pageSize)
         {
-            var jobIdsForTenant =
-                GDB.HangfireTenantMappings.Where(x => x.TenantId == Current.TenantId).Select(y => y.JobId);
-            var items = GDB.Jobs.AsNoTracking().Where(z => jobIdsForTenant.Contains(z.JobId));
-            items = ApplyBrowse(items, sortCol ?? nameof(HangfireJob.CreatedAtUtc),
+            var items = GDB.Job.Where(j => j.TenantId == TenantId);
+            items = ApplyBrowse(items, sortCol ?? nameof(Job.CreatedAt),
                 sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
             return View(ViewNames.JobList, items);
         }
@@ -76,6 +74,9 @@ namespace TraffkPortal.Controllers
             return await JsonCancelJobAsync<int>();
         }
 
+        private async Task<Job> FindJobAsync(int jobId)
+            => await GDB.Job.FirstOrDefaultAsync(j => j.Id == jobId && j.TenantId == this.TenantId);
+
         private async Task<IActionResult> JsonCancelJobAsync<TId>()
         {
             var rawIds = Request.BodyAsJsonObject<TId[]>();
@@ -83,14 +84,15 @@ namespace TraffkPortal.Controllers
 
             if (ids != null)
             {
-                var tenantsJobIdsToCancel = GDB.HangfireTenantMappings.Where(x => ids.Contains(x.JobId) && x.TenantId == Current.TenantId).Select(x => x.JobId);
-                var cancellableJobs = GDB.Jobs.Where(j => tenantsJobIdsToCancel.Contains(j.JobId) && j.CanBeCancelled);
                 int numDeleted = 0;
-
-                foreach (var job in cancellableJobs)
+                foreach (var jobId in ids)
                 {
-                    Backgrounder.ChangeState(job.JobId.ToString(), new CancelledState());
-                    numDeleted++;
+                    var job = await FindJobAsync(jobId);
+                    if (job.CanBeCancelled)
+                    {
+                        Backgrounder.ChangeState(jobId.ToString(), new CancelledState());
+                        numDeleted++;
+                    }
                 }
                 if (numDeleted > 0)
                 {

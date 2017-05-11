@@ -295,11 +295,8 @@ create table CommunicationBlasts
 	CommunicationBlastRowStatus dbo.RowStatus not null default '1',	
 	CommunicationId int not null references Communications(CommunicationId),
 	CreativeId int null references Creatives(CreativeId),
-	JobId int null references Jobs(JobId) --change to linksTo hangfire.jobs;  Also, import the hangfire.job table;
+	JobId int null
 )
-
-drop table Jobs
-
 
 GO
 

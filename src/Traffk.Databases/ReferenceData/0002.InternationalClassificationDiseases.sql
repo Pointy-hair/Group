@@ -8,3 +8,6 @@ create table InternationalClassificationDiseases.ICD10
 	DiagnosisDescription nvarchar(255) not null
 )
 GO
+exec db.TablePropertySet  'ICD10', '1', @propertyName='AddToDbContext', @tableSchema='InternationalClassificationDiseases'
+exec db.TablePropertySet  'ICD10', '1', @propertyName='GeneratePoco', @tableSchema='InternationalClassificationDiseases'
+GO

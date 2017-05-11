@@ -1,0 +1,547 @@
+﻿<SchemaMeta>
+  <Tables>
+    <Table schema="db" name="ChangeLog" tableType="BASE TABLE">
+      <Columns>
+        <Column name="ChangeLogId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="EventType" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" />
+        <Column name="ObjectName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="256" />
+        <Column name="ObjectType" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="25" />
+        <Column name="SqlCommand" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="-1" />
+        <Column name="EventDate" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" />
+        <Column name="LoginName" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="256" />
+        <Column name="Data" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="xml" maxLen="-1" />
+      </Columns>
+    </Table>
+    <Table schema="db" name="ColumnProperties" tableType="VIEW">
+      <Columns>
+        <Column name="SchemaName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="TableName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="ColumnName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyName" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyValue" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" />
+      </Columns>
+    </Table>
+    <Table schema="db" name="ProcResultsetColumns" tableType="BASE TABLE">
+      <Columns>
+        <Column name="TABLE_SCHEMA" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="TABLE_NAME" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="RESULT_SET" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="ResultType" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" />
+        <Column name="COLUMN_NAME" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="ORDINAL_POSITION" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="IS_NULLABLE" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="3" />
+        <Column name="DATA_TYPE" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" />
+        <Column name="CHARACTER_MAXIMUM_LENGTH" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="ErrorMessage" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="4000" />
+      </Columns>
+    </Table>
+    <Table schema="db" name="SchemaMeta" tableType="VIEW">
+      <Columns>
+        <Column name="HostDatabaseName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" />
+        <Column name="X" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="xml" maxLen="-1" />
+        <Column name="T" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
+      </Columns>
+    </Table>
+    <Table schema="db" name="SprocParameterProperties" tableType="VIEW">
+      <Columns>
+        <Column name="SchemaName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="SprocName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="ParameterName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyName" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyValue" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" />
+      </Columns>
+    </Table>
+    <Table schema="db" name="SprocProperties" tableType="VIEW">
+      <Columns>
+        <Column name="SchemaName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="SprocName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyValue" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" />
+      </Columns>
+    </Table>
+    <Table schema="db" name="TableProperties" tableType="VIEW">
+      <Columns>
+        <Column name="SchemaName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="TableName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyValue" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" />
+      </Columns>
+    </Table>
+    <Table schema="db" name="TraffkGlobalCols" tableType="VIEW">
+      <Columns>
+        <Column name="TABLE_CATALOG" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" />
+        <Column name="TABLE_SCHEMA" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" />
+        <Column name="TABLE_NAME" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="COLUMN_NAME" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" />
+        <Column name="ORDINAL_POSITION" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="COLUMN_DEFAULT" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="4000" />
+        <Column name="IS_NULLABLE" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="3" />
+        <Column name="DATA_TYPE" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" />
+        <Column name="CHARACTER_MAXIMUM_LENGTH" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="CHARACTER_OCTET_LENGTH" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="NUMERIC_PRECISION" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="tinyint" />
+        <Column name="NUMERIC_PRECISION_RADIX" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="smallint" />
+        <Column name="NUMERIC_SCALE" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="DATETIME_PRECISION" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="smallint" />
+        <Column name="CHARACTER_SET_CATALOG" position="15" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" />
+        <Column name="CHARACTER_SET_SCHEMA" position="16" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" />
+        <Column name="CHARACTER_SET_NAME" position="17" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" />
+        <Column name="COLLATION_CATALOG" position="18" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" />
+        <Column name="COLLATION_SCHEMA" position="19" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" />
+        <Column name="COLLATION_NAME" position="20" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" />
+        <Column name="DOMAIN_CATALOG" position="21" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" />
+        <Column name="DOMAIN_SCHEMA" position="22" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" />
+        <Column name="DOMAIN_NAME" position="23" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" />
+      </Columns>
+    </Table>
+    <Table schema="db" name="ViewColumnProperties" tableType="VIEW">
+      <Columns>
+        <Column name="SchemaName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="ViewName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="ColumnName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyName" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyValue" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" />
+      </Columns>
+    </Table>
+    <Table schema="db" name="ViewProperties" tableType="VIEW">
+      <Columns>
+        <Column name="SchemaName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="ViewName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyValue" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" />
+      </Columns>
+    </Table>
+    <Table schema="dbo" name="DataSources" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+      </Properties>
+      <Columns>
+        <Column name="DataSourceId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="RowStatus" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')">
+          <Properties>
+            <Property name="AccessModifier" value="missing" />
+            <Property name="ImplementsRowStatusSemantics" value="1" />
+          </Properties>
+        </Column>
+        <Column name="TenantId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="CreatedAtUtc" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())">
+          <Properties>
+            <Property name="MS_Description" value="Datetime when this entity was created." />
+          </Properties>
+        </Column>
+        <Column name="DataSourceSettings" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1">
+          <Properties>
+            <Property name="JsonSettingsClass" value="Bal.Settings.DataSourceSettings" />
+          </Properties>
+        </Column>
+      </Columns>
+    </Table>
+    <Table schema="dbo" name="ReleaseChanges" tableType="BASE TABLE">
+      <Columns>
+        <Column name="ReleaseChangeId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="ReleaseId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="Releases" />
+        <Column name="ChangeType" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" />
+        <Column name="Title" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" />
+        <Column name="Order" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+      </Columns>
+    </Table>
+    <Table schema="dbo" name="Releases" tableType="BASE TABLE">
+      <Columns>
+        <Column name="ReleaseId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="AppType" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80">
+          <Properties>
+            <Property name="EnumType" value="AppTypes" />
+          </Properties>
+        </Column>
+        <Column name="ReleaseDate" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="date" />
+        <Column name="ReleaseName" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" />
+        <Column name="ReleaseNotes" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
+      </Columns>
+      <Collections>
+        <Collection schema="dbo" table="ReleaseChanges" column="ReleaseId" collectionType="actual" />
+      </Collections>
+    </Table>
+    <Table schema="dbo" name="ReportMetaData" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="0" />
+        <Property name="GeneratePoco" value="0" />
+        <Property name="JointPart" value="Global" />
+      </Properties>
+      <Columns>
+        <Column name="ReportMetaDataId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="ExternalReportKey" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="2000" />
+        <Column name="ParentReportMetaDataId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="RowStatus" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="((1))">
+          <Properties>
+            <Property name="AccessModifier" value="missing" />
+            <Property name="ImplementsRowStatusSemantics" value="1" />
+          </Properties>
+        </Column>
+        <Column name="OwnerContactId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
+        <Column name="CreatedAtUtc" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())">
+          <Properties>
+            <Property name="MS_Description" value="Datetime when this entity was created." />
+          </Properties>
+        </Column>
+        <Column name="ReportDetails" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="-1" />
+      </Columns>
+    </Table>
+    <Table schema="HangFire" name="AggregatedCounter" tableType="BASE TABLE">
+      <Columns>
+        <Column name="Id" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="Key" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="100" />
+        <Column name="Value" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bigint" />
+        <Column name="ExpireAt" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="datetime" />
+      </Columns>
+    </Table>
+    <Table schema="HangFire" name="Counter" tableType="BASE TABLE">
+      <Columns>
+        <Column name="Id" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="Key" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="100" />
+        <Column name="Value" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="smallint" />
+        <Column name="ExpireAt" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="datetime" />
+      </Columns>
+    </Table>
+    <Table schema="HangFire" name="Hash" tableType="BASE TABLE">
+      <Columns>
+        <Column name="Id" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="Key" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="100" />
+        <Column name="Field" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="100" />
+        <Column name="Value" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
+        <Column name="ExpireAt" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="datetime2" />
+      </Columns>
+    </Table>
+    <Table schema="HangFire" name="Job" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+      </Properties>
+      <Columns>
+        <Column name="Id" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="StateId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="StateName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="20" />
+        <Column name="InvocationData" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="-1" />
+        <Column name="Arguments" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="-1" />
+        <Column name="CreatedAt" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" />
+        <Column name="ExpireAt" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="datetime" />
+        <Column name="TenantId" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="ResultData" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
+      </Columns>
+      <Collections>
+        <Collection schema="HangFire" table="State" column="JobId" collectionType="actual" />
+        <Collection schema="HangFire" table="JobParameter" column="JobId" collectionType="actual" />
+      </Collections>
+    </Table>
+    <Table schema="HangFire" name="JobParameter" tableType="BASE TABLE">
+      <Columns>
+        <Column name="Id" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="JobId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="HangFire" refTable="Job" />
+        <Column name="Name" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="40" />
+        <Column name="Value" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
+      </Columns>
+    </Table>
+    <Table schema="HangFire" name="JobQueue" tableType="BASE TABLE">
+      <Columns>
+        <Column name="Id" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="JobId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="Queue" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="50" />
+        <Column name="FetchedAt" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="datetime" />
+      </Columns>
+    </Table>
+    <Table schema="HangFire" name="List" tableType="BASE TABLE">
+      <Columns>
+        <Column name="Id" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="Key" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="100" />
+        <Column name="Value" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
+        <Column name="ExpireAt" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="datetime" />
+      </Columns>
+    </Table>
+    <Table schema="HangFire" name="Schema" tableType="BASE TABLE">
+      <Columns>
+        <Column name="Version" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="int" />
+      </Columns>
+    </Table>
+    <Table schema="HangFire" name="Server" tableType="BASE TABLE">
+      <Columns>
+        <Column name="Id" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="100" />
+        <Column name="Data" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
+        <Column name="LastHeartbeat" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" />
+      </Columns>
+    </Table>
+    <Table schema="HangFire" name="Set" tableType="BASE TABLE">
+      <Columns>
+        <Column name="Id" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="Key" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="100" />
+        <Column name="Score" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="float" />
+        <Column name="Value" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="256" />
+        <Column name="ExpireAt" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="datetime" />
+      </Columns>
+    </Table>
+    <Table schema="HangFire" name="State" tableType="BASE TABLE">
+      <Columns>
+        <Column name="Id" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="JobId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="HangFire" refTable="Job" />
+        <Column name="Name" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="20" />
+        <Column name="Reason" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="100" />
+        <Column name="CreatedAt" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" />
+        <Column name="Data" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
+      </Columns>
+    </Table>
+    <Table schema="sys" name="database_firewall_rules" tableType="VIEW">
+      <Columns>
+        <Column name="id" position="1" isPrimaryKey="0" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="name" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="start_ip_address" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="45" />
+        <Column name="end_ip_address" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="45" />
+        <Column name="create_date" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" />
+        <Column name="modify_date" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" />
+      </Columns>
+    </Table>
+  </Tables>
+  <Sprocs>
+    <Sproc schema="db" name="AssertEquals">
+      <Args>
+        <Arg position="1" mode="IN" name="@expected" sqlType="sql_variant" maxLen="0" />
+        <Arg position="2" mode="IN" name="@actual" sqlType="sql_variant" maxLen="0" />
+        <Arg position="3" mode="IN" name="@msg" sqlType="varchar" maxLen="4000" />
+      </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="0" />
+      </ResultSets>
+    </Sproc>
+    <Sproc schema="db" name="AssertFail">
+      <Args>
+        <Arg position="1" mode="IN" name="@msg" sqlType="varchar" maxLen="4000" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="AssertNotNull">
+      <Args>
+        <Arg position="1" mode="IN" name="@actual" sqlType="int" />
+        <Arg position="2" mode="IN" name="@msg" sqlType="varchar" maxLen="4000" />
+      </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="0" />
+      </ResultSets>
+    </Sproc>
+    <Sproc schema="db" name="AssertNull">
+      <Args>
+        <Arg position="1" mode="IN" name="@actual" sqlType="int" />
+        <Arg position="2" mode="IN" name="@msg" sqlType="varchar" maxLen="4000" />
+      </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="0" />
+      </ResultSets>
+    </Sproc>
+    <Sproc schema="db" name="AssertStringHasContent">
+      <Args>
+        <Arg position="1" mode="IN" name="@test" sqlType="nvarchar" maxLen="-1" />
+        <Arg position="2" mode="IN" name="@msg" sqlType="varchar" maxLen="4000" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="AssertZero">
+      <Args>
+        <Arg position="1" mode="IN" name="@actual" sqlType="int" />
+        <Arg position="2" mode="IN" name="@msg" sqlType="varchar" maxLen="4000" />
+      </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="0" />
+      </ResultSets>
+    </Sproc>
+    <Sproc schema="db" name="AssertZeroOrOne">
+      <Args>
+        <Arg position="1" mode="IN" name="@actual" sqlType="int" />
+        <Arg position="2" mode="IN" name="@msg" sqlType="varchar" maxLen="4000" />
+      </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="0" />
+      </ResultSets>
+    </Sproc>
+    <Sproc schema="db" name="ColumnPropertySet">
+      <Args>
+        <Arg position="1" mode="IN" name="@tableName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@columnName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="3" mode="IN" name="@propertyVal" sqlType="nvarchar" maxLen="3750" />
+        <Arg position="4" mode="IN" name="@tableSchema" sqlType="nvarchar" maxLen="128" />
+        <Arg position="5" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
+      </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>The metadata could not be determined because statement 'EXEC %%ExtendedPropertySet().RemoveValue(Name = @name, Level0type = @level0type, Level0name = @level' in procedure 'sp_dropextendedproperty' does not support metadata discovery.</Error>
+        </ResultSet>
+      </ResultSets>
+    </Sproc>
+    <Sproc schema="db" name="ExternalTableImport">
+      <Args>
+        <Arg position="1" mode="IN" name="@dataSource" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@schema" sqlType="nvarchar" maxLen="128" />
+        <Arg position="3" mode="IN" name="@table" sqlType="nvarchar" maxLen="128" />
+        <Arg position="4" mode="IN" name="@schemaMetaXml" sqlType="nvarchar" maxLen="-1" />
+        <Arg position="5" mode="IN" name="@type" sqlType="nvarchar" maxLen="128" />
+        <Arg position="6" mode="IN" name="@distribution" sqlType="nvarchar" maxLen="128" />
+        <Arg position="7" mode="IN" name="@srcSchema" sqlType="nvarchar" maxLen="128" />
+        <Arg position="8" mode="IN" name="@srcTable" sqlType="nvarchar" maxLen="128" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="PrintNow">
+      <Args>
+        <Arg position="1" mode="IN" name="@format" sqlType="nvarchar" maxLen="-1" />
+        <Arg position="2" mode="IN" name="@n0" sqlType="int" />
+        <Arg position="3" mode="IN" name="@n1" sqlType="int" />
+        <Arg position="4" mode="IN" name="@n2" sqlType="int" />
+        <Arg position="5" mode="IN" name="@n3" sqlType="int" />
+        <Arg position="6" mode="IN" name="@n4" sqlType="int" />
+        <Arg position="7" mode="IN" name="@n5" sqlType="int" />
+        <Arg position="8" mode="IN" name="@n6" sqlType="int" />
+        <Arg position="9" mode="IN" name="@n7" sqlType="int" />
+        <Arg position="10" mode="IN" name="@s0" sqlType="nvarchar" maxLen="-1" />
+        <Arg position="11" mode="IN" name="@s1" sqlType="nvarchar" maxLen="-1" />
+        <Arg position="12" mode="IN" name="@s2" sqlType="nvarchar" maxLen="-1" />
+        <Arg position="13" mode="IN" name="@s3" sqlType="nvarchar" maxLen="-1" />
+        <Arg position="14" mode="IN" name="@d0" sqlType="datetime" />
+        <Arg position="15" mode="IN" name="@d1" sqlType="datetime" />
+        <Arg position="16" mode="IN" name="@d2" sqlType="datetime" />
+        <Arg position="17" mode="IN" name="@d3" sqlType="datetime" />
+        <Arg position="18" mode="IN" name="@b0" sqlType="bit" />
+        <Arg position="19" mode="IN" name="@b1" sqlType="bit" />
+        <Arg position="20" mode="IN" name="@b2" sqlType="bit" />
+        <Arg position="21" mode="IN" name="@b3" sqlType="bit" />
+        <Arg position="22" mode="IN" name="@m0" sqlType="money" />
+        <Arg position="23" mode="IN" name="@m1" sqlType="money" />
+        <Arg position="24" mode="IN" name="@m2" sqlType="money" />
+        <Arg position="25" mode="IN" name="@m3" sqlType="money" />
+        <Arg position="26" mode="IN" name="@startedAt" sqlType="datetime" />
+      </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="0" />
+      </ResultSets>
+    </Sproc>
+    <Sproc schema="db" name="PrintSql">
+      <Args>
+        <Arg position="1" mode="IN" name="@sql" sqlType="nvarchar" maxLen="-1" />
+        <Arg position="2" mode="IN" name="@debugMode" sqlType="bit" />
+      </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="1" isError="0">
+          <Columns>
+            <Column name="Sql" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="xml" maxLen="-1" />
+          </Columns>
+        </ResultSet>
+      </ResultSets>
+    </Sproc>
+    <Sproc schema="db" name="ProcResultsetColumnsPopulate">
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="0" />
+      </ResultSets>
+    </Sproc>
+    <Sproc schema="db" name="SprocParameterPropertySet">
+      <Args>
+        <Arg position="1" mode="IN" name="@sprocName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@parameterName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="3" mode="IN" name="@propertyVal" sqlType="nvarchar" maxLen="3750" />
+        <Arg position="4" mode="IN" name="@sprocSchema" sqlType="nvarchar" maxLen="128" />
+        <Arg position="5" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
+      </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>The metadata could not be determined because statement 'EXEC %%ExtendedPropertySet().RemoveValue(Name = @name, Level0type = @level0type, Level0name = @level' in procedure 'sp_dropextendedproperty' does not support metadata discovery.</Error>
+        </ResultSet>
+      </ResultSets>
+    </Sproc>
+    <Sproc schema="db" name="SprocPropertySet">
+      <Args>
+        <Arg position="1" mode="IN" name="@sprocName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@propertyVal" sqlType="sql_variant" maxLen="0" />
+        <Arg position="3" mode="IN" name="@routineSchema" sqlType="nvarchar" maxLen="128" />
+        <Arg position="4" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
+      </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>The metadata could not be determined because statement 'EXEC %%ExtendedPropertySet().RemoveValue(Name = @name, Level0type = @level0type, Level0name = @level' in procedure 'sp_dropextendedproperty' does not support metadata discovery.</Error>
+        </ResultSet>
+      </ResultSets>
+    </Sproc>
+    <Sproc schema="db" name="TablePropertySet">
+      <Args>
+        <Arg position="1" mode="IN" name="@tableName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@propertyVal" sqlType="sql_variant" maxLen="0" />
+        <Arg position="3" mode="IN" name="@tableSchema" sqlType="nvarchar" maxLen="128" />
+        <Arg position="4" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
+      </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>The metadata could not be determined because statement 'EXEC %%ExtendedPropertySet().RemoveValue(Name = @name, Level0type = @level0type, Level0name = @level' in procedure 'sp_dropextendedproperty' does not support metadata discovery.</Error>
+        </ResultSet>
+      </ResultSets>
+    </Sproc>
+    <Sproc schema="db" name="ViewColumnPropertySet">
+      <Args>
+        <Arg position="1" mode="IN" name="@viewName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@columnName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="3" mode="IN" name="@propertyVal" sqlType="nvarchar" maxLen="3750" />
+        <Arg position="4" mode="IN" name="@viewSchema" sqlType="nvarchar" maxLen="128" />
+        <Arg position="5" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
+      </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>The metadata could not be determined because statement 'EXEC %%ExtendedPropertySet().RemoveValue(Name = @name, Level0type = @level0type, Level0name = @level' in procedure 'sp_dropextendedproperty' does not support metadata discovery.</Error>
+        </ResultSet>
+      </ResultSets>
+    </Sproc>
+    <Sproc schema="db" name="ViewPropertySet">
+      <Args>
+        <Arg position="1" mode="IN" name="@viewName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@propertyVal" sqlType="sql_variant" maxLen="0" />
+        <Arg position="3" mode="IN" name="@viewSchema" sqlType="nvarchar" maxLen="128" />
+        <Arg position="4" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="5" mode="IN" name="@remove" sqlType="bit" />
+      </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>The metadata could not be determined because statement 'EXEC %%ExtendedPropertySet().RemoveValue(Name = @name, Level0type = @level0type, Level0name = @level' in procedure 'sp_dropextendedproperty' does not support metadata discovery.</Error>
+        </ResultSet>
+      </ResultSets>
+    </Sproc>
+    <Sproc schema="db" name="WhoIsActive">
+      <Args>
+        <Arg position="1" mode="IN" name="@filter" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@filter_type" sqlType="varchar" maxLen="10" />
+        <Arg position="3" mode="IN" name="@not_filter" sqlType="nvarchar" maxLen="128" />
+        <Arg position="4" mode="IN" name="@not_filter_type" sqlType="varchar" maxLen="10" />
+        <Arg position="5" mode="IN" name="@show_own_spid" sqlType="bit" />
+        <Arg position="6" mode="IN" name="@show_system_spids" sqlType="bit" />
+        <Arg position="7" mode="IN" name="@show_sleeping_spids" sqlType="tinyint" />
+        <Arg position="8" mode="IN" name="@get_full_inner_text" sqlType="bit" />
+        <Arg position="9" mode="IN" name="@get_plans" sqlType="tinyint" />
+        <Arg position="10" mode="IN" name="@get_outer_command" sqlType="bit" />
+        <Arg position="11" mode="IN" name="@get_transaction_info" sqlType="bit" />
+        <Arg position="12" mode="IN" name="@get_task_info" sqlType="tinyint" />
+        <Arg position="13" mode="IN" name="@get_locks" sqlType="bit" />
+        <Arg position="14" mode="IN" name="@get_avg_time" sqlType="bit" />
+        <Arg position="15" mode="IN" name="@get_additional_info" sqlType="bit" />
+        <Arg position="16" mode="IN" name="@find_block_leaders" sqlType="bit" />
+        <Arg position="17" mode="IN" name="@delta_interval" sqlType="tinyint" />
+        <Arg position="18" mode="IN" name="@output_column_list" sqlType="varchar" maxLen="8000" />
+        <Arg position="19" mode="IN" name="@sort_order" sqlType="varchar" maxLen="500" />
+        <Arg position="20" mode="IN" name="@format_output" sqlType="tinyint" />
+        <Arg position="21" mode="IN" name="@destination_table" sqlType="varchar" maxLen="4000" />
+        <Arg position="22" mode="IN" name="@return_schema" sqlType="bit" />
+        <Arg position="23" mode="INOUT" name="@schema" sqlType="varchar" maxLen="-1" />
+        <Arg position="24" mode="IN" name="@help" sqlType="bit" />
+      </Args>
+      <ResultSets>
+        <ResultSet resultSetNumber="0" colCount="0" isError="1">
+          <Error>
+            The metadata could not be determined because statement 'INSERT #sessions
+            (
+            recursion,
+            session_id,
+            request_id,
+            session_number,
+            elapsed' in procedure 'WhoIsActive' uses a temp table.
+          </Error>
+        </ResultSet>
+      </ResultSets>
+    </Sproc>
+  </Sprocs>
+</SchemaMeta>

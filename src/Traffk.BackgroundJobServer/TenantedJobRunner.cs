@@ -16,7 +16,7 @@ namespace Traffk.BackgroundJobServer
         private readonly ITableauAdminService TableauAdminService;
 
         public TenantedJobRunner(TraffkRdbContext db, 
-            TraffkGlobalContext globalContext,
+            TraffkGlobalsContext globalContext,
             JobRunnerProgram jobRunnerProgram,
             CurrentTenantServices current, 
             ITableauAdminService tableauAdminService,

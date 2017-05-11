@@ -22,12 +22,12 @@ namespace Traffk.Bal.ApplicationParts
         protected readonly string ConstructedText = "Constructed";
         protected readonly string DisposedText = "Disposed";
 
-        protected readonly TraffkGlobalContext GlobalContext;
+        protected readonly TraffkGlobalsContext GlobalContext;
         protected readonly PerformContext PerformContext;
 
         private static int InstanceId_s;
 
-        protected BaseJobRunner(TraffkGlobalContext globalContext, 
+        protected BaseJobRunner(TraffkGlobalsContext globalContext, 
             JobRunnerProgram jobRunnerProgram, 
             ILogger logger)
         {
@@ -46,19 +46,14 @@ namespace Traffk.Bal.ApplicationParts
         }
 
         protected void PostResult(object resultObject)
-        {
-            var serializedResult = JsonConvert.SerializeObject(resultObject);
-            PostResult(serializedResult);
-        }
+            => PostResult(JsonConvert.SerializeObject(resultObject));
 
         protected void PostResult(string serializedResult)
         {
-            var jobResult = new HangfireJobResult
-            {
-                JobId = this.JobId,
-                JobResultDetailsJson = serializedResult
-            };
-            //GlobalContext.JobResults.Add(jobResult)
+            if (serializedResult == null) return;
+            var j = GlobalContext.Job.Find(JobId);
+            j.ResultData = serializedResult;
+            GlobalContext.SaveChanges();
         }
 
         protected override void OnDispose(bool disposing)
