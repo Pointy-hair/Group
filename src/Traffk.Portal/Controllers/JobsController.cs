@@ -1,18 +1,15 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using TraffkPortal.Services;
-using Traffk.Bal.Data.Rdb;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using Hangfire;
-using Hangfire.States;
 using RevolutionaryStuff.Core;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Traffk.Bal.BackgroundJobs;
-using Traffk.Bal.Settings;
+using Traffk.Bal.Data.Rdb;
+using TraffkPortal.Services;
 
 namespace TraffkPortal.Controllers
 {
@@ -57,8 +54,9 @@ namespace TraffkPortal.Controllers
         {
             var jobIdsForTenant =
                 GDB.HangfireTenantMappings.Where(x => x.TenantId == Current.TenantId).Select(y => y.JobId);
-            var items = GDB.Jobs.Where(z => jobIdsForTenant.Contains(z.JobId));
-            items = ApplyBrowse(items, sortCol ?? nameof(HangfireJob.CreatedAtUtc), sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
+            var items = GDB.Jobs.AsNoTracking().Where(z => jobIdsForTenant.Contains(z.JobId));
+            items = ApplyBrowse(items, sortCol ?? nameof(HangfireJob.CreatedAtUtc),
+                sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
             return View(ViewNames.JobList, items);
         }
 

@@ -57,7 +57,7 @@
                             @if (item.CanBeCancelled)
                             {
                                 <li>
-                                    <a asp-action="@ActionNames.JobCancel" asp-route-id="@item.JobId" onclick="cancelJob(@item.JobId)" class="confirm-on-click" confirmHeading="Are you sure?" confirmMessage="Are you sure you want to cancel Job @item.JobId?">Yes, Cancel Job</a>
+                                    <a asp-action="@ActionNames.JobCancel" asp-route-id="@item.JobId" onclick="cancelJob(@item.JobId)" class="confirm-on-click" confirmHeading="Are you sure?" confirmMessage="Are you sure you want to cancel Job @item.JobId?">Cancel Job</a>
                                 </li>
                             }
                         </ul>
