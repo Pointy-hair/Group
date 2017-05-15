@@ -42,7 +42,7 @@ namespace TraffkPortal.Controllers
             IBackgroundJobClient backgrounder,
             TraffkGlobalsContext gdb
             )
-            : base(AspHelpers.MainNavigationPageKeys.Manage, db, current, loggerFactory)
+            : base(AspHelpers.MainNavigationPageKeys.Setup, db, current, loggerFactory)
         {
             Backgrounder = backgrounder;
             GDB = gdb;
@@ -52,7 +52,7 @@ namespace TraffkPortal.Controllers
         [Route("/Jobs")]
         public IActionResult Jobs(string sortCol, string sortDir, int? page, int? pageSize)
         {
-            var items = GDB.Job.Where(j => j.TenantId == TenantId);
+            var items = GDB.Job.AsNoTracking().Where(j => j.TenantId == TenantId);
             items = ApplyBrowse(items, sortCol ?? nameof(Job.CreatedAt),
                 sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
             return View(ViewNames.JobList, items);

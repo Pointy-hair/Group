@@ -416,7 +416,7 @@ $(document).ready(function () {
         if ($(window).width() > 768) {
             if (jQuery('#page-wrapper').hasClass('nav-open')) {
                 jQuery('#page-wrapper').removeClass('nav-open');
-            } else if (isUserLoggedIn) {
+            } else if (isUserLoggedIn && !jQuery('#page-wrapper').hasClass('nav-open')) {
                 jQuery('#page-wrapper').addClass('nav-open');
             }
         }
@@ -425,6 +425,12 @@ $(document).ready(function () {
     //If clicking outside navbar it will collapse and script shift contents up
     jQuery(document).mouseup(function (e) {
         var container = jQuery('ul.nav.navbar-left.top-nav');
+        var logoContainer = jQuery('a.dropdown-toggle.navbar-brand.img-logo');
+        var logo = jQuery('#client-logo');
+
+        if (logoContainer.is(e.target) || logo.is(e.target)) {
+            return;
+        }
         if (!container.is(e.target)) {
             jQuery('#page-wrapper').removeClass('nav-open');
         }

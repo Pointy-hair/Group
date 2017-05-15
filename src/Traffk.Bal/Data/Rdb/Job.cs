@@ -1,4 +1,5 @@
-﻿using Hangfire.States;
+﻿using System;
+using Hangfire.States;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using Traffk.Bal.BackgroundJobs;
@@ -7,7 +8,10 @@ namespace Traffk.Bal.Data.Rdb
 {
     public partial class Job
     {
-        private static readonly HashSet<string> CancellableStateNames = new HashSet<string> { FailedState.StateName, SucceededState.StateName, DeletedState.StateName };
+        [NotMapped]
+        public DateTime CreatedAtUtc => CreatedAt;
+
+        private static readonly HashSet<string> CancellableStateNames = new HashSet<string> { EnqueuedState.StateName, ProcessingState.StateName, ScheduledState.StateName };
 
         [NotMapped]
         public bool CanBeCancelled => CancellableStateNames.Contains(this.StateName);

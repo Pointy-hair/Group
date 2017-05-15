@@ -42,7 +42,8 @@ namespace Traffk.Bal.ApplicationParts
                         var j = this.Activator.Runner.GDB.Job.Find(jobId);
                         if (j != null)
                         {
-                            TenantId = j.TenantId; 
+                            TenantId = j.TenantId;
+                            JobId = j.Id;
                         }
                     }
                     catch (Exception) { }

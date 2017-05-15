@@ -367,21 +367,22 @@ namespace Traffk.Tableau.Tests.REST
                 Assert.IsNotNull(dataTable);
             }
 
-			[Ignore]
+            [Ignore]
             [TestMethod]
             public async Task WhenSignedInGetUnderlyingDataWithManyRows()
             {
+                var testTimeout = TimeSpan.FromHours(4); //Required so that test itself doesn't timeout
+
                 var trustedTicketGetter = new TrustedTicketGetter(Options, TableauAdminCredentials, TableauTenantFinder);
                 var testService = new TableauVisualServices(trustedTicketGetter, Options) as ITableauVisualServices;
 
                 var worksheetName = "Avg Risk by Mbr Relationship";
 
                 var testGetUnderlyingDataOptions = new GetUnderlyingDataOptions { WorksheetName = worksheetName };
-                int timeout = 900000; //900000 ms = 15 minutes
                 var task = testService.GetUnderlyingDataAsync(testGetUnderlyingDataOptions, "AverageRiskScore",
                     "1-AverageRiskScore_demo");
 
-                if (await Task.WhenAny(task, Task.Delay(timeout)) == task)
+                if (await Task.WhenAny(task, Task.Delay(testTimeout)) == task)
                 {
                     var data = task.Result;
                     var dataTable = data.ToDataTable();

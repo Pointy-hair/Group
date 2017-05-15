@@ -17,8 +17,7 @@ namespace Traffk.Tableau
 {
     public class TableauVisualServices : ITableauVisualServices
     {
-        //Service is responsible for all Javascript Tableau actions
-        private static readonly TimeSpan GetUnderlyingDataTimeOut = TimeSpan.FromMinutes(15);
+        private static readonly TimeSpan GetUnderlyingDataTimeOut = TimeSpan.FromHours(4);
 
         private readonly ITrustedTicketGetter TrustedTicketGetter;
         private readonly TableauSignInOptions TableauSignInOptions;

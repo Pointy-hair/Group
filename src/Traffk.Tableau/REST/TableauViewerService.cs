@@ -5,6 +5,9 @@ using Traffk.Tableau.REST.RestRequests;
 
 namespace Traffk.Tableau.REST
 {
+    /// <summary>
+    /// TableauViewerService is server implementation of Tableau Javascript API
+    /// </summary>
     public class TableauViewerService : TableauBaseService, ITableauViewerService
     {
         TimeSpan ITableauViewerService.ReportIndexCacheTimeout => Options.ReportIndexCacheTimeout;
