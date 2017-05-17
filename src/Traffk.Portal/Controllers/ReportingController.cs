@@ -1,10 +1,12 @@
-using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
+using System;
 using Serilog;
+using Serilog.Context;
+using Serilog.Core;
+using Serilog.Core.Enrichers;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Permissions;
 using Traffk.Bal.ReportVisuals;
@@ -15,6 +17,7 @@ using TraffkPortal.Controllers;
 using TraffkPortal.Models.ReportingModels;
 using TraffkPortal.Permissions;
 using TraffkPortal.Services;
+using ILogger = Serilog.ILogger;
 
 namespace Traffk.Portal.Controllers
 {
@@ -34,17 +37,17 @@ namespace Traffk.Portal.Controllers
             public const string Report = "Report";
         }
 
+        
         public ReportingController(
             TraffkRdbContext db,
             CurrentContextServices current,
-            ILoggerFactory loggerFactory,
+            ILogger logger,
             ICacher cacher,
             IReportVisualService reportVisualService
         )
-            : base(AspHelpers.MainNavigationPageKeys.Reporting, db, current, loggerFactory, cacher)
+            : base(AspHelpers.MainNavigationPageKeys.Reporting, db, current, logger, cacher)
         {
             ReportVisualService = reportVisualService;
-            AttachLogContextProperty(typeof(EventType).Name, EventType.LoggingEventTypes.Report.ToString());
         }
 
         [Route("/Reporting")]
@@ -74,7 +77,10 @@ namespace Traffk.Portal.Controllers
             {
                 return RedirectToAction(ActionNames.Index);
             }
-            Log.Information(reportVisual.Id.ToString());
+
+            var logger = GetEnrichedLogger(EventType.LoggingEventTypes.ViewedReport);
+            logger.Information(reportVisual.Id.ToString());
+
             var tableauReportViewModel = new TableauReportViewModel(reportVisual);
             return View(tableauReportViewModel);
         }

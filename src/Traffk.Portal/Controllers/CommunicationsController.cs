@@ -1,23 +1,21 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using RevolutionaryStuff.Core;
+using Serilog;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using TraffkPortal.Services;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Authorization;
-using TraffkPortal.Permissions;
-using Traffk.Bal.Permissions;
+using Traffk.Bal.Communications;
+using Traffk.Bal.Data;
 using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Permissions;
 using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
-using RevolutionaryStuff.Core;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Traffk.Bal.Data;
 using TraffkPortal.Models.CommunicationModels;
-using Microsoft.EntityFrameworkCore;
-using System.IO;
-using System;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Traffk.Bal.Communications;
+using TraffkPortal.Permissions;
+using TraffkPortal.Services;
 
 namespace TraffkPortal.Controllers
 {
@@ -72,9 +70,9 @@ namespace TraffkPortal.Controllers
             BlobStorageServices blobs,
             TraffkRdbContext db,
             CurrentContextServices current,
-            ILoggerFactory loggerFactory
+            ILogger logger
             )
-            : base(AspHelpers.MainNavigationPageKeys.Messaging, db, current, loggerFactory)
+            : base(AspHelpers.MainNavigationPageKeys.Messaging, db, current, logger)
         {
             Blobs = blobs;
         }

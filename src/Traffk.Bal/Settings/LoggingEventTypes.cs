@@ -6,7 +6,7 @@ namespace Traffk.Bal.Settings
         public enum LoggingEventTypes
         {
             JobRunner,
-            Report,
+            ViewedReport,
             Account,
             Exception
         }

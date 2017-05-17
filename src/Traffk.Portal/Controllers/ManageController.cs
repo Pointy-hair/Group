@@ -1,14 +1,13 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Serilog;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Traffk.Bal.Data.Rdb;
 using TraffkPortal.Models.ManageViewModels;
 using TraffkPortal.Services;
-using Traffk.Bal.Data.Rdb;
 using TraffkPortal.Services.Sms;
 
 namespace TraffkPortal.Controllers
@@ -46,9 +45,9 @@ namespace TraffkPortal.Controllers
             IEmailSender emailSender,
             ISmsSender smsSender,
             CurrentContextServices current,
-            ILoggerFactory loggerFactory
+            ILogger logger
             )
-            : base(AspHelpers.MainNavigationPageKeys.Manage, db, current, loggerFactory)
+            : base(AspHelpers.MainNavigationPageKeys.Manage, db, current, logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -155,7 +154,7 @@ namespace TraffkPortal.Controllers
 
                 await _userManager.SetTwoFactorEnabledAsync(user, true);
                 await _signInManager.SignInAsync(user, isPersistent: IsSigninPersistent);
-                Log.Information("User enabled two-factor authentication.");
+                Logger.Information("User enabled two-factor authentication.");
             }
             return RedirectToAction(nameof(Index), "Manage");
         }
@@ -171,7 +170,7 @@ namespace TraffkPortal.Controllers
             {
                 await _userManager.SetTwoFactorEnabledAsync(user, false);
                 await _signInManager.SignInAsync(user, isPersistent: IsSigninPersistent);
-                Log.Information("User disabled two-factor authentication.");
+                Logger.Information("User disabled two-factor authentication.");
             }
             return RedirectToAction(nameof(Index), "Manage");
         }
@@ -265,7 +264,7 @@ namespace TraffkPortal.Controllers
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: IsSigninPersistent);
-                    Log.Information("User changed their password successfully.");
+                    Logger.Information("User changed their password successfully.");
                     return RedirectToAction(nameof(Index), new { Message = ManageMessageId.ChangePasswordSuccess });
                 }
                 AddErrors(result);

@@ -33,6 +33,7 @@ using TraffkPortal.Services;
 using TraffkPortal.Services.Logging;
 using TraffkPortal.Services.Sms;
 using TraffkPortal.Services.TenantServices;
+using ILogger = Serilog.ILogger;
 
 namespace TraffkPortal
 {
@@ -41,6 +42,8 @@ namespace TraffkPortal
         public static bool IsSigninPersistent = true;
         private readonly bool RequireHttps;
         private readonly TimeSpan IdleLogout;
+
+        private readonly ILogger Logger;
 
         public Startup(IHostingEnvironment env)
         {
@@ -65,7 +68,7 @@ namespace TraffkPortal
             IdleLogout = Parse.ParseTimeSpan(Configuration["IdleLogout"], TimeSpan.FromMinutes(15));
             TraffkHttpHeadersFilter.IdleLogout = IdleLogout;
 
-            Log.Logger = new LoggerConfiguration()
+            Logger = new LoggerConfiguration()
                     .Enrich.WithProperty("ApplicationName", Configuration["RevolutionaryStuffCoreOptions:ApplicationName"])
                     .Enrich.WithProperty("MachineName", Environment.MachineName)
                     .Enrich.With<EventTimeEnricher>()
@@ -124,7 +127,7 @@ namespace TraffkPortal
             }, ServiceLifetime.Scoped);
 
             services.AddDbContext<TraffkGlobalsContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString(TraffkGlobalsContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Singleton);
+                options.UseSqlServer(Configuration.GetConnectionString(TraffkGlobalsContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Scoped);
 
             services.Configure<IdentityOptions>(options => 
             {
@@ -197,13 +200,15 @@ namespace TraffkPortal
             services.AddScoped<TableauTrustedTicketActionFilter>();
 
             services.Add(new ServiceDescriptor(typeof(ICacher), Cache.DataCacher));
+
+            services.AddScoped<ILogger>(provider => Logger.ForContext<Startup>());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddDebug();
-            loggerFactory.AddSerilog(Log.Logger);
+            loggerFactory.AddSerilog(Logger);
 
             app.UseApplicationInsightsRequestTelemetry();
 

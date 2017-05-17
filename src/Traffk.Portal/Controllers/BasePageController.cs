@@ -1,32 +1,30 @@
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using RevolutionaryStuff.Core;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
-using Traffk.Bal.Data.Rdb;
-using TraffkPortal.Services;
-using System.Linq;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System;
-using static TraffkPortal.AspHelpers;
-using Serilog.Context;
+using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
-using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Serilog;
-using ILogger = Serilog.ILogger;
+using Serilog.Context;
+using Serilog.Core;
+using Serilog.Core.Enrichers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Traffk.Bal;
-using Traffk.Bal.Data;
+using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.ReportVisuals;
+using Traffk.Bal.Settings;
+using TraffkPortal.Services;
+using static TraffkPortal.AspHelpers;
+using ILogger = Serilog.ILogger;
 
 namespace TraffkPortal.Controllers
 {
     public abstract class BasePageController : Controller
     {
         protected readonly CurrentContextServices Current;
-        protected readonly ILogger Logger;
+        protected ILogger Logger;
         protected readonly TraffkRdbContext Rdb;
         protected readonly MainNavigationPageKeys MainNavPageKey;
         protected int TenantId { get { return Current.TenantId;  } }
@@ -108,20 +106,41 @@ namespace TraffkPortal.Controllers
 
         private readonly Stack<IDisposable> LogContextProperties = new Stack<IDisposable>();
 
-        protected void AttachLogContextProperty(string name, object val) => LogContextProperties.Push(LogContext.PushProperty(name, val));
-
         protected ICacher Cacher { get; set; }
 
-        protected BasePageController(MainNavigationPageKeys mainNavPageKey, TraffkRdbContext db, CurrentContextServices current, ILoggerFactory loggerFactory, ICacher cacher = null)
+        protected ILogger GetEnrichedLogger(EventType.LoggingEventTypes eventType)
+        {
+            return GetEnrichedLogger(new ILogEventEnricher[]
+            {
+                new PropertyEnricher(typeof(EventType).Name, eventType.ToString())
+            });
+        }
+
+        protected ILogger GetEnrichedLogger(ILogEventEnricher[] enrichers)
+        {
+            var logger = Logger.ForContext(enrichers);
+            return logger;
+        }
+
+        protected BasePageController(MainNavigationPageKeys mainNavPageKey, 
+            TraffkRdbContext db, 
+            CurrentContextServices current, 
+            ILogger logger, 
+            ICacher cacher = null)
         {
             Requires.NonNull(db, nameof(db));
             Requires.NonNull(current, nameof(current));
-            Requires.NonNull(loggerFactory, nameof(loggerFactory));
+            Requires.NonNull(logger, nameof(logger));
 
             MainNavPageKey = mainNavPageKey;
             Rdb = db;
             Current = current;
-            Logger = Log.Logger;
+
+            Logger = logger.ForContext(new ILogEventEnricher[]
+            {
+                new PropertyEnricher(typeof(Type).Name, this.GetType().Name),
+            });
+
             var u = current.User;
             if (cacher != null)
             {

@@ -371,7 +371,7 @@ namespace Traffk.Tableau.Tests.REST
             [TestMethod]
             public async Task WhenSignedInGetUnderlyingDataWithManyRows()
             {
-                var testTimeout = TimeSpan.FromHours(4); //Required so that test itself doesn't timeout
+                var testTimeout = TimeSpan.FromHours(12); //Required so that test itself doesn't timeout
 
                 var trustedTicketGetter = new TrustedTicketGetter(Options, TableauAdminCredentials, TableauTenantFinder);
                 var testService = new TableauVisualServices(trustedTicketGetter, Options) as ITableauVisualServices;

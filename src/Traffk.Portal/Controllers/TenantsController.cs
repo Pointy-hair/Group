@@ -2,7 +2,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using TraffkPortal.Permissions;
 using TraffkPortal.Models.TenantModels;
 using Traffk.Bal.Settings;
@@ -87,10 +86,10 @@ namespace TraffkPortal.Controllers
             UserManager<ApplicationUser> userManager,
             TraffkRdbContext db,
             CurrentContextServices current,
-            ILoggerFactory loggerFactory,
+            ILogger logger,
             IBackgroundJobClient backgrounder
         )
-            : base(AspHelpers.MainNavigationPageKeys.Setup, db, current, loggerFactory)
+            : base(AspHelpers.MainNavigationPageKeys.Setup, db, current, logger)
         {
             UserManager = userManager;
             Blobs = blobs;
@@ -590,7 +589,7 @@ namespace TraffkPortal.Controllers
                 }
                 catch (Exception e)
                 {
-                    Log.Error(e, "Fiscal Year Settings save error");
+                    Logger.Error(e, "Fiscal Year Settings save error");
                     throw;
                 }
             }

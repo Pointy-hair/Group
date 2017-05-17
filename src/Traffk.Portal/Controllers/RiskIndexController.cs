@@ -1,22 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
-using RevolutionaryStuff.Core.Collections;
 using Serilog;
+using Serilog.Core;
+using Serilog.Core.Enrichers;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Permissions;
 using Traffk.Bal.ReportVisuals;
 using Traffk.Bal.Settings;
 using Traffk.Tableau;
-using Traffk.Tableau.REST;
-using Traffk.Tableau.REST.Models;
 using TraffkPortal.Models.ReportingModels;
 using TraffkPortal.Permissions;
 using TraffkPortal.Services;
@@ -40,14 +33,13 @@ namespace TraffkPortal.Controllers
         public RiskIndexController(
             TraffkRdbContext db,
             CurrentContextServices current,
-            ILoggerFactory loggerFactory,
+            ILogger logger,
             ICacher cacher,
             IReportVisualService reportVisualService
         )
-            : base(AspHelpers.MainNavigationPageKeys.RiskIndex, db, current, loggerFactory, cacher)
+            : base(AspHelpers.MainNavigationPageKeys.RiskIndex, db, current, logger, cacher)
         {
             ReportVisualService = reportVisualService;
-            AttachLogContextProperty(typeof(EventType).Name, EventType.LoggingEventTypes.Report.ToString());
         }
 
         [Route("/RiskIndex")]
@@ -78,7 +70,10 @@ namespace TraffkPortal.Controllers
             {
                 return RedirectToAction(ActionNames.Index);
             }
-            Log.Information(reportVisual.Id.ToString());
+
+            var logger = GetEnrichedLogger(EventType.LoggingEventTypes.ViewedReport);
+            logger.Information(reportVisual.Id.ToString());
+
             var tableauReportViewModel = new TableauReportViewModel(reportVisual);
             return View(tableauReportViewModel);
         }

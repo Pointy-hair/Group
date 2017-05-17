@@ -1,12 +1,12 @@
 ﻿using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using RevolutionaryStuff.Core;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using Traffk.Bal.BackgroundJobs;
 using Traffk.Bal.Data.Rdb;
 using TraffkPortal.Services;
@@ -38,11 +38,11 @@ namespace TraffkPortal.Controllers
         public JobsController(
             TraffkRdbContext db,
             CurrentContextServices current,
-            ILoggerFactory loggerFactory,
+            ILogger logger,
             IBackgroundJobClient backgrounder,
             TraffkGlobalsContext gdb
             )
-            : base(AspHelpers.MainNavigationPageKeys.Setup, db, current, loggerFactory)
+            : base(AspHelpers.MainNavigationPageKeys.Setup, db, current, logger)
         {
             Backgrounder = backgrounder;
             GDB = gdb;
@@ -52,7 +52,7 @@ namespace TraffkPortal.Controllers
         [Route("/Jobs")]
         public IActionResult Jobs(string sortCol, string sortDir, int? page, int? pageSize)
         {
-            var items = GDB.Job.AsNoTracking().Where(j => j.TenantId == TenantId);
+            var items = GDB.Job.Where(j => j.TenantId == TenantId);
             items = ApplyBrowse(items, sortCol ?? nameof(Job.CreatedAt),
                 sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
             return View(ViewNames.JobList, items);

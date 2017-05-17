@@ -1,10 +1,9 @@
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
+using System.Linq;
+using System.Threading.Tasks;
+using Serilog;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Portal.Models.ReportMetadataModels;
 using TraffkPortal;
@@ -25,8 +24,8 @@ namespace Traffk.Portal.Controllers
         public ReportMetadataController( 
             TraffkRdbContext db, 
             CurrentContextServices current, 
-            ILoggerFactory loggerFactory, 
-            ICacher cacher = null) : base(AspHelpers.MainNavigationPageKeys.NotSpecified, db, current, loggerFactory, cacher)
+            ILogger logger, 
+            ICacher cacher = null) : base(AspHelpers.MainNavigationPageKeys.NotSpecified, db, current, logger, cacher)
         {
 
         }

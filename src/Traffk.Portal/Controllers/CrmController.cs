@@ -7,17 +7,21 @@ using Serilog;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Serilog.Core;
+using Serilog.Core.Enrichers;
 using Traffk.Bal;
 using Traffk.Bal.Communications;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Permissions;
 using Traffk.Bal.ReportVisuals;
+using Traffk.Bal.Settings;
 using Traffk.Tableau;
 using TraffkPortal.Models;
 using TraffkPortal.Models.CrmModels;
 using TraffkPortal.Models.ReportingModels;
 using TraffkPortal.Permissions;
 using TraffkPortal.Services;
+using ILogger = Serilog.ILogger;
 
 namespace TraffkPortal.Controllers
 {
@@ -133,11 +137,11 @@ namespace TraffkPortal.Controllers
             IEmailSender emailSender,
             TraffkRdbContext db,
             CurrentContextServices current,
-            ILoggerFactory loggerFactory,
+            ILogger logger,
             ICacher cacher,
             IReportVisualService reportVisualService
             )
-            : base(AspHelpers.MainNavigationPageKeys.CRM, db, current, loggerFactory, cacher)
+            : base(AspHelpers.MainNavigationPageKeys.CRM, db, current, logger, cacher)
         {
             ReportVisualService = reportVisualService;
             EmailSender = emailSender;
@@ -520,7 +524,10 @@ namespace TraffkPortal.Controllers
             {
                 RedirectToAction(ActionNames.ContactBackground);
             }
-            Log.Information(reportVisual.Id + " ContactId: " + contactId);
+
+            var logger = GetEnrichedLogger(EventType.LoggingEventTypes.ViewedReport);
+            logger.Information(reportVisual.Id + " ContactId: " + contactId);
+
             var tableauReportViewModel = new TableauReportViewModel(reportVisual);
             return View(tableauReportViewModel);
         }

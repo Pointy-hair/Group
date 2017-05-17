@@ -1,13 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using RevolutionaryStuff.Core.Caching;
+using System;
+using Serilog;
 using Traffk.Bal.Data;
 using Traffk.Bal.Data.Rdb;
 using TraffkPortal.Models.ErrorModels;
@@ -37,10 +33,10 @@ namespace TraffkPortal.Controllers
         public ErrorController(
             TraffkRdbContext db,
             CurrentContextServices current,
-            ILoggerFactory loggerFactory,
+            ILogger logger,
             IHostingEnvironment hostingEnvironment
         )
-            : base(AspHelpers.MainNavigationPageKeys.Main, db, current, loggerFactory)
+            : base(AspHelpers.MainNavigationPageKeys.Main, db, current, logger)
         {
             HostingEnvironment_p = hostingEnvironment;
         }

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using RevolutionaryStuff.Core;
 using System;
 using System.Linq;
@@ -16,6 +15,7 @@ using TraffkPortal.Services;
 using TraffkPortal.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Serilog;
 using Traffk.Bal.Communications;
 using static TraffkPortal.AspHelpers;
 
@@ -60,8 +60,8 @@ namespace TraffkPortal.Controllers
             UserManager<ApplicationUser> userManager,
             TraffkRdbContext db, 
             CurrentContextServices current, 
-            ILoggerFactory loggerFactory)
-            : base(AspHelpers.MainNavigationPageKeys.Setup, db, current, loggerFactory)
+            ILogger logger)
+            : base(AspHelpers.MainNavigationPageKeys.Setup, db, current, logger)
         {
             EmailSender = emailSender;
             UserClaimsPrincipalFactory = userClaimsPrincipalFactory;

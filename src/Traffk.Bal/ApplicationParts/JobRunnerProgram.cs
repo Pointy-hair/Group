@@ -91,18 +91,20 @@ namespace Traffk.Bal.ApplicationParts
             services.Configure<TableauAdminCredentials>(Configuration.GetSection(nameof(TableauAdminCredentials)));
             services.AddScoped<ITableauAdminService, TableauAdminService>();
 
-            services.AddScoped<ILogger, Logger>(logger => new LoggerConfiguration()
-                    .Enrich.WithProperty("ApplicationName", Configuration["RevolutionaryStuffCoreOptions:ApplicationName"])
-                    .Enrich.WithProperty("MachineName", Environment.MachineName)
-                    .Enrich.With<EventTimeEnricher>()
-                    .MinimumLevel.Verbose()
-                    .Enrich.FromLogContext()
-                    .WriteTo.Trace()
-                    .WriteTo.AzureTableStorageWithProperties(Configuration["BlobStorageServicesOptions:ConnectionString"],
-                        storageTableName: Configuration["Serilog:TableName"],
-                        writeInBatches: Parse.ParseBool(Configuration["Serilog:WriteInBatches"], true),
-                        period: Parse.ParseTimeSpan(Configuration["Serilog:LogInterval"], TimeSpan.FromSeconds(2)))
-                    .CreateLogger());
+            var logger = new LoggerConfiguration()
+                .Enrich.WithProperty("ApplicationName", Configuration["RevolutionaryStuffCoreOptions:ApplicationName"])
+                .Enrich.WithProperty("MachineName", Environment.MachineName)
+                .Enrich.With<EventTimeEnricher>()
+                .MinimumLevel.Verbose()
+                .Enrich.FromLogContext()
+                .WriteTo.Trace()
+                .WriteTo.AzureTableStorageWithProperties(Configuration["BlobStorageServicesOptions:ConnectionString"],
+                    storageTableName: Configuration["Serilog:TableName"],
+                    writeInBatches: Parse.ParseBool(Configuration["Serilog:WriteInBatches"], true),
+                    period: Parse.ParseTimeSpan(Configuration["Serilog:LogInterval"], TimeSpan.FromSeconds(2)))
+                .CreateLogger();
+
+            services.AddScoped<ILogger>(provider => logger.ForContext<JobRunnerProgram>());
         }
     }
 }

@@ -1,21 +1,19 @@
-﻿using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Logging;
-using TraffkPortal.Models.AccountViewModels;
-using TraffkPortal.Services;
-using Traffk.Bal.Data.Rdb;
 using RevolutionaryStuff.Core;
 using System;
-using Microsoft.AspNetCore.Http;
-using Serilog;
-using TraffkPortal.Services.Sms;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using Traffk.Bal.Communications;
-using Traffk.Bal.Settings;
+using Traffk.Bal.Data.Rdb;
+using TraffkPortal.Models.AccountViewModels;
+using TraffkPortal.Services;
+using TraffkPortal.Services.Sms;
+using ILogger = Serilog.ILogger;
 
 namespace TraffkPortal.Controllers
 {
@@ -42,16 +40,15 @@ namespace TraffkPortal.Controllers
             IEmailSender emailSender,
             ISmsSender smsSender,
             CurrentContextServices current,
-            ILoggerFactory loggerFactory
+            ILogger logger
             )
-            : base(AspHelpers.MainNavigationPageKeys.Manage, db, current, loggerFactory)
+            : base(AspHelpers.MainNavigationPageKeys.Manage, db, current, logger)
         {
             UserManager = userManager;
             SignInManager = signInManager;
             EmailSender = emailSender;
             SmsSender = smsSender;
             IsSigninPersistent = Startup.IsSigninPersistent;
-            AttachLogContextProperty(typeof(EventType).Name, EventType.LoggingEventTypes.Account.ToString());
         }
 
         //
@@ -101,7 +98,7 @@ namespace TraffkPortal.Controllers
                             }
                         }
 
-                        Log.Information("User logged in.");
+                        Logger.Information("User logged in.");
 
                         Uri u;
                         if (Uri.TryCreate(returnUrl, UriKind.Absolute, out u))
@@ -127,7 +124,7 @@ namespace TraffkPortal.Controllers
 
                     if (result.IsLockedOut)
                     {
-                        Log.Information("User account locked out.");
+                        Logger.Information("User account locked out.");
                         return View("Lockout");
                     }
 
@@ -191,7 +188,7 @@ namespace TraffkPortal.Controllers
                     {
                         await SignInManager.SignInAsync(user, isPersistent: IsSigninPersistent);
                     }
-                    Log.Information("User created a new account with password.");
+                    Logger.Information("User created a new account with password.");
                     return RedirectToLocal(returnUrl);
                 }
                 AddErrors(result);
@@ -206,7 +203,7 @@ namespace TraffkPortal.Controllers
         public async Task<IActionResult> InactivityLogOff()
         {
             await SignInManager.SignOutAsync();
-            Log.Information("User logged out.");
+            Logger.Information("User logged out.");
             var returnUrl = HttpContext.Request.Headers[WebHelpers.HeaderStrings.Referer][0];
             return RedirectToAction(nameof(Login), new { returnUrl = returnUrl });
         }
@@ -218,7 +215,7 @@ namespace TraffkPortal.Controllers
         public async Task<IActionResult> LogOff()
         {
             await SignInManager.SignOutAsync();
-            Log.Information("User logged out.");
+            Logger.Information("User logged out.");
             return RedirectToHome();
         }
 
@@ -256,7 +253,7 @@ namespace TraffkPortal.Controllers
             var result = await SignInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: IsSigninPersistent);
             if (result.Succeeded)
             {
-                Log.Information("User logged in with {Name} provider.", info.LoginProvider);
+                Logger.Information("User logged in with {Name} provider.", info.LoginProvider);
                 return RedirectToLocal(returnUrl);
             }
             if (result.RequiresTwoFactor)
@@ -300,7 +297,7 @@ namespace TraffkPortal.Controllers
                     if (result.Succeeded)
                     {
                         await SignInManager.SignInAsync(user, isPersistent: IsSigninPersistent);
-                        Log.Information("User created an account using {Name} provider.", info.LoginProvider);
+                        Logger.Information("User created an account using {Name} provider.", info.LoginProvider);
                         return RedirectToLocal(returnUrl);
                     }
                 }
@@ -572,7 +569,7 @@ namespace TraffkPortal.Controllers
             }
             if (result.IsLockedOut)
             {
-                Log.Warning("User account locked out.");
+                Logger.Warning("User account locked out.");
                 return View("Lockout");
             }
             else

@@ -1,15 +1,15 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using RevolutionaryStuff.Core;
+using Serilog;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using TraffkPortal.Models.RoleModels;
-using RevolutionaryStuff.Core;
-using TraffkPortal.Permissions;
-using Microsoft.AspNetCore.Authorization;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Permissions;
+using TraffkPortal.Models.RoleModels;
+using TraffkPortal.Permissions;
 using TraffkPortal.Services;
 using static TraffkPortal.AspHelpers;
 
@@ -34,9 +34,9 @@ namespace TraffkPortal.Controllers
         public RolesController(
             TraffkRdbContext db,
             CurrentContextServices current,
-            ILoggerFactory loggerFactory
+            ILogger logger
         )
-            : base(AspHelpers.MainNavigationPageKeys.Setup, db, current, loggerFactory)
+            : base(AspHelpers.MainNavigationPageKeys.Setup, db, current, logger)
         { }
 
         [ActionName(ActionNames.Index)]

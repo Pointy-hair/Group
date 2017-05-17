@@ -11,6 +11,7 @@ using TraffkPortal.Services;
 using TraffkPortal.Permissions;
 using Traffk.Bal.Permissions;
 using Traffk.Tableau;
+using ILogger = Serilog.ILogger;
 
 namespace TraffkPortal.Controllers
 {
@@ -27,9 +28,9 @@ namespace TraffkPortal.Controllers
         public HomeController(
             TraffkRdbContext db,
             CurrentContextServices current,
-            ILoggerFactory loggerFactory
+            ILogger logger
             )
-            : base(AspHelpers.MainNavigationPageKeys.Main, db, current, loggerFactory)
+            : base(AspHelpers.MainNavigationPageKeys.Main, db, current, logger)
         { }
 
         [ActionName(ActionNames.Index)]

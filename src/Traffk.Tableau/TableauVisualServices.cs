@@ -17,7 +17,7 @@ namespace Traffk.Tableau
 {
     public class TableauVisualServices : ITableauVisualServices
     {
-        private static readonly TimeSpan GetUnderlyingDataTimeOut = TimeSpan.FromHours(4);
+        private static readonly TimeSpan GetUnderlyingDataTimeOut = TimeSpan.FromHours(12);
 
         private readonly ITrustedTicketGetter TrustedTicketGetter;
         private readonly TableauSignInOptions TableauSignInOptions;

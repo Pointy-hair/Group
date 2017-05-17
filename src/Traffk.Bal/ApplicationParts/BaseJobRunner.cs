@@ -6,6 +6,7 @@ using System.Threading;
 using Newtonsoft.Json;
 using Serilog;
 using Serilog.Core;
+using Serilog.Core.Enrichers;
 using Serilog.Events;
 using Traffk.Bal.Data.Rdb;
 using ILogger = Serilog.ILogger;
@@ -36,11 +37,12 @@ namespace Traffk.Bal.ApplicationParts
 
             JobId = jobRunnerProgram.JobId ?? 0;
 
-            Logger = new LoggerConfiguration().
-                Enrich.WithProperty(nameof(InstanceId), InstanceId).
-                Enrich.WithProperty("JobId", JobId).
-                Enrich.WithProperty("Type", this.GetType().Name).
-                WriteTo.Logger(logger).CreateLogger();
+            Logger = logger.ForContext(new ILogEventEnricher[]
+            {
+                new PropertyEnricher(nameof(InstanceId), InstanceId),
+                new PropertyEnricher(nameof(JobId), JobId),
+                new PropertyEnricher(typeof(Type).Name, this.GetType().Name),
+            });
 
             Logger.Information(ConstructedText);
         }
