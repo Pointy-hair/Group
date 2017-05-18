@@ -395,5 +395,36 @@ namespace Traffk.Tableau.Tests.REST
                 }
             }
         }
+
+
+        [TestClass]
+        public class GetPdfMethodTests : TableauRestServiceTests
+        {
+            [Ignore]
+            [TestMethod]
+            public async Task WhenSignedInGetPdf()
+            {
+
+                var trustedTicketGetter = new TrustedTicketGetter(Options, TableauAdminCredentials, TableauTenantFinder);
+                var testService = new TableauVisualServices(trustedTicketGetter, Options) as ITableauVisualServices;
+
+                var worksheetName = "Average Risk Dashboard";
+
+                var testGetPdfOptions = new GetPdfOptions() { WorksheetName = worksheetName };
+
+                var pdfBytes = await testService.GetPdfAsync(testGetPdfOptions, "AverageRiskMap","AverageRiskDashboard");
+
+                Assert.IsNotNull(pdfBytes);
+
+                var tempPath = Path.GetTempPath() + @"TableauPDFTestDownload";
+                Directory.CreateDirectory(tempPath); //Doesn't create if it already exists
+
+                var dateTime = DateTime.UtcNow.ToString().RemoveSpecialCharacters();
+
+                var tempFilePath = tempPath + $@"\test-{dateTime}.pdf";
+
+                File.WriteAllBytes(tempFilePath, pdfBytes);
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -22,7 +23,8 @@ namespace Traffk.Tableau
         private readonly ITrustedTicketGetter TrustedTicketGetter;
         private readonly TableauSignInOptions TableauSignInOptions;
 
-        public TableauVisualServices(ITrustedTicketGetter trustedTicketGetter, IOptions<TableauSignInOptions> tableauSignInOptions)
+        public TableauVisualServices(ITrustedTicketGetter trustedTicketGetter,
+            IOptions<TableauSignInOptions> tableauSignInOptions)
         {
             Requires.NonNull(trustedTicketGetter, nameof(trustedTicketGetter));
             Requires.NonNull(tableauSignInOptions, nameof(tableauSignInOptions));
@@ -35,13 +37,16 @@ namespace Traffk.Tableau
             (await TrustedTicketGetter.AuthorizeAsync()).Token;
 
         [Produces("text/html")]
-        async Task<HttpContent> ITableauVisualServices.GetVisualization(string workbook, string view, string trustedTicket)
+        async Task<HttpContent> ITableauVisualServices.GetVisualization(string workbook, string view,
+            string trustedTicket)
         {
             using (var httpClient = new HttpClient())
             {
                 var uri = new Uri($"{TableauSignInOptions.TrustedUrl}{trustedTicket}/views/{workbook}/{view}");
-                httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/html,application/xhtml+xml,application/xml");
-                httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:19.0) Gecko/20100101 Firefox/19.0");
+                httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept",
+                    "text/html,application/xhtml+xml,application/xml");
+                httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent",
+                    "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:19.0) Gecko/20100101 Firefox/19.0");
                 httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Charset", "ISO-8859-1");
 
                 var response = await httpClient.GetAsync(uri);
@@ -51,11 +56,21 @@ namespace Traffk.Tableau
             }
         }
 
-        private static readonly Regex CurrentWorkbookIdExpr = new Regex(@"\Wcurrent_workbook_id:\s*""(\d+)""", RegexOptions.Compiled);
-        private static readonly Regex CurrentViewIdExpr = new Regex(@"\Wcurrent_view_id:\s*""(\d+)""", RegexOptions.Compiled);
+        private static readonly Regex CurrentWorkbookIdExpr = new Regex(@"\Wcurrent_workbook_id:\s*""(\d+)""",
+            RegexOptions.Compiled);
+
+        private static readonly Regex CurrentViewIdExpr = new Regex(@"\Wcurrent_view_id:\s*""(\d+)""",
+            RegexOptions.Compiled);
+
         private static readonly Regex SheetIdExpr = new Regex(@"\WsheetId:\s*""(\d+)""", RegexOptions.Compiled);
-        private static readonly Regex LastUpdatedAtExpr = new Regex(@"lastUpdatedAt\x22\x3A(\d+),", RegexOptions.Compiled);
+
+        private static readonly Regex LastUpdatedAtExpr = new Regex(@"lastUpdatedAt\x22\x3A(\d+),",
+            RegexOptions.Compiled);
+
         private static readonly Regex LayoutIdExpr = new Regex(@"""layoutId""\s*:\s*""(\d+)""", RegexOptions.Compiled);
+
+        private static readonly Regex PdfTempFileKeyExpr = new Regex(@"""tempfileKey""\s*:\s*""(\d+)""", RegexOptions.Compiled);
+
 
         private class StickySessionKey
         {
@@ -69,7 +84,8 @@ namespace Traffk.Tableau
             public string workbookId { get; set; }
         }
 
-        async Task<UnderlyingDataTable> ITableauVisualServices.GetUnderlyingDataAsync(GetUnderlyingDataOptions options, string workbookName, string viewName)
+        async Task<UnderlyingDataTable> ITableauVisualServices.GetUnderlyingDataAsync(GetUnderlyingDataOptions options,
+            string workbookName, string viewName)
         {
             var token = (await TrustedTicketGetter.AuthorizeAsync()).Token;
             var handler = new HttpClientHandler
@@ -79,9 +95,13 @@ namespace Traffk.Tableau
             };
             using (var embedClient = new HttpClient(handler))
             {
-                var uri = new Uri($"{TableauSignInOptions.Url}/trusted/{token}/views/{workbookName}/{viewName}?:size=1610,31&:embed=y&:showVizHome=n&:jsdebug=y&:bootstrapWhenNotified=y&:tabs=n&:apiID=host0");
-                embedClient.DefaultRequestHeaders.TryAddWithoutValidation("User Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36");
-                embedClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+                var uri =
+                    new Uri(
+                        $"{TableauSignInOptions.Url}/trusted/{token}/views/{workbookName}/{viewName}?:size=1610,31&:embed=y&:showVizHome=n&:jsdebug=y&:bootstrapWhenNotified=y&:tabs=n&:apiID=host0");
+                embedClient.DefaultRequestHeaders.TryAddWithoutValidation("User Agent",
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36");
+                embedClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept",
+                    "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
                 embedClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Encoding", "gzip, deflate, sdch, br");
                 embedClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Language", "en-US,en;q=0.8");
                 var response = await embedClient.GetAsync(uri);
@@ -97,7 +117,8 @@ namespace Traffk.Tableau
                     using (var bootstrapClient = new HttpClient(handler))
                     {
                         bootstrapClient.DefaultRequestHeaders.Referrer = uri;
-                        bootstrapClient.DefaultRequestHeaders.TryAddWithoutValidation("X-Tsi-Active-Tab", options.WorksheetName);
+                        bootstrapClient.DefaultRequestHeaders.TryAddWithoutValidation("X-Tsi-Active-Tab",
+                            options.WorksheetName);
                         var d = new Dictionary<string, string>();
                         d["worksheetPortSize"] = "{\"w\":500,\"h\":440}";
                         d["dashboardPortSize"] = "{\"w\":500,\"h\":440}";
@@ -109,8 +130,15 @@ namespace Traffk.Tableau
                         d["devicePixelRatio"] = "2";
                         d["clientRenderPixelLimit"] = "25000000";
                         d["sheet_id"] = options.WorksheetName;
-                        d["showParams"] = "{\"revertType\":null,\"refresh\":false,\"checkpoint\":false,\"sheetName\":\"\",\"unknownParams\":\"\",\"layoutId\":\"\"}";
-                        d["stickySessionKey"] = new StickySessionKey { lastUpdatedAt = lastUpdatedAt, viewId = currentViewId, workbookId = currentWorkbookId }.ToJson();
+                        d["showParams"] =
+                            "{\"revertType\":null,\"refresh\":false,\"checkpoint\":false,\"sheetName\":\"\",\"unknownParams\":\"\",\"layoutId\":\"\"}";
+                        d["stickySessionKey"] =
+                            new StickySessionKey
+                            {
+                                lastUpdatedAt = lastUpdatedAt,
+                                viewId = currentViewId,
+                                workbookId = currentWorkbookId
+                            }.ToJson();
                         d["filterTileSize"] = "200";
                         d["workbookLocale"] = "";
                         d["locale"] = "en_US";
@@ -119,7 +147,11 @@ namespace Traffk.Tableau
                         d[":session_feature_flags"] = "{}";
                         d["keychain_version"] = "1";
                         var content = new FormUrlEncodedContent(d);
-                        response = await bootstrapClient.PostAsync(new Uri($"{TableauSignInOptions.Url}/vizql/w/{workbookName}/v/{viewName}/bootstrapSession/sessions/{sessionId}"), content);
+                        response =
+                            await bootstrapClient.PostAsync(
+                                new Uri(
+                                    $"{TableauSignInOptions.Url}/vizql/w/{workbookName}/v/{viewName}/bootstrapSession/sessions/{sessionId}"),
+                                content);
                         Stuff.Noop(response);
                         using (var postLoadOperationsClient = new HttpClient(handler))
                         {
@@ -133,14 +165,23 @@ namespace Traffk.Tableau
                             response = await postLoadOperationsClient.GetAsync(new Uri($"{Options.Url}/vizql/w/{workbookName}/v/{viewName}/performPostLoadOperations/sessions/{sessionId}/layouts/{layoutId}/?sheet_id={sheetId}"));
                             Stuff.Noop(response);
                             */
-                            using (var getUnderlyingDataClient = new HttpClient(handler) {Timeout = GetUnderlyingDataTimeOut })
+                            using (
+                                var getUnderlyingDataClient = new HttpClient(handler)
+                                {
+                                    Timeout = GetUnderlyingDataTimeOut
+                                })
                             {
                                 getUnderlyingDataClient.DefaultRequestHeaders.Referrer = uri;
-                                getUnderlyingDataClient.DefaultRequestHeaders.TryAddWithoutValidation("Origin", uri.GetComponents(UriComponents.SchemeAndServer, UriFormat.SafeUnescaped));
-                                getUnderlyingDataClient.DefaultRequestHeaders.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/javascript"));
-                                getUnderlyingDataClient.DefaultRequestHeaders.TryAddWithoutValidation("X-Tsi-Supports-Accepted", "true");
-                                getUnderlyingDataClient.DefaultRequestHeaders.TryAddWithoutValidation("X-Tsi-Active-Tab", options.WorksheetName);
-                                getUnderlyingDataClient.DefaultRequestHeaders.TryAddWithoutValidation("X-Requested-With", "XMLHttpRequest");
+                                getUnderlyingDataClient.DefaultRequestHeaders.TryAddWithoutValidation("Origin",
+                                    uri.GetComponents(UriComponents.SchemeAndServer, UriFormat.SafeUnescaped));
+                                getUnderlyingDataClient.DefaultRequestHeaders.Accept.Add(
+                                    System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/javascript"));
+                                getUnderlyingDataClient.DefaultRequestHeaders.TryAddWithoutValidation(
+                                    "X-Tsi-Supports-Accepted", "true");
+                                getUnderlyingDataClient.DefaultRequestHeaders.TryAddWithoutValidation(
+                                    "X-Tsi-Active-Tab", options.WorksheetName);
+                                getUnderlyingDataClient.DefaultRequestHeaders.TryAddWithoutValidation(
+                                    "X-Requested-With", "XMLHttpRequest");
                                 var mc = new MultipartContent("form-data");
                                 AddStringContent(mc, "dashboard", options.DashboardName);
                                 AddStringContent(mc, "worksheet", options.WorksheetName);
@@ -148,7 +189,11 @@ namespace Traffk.Tableau
                                 AddStringContent(mc, "ignoreAliases", options.IgnoreAliases);
                                 AddStringContent(mc, "ignoreSelection", options.IgnoreSelection);
                                 AddStringContent(mc, "includeAllColumns", options.IncludeAllColumns);
-                                response = await getUnderlyingDataClient.PostAsync(new Uri($"{TableauSignInOptions.Url}/vizql/w/{workbookName}/v/{viewName}/sessions/{sessionId}/commands/tabdoc/get-underlying-data"), mc);
+                                response =
+                                    await getUnderlyingDataClient.PostAsync(
+                                        new Uri(
+                                            $"{TableauSignInOptions.Url}/vizql/w/{workbookName}/v/{viewName}/sessions/{sessionId}/commands/tabdoc/get-underlying-data"),
+                                        mc);
                                 Stuff.Noop(response);
                                 var json = await response.Content.ReadAsStringAsync();
                                 var vcra = JsonConvert.DeserializeObject<VqlCmdResponseWrapper>(json);
@@ -178,5 +223,126 @@ namespace Traffk.Tableau
         private void AddStringContent(MultipartContent m, string name, bool value)
             => AddStringContent(m, name, value ? "true" : "false");
 
+        async Task<byte[]> ITableauVisualServices.GetPdfAsync(GetPdfOptions options, string workbookName, string viewName)
+        {
+            var token = (await TrustedTicketGetter.AuthorizeAsync()).Token;
+            var handler = new HttpClientHandler
+            {
+                CookieContainer = new CookieContainer(),
+                UseCookies = true
+            };
+            using (var embedClient = new HttpClient(handler))
+            {
+                var uri =
+                    new Uri(
+                        $"{TableauSignInOptions.Url}/trusted/{token}/views/{workbookName}/{viewName}?:size=1610,31&:embed=y&:showVizHome=n&:jsdebug=y&:bootstrapWhenNotified=y&:tabs=n&:apiID=host0");
+                embedClient.DefaultRequestHeaders.TryAddWithoutValidation("User Agent",
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36");
+                embedClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept",
+                    "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+                embedClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Encoding", "gzip, deflate, sdch, br");
+                embedClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Language", "en-US,en;q=0.8");
+                var response = await embedClient.GetAsync(uri);
+                IEnumerable<string> values;
+                if (response.Headers.TryGetValues("X-Session-Id", out values))
+                {
+                    var sessionId = values.First();
+                    var clientEmbedResponseString = await response.Content.ReadAsStringAsync();
+                    var currentWorkbookId = CurrentWorkbookIdExpr.GetGroupValue(clientEmbedResponseString);
+                    var currentViewId = CurrentViewIdExpr.GetGroupValue(clientEmbedResponseString);
+                    var sheetId = SheetIdExpr.GetGroupValue(clientEmbedResponseString) ?? options.WorksheetName;
+                    var lastUpdatedAt = LastUpdatedAtExpr.GetGroupValue(clientEmbedResponseString);
+                    using (var bootstrapClient = new HttpClient(handler))
+                    {
+                        bootstrapClient.DefaultRequestHeaders.Referrer = uri;
+                        bootstrapClient.DefaultRequestHeaders.TryAddWithoutValidation("X-Tsi-Active-Tab",
+                            options.WorksheetName);
+                        var d = new Dictionary<string, string>();
+                        d["worksheetPortSize"] = "{\"w\":500,\"h\":440}";
+                        d["dashboardPortSize"] = "{\"w\":500,\"h\":440}";
+                        d["clientDimension"] = "{\"w\":500,\"h\":440}";
+                        d["isBrowserRendering"] = "true";
+                        d["browserRenderingThreshold"] = "100";
+                        d["formatDataValueLocally"] = "false";
+                        d["clientNum"] = "";
+                        d["devicePixelRatio"] = "2";
+                        d["clientRenderPixelLimit"] = "25000000";
+                        d["sheet_id"] = options.WorksheetName;
+                        d["showParams"] =
+                            "{\"revertType\":null,\"refresh\":false,\"checkpoint\":false,\"sheetName\":\"\",\"unknownParams\":\"\",\"layoutId\":\"\"}";
+                        d["stickySessionKey"] =
+                            new StickySessionKey
+                            {
+                                lastUpdatedAt = lastUpdatedAt,
+                                viewId = currentViewId,
+                                workbookId = currentWorkbookId
+                            }.ToJson();
+                        d["filterTileSize"] = "200";
+                        d["workbookLocale"] = "";
+                        d["locale"] = "en_US";
+                        d["language"] = "en";
+                        d["verboseMode"] = "true";
+                        d[":session_feature_flags"] = "{}";
+                        d["keychain_version"] = "1";
+                        var content = new FormUrlEncodedContent(d);
+                        response = await bootstrapClient.PostAsync(new Uri($"{TableauSignInOptions.Url}/vizql/w/{workbookName}/v/{viewName}/bootstrapSession/sessions/{sessionId}"),content);
+                        Stuff.Noop(response);
+                        using (var queuePdfClient = new HttpClient(handler))
+                        {
+                            queuePdfClient.DefaultRequestHeaders.Referrer = uri;
+                            queuePdfClient.DefaultRequestHeaders.TryAddWithoutValidation("Origin",
+                                uri.GetComponents(UriComponents.SchemeAndServer, UriFormat.SafeUnescaped));
+                            queuePdfClient.DefaultRequestHeaders.Accept.Add(
+                                System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/javascript"));
+                            queuePdfClient.DefaultRequestHeaders.TryAddWithoutValidation(
+                                "X-Tsi-Supports-Accepted", "true");
+                            queuePdfClient.DefaultRequestHeaders.TryAddWithoutValidation(
+                                "X-Tsi-Active-Tab", options.WorksheetName);
+                            queuePdfClient.DefaultRequestHeaders.TryAddWithoutValidation(
+                                "X-Requested-With", "XMLHttpRequest");
+                            var pdfFormData = new MultipartContent("form-data");
+
+                            var pdfParams = @"{""currentSheet"":""{{worksheetName}}"",
+							""exportLayoutOptions"":{""pageSizeOption"":""letter"",""pageOrientationOption"":""printer"",""pageScaleMode"":""auto"",""pageScalePercent"":100,""pageFitHorizontal"":1,""pageFitVertical"":1,""imageHeight"":0,""imageWidth"":0},
+							""sheetOptions"":[{""sheet"":""{{worksheetName}}"",""isDashboard"":true,""isStory"":false,""namesOfSubsheets"":[],""isPublished"":true,""baseViewThumbLink"":""/thumb/views/{{workbookName}}/{{viewName}}"",""isSelected"":true,
+							""exportLayoutOptions"":{""pageSizeOption"":""letter"",""pageOrientationOption"":""printer"",""pageScaleMode"":""auto"",""pageScalePercent"":100,""pageFitHorizontal"":1,""pageFitVertical"":1,""imageHeight"":0,""imageWidth"":0}}
+                            ]}";
+
+                            pdfParams = pdfParams.Replace(@"{{worksheetName}}", options.WorksheetName);
+                            pdfParams = pdfParams.Replace(@"{{workbookName}}", workbookName);
+                            pdfParams = pdfParams.Replace(@"{{viewName}}", viewName);
+
+                            AddStringContent(pdfFormData, "pdfExport", pdfParams);
+
+                            //AddStringContent(pdfFormData, "pdfExport", @"{""currentSheet"":""Average Risk Dashboard"",""exportLayoutOptions"":{""pageSizeOption"":""letter"",""pageOrientationOption"":""printer"",""pageScaleMode"":""auto"",""pageScalePercent"":100,""pageFitHorizontal"":1,""pageFitVertical"":1,""imageHeight"":0,""imageWidth"":0},""sheetOptions"":[{""sheet"":""Average Risk Dashboard"",""isDashboard"":true,""isStory"":false,""namesOfSubsheets"":[""AverageRiskState_demo"",""AverageRiskZip_demo""],""isPublished"":true,""baseViewThumbLink"":""/thumb/views/AverageRiskMap/AverageRiskDashboard"",""isSelected"":true,""exportLayoutOptions"":{""pageSizeOption"":""letter"",""pageOrientationOption"":""printer"",""pageScaleMode"":""auto"",""pageScalePercent"":100,""pageFitHorizontal"":1,""pageFitVertical"":1,""imageHeight"":0,""imageWidth"":0}},{""sheet"":""AverageRiskState_demo"",""isDashboard"":false,""isStory"":false,""namesOfSubsheets"":[],""isPublished"":false,""baseViewThumbLink"":"""",""isSelected"":false,""exportLayoutOptions"":{""pageSizeOption"":""letter"",""pageOrientationOption"":""printer"",""pageScaleMode"":""auto"",""pageScalePercent"":100,""pageFitHorizontal"":1,""pageFitVertical"":1,""imageHeight"":0,""imageWidth"":0}},{""sheet"":""AverageRiskZip_demo"",""isDashboard"":false,""isStory"":false,""namesOfSubsheets"":[],""isPublished"":false,""baseViewThumbLink"":"""",""isSelected"":false,""exportLayoutOptions"":{""pageSizeOption"":""letter"",""pageOrientationOption"":""printer"",""pageScaleMode"":""auto"",""pageScalePercent"":100,""pageFitHorizontal"":1,""pageFitVertical"":1,""imageHeight"":0,""imageWidth"":0}}]}");
+
+                            response = await queuePdfClient.PostAsync(new Uri(
+                                $"{TableauSignInOptions.Url}/vizql/w/{workbookName}/v/{viewName}/sessions/{sessionId}/commands/tabsrv/pdf-export-server"),pdfFormData);
+
+                            Stuff.Noop(response);
+                            
+                            var responseString = await response.Content.ReadAsStringAsync();
+                            var tempFileKey = PdfTempFileKeyExpr.GetGroupValue(responseString);
+
+                            using (var downloadPdfClient = new HttpClient(handler))
+                            {
+                                downloadPdfClient.DefaultRequestHeaders.Referrer = uri;
+                                downloadPdfClient.DefaultRequestHeaders.TryAddWithoutValidation(
+                                    "Upgrade-Insecure-Requests", "1");
+                                response =
+                                    await downloadPdfClient.GetAsync(
+                                        new Uri(
+                                            $"{TableauSignInOptions.Url}/vizql/w/{workbookName}/v/{viewName}/tempfile/sessions/{sessionId}/?key={tempFileKey}&keepfile=yes&attachment=yes&download=true"));
+
+                                var pdfBytes = await response.Content.ReadAsByteArrayAsync();
+                                return pdfBytes;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
     }
 }

@@ -525,8 +525,7 @@ namespace TraffkPortal.Controllers
                 RedirectToAction(ActionNames.ContactBackground);
             }
 
-            var logger = GetEnrichedLogger(EventType.LoggingEventTypes.ViewedReport);
-            logger.Information(reportVisual.Id + " ContactId: " + contactId);
+            Logger.Information("{@EventType} {@ReportId} {@ContactId}", EventType.LoggingEventTypes.ViewedReport.ToString(), reportVisual.Id.ToString(), contactId);
 
             var tableauReportViewModel = new TableauReportViewModel(reportVisual);
             return View(tableauReportViewModel);

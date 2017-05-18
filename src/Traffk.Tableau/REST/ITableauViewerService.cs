@@ -59,4 +59,14 @@ namespace Traffk.Tableau.REST
         [JsonProperty("dashboardName")]
         public string DashboardName { get; set; }
     }
+
+    public class GetPdfOptions
+    {
+        [JsonProperty("worksheetName")]
+        public string WorksheetName { get; set; }
+
+        [JsonProperty("dashboardName")]
+        public string DashboardName { get; set; }
+
+    }
 }

@@ -78,8 +78,7 @@ namespace Traffk.Portal.Controllers
                 return RedirectToAction(ActionNames.Index);
             }
 
-            var logger = GetEnrichedLogger(EventType.LoggingEventTypes.ViewedReport);
-            logger.Information(reportVisual.Id.ToString());
+            Logger.Information("{@EventType} {@ReportId}", EventType.LoggingEventTypes.ViewedReport.ToString(), reportVisual.Id.ToString());
 
             var tableauReportViewModel = new TableauReportViewModel(reportVisual);
             return View(tableauReportViewModel);

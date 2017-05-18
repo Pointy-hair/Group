@@ -13,5 +13,7 @@ namespace Traffk.Tableau
 
         Task<UnderlyingDataTable> GetUnderlyingDataAsync(GetUnderlyingDataOptions options, string workbookName,
             string viewName);
+
+        Task<byte[]> GetPdfAsync(GetPdfOptions options, string workbookName, string viewName);
     }
 }
