@@ -223,7 +223,7 @@ namespace Traffk.Tableau
         private void AddStringContent(MultipartContent m, string name, bool value)
             => AddStringContent(m, name, value ? "true" : "false");
 
-        async Task<byte[]> ITableauVisualServices.GetPdfAsync(GetPdfOptions options, string workbookName, string viewName)
+        async Task<DownloadPdfOptions> ITableauVisualServices.CreatePdfAsync(CreatePdfOptions options, string workbookName, string viewName)
         {
             var token = (await TrustedTicketGetter.AuthorizeAsync()).Token;
             var handler = new HttpClientHandler
@@ -258,9 +258,16 @@ namespace Traffk.Tableau
                         bootstrapClient.DefaultRequestHeaders.TryAddWithoutValidation("X-Tsi-Active-Tab",
                             options.WorksheetName);
                         var d = new Dictionary<string, string>();
-                        d["worksheetPortSize"] = "{\"w\":500,\"h\":440}";
-                        d["dashboardPortSize"] = "{\"w\":500,\"h\":440}";
-                        d["clientDimension"] = "{\"w\":500,\"h\":440}";
+
+                        var portSize = "{\"w\":{{pixelWidth}},\"h\":{{pixelHeight}}}";
+                        portSize = portSize.Replace("{{pixelWidth}}", options.PixelWidth.ToString());
+                        portSize = portSize.Replace("{{pixelHeight}}", options.PixelHeight.ToString());
+
+                        d["worksheetPortSize"] = portSize;
+                        d["dashboardPortSize"] = portSize;
+                        d["clientDimension"] = portSize;
+
+
                         d["isBrowserRendering"] = "true";
                         d["browserRenderingThreshold"] = "100";
                         d["formatDataValueLocally"] = "false";
@@ -314,8 +321,6 @@ namespace Traffk.Tableau
 
                             AddStringContent(pdfFormData, "pdfExport", pdfParams);
 
-                            //AddStringContent(pdfFormData, "pdfExport", @"{""currentSheet"":""Average Risk Dashboard"",""exportLayoutOptions"":{""pageSizeOption"":""letter"",""pageOrientationOption"":""printer"",""pageScaleMode"":""auto"",""pageScalePercent"":100,""pageFitHorizontal"":1,""pageFitVertical"":1,""imageHeight"":0,""imageWidth"":0},""sheetOptions"":[{""sheet"":""Average Risk Dashboard"",""isDashboard"":true,""isStory"":false,""namesOfSubsheets"":[""AverageRiskState_demo"",""AverageRiskZip_demo""],""isPublished"":true,""baseViewThumbLink"":""/thumb/views/AverageRiskMap/AverageRiskDashboard"",""isSelected"":true,""exportLayoutOptions"":{""pageSizeOption"":""letter"",""pageOrientationOption"":""printer"",""pageScaleMode"":""auto"",""pageScalePercent"":100,""pageFitHorizontal"":1,""pageFitVertical"":1,""imageHeight"":0,""imageWidth"":0}},{""sheet"":""AverageRiskState_demo"",""isDashboard"":false,""isStory"":false,""namesOfSubsheets"":[],""isPublished"":false,""baseViewThumbLink"":"""",""isSelected"":false,""exportLayoutOptions"":{""pageSizeOption"":""letter"",""pageOrientationOption"":""printer"",""pageScaleMode"":""auto"",""pageScalePercent"":100,""pageFitHorizontal"":1,""pageFitVertical"":1,""imageHeight"":0,""imageWidth"":0}},{""sheet"":""AverageRiskZip_demo"",""isDashboard"":false,""isStory"":false,""namesOfSubsheets"":[],""isPublished"":false,""baseViewThumbLink"":"""",""isSelected"":false,""exportLayoutOptions"":{""pageSizeOption"":""letter"",""pageOrientationOption"":""printer"",""pageScaleMode"":""auto"",""pageScalePercent"":100,""pageFitHorizontal"":1,""pageFitVertical"":1,""imageHeight"":0,""imageWidth"":0}}]}");
-
                             response = await queuePdfClient.PostAsync(new Uri(
                                 $"{TableauSignInOptions.Url}/vizql/w/{workbookName}/v/{viewName}/sessions/{sessionId}/commands/tabsrv/pdf-export-server"),pdfFormData);
 
@@ -324,25 +329,37 @@ namespace Traffk.Tableau
                             var responseString = await response.Content.ReadAsStringAsync();
                             var tempFileKey = PdfTempFileKeyExpr.GetGroupValue(responseString);
 
-                            using (var downloadPdfClient = new HttpClient(handler))
-                            {
-                                downloadPdfClient.DefaultRequestHeaders.Referrer = uri;
-                                downloadPdfClient.DefaultRequestHeaders.TryAddWithoutValidation(
-                                    "Upgrade-Insecure-Requests", "1");
-                                response =
-                                    await downloadPdfClient.GetAsync(
-                                        new Uri(
-                                            $"{TableauSignInOptions.Url}/vizql/w/{workbookName}/v/{viewName}/tempfile/sessions/{sessionId}/?key={tempFileKey}&keepfile=yes&attachment=yes&download=true"));
-
-                                var pdfBytes = await response.Content.ReadAsByteArrayAsync();
-                                return pdfBytes;
-                            }
+                            var downloadPdfOptions = new DownloadPdfOptions(workbookName, viewName, sessionId, uri, tempFileKey, handler.CookieContainer.GetCookies(uri));
+                            return downloadPdfOptions;
                         }
                     }
                 }
             }
 
             return null;
+        }
+
+        async Task<byte[]> ITableauVisualServices.DownloadPdfAsync(DownloadPdfOptions options)
+        {
+
+            var handler = new HttpClientHandler
+            {
+                CookieContainer = options.Cookies,
+                UseCookies = true
+            };
+            using (var downloadPdfClient = new HttpClient(handler))
+            {
+                downloadPdfClient.DefaultRequestHeaders.Referrer = options.ReferrerUri;
+                downloadPdfClient.DefaultRequestHeaders.TryAddWithoutValidation(
+                    "Upgrade-Insecure-Requests", "1");
+                var response =
+                    await downloadPdfClient.GetAsync(
+                        new Uri(
+                            $"{TableauSignInOptions.Url}/vizql/w/{options.WorkbookName}/v/{options.ViewName}/tempfile/sessions/{options.SessionId}/?key={options.TempFileKey}&keepfile=yes&attachment=yes&download=true"));
+
+                var pdfBytes = await response.Content.ReadAsByteArrayAsync();
+                return pdfBytes;
+            }
         }
     }
 }

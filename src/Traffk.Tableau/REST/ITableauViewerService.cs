@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using Newtonsoft.Json;
 using Traffk.Tableau.REST.Models;
 using Traffk.Tableau.REST.RestRequests;
@@ -60,7 +61,7 @@ namespace Traffk.Tableau.REST
         public string DashboardName { get; set; }
     }
 
-    public class GetPdfOptions
+    public class CreatePdfOptions
     {
         [JsonProperty("worksheetName")]
         public string WorksheetName { get; set; }
@@ -68,5 +69,57 @@ namespace Traffk.Tableau.REST
         [JsonProperty("dashboardName")]
         public string DashboardName { get; set; }
 
+        public int PixelWidth { get; set; }
+
+        public int PixelHeight { get; set; }
+    }
+
+    public class DownloadPdfOptions
+    {
+        public DownloadPdfOptions(string workbookName, string viewName, string sessionid, Uri referrerUri, string tempFileKey, CookieCollection cookieCollection)
+        {
+            SessionId = sessionid;
+            WorkbookName = workbookName;
+            ViewName = viewName;
+            ReferrerUri = referrerUri;
+            TempFileKey = tempFileKey;
+            CookiesJson = JsonConvert.SerializeObject(cookieCollection);
+        }
+
+        [JsonProperty("sessionId")]
+        public string SessionId { get; set; }
+
+        [JsonProperty("workbookName")]
+        public string WorkbookName { get; set; }
+
+        [JsonProperty("viewName")]
+        public string ViewName { get; set; }
+
+        [JsonProperty("tempFileKey")]
+        public string TempFileKey { get; set; }
+
+        [JsonProperty("referrerUri")]
+        public Uri ReferrerUri { get; set; }
+
+        [JsonProperty("cookiesJson")]
+        public string CookiesJson { get; set; }
+
+        public CookieContainer Cookies
+        {
+            get
+            {
+                var cookies = JsonConvert.DeserializeObject<Cookie[]>(CookiesJson);
+                var cookieCollection = new CookieCollection();
+                foreach (var cookie in cookies)
+                {
+                    cookieCollection.Add(cookie);
+                }
+
+                var cookieContainer = new CookieContainer();
+                cookieContainer.Add(ReferrerUri, cookieCollection);
+
+                return cookieContainer;
+            }
+        }
     }
 }

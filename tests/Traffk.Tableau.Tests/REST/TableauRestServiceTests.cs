@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
 using Traffk.Tableau.REST;
 using Traffk.Tableau.REST.RestRequests;
@@ -402,17 +403,95 @@ namespace Traffk.Tableau.Tests.REST
         {
             [Ignore]
             [TestMethod]
-            public async Task WhenSignedInGetPdf()
+            public async Task WhenSignedInCreatePdf()
             {
-
                 var trustedTicketGetter = new TrustedTicketGetter(Options, TableauAdminCredentials, TableauTenantFinder);
                 var testService = new TableauVisualServices(trustedTicketGetter, Options) as ITableauVisualServices;
 
                 var worksheetName = "Average Risk Dashboard";
 
-                var testGetPdfOptions = new GetPdfOptions() { WorksheetName = worksheetName };
+                var testGetPdfOptions = new CreatePdfOptions() { WorksheetName = worksheetName, PixelWidth = 1024, PixelHeight = 768 };
 
-                var pdfBytes = await testService.GetPdfAsync(testGetPdfOptions, "AverageRiskMap","AverageRiskDashboard");
+                var downloadPdfOptions = await testService.CreatePdfAsync(testGetPdfOptions, "AverageRiskMap", "AverageRiskDashboard");
+
+                Assert.IsNotNull(downloadPdfOptions);
+            }
+
+            [Ignore]
+            [TestMethod]
+            public async Task WhenSignedInDownloadPdf()
+            {
+                var trustedTicketGetter = new TrustedTicketGetter(Options, TableauAdminCredentials, TableauTenantFinder);
+                var testService = new TableauVisualServices(trustedTicketGetter, Options) as ITableauVisualServices;
+
+                var worksheetName = "Average Risk Dashboard";
+
+                var testGetPdfOptions = new CreatePdfOptions() { WorksheetName = worksheetName, PixelWidth = 1024, PixelHeight = 768 };
+
+                var downloadPdfOptions = await testService.CreatePdfAsync(testGetPdfOptions, "AverageRiskMap","AverageRiskDashboard");
+
+                Assert.IsNotNull(downloadPdfOptions);
+
+                var pdfBytes = await testService.DownloadPdfAsync(downloadPdfOptions);
+
+                Assert.IsNotNull(pdfBytes);
+
+                var tempPath = Path.GetTempPath() + @"TableauPDFTestDownload";
+                Directory.CreateDirectory(tempPath); //Doesn't create if it already exists
+
+                var dateTime = DateTime.UtcNow.ToString().RemoveSpecialCharacters();
+
+                var tempFilePath = tempPath + $@"\test-{dateTime}.pdf";
+
+                File.WriteAllBytes(tempFilePath, pdfBytes);
+            }
+
+            [Ignore]
+            [TestMethod]
+            public async Task WhenGivenJsonObjectDownloadPdf()
+            {
+                var trustedTicketGetter = new TrustedTicketGetter(Options, TableauAdminCredentials, TableauTenantFinder);
+                var testService = new TableauVisualServices(trustedTicketGetter, Options) as ITableauVisualServices;
+
+                var worksheetName = "Average Risk Dashboard";
+
+                var testGetPdfOptions = new CreatePdfOptions() { WorksheetName = worksheetName, PixelWidth = 1024, PixelHeight = 768 };
+
+                var downloadPdfOptions = await testService.CreatePdfAsync(testGetPdfOptions, "AverageRiskMap", "AverageRiskDashboard");
+
+                Assert.IsNotNull(downloadPdfOptions);
+
+                var downloadPdfJsonObject = JsonConvert.SerializeObject(downloadPdfOptions);
+
+                var deserializedPdfOptions = JsonConvert.DeserializeObject<DownloadPdfOptions>(downloadPdfJsonObject);
+
+                var pdfBytes = await testService.DownloadPdfAsync(deserializedPdfOptions);
+
+                Assert.IsNotNull(pdfBytes);
+
+                var tempPath = Path.GetTempPath() + @"TableauPDFTestDownload";
+                Directory.CreateDirectory(tempPath); //Doesn't create if it already exists
+
+                var dateTime = DateTime.UtcNow.ToString().RemoveSpecialCharacters();
+
+                var tempFilePath = tempPath + $@"\test-{dateTime}.pdf";
+
+                File.WriteAllBytes(tempFilePath, pdfBytes);
+            }
+
+            [Ignore]
+            [TestMethod]
+            public async Task WhenGivenStringDownloadPdf()
+            {
+                var trustedTicketGetter = new TrustedTicketGetter(Options, TableauAdminCredentials, TableauTenantFinder);
+                var testService = new TableauVisualServices(trustedTicketGetter, Options) as ITableauVisualServices;
+
+                var testString =
+                    "{\"sessionId\":\"D8FCB32D154543D2A559D333F9D76FC2-0:0\",\"workbookName\":\"AverageRiskMap\",\"viewName\":\"AverageRiskDashboard\",\"tempFileKey\":\"1294393454\",\"referrerUri\":\"https://tableau-dev.traffk.com/trusted/DFJ0lIm3XemqDTDM_hpX4ZGX/views/AverageRiskMap/AverageRiskDashboard?:size=1610,31&:embed=y&:showVizHome=n&:jsdebug=y&:bootstrapWhenNotified=y&:tabs=n&:apiID=host0\",\"cookiesJson\":\"[{\\\"Comment\\\":\\\"\\\",\\\"CommentUri\\\":null,\\\"HttpOnly\\\":true,\\\"Discard\\\":false,\\\"Domain\\\":\\\"tableau-dev.traffk.com\\\",\\\"Expired\\\":false,\\\"Expires\\\":\\\"0001-01-01T00:00:00\\\",\\\"Name\\\":\\\"workgroup_session_id\\\",\\\"Path\\\":\\\"/\\\",\\\"Port\\\":\\\"\\\",\\\"Secure\\\":true,\\\"TimeStamp\\\":\\\"2017-05-18T15:11:54.4239408-07:00\\\",\\\"Value\\\":\\\"uhHuUMYmk7mYzWWr26HI8oememKagKSk\\\",\\\"Version\\\":0},{\\\"Comment\\\":\\\"\\\",\\\"CommentUri\\\":null,\\\"HttpOnly\\\":false,\\\"Discard\\\":false,\\\"Domain\\\":\\\"tableau-dev.traffk.com\\\",\\\"Expired\\\":false,\\\"Expires\\\":\\\"0001-01-01T00:00:00\\\",\\\"Name\\\":\\\"XSRF-TOKEN\\\",\\\"Path\\\":\\\"/\\\",\\\"Port\\\":\\\"\\\",\\\"Secure\\\":true,\\\"TimeStamp\\\":\\\"2017-05-18T15:11:54.4269516-07:00\\\",\\\"Value\\\":\\\"hrYPgkej0VvLonyizHZ9xbMj5QZeldAA\\\",\\\"Version\\\":0},{\\\"Comment\\\":\\\"\\\",\\\"CommentUri\\\":null,\\\"HttpOnly\\\":true,\\\"Discard\\\":false,\\\"Domain\\\":\\\"tableau-dev.traffk.com\\\",\\\"Expired\\\":false,\\\"Expires\\\":\\\"0001-01-01T00:00:00\\\",\\\"Name\\\":\\\"tableau_locale\\\",\\\"Path\\\":\\\"/\\\",\\\"Port\\\":\\\"\\\",\\\"Secure\\\":true,\\\"TimeStamp\\\":\\\"2017-05-18T15:11:54.6386584-07:00\\\",\\\"Value\\\":\\\"en\\\",\\\"Version\\\":0}]\"}";
+
+                var deserializedPdfOptions = JsonConvert.DeserializeObject<DownloadPdfOptions>(testString);
+
+                var pdfBytes = await testService.DownloadPdfAsync(deserializedPdfOptions);
 
                 Assert.IsNotNull(pdfBytes);
 
