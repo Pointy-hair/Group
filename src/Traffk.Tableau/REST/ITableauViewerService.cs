@@ -63,14 +63,29 @@ namespace Traffk.Tableau.REST
 
     public class CreatePdfOptions
     {
+        public CreatePdfOptions(string workbookName, string viewName, string worksheetName, int pixelWidth = 1024,
+            int pixelHeight = 768)
+        {
+            WorkbookName = workbookName;
+            ViewName = viewName;
+            WorksheetName = worksheetName;
+            PixelWidth = pixelWidth;
+            PixelHeight = pixelHeight;
+        }
+
+        [JsonProperty("workbookName")]
+        public string WorkbookName { get; set; }
+
+        [JsonProperty("viewName")]
+        public string ViewName { get; set; }
+
         [JsonProperty("worksheetName")]
         public string WorksheetName { get; set; }
 
-        [JsonProperty("dashboardName")]
-        public string DashboardName { get; set; }
-
+        [JsonProperty("pixelWidth")]
         public int PixelWidth { get; set; }
 
+        [JsonProperty("pixelHeight")]
         public int PixelHeight { get; set; }
     }
 

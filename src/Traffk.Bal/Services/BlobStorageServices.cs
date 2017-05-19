@@ -128,6 +128,40 @@ namespace Traffk.Bal.Services
             };
         }
 
+        public async Task<CloudFilePointer> StoreFileAsync(bool secure, Roots root, byte[] bytes, string name, bool addUniqueRef = false)
+        {
+            var tenantTask = CurrentTenant.GetTenantAsync();
+            var container = GetContainer(secure);
+            var contentType = Path.GetExtension(name);
+            if (addUniqueRef)
+            {
+                name = $"{Path.GetFileNameWithoutExtension(name)}.{Stuff.Random.Next()}{contentType}";
+            }
+            var tenant = await tenantTask;
+            name = ConstructRealName(tenant, root, name);
+            var block = container.GetBlockBlobReference(name);
+            await block.UploadFromByteArrayAsync(bytes, 0, bytes.Length);
+
+            var blob = container.GetBlobReference(name);
+            blob.Properties.ContentType = contentType;
+            blob.Metadata["TenantId"] = tenant.TenantId.ToString();
+            blob.Metadata["TenantName"] = tenant.TenantName;
+            //blob.Metadata["UploadedContentDisposition"] = file.ContentDisposition;
+            blob.Metadata["UploadedFileName"] = name;
+            blob.Metadata["UploadedByUserName"] = CurrentUser.User.UserName;
+            blob.Metadata["UploadedByUserId"] = CurrentUser.User.Id;
+            await blob.SetPropertiesAsync();
+            await blob.SetMetadataAsync();
+            return new CloudFilePointer
+            {
+                CloudFilePointerType = CloudFilePointerTypes.AzureBlob,
+                Uri = block.Uri,
+                Path = name,
+                ContainerName = container.Name,
+                ContentType = contentType
+            };
+        }
+
         public BlobStorageServices(CurrentTenantServices currentTenant, ICurrentUser currentUser, IOptions<BlobStorageServicesOptions> options)
         {
             CurrentTenant = currentTenant;

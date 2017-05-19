@@ -24,6 +24,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.1.14" />
     <PackageReference Include="MSTest.TestFramework" Version="1.1.14" />
+    <PackageReference Include="Serilog.Sinks.AzureTableStorage" Version="3.0.0" />
   </ItemGroup>
 
   <ItemGroup>

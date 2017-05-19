@@ -8,7 +8,8 @@ namespace Traffk.Bal.Settings
             JobRunner,
             ViewedReport,
             Account,
-            Exception
+            Exception,
+            DownloadedReport
         }
     }
 }

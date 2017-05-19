@@ -269,7 +269,7 @@ namespace Traffk.Bal.ReportVisuals
 
         public static string CreateAnchorName(IReportResource resource) => CreateAnchorName(resource.Title);
         public static string CreateAnchorName(IReportVisual visual) => CreateAnchorName(visual.Title);
-        private static string CreateAnchorName(string name) => name.Trim()?.ToLower()?.RemoveSpecialCharacters() ?? "";
+        public static string CreateAnchorName(string name) => name.Trim()?.ToLower()?.RemoveSpecialCharacters() ?? "";
 
     }
 }

@@ -14,7 +14,7 @@ namespace Traffk.Tableau
         Task<UnderlyingDataTable> GetUnderlyingDataAsync(GetUnderlyingDataOptions options, string workbookName,
             string viewName);
 
-        Task<DownloadPdfOptions> CreatePdfAsync(CreatePdfOptions options, string workbookName, string viewName);
+        Task<DownloadPdfOptions> CreatePdfAsync(CreatePdfOptions options);
 
         Task<byte[]> DownloadPdfAsync(DownloadPdfOptions options);
     }

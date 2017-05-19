@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
+using Serilog;
 using Traffk.Tableau.REST;
 using Traffk.Tableau.REST.RestRequests;
 
@@ -18,6 +19,7 @@ namespace Traffk.Tableau.Tests.REST
         public ITableauTenantFinder TableauTenantFinder { get; set; }
         public TableauAdminCredentials TableauAdminCredentials { get; set; }
         public ITableauUserCredentials TableauUserCredentials { get; set; }
+        public ILogger Logger { get; set; }
 
     public TableauRestServiceTests()
         {
@@ -30,6 +32,7 @@ namespace Traffk.Tableau.Tests.REST
                 Password = tableauAdminCredentials.Password
             };
             TableauUserCredentials = MockEnvironment.TableauUserCredentials().Object;
+            Logger = MockEnvironment.CreateTestLogger();
         }
 
         [TestClass]
@@ -334,21 +337,35 @@ namespace Traffk.Tableau.Tests.REST
         [TestClass]
         public class GetUnderlyingDataMethodTests : TableauRestServiceTests
         {
-            [Ignore]
             [TestMethod]
-            public void WhenSignedInGetUnderlyingDataUsingWorksheetName()
+            public async Task WhenSignedInGetUnderlyingDataUsingWorksheetName()
             {
+                var testTimeout = TimeSpan.FromHours(12); //Required so that test itself doesn't timeou
+
                 var trustedTicketGetter = new TrustedTicketGetter(Options, TableauAdminCredentials, TableauTenantFinder);
-                var testService = new TableauVisualServices(trustedTicketGetter, Options) as ITableauVisualServices;
+                var testService = new TableauVisualServices(trustedTicketGetter, Options, Logger) as ITableauVisualServices;
 
                 var worksheetName = "Risk by Occupation";
                 var testGetUnderlyingDataOptions = new GetUnderlyingDataOptions {WorksheetName = worksheetName };
-                var data = testService.GetUnderlyingDataAsync(testGetUnderlyingDataOptions, "RiskIndex-Occupations",
-                    "EmploymentandRisk").ExecuteSynchronously();
-                var dataTable = data.ToDataTable();
 
-                Assert.IsNotNull(data);
-                Assert.IsNotNull(dataTable);
+                var task = testService.GetUnderlyingDataAsync(testGetUnderlyingDataOptions, "RiskIndex-Occupations",
+                    "EmploymentandRisk").ExecuteSynchronously();
+
+                //var task = testService.GetUnderlyingDataAsync(testGetUnderlyingDataOptions, "RiskIndex-Occupations",
+                //    "EmploymentandRisk");
+
+                //if (await Task.WhenAny(task, Task.Delay(testTimeout)) == task)
+                //{
+                //    task.ExecuteSynchronously();
+                //    var data = task.Result;
+                //    var dataTable = data.ToDataTable();
+                //    Assert.IsNotNull(data);
+                //    Assert.IsNotNull(dataTable);
+                //}
+                //else
+                //{
+                //    throw new Exception("Timed Out");
+                //}
             }
 
             [Ignore]
@@ -356,7 +373,7 @@ namespace Traffk.Tableau.Tests.REST
             public void WhenSignedInGetUnderlyingDataUsingDashboardName()
             {
                 var trustedTicketGetter = new TrustedTicketGetter(Options, TableauAdminCredentials, TableauTenantFinder);
-                var testService = new TableauVisualServices(trustedTicketGetter, Options) as ITableauVisualServices;
+                var testService = new TableauVisualServices(trustedTicketGetter, Options, Logger) as ITableauVisualServices;
 
                 var dashboardName = "Employment and Risk";
                 var testGetUnderlyingDataOptions = new GetUnderlyingDataOptions { DashboardName = dashboardName };
@@ -368,14 +385,13 @@ namespace Traffk.Tableau.Tests.REST
                 Assert.IsNotNull(dataTable);
             }
 
-            [Ignore]
             [TestMethod]
             public async Task WhenSignedInGetUnderlyingDataWithManyRows()
             {
                 var testTimeout = TimeSpan.FromHours(12); //Required so that test itself doesn't timeout
 
                 var trustedTicketGetter = new TrustedTicketGetter(Options, TableauAdminCredentials, TableauTenantFinder);
-                var testService = new TableauVisualServices(trustedTicketGetter, Options) as ITableauVisualServices;
+                var testService = new TableauVisualServices(trustedTicketGetter, Options, Logger) as ITableauVisualServices;
 
                 var worksheetName = "Avg Risk by Mbr Relationship";
 
@@ -406,7 +422,7 @@ namespace Traffk.Tableau.Tests.REST
             public async Task WhenSignedInCreatePdf()
             {
                 var trustedTicketGetter = new TrustedTicketGetter(Options, TableauAdminCredentials, TableauTenantFinder);
-                var testService = new TableauVisualServices(trustedTicketGetter, Options) as ITableauVisualServices;
+                var testService = new TableauVisualServices(trustedTicketGetter, Options, Logger) as ITableauVisualServices;
 
                 var worksheetName = "Average Risk Dashboard";
 
@@ -422,7 +438,7 @@ namespace Traffk.Tableau.Tests.REST
             public async Task WhenSignedInDownloadPdf()
             {
                 var trustedTicketGetter = new TrustedTicketGetter(Options, TableauAdminCredentials, TableauTenantFinder);
-                var testService = new TableauVisualServices(trustedTicketGetter, Options) as ITableauVisualServices;
+                var testService = new TableauVisualServices(trustedTicketGetter, Options, Logger) as ITableauVisualServices;
 
                 var worksheetName = "Average Risk Dashboard";
 
@@ -451,7 +467,7 @@ namespace Traffk.Tableau.Tests.REST
             public async Task WhenGivenJsonObjectDownloadPdf()
             {
                 var trustedTicketGetter = new TrustedTicketGetter(Options, TableauAdminCredentials, TableauTenantFinder);
-                var testService = new TableauVisualServices(trustedTicketGetter, Options) as ITableauVisualServices;
+                var testService = new TableauVisualServices(trustedTicketGetter, Options, Logger) as ITableauVisualServices;
 
                 var worksheetName = "Average Risk Dashboard";
 
@@ -484,7 +500,7 @@ namespace Traffk.Tableau.Tests.REST
             public async Task WhenGivenStringDownloadPdf()
             {
                 var trustedTicketGetter = new TrustedTicketGetter(Options, TableauAdminCredentials, TableauTenantFinder);
-                var testService = new TableauVisualServices(trustedTicketGetter, Options) as ITableauVisualServices;
+                var testService = new TableauVisualServices(trustedTicketGetter, Options, Logger) as ITableauVisualServices;
 
                 var testString =
                     "{\"sessionId\":\"D8FCB32D154543D2A559D333F9D76FC2-0:0\",\"workbookName\":\"AverageRiskMap\",\"viewName\":\"AverageRiskDashboard\",\"tempFileKey\":\"1294393454\",\"referrerUri\":\"https://tableau-dev.traffk.com/trusted/DFJ0lIm3XemqDTDM_hpX4ZGX/views/AverageRiskMap/AverageRiskDashboard?:size=1610,31&:embed=y&:showVizHome=n&:jsdebug=y&:bootstrapWhenNotified=y&:tabs=n&:apiID=host0\",\"cookiesJson\":\"[{\\\"Comment\\\":\\\"\\\",\\\"CommentUri\\\":null,\\\"HttpOnly\\\":true,\\\"Discard\\\":false,\\\"Domain\\\":\\\"tableau-dev.traffk.com\\\",\\\"Expired\\\":false,\\\"Expires\\\":\\\"0001-01-01T00:00:00\\\",\\\"Name\\\":\\\"workgroup_session_id\\\",\\\"Path\\\":\\\"/\\\",\\\"Port\\\":\\\"\\\",\\\"Secure\\\":true,\\\"TimeStamp\\\":\\\"2017-05-18T15:11:54.4239408-07:00\\\",\\\"Value\\\":\\\"uhHuUMYmk7mYzWWr26HI8oememKagKSk\\\",\\\"Version\\\":0},{\\\"Comment\\\":\\\"\\\",\\\"CommentUri\\\":null,\\\"HttpOnly\\\":false,\\\"Discard\\\":false,\\\"Domain\\\":\\\"tableau-dev.traffk.com\\\",\\\"Expired\\\":false,\\\"Expires\\\":\\\"0001-01-01T00:00:00\\\",\\\"Name\\\":\\\"XSRF-TOKEN\\\",\\\"Path\\\":\\\"/\\\",\\\"Port\\\":\\\"\\\",\\\"Secure\\\":true,\\\"TimeStamp\\\":\\\"2017-05-18T15:11:54.4269516-07:00\\\",\\\"Value\\\":\\\"hrYPgkej0VvLonyizHZ9xbMj5QZeldAA\\\",\\\"Version\\\":0},{\\\"Comment\\\":\\\"\\\",\\\"CommentUri\\\":null,\\\"HttpOnly\\\":true,\\\"Discard\\\":false,\\\"Domain\\\":\\\"tableau-dev.traffk.com\\\",\\\"Expired\\\":false,\\\"Expires\\\":\\\"0001-01-01T00:00:00\\\",\\\"Name\\\":\\\"tableau_locale\\\",\\\"Path\\\":\\\"/\\\",\\\"Port\\\":\\\"\\\",\\\"Secure\\\":true,\\\"TimeStamp\\\":\\\"2017-05-18T15:11:54.6386584-07:00\\\",\\\"Value\\\":\\\"en\\\",\\\"Version\\\":0}]\"}";

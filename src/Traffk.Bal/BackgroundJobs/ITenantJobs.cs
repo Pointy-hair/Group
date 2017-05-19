@@ -1,4 +1,6 @@
-﻿using Traffk.Bal.Settings;
+﻿using System.Collections.Generic;
+using Traffk.Bal.Settings;
+using Traffk.Tableau.REST;
 using Traffk.Tableau.REST.RestRequests;
 
 namespace Traffk.Bal.BackgroundJobs
@@ -10,5 +12,9 @@ namespace Traffk.Bal.BackgroundJobs
         void CreateTableauTenant(CreateTableauTenantRequest request);
 
         void MigrateTableauDataset(TableauDataMigrationRequest request);
+
+        void CreateTableauPdf(CreatePdfOptions options);
+
+        void DownloadTableauPdfContinuationJob(int jobId);
     }
 }

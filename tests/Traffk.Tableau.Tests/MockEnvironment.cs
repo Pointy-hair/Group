@@ -4,6 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Moq;
+using RevolutionaryStuff.Core;
+using Serilog;
+using ILogger = Serilog.ILogger;
 using Traffk.Tableau.REST.RestRequests;
 
 namespace Traffk.Tableau.Tests
@@ -57,6 +60,16 @@ namespace Traffk.Tableau.Tests
             var tenantFinderMock = new Mock<ITableauTenantFinder>();
             tenantFinderMock.Setup(x => x.GetTenantIdAsync()).Returns(Task.FromResult<string>(null));
             return tenantFinderMock;
+        }
+
+        public static ILogger CreateTestLogger()
+        {
+            return new LoggerConfiguration()
+                    .MinimumLevel.Verbose()
+                    .Enrich.FromLogContext()
+                    .WriteTo.AzureTableStorageWithProperties("DefaultEndpointsProtocol=https;AccountName=devhiptraffk;AccountKey=3AJ7i+qzBaq+WkkUNcAyTlhx1pRrfGg6ZiqZGLZj3Ga7j2cyzwjCpfe7dr2mtIQwn/jDrCf0xxVWrJEGh9l9Yg==;",
+                        storageTableName: "AppLogsDev")
+                    .CreateLogger();
         }
     }
 }

@@ -10,6 +10,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Serilog;
 using Traffk.Tableau.REST;
 using Traffk.Tableau.REST.RestRequests;
 using Traffk.Tableau.VQL;
@@ -22,15 +23,19 @@ namespace Traffk.Tableau
 
         private readonly ITrustedTicketGetter TrustedTicketGetter;
         private readonly TableauSignInOptions TableauSignInOptions;
+        private readonly ILogger Logger;
 
         public TableauVisualServices(ITrustedTicketGetter trustedTicketGetter,
-            IOptions<TableauSignInOptions> tableauSignInOptions)
+            IOptions<TableauSignInOptions> tableauSignInOptions,
+            ILogger logger,
+            BlobStorageServices blobStorageServices)
         {
             Requires.NonNull(trustedTicketGetter, nameof(trustedTicketGetter));
             Requires.NonNull(tableauSignInOptions, nameof(tableauSignInOptions));
 
             TableauSignInOptions = tableauSignInOptions.Value;
             TrustedTicketGetter = trustedTicketGetter;
+            Logger = logger;
         }
 
         async Task<string> ITableauVisualServices.GetTrustedTicket() =>
@@ -153,6 +158,7 @@ namespace Traffk.Tableau
                                     $"{TableauSignInOptions.Url}/vizql/w/{workbookName}/v/{viewName}/bootstrapSession/sessions/{sessionId}"),
                                 content);
                         Stuff.Noop(response);
+                        Logger.Information("Received BootstrapClient Response");
                         using (var postLoadOperationsClient = new HttpClient(handler))
                         {
                             /*
@@ -194,10 +200,14 @@ namespace Traffk.Tableau
                                         new Uri(
                                             $"{TableauSignInOptions.Url}/vizql/w/{workbookName}/v/{viewName}/sessions/{sessionId}/commands/tabdoc/get-underlying-data"),
                                         mc);
+                                Logger.Information("Received GetUnderlyingData Response");
                                 Stuff.Noop(response);
                                 var json = await response.Content.ReadAsStringAsync();
+                                Logger.Information("Json Read String Complete");
                                 var vcra = JsonConvert.DeserializeObject<VqlCmdResponseWrapper>(json);
+                                Logger.Information("Json to VqlCmdResponseWrapper Complete");
                                 var dt = vcra?.vqlCmdResponse?.cmdResultList[0]?.commandReturn?.underlyingDataTable;
+                                Logger.Information("VqlCmdResponseWrapper to Datatable Complete");
                                 return dt;
                             }
                         }
@@ -223,7 +233,7 @@ namespace Traffk.Tableau
         private void AddStringContent(MultipartContent m, string name, bool value)
             => AddStringContent(m, name, value ? "true" : "false");
 
-        async Task<DownloadPdfOptions> ITableauVisualServices.CreatePdfAsync(CreatePdfOptions options, string workbookName, string viewName)
+        async Task<DownloadPdfOptions> ITableauVisualServices.CreatePdfAsync(CreatePdfOptions options)
         {
             var token = (await TrustedTicketGetter.AuthorizeAsync()).Token;
             var handler = new HttpClientHandler
@@ -235,7 +245,7 @@ namespace Traffk.Tableau
             {
                 var uri =
                     new Uri(
-                        $"{TableauSignInOptions.Url}/trusted/{token}/views/{workbookName}/{viewName}?:size=1610,31&:embed=y&:showVizHome=n&:jsdebug=y&:bootstrapWhenNotified=y&:tabs=n&:apiID=host0");
+                        $"{TableauSignInOptions.Url}/trusted/{token}/views/{options.WorkbookName}/{options.ViewName}?:size=1610,31&:embed=y&:showVizHome=n&:jsdebug=y&:bootstrapWhenNotified=y&:tabs=n&:apiID=host0");
                 embedClient.DefaultRequestHeaders.TryAddWithoutValidation("User Agent",
                     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36");
                 embedClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept",
@@ -292,7 +302,7 @@ namespace Traffk.Tableau
                         d[":session_feature_flags"] = "{}";
                         d["keychain_version"] = "1";
                         var content = new FormUrlEncodedContent(d);
-                        response = await bootstrapClient.PostAsync(new Uri($"{TableauSignInOptions.Url}/vizql/w/{workbookName}/v/{viewName}/bootstrapSession/sessions/{sessionId}"),content);
+                        response = await bootstrapClient.PostAsync(new Uri($"{TableauSignInOptions.Url}/vizql/w/{options.WorkbookName}/v/{options.ViewName}/bootstrapSession/sessions/{sessionId}"),content);
                         Stuff.Noop(response);
                         using (var queuePdfClient = new HttpClient(handler))
                         {
@@ -316,20 +326,20 @@ namespace Traffk.Tableau
                             ]}";
 
                             pdfParams = pdfParams.Replace(@"{{worksheetName}}", options.WorksheetName);
-                            pdfParams = pdfParams.Replace(@"{{workbookName}}", workbookName);
-                            pdfParams = pdfParams.Replace(@"{{viewName}}", viewName);
+                            pdfParams = pdfParams.Replace(@"{{workbookName}}", options.WorkbookName);
+                            pdfParams = pdfParams.Replace(@"{{viewName}}", options.ViewName);
 
                             AddStringContent(pdfFormData, "pdfExport", pdfParams);
 
                             response = await queuePdfClient.PostAsync(new Uri(
-                                $"{TableauSignInOptions.Url}/vizql/w/{workbookName}/v/{viewName}/sessions/{sessionId}/commands/tabsrv/pdf-export-server"),pdfFormData);
+                                $"{TableauSignInOptions.Url}/vizql/w/{options.WorkbookName}/v/{options.ViewName}/sessions/{sessionId}/commands/tabsrv/pdf-export-server"),pdfFormData);
 
                             Stuff.Noop(response);
                             
                             var responseString = await response.Content.ReadAsStringAsync();
                             var tempFileKey = PdfTempFileKeyExpr.GetGroupValue(responseString);
 
-                            var downloadPdfOptions = new DownloadPdfOptions(workbookName, viewName, sessionId, uri, tempFileKey, handler.CookieContainer.GetCookies(uri));
+                            var downloadPdfOptions = new DownloadPdfOptions(options.WorkbookName, options.ViewName, sessionId, uri, tempFileKey, handler.CookieContainer.GetCookies(uri));
                             return downloadPdfOptions;
                         }
                     }

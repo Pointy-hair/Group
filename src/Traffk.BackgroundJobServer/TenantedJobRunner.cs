@@ -1,9 +1,16 @@
-﻿using Serilog;
+﻿using System;
+using System.Linq;
+using System.Threading;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using RevolutionaryStuff.Core;
+using Serilog;
 using Traffk.Bal.ApplicationParts;
 using Traffk.Bal.BackgroundJobs;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
+using Traffk.Tableau;
 using Traffk.Tableau.REST;
 using Traffk.Tableau.REST.RestRequests;
 
@@ -14,19 +21,25 @@ namespace Traffk.BackgroundJobServer
         private readonly TraffkRdbContext DB;
         private readonly CurrentTenantServices Current;
         private readonly ITableauAdminService TableauAdminService;
+        private readonly ITableauVisualServices TableauVisualService;
+        private readonly BlobStorageServices BlobStorageService;
 
         public TenantedJobRunner(TraffkRdbContext db, 
             TraffkGlobalsContext globalContext,
             JobRunnerProgram jobRunnerProgram,
             CurrentTenantServices current, 
             ITableauAdminService tableauAdminService,
-            ILogger logger) : base(globalContext, 
+            ILogger logger,
+            ITableauVisualServices tableauVisualService,
+            BlobStorageServices blobStorageService) : base(globalContext, 
                 jobRunnerProgram, 
                 logger)
         {
             DB = db;
             Current = current;
             TableauAdminService = tableauAdminService;
+            TableauVisualService = tableauVisualService;
+            BlobStorageService = blobStorageService;
         }
 
         void ITenantJobs.ReconfigureFiscalYears(FiscalYearSettings settings)
@@ -55,6 +68,33 @@ namespace Traffk.BackgroundJobServer
         void ITenantJobs.MigrateTableauDataset(TableauDataMigrationRequest request)
         {
             TableauAdminService.MigrateDataset(request);
+        }
+
+        void ITenantJobs.CreateTableauPdf(CreatePdfOptions options)
+        {
+            var downloadOptions = TableauVisualService.CreatePdfAsync(options).ExecuteSynchronously();
+            PostResult(downloadOptions);
+        }
+
+        async void ITenantJobs.DownloadTableauPdfContinuationJob(int jobId)
+        {
+            const string pdfFileExtension = ".pdf";
+            string resultData = null;
+            do
+            {
+                var precedingJob = await GlobalContext.Job.AsNoTracking().FirstAsync(x => x.Id == jobId);
+                resultData = precedingJob.ResultData;
+                if (resultData == null)
+                {
+                    Thread.Sleep(TimeSpan.FromMinutes(1));
+                }
+            } while (resultData == null);
+
+            var downloadOptions = JsonConvert.DeserializeObject<DownloadPdfOptions>(resultData);
+            var pdfBytes = await TableauVisualService.DownloadPdfAsync(downloadOptions);
+            var blob = BlobStorageService.StoreFileAsync(true, BlobStorageServices.Roots.User, pdfBytes,
+                $"{downloadOptions.WorkbookName.RemoveSpecialCharacters()}{pdfFileExtension}");
+            PostResult(blob);
         }
     }
 }
