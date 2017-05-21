@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Traffk.Bal.Data;
 using H = cloudscribe.HtmlAgilityPack;
 
@@ -102,6 +103,19 @@ namespace Traffk.Bal
         static TraffkHelpers()
         {
             ThisAssembly = typeof(TraffkHelpers).GetTypeInfo().Assembly;
+        }
+
+        public static int? GetTenantIdOrGlobal(this ITraffkTenantFinder finder)
+        {
+            Requires.NonNull(finder, nameof(finder));
+            try
+            {
+                return finder.GetTenantIdAsync().ExecuteSynchronously();
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

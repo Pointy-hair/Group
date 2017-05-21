@@ -26,6 +26,8 @@ namespace Traffk.Bal.ApplicationParts
         protected readonly TraffkGlobalsContext GlobalContext;
         protected readonly PerformContext PerformContext;
 
+        protected readonly DateTime StartedAtUtc = DateTime.UtcNow;
+
         private static int InstanceId_s;
 
         protected BaseJobRunner(TraffkGlobalsContext globalContext, 

@@ -68,6 +68,8 @@ namespace Traffk.Bal.ApplicationParts
         {
             base.OnConfigureServices(services);
 
+            services.AddOptions();
+
             services.Configure<BlobStorageServices.BlobStorageServicesOptions>(Configuration.GetSection(nameof(BlobStorageServices.BlobStorageServicesOptions)));
 
             services.AddSingleton(this);
@@ -75,13 +77,13 @@ namespace Traffk.Bal.ApplicationParts
             services.AddSingleton<ICurrentUser>(this);
             services.AddScoped<ConfigStringFormatter>();
             services.AddDbContext<TenantRdbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString(TenantRdbContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Singleton);
+                options.UseSqlServer(Configuration.GetConnectionString(TenantRdbContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Scoped);
             services.AddDbContext<TraffkRdbContext>((sp, options) =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString(TraffkRdbContext.DefaultDatabaseConnectionStringName));
             }, ServiceLifetime.Scoped);
             services.AddDbContext<TraffkGlobalsContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString(TraffkGlobalsContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Singleton);
+                options.UseSqlServer(Configuration.GetConnectionString(TraffkGlobalsContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Scoped);
             services.AddScoped<CurrentTenantServices>();
             services.AddScoped<BlobStorageServices>();
             services.Configure<HangfireServerOptions>(Configuration.GetSection(nameof(HangfireServerOptions)));

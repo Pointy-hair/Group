@@ -21,7 +21,14 @@ namespace RevolutionaryStuff.Core
             return !dt.IsWeekday();
         }
 
-        public static string ToRfc7231(this DateTime dt) => dt.ToUniversalTime().ToString("r");
+        public static string ToYYYYMMDD(this DateTime dt)
+            => dt.ToString("yyyyMMdd");
+
+        public static string ToHHMMSS(this DateTime dt)
+            => dt.ToString("HHmmss");
+
+        public static string ToRfc7231(this DateTime dt) 
+            => dt.ToUniversalTime().ToString("r");
 
         public static int Age(this DateTime dt)
         {

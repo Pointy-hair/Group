@@ -29,7 +29,6 @@ namespace RevolutionaryStuff.Core.Streams
         protected override void OnDispose(bool disposing)
         {
             base.OnDispose(disposing);
-            Inner_p.Flush();
             if (!LeaveOpen)
             {
                 Inner_p.Dispose();
@@ -99,6 +98,8 @@ namespace RevolutionaryStuff.Core.Streams
         {
             return new MyStream(this, canRead, canWrite, offset, size);
         }
+
+        public Stream OpenRead() => Create(true, false, 0, -1);
 
         #endregion
 

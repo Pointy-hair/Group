@@ -111,6 +111,49 @@
         <Column name="PropertyValue" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" />
       </Columns>
     </Table>
+    <Table schema="dbo" name="DataSourceFetches" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+      </Properties>
+      <Columns>
+        <Column name="DataSourceFetchId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="DataSourceId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="DataSources" />
+        <Column name="CreatedAtUtc" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())" />
+      </Columns>
+      <Collections>
+        <Collection schema="dbo" table="DataSourceFetchItems" column="DataSourceFetchId" collectionType="actual" />
+      </Collections>
+    </Table>
+    <Table schema="dbo" name="DataSourceFetchItems" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+      </Properties>
+      <Columns>
+        <Column name="DataSourceFetchItemId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="DataSourceFetchId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="dbo" refTable="DataSourceFetches" />
+        <Column name="DataSourceFetchItemType" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80">
+          <Properties>
+            <Property name="EnumType" value="DataSourceFetchItem.DataSourceFetchItemTypes" />
+          </Properties>
+        </Column>
+        <Column name="ParentDataSourceFetchItemId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="DataSourceFetchItems" />
+        <Column name="SameDataSourceReplicatedDataSourceFetchItemId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="dbo" refTable="DataSourceFetchItems" />
+        <Column name="Name" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1024" />
+        <Column name="Size" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" />
+        <Column name="Url" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1024" />
+        <Column name="DataSourceFetchItemProperties" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1">
+          <Properties>
+            <Property name="JsonSettingsClass" value="Bal.Settings.DataSourceFetchItemProperties" />
+          </Properties>
+        </Column>
+      </Columns>
+      <Collections>
+        <Collection schema="dbo" table="DataSourceFetchItems" column="ParentDataSourceFetchItemId" collectionType="actual" />
+        <Collection schema="dbo" table="DataSourceFetchItems" column="SameDataSourceReplicatedDataSourceFetchItemId" collectionType="actual" />
+      </Collections>
+    </Table>
     <Table schema="dbo" name="DataSources" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
@@ -136,6 +179,9 @@
           </Properties>
         </Column>
       </Columns>
+      <Collections>
+        <Collection schema="dbo" table="DataSourceFetches" column="DataSourceId" collectionType="actual" />
+      </Collections>
     </Table>
     <Table schema="dbo" name="ReleaseChanges" tableType="BASE TABLE">
       <Columns>
@@ -531,15 +577,13 @@
       </Args>
       <ResultSets>
         <ResultSet resultSetNumber="0" colCount="0" isError="1">
-          <Error>
-            The metadata could not be determined because statement 'INSERT #sessions
-            (
-            recursion,
-            session_id,
-            request_id,
-            session_number,
-            elapsed' in procedure 'WhoIsActive' uses a temp table.
-          </Error>
+          <Error>The metadata could not be determined because statement 'INSERT #sessions
+		(
+			recursion,
+			session_id,
+			request_id,
+			session_number,
+			elapsed' in procedure 'WhoIsActive' uses a temp table.</Error>
         </ResultSet>
       </ResultSets>
     </Sproc>

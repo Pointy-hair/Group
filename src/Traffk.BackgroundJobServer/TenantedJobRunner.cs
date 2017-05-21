@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -92,7 +91,15 @@ namespace Traffk.BackgroundJobServer
 
             var downloadOptions = JsonConvert.DeserializeObject<DownloadPdfOptions>(resultData);
             var pdfBytes = await TableauVisualService.DownloadPdfAsync(downloadOptions);
-            var blob = BlobStorageService.StoreFileAsync(true, BlobStorageServices.Roots.User, pdfBytes,
+            var blob = BlobStorageService.StoreFileAsync(
+                true, 
+                BlobStorageServices.Roots.User, 
+                new BasicFormFile(pdfBytes)
+                {
+                    ContentType = MimeType.Application.Pdf,
+                    FileName = $"{downloadOptions.WorkbookName}{MimeType.Application.Pdf.PrimaryFileExtension}",
+                    Name = $"{downloadOptions.WorkbookName}{MimeType.Application.Pdf.PrimaryFileExtension}",
+                },
                 $"{downloadOptions.WorkbookName.RemoveSpecialCharacters()}{pdfFileExtension}");
             PostResult(blob);
         }

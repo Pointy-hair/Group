@@ -189,6 +189,16 @@ namespace RevolutionaryStuff.Core
         public static string GetEmbeddedResourceAsString(this Assembly a, string name)
             => a.GetEmbeddedResourceAsStream(name)?.ReadToEnd();
 
+        public static void FileTryDelete(string fn)
+        {
+            if (string.IsNullOrEmpty(fn)) return;
+            try
+            {
+                File.Delete(fn);
+            }
+            catch (Exception) { }
+        }
+
         public static TResult ExecuteSynchronously<TResult>(this Task<TResult> task)
         {
             var t = Task.Run(async () => await task);

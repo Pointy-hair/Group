@@ -48,6 +48,30 @@ namespace TraffkPortal.Controllers
             GDB = gdb;
         }
 
+        [AllowAnonymous]
+        [Route("/Jobs/DS")]
+        public IActionResult DS()
+        {
+            var ds = new DataSource
+            {
+                TenantId = 3,
+                DataSourceSettings = new Traffk.Bal.Settings.DataSourceSettings
+                {
+                    FTP = new Traffk.Bal.Settings.DataSourceSettings.FtpSettings
+                    {
+                        CredentialsKeyUri = Traffk.Bal.Services.Vault.CommonSecretUris.TraffkFtpTodayCredentialsUri,
+                        Hostname = "traffk.ftptoday.com",
+                        Port = 22,
+                        FolderPaths = new[] { "/U-HaulWorkday", "/U-HaulCarrum", "/bradm@uhaul.com" }
+                    }
+                }
+            };
+            GDB.DataSources.Add(ds);
+            GDB.SaveChanges();
+            Backgrounder.Enqueue<IDataSourceSyncJobs>(z => z.DataSourceFetch(ds.DataSourceId));
+            return Ok();
+        }
+
         [ActionName(ActionNames.Jobs)]
         [Route("/Jobs")]
         public IActionResult Jobs(string sortCol, string sortDir, int? page, int? pageSize)
