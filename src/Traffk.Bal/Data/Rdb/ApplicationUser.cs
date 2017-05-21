@@ -6,7 +6,6 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
-using Microsoft.Extensions.Logging;
 using Serilog;
 using Traffk.Bal.Settings;
 

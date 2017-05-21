@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Traffk.Tableau.REST.Models
+﻿namespace Traffk.Tableau.REST.Models
 {
     public interface ITableauReportVisual
     {

@@ -1,5 +1,4 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
 using System.Collections.Generic;
 using System.ComponentModel;

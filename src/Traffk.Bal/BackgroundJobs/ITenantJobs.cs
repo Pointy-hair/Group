@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Traffk.Bal.Settings;
+﻿using Traffk.Bal.Settings;
 using Traffk.Tableau.REST;
 using Traffk.Tableau.REST.RestRequests;
 

@@ -4,20 +4,6 @@ using Traffk.Bal.Services;
 using Traffk.Bal.Data.Rdb;
 using TraffkPortal.Services;
 using Microsoft.Extensions.Logging;
-using TraffkPortal.Models.ApplicationModels;
-using Microsoft.EntityFrameworkCore;
-using Traffk.Portal.Tests.Helpers;
-using static Traffk.Bal.Services.BlobStorageServices;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Threading.Tasks;
-using System.IO;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
-using System.Threading;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Options;
-using Traffk.Bal;
 
 namespace Traffk.Portal.Tests.ControllersTests
 {

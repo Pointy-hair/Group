@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using Newtonsoft.Json;
-using Traffk.Tableau.REST.Models;
 using Traffk.Tableau.REST.RestRequests;
 
 namespace Traffk.Tableau.REST

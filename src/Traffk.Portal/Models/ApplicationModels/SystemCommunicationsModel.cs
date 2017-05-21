@@ -1,7 +1,6 @@
 ﻿using RevolutionaryStuff.Core;
 using System.Collections.Generic;
 using System.Linq;
-using Traffk.Bal;
 using Traffk.Bal.Communications;
 
 namespace TraffkPortal.Models.ApplicationModels

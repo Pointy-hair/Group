@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Traffk.Tableau.REST.Models;
 using Traffk.Tableau.REST.RestRequests;
 

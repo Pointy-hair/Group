@@ -2,14 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.ApplicationParts;
 using Serilog;
 using System;
 using System.Threading.Tasks;
-using Serilog.Core;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Logging;
 using Traffk.Bal.Services;

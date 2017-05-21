@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Net;
-using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
-using System.Text;
-using Serilog;
 
 /// <summary>
 /// Subclass of the WebClient object that allows use to set a larger/custom timout value so that longer downloads succeed

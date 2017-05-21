@@ -1,6 +1,4 @@
-﻿using System;
-
-/// <summary>
+﻿/// <summary>
 /// Different versions of server have different URL formats
 /// </summary>
 public enum ServerVersion

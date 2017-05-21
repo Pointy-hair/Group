@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Xml;
 using System.Collections.Generic;
-using System.Text;
-using Traffk.Tableau.REST;
 using Traffk.Tableau.REST.Helpers;
 using Traffk.Tableau.REST.Models;
-using Traffk.Tableau.REST.RestRequests;
 
 namespace Traffk.Tableau.REST.RestRequests
 {

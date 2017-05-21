@@ -1,6 +1,4 @@
-﻿using RevolutionaryStuff.Core;
-
-namespace Traffk.Bal.Data.Rdb
+﻿namespace Traffk.Bal.Data.Rdb
 {
     public enum AppTypes
     {

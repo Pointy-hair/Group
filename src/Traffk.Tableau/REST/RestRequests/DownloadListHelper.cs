@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Xml;
-using System.Collections.Generic;
-using System.Text;
-using System.Net;
-using System.IO;
 
 /// <summary>
 /// Helper functions for REST API functions that download lists

@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
 using Traffk.Bal.Data;
 
 namespace Traffk.Bal.Settings

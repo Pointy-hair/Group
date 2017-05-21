@@ -1,7 +1,5 @@
 ﻿using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
-using RevolutionaryStuff.Core.Crypto;
-using RevolutionaryStuff.Core.EncoderDecoders;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -10,7 +8,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Traffk.Bal.Data;
 using H = cloudscribe.HtmlAgilityPack;
 
