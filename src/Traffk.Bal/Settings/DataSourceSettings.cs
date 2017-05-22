@@ -1,13 +1,26 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Traffk.Bal.Settings
 {
     public class DataSourceSettings
     {
+        [JsonIgnore]
+        public bool IsFtp => this.FTP != null;
+
         public class FtpSettings
         {
+            [JsonProperty("hostname")]
             public string Hostname { get; set; }
-            public string Folderpath { get; set; }
+
+            [JsonProperty("port")]
+            public int Port { get; set; }
+
+            [JsonProperty("folder")]
+            public IList<string> FolderPaths { get; set; }
+
+            [JsonProperty("credentialsKey")]
+            public string CredentialsKeyUri { get; set; }
         }
 
 

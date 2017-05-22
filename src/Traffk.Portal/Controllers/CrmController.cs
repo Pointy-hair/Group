@@ -1,14 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
-using Serilog;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Serilog.Core;
-using Serilog.Core.Enrichers;
 using Traffk.Bal;
 using Traffk.Bal.Communications;
 using Traffk.Bal.Data.Rdb;

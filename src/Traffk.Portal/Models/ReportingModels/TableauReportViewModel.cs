@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using RevolutionaryStuff.Core;
-using Traffk.Bal.Data.Rdb;
+﻿using System.Linq;
 using Traffk.Bal.ReportVisuals;
 
 namespace TraffkPortal.Models.ReportingModels

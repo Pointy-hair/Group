@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Xml;
+﻿using System.Linq;
 using System.Xml.Linq;
-using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Traffk.Tableau.REST;
-using Traffk.Tableau.REST.RestRequests;
-using Moq;
 using Traffk.Tableau.REST.Models;
 
 namespace Traffk.Tableau.Tests.REST.Models

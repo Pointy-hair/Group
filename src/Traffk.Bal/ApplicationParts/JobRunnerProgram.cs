@@ -2,14 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.ApplicationParts;
 using Serilog;
 using System;
 using System.Threading.Tasks;
-using Serilog.Core;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Logging;
 using Traffk.Bal.ReportVisuals;
@@ -69,6 +67,8 @@ namespace Traffk.Bal.ApplicationParts
         {
             base.OnConfigureServices(services);
 
+            services.AddOptions();
+
             services.Configure<BlobStorageServices.BlobStorageServicesOptions>(Configuration.GetSection(nameof(BlobStorageServices.BlobStorageServicesOptions)));
 
             services.AddSingleton(this);
@@ -76,13 +76,13 @@ namespace Traffk.Bal.ApplicationParts
             services.AddSingleton<ICurrentUser>(this);
             services.AddScoped<ConfigStringFormatter>();
             services.AddDbContext<TenantRdbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString(TenantRdbContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Singleton);
+                options.UseSqlServer(Configuration.GetConnectionString(TenantRdbContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Scoped);
             services.AddDbContext<TraffkRdbContext>((sp, options) =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString(TraffkRdbContext.DefaultDatabaseConnectionStringName));
             }, ServiceLifetime.Scoped);
             services.AddDbContext<TraffkGlobalsContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString(TraffkGlobalsContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Singleton);
+                options.UseSqlServer(Configuration.GetConnectionString(TraffkGlobalsContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Scoped);
             services.AddScoped<CurrentTenantServices>();
             services.AddScoped<BlobStorageServices>();
             services.Configure<HangfireServerOptions>(Configuration.GetSection(nameof(HangfireServerOptions)));

@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 using Traffk.Tableau.REST.Models;
 

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Traffk.Bal.ReportVisuals
+﻿namespace Traffk.Bal.ReportVisuals
 {
     public class ReportSearchCriteria
     {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Traffk.Tableau.REST.RestRequests
+﻿namespace Traffk.Tableau.REST.RestRequests
 {
     public class CreateTableauTenantRequest
     {

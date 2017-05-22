@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core.Caching;
 using Traffk.Tableau.REST.Models;

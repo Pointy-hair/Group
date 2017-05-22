@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Traffk.Bal.Settings;
+﻿using Traffk.Bal.Settings;
 
 namespace Traffk.Portal.Models.TenantModels
 {

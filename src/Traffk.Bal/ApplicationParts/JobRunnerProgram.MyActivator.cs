@@ -1,7 +1,5 @@
 ﻿using Hangfire;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using System;
 

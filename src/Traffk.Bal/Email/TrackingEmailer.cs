@@ -1,9 +1,7 @@
-﻿using Microsoft.Extensions.Options;
-using System;
+﻿using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Traffk.Bal.Settings;
 using MimeKit;
 using H = cloudscribe.HtmlAgilityPack;
 using RevolutionaryStuff.Core;

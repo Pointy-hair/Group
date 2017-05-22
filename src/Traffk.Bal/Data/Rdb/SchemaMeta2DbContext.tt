@@ -754,6 +754,9 @@ public string GetClrTypeFromColumn(XElement f, out bool isNullable, out string m
 		case "date":
 			dataType = "DateTime" + (isNullable ? "?" : "");
 			break;
+		case "binary":
+			dataType = "byte[]";
+			break;
 		case "nvarchar":
 		case "varchar":
 			canUseMaxLen = true;

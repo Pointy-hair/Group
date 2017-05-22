@@ -1,7 +1,5 @@
 ﻿using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
-using RevolutionaryStuff.Core.Crypto;
-using RevolutionaryStuff.Core.EncoderDecoders;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -102,6 +100,19 @@ namespace Traffk.Bal
         static TraffkHelpers()
         {
             ThisAssembly = typeof(TraffkHelpers).GetTypeInfo().Assembly;
+        }
+
+        public static int? GetTenantIdOrGlobal(this ITraffkTenantFinder finder)
+        {
+            Requires.NonNull(finder, nameof(finder));
+            try
+            {
+                return finder.GetTenantIdAsync().ExecuteSynchronously();
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

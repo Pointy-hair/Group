@@ -4,7 +4,6 @@ using Traffk.Bal.Email;
 using MimeKit;
 using Traffk.Bal.Data.Rdb;
 using TraffkPortal.Services.Sms;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Reflection;
 using Traffk.Bal.Communications;

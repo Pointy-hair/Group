@@ -4,10 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Newtonsoft.Json;
-using Serilog;
 using Serilog.Core;
 using Serilog.Core.Enrichers;
-using Serilog.Events;
 using Traffk.Bal.Data.Rdb;
 using ILogger = Serilog.ILogger;
 
@@ -25,6 +23,8 @@ namespace Traffk.Bal.ApplicationParts
 
         protected readonly TraffkGlobalsContext GlobalContext;
         protected readonly PerformContext PerformContext;
+
+        protected readonly DateTime StartedAtUtc = DateTime.UtcNow;
 
         private static int InstanceId_s;
 

@@ -1,5 +1,4 @@
-﻿using System.Xml;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 using Traffk.Tableau.REST.Models;
 
 namespace Traffk.Tableau.REST.RestRequests

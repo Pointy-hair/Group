@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Moq;
-using RevolutionaryStuff.Core;
 using Serilog;
 using ILogger = Serilog.ILogger;
 using Traffk.Tableau.REST.RestRequests;
