@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Serilog.Core;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Logging;
+using Traffk.Bal.ReportVisuals;
 using Traffk.Bal.Services;
 using Traffk.Tableau;
 using Traffk.Tableau.REST;
@@ -89,6 +90,11 @@ namespace Traffk.Bal.ApplicationParts
 
             services.Configure<TableauSignInOptions>(Configuration.GetSection(nameof(TableauSignInOptions)));
             services.Configure<TableauAdminCredentials>(Configuration.GetSection(nameof(TableauAdminCredentials)));
+
+            services.AddScoped<ITableauTenantFinder, TableauTenantFinder>();
+            services.AddScoped<ITableauUserCredentials, MyTableauAdminCredentials>();
+            services.AddScoped<ITrustedTicketGetter, TrustedTicketGetter>();
+            services.AddScoped<ITableauVisualServices, TableauVisualServices>();
             services.AddScoped<ITableauAdminService, TableauAdminService>();
 
             var logger = new LoggerConfiguration()

@@ -348,24 +348,24 @@ namespace Traffk.Tableau.Tests.REST
                 var worksheetName = "Risk by Occupation";
                 var testGetUnderlyingDataOptions = new GetUnderlyingDataOptions {WorksheetName = worksheetName };
 
-                var task = testService.GetUnderlyingDataAsync(testGetUnderlyingDataOptions, "RiskIndex-Occupations",
-                    "EmploymentandRisk").ExecuteSynchronously();
-
                 //var task = testService.GetUnderlyingDataAsync(testGetUnderlyingDataOptions, "RiskIndex-Occupations",
-                //    "EmploymentandRisk");
+                //    "EmploymentandRisk").ExecuteSynchronously();
 
-                //if (await Task.WhenAny(task, Task.Delay(testTimeout)) == task)
-                //{
-                //    task.ExecuteSynchronously();
-                //    var data = task.Result;
-                //    var dataTable = data.ToDataTable();
-                //    Assert.IsNotNull(data);
-                //    Assert.IsNotNull(dataTable);
-                //}
-                //else
-                //{
-                //    throw new Exception("Timed Out");
-                //}
+                var task = testService.GetUnderlyingDataAsync(testGetUnderlyingDataOptions, "RiskIndex-Occupations",
+                    "EmploymentandRisk");
+
+                if (await Task.WhenAny(task, Task.Delay(testTimeout)) == task)
+                {
+                    task.ExecuteSynchronously();
+                    var data = task.Result;
+                    var dataTable = data.ToDataTable();
+                    Assert.IsNotNull(data);
+                    Assert.IsNotNull(dataTable);
+                }
+                else
+                {
+                    throw new Exception("Timed Out");
+                }
             }
 
             [Ignore]
@@ -424,11 +424,10 @@ namespace Traffk.Tableau.Tests.REST
                 var trustedTicketGetter = new TrustedTicketGetter(Options, TableauAdminCredentials, TableauTenantFinder);
                 var testService = new TableauVisualServices(trustedTicketGetter, Options, Logger) as ITableauVisualServices;
 
-                var worksheetName = "Average Risk Dashboard";
+                var testGetPdfOptions = new CreatePdfOptions("AverageRiskMap", "AverageRiskDashboard",
+                    "Average Risk Dashboard");
 
-                var testGetPdfOptions = new CreatePdfOptions() { WorksheetName = worksheetName, PixelWidth = 1024, PixelHeight = 768 };
-
-                var downloadPdfOptions = await testService.CreatePdfAsync(testGetPdfOptions, "AverageRiskMap", "AverageRiskDashboard");
+                var downloadPdfOptions = await testService.CreatePdfAsync(testGetPdfOptions);
 
                 Assert.IsNotNull(downloadPdfOptions);
             }
@@ -440,11 +439,10 @@ namespace Traffk.Tableau.Tests.REST
                 var trustedTicketGetter = new TrustedTicketGetter(Options, TableauAdminCredentials, TableauTenantFinder);
                 var testService = new TableauVisualServices(trustedTicketGetter, Options, Logger) as ITableauVisualServices;
 
-                var worksheetName = "Average Risk Dashboard";
+                var testGetPdfOptions = new CreatePdfOptions("AverageRiskMap", "AverageRiskDashboard",
+                    "Average Risk Dashboard");
 
-                var testGetPdfOptions = new CreatePdfOptions() { WorksheetName = worksheetName, PixelWidth = 1024, PixelHeight = 768 };
-
-                var downloadPdfOptions = await testService.CreatePdfAsync(testGetPdfOptions, "AverageRiskMap","AverageRiskDashboard");
+                var downloadPdfOptions = await testService.CreatePdfAsync(testGetPdfOptions);
 
                 Assert.IsNotNull(downloadPdfOptions);
 
@@ -469,11 +467,10 @@ namespace Traffk.Tableau.Tests.REST
                 var trustedTicketGetter = new TrustedTicketGetter(Options, TableauAdminCredentials, TableauTenantFinder);
                 var testService = new TableauVisualServices(trustedTicketGetter, Options, Logger) as ITableauVisualServices;
 
-                var worksheetName = "Average Risk Dashboard";
+                var testGetPdfOptions = new CreatePdfOptions("AverageRiskMap", "AverageRiskDashboard",
+                    "Average Risk Dashboard");
 
-                var testGetPdfOptions = new CreatePdfOptions() { WorksheetName = worksheetName, PixelWidth = 1024, PixelHeight = 768 };
-
-                var downloadPdfOptions = await testService.CreatePdfAsync(testGetPdfOptions, "AverageRiskMap", "AverageRiskDashboard");
+                var downloadPdfOptions = await testService.CreatePdfAsync(testGetPdfOptions);
 
                 Assert.IsNotNull(downloadPdfOptions);
 

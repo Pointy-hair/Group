@@ -27,8 +27,7 @@ namespace Traffk.Tableau
 
         public TableauVisualServices(ITrustedTicketGetter trustedTicketGetter,
             IOptions<TableauSignInOptions> tableauSignInOptions,
-            ILogger logger,
-            BlobStorageServices blobStorageServices)
+            ILogger logger)
         {
             Requires.NonNull(trustedTicketGetter, nameof(trustedTicketGetter));
             Requires.NonNull(tableauSignInOptions, nameof(tableauSignInOptions));

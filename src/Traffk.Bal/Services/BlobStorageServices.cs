@@ -130,14 +130,14 @@ namespace Traffk.Bal.Services
 
         public async Task<CloudFilePointer> StoreFileAsync(bool secure, Roots root, byte[] bytes, string name, bool addUniqueRef = false)
         {
-            var tenantTask = CurrentTenant.GetTenantAsync();
             var container = GetContainer(secure);
+
             var contentType = Path.GetExtension(name);
             if (addUniqueRef)
             {
                 name = $"{Path.GetFileNameWithoutExtension(name)}.{Stuff.Random.Next()}{contentType}";
             }
-            var tenant = await tenantTask;
+            var tenant = await CurrentTenant.GetTenantAsync();
             name = ConstructRealName(tenant, root, name);
             var block = container.GetBlockBlobReference(name);
             await block.UploadFromByteArrayAsync(bytes, 0, bytes.Length);

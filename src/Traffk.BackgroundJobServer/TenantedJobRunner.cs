@@ -72,6 +72,10 @@ namespace Traffk.BackgroundJobServer
 
         void ITenantJobs.CreateTableauPdf(CreatePdfOptions options)
         {
+            if (String.IsNullOrEmpty(options.WorksheetName))
+            {
+                options.WorksheetName = "Average Risk Dashboard";
+            }
             var downloadOptions = TableauVisualService.CreatePdfAsync(options).ExecuteSynchronously();
             PostResult(downloadOptions);
         }
@@ -92,7 +96,7 @@ namespace Traffk.BackgroundJobServer
 
             var downloadOptions = JsonConvert.DeserializeObject<DownloadPdfOptions>(resultData);
             var pdfBytes = await TableauVisualService.DownloadPdfAsync(downloadOptions);
-            var blob = BlobStorageService.StoreFileAsync(true, BlobStorageServices.Roots.User, pdfBytes,
+            var blob = await BlobStorageService.StoreFileAsync(true, BlobStorageServices.Roots.Portal, pdfBytes,
                 $"{downloadOptions.WorkbookName.RemoveSpecialCharacters()}{pdfFileExtension}");
             PostResult(blob);
         }
