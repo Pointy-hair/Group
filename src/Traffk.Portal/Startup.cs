@@ -83,6 +83,7 @@ namespace TraffkPortal
                     .CreateLogger();
 
             GlobalConfiguration.Configuration.UseSqlServerStorage(Configuration.GetConnectionString("TraffkGlobal"));
+            GlobalJobFilters.Filters.Add(new TraffkJobFilterAttribute(Configuration));
         }
 
         public IConfigurationRoot Configuration { get; }

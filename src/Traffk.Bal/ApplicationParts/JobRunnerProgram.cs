@@ -8,6 +8,7 @@ using RevolutionaryStuff.Core.ApplicationParts;
 using Serilog;
 using System;
 using System.Threading.Tasks;
+using Traffk.Bal.BackgroundJobs;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Logging;
 using Traffk.Bal.ReportVisuals;
@@ -42,6 +43,7 @@ namespace Traffk.Bal.ApplicationParts
 
             GlobalConfiguration.Configuration.UseSqlServerStorage(Configuration.GetConnectionString(o.ConnectionStringName));
             GlobalConfiguration.Configuration.UseActivator(new MyActivator(this));
+            GlobalJobFilters.Filters.Add(new TraffkJobFilterAttribute(Configuration));
 
             using (var s = new BackgroundJobServer(o.BackgroundOptions ?? new BackgroundJobServerOptions()))
             {
