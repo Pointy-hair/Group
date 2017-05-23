@@ -337,6 +337,7 @@ namespace Traffk.Tableau.Tests.REST
         [TestClass]
         public class GetUnderlyingDataMethodTests : TableauRestServiceTests
         {
+            [Ignore]
             [TestMethod]
             public async Task WhenSignedInGetUnderlyingDataUsingWorksheetName()
             {
@@ -385,6 +386,7 @@ namespace Traffk.Tableau.Tests.REST
                 Assert.IsNotNull(dataTable);
             }
 
+            [Ignore]
             [TestMethod]
             public async Task WhenSignedInGetUnderlyingDataWithManyRows()
             {
