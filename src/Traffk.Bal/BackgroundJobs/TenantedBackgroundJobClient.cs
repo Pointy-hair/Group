@@ -1,21 +1,25 @@
-﻿using Hangfire;
+﻿using System;
+using Hangfire;
+using Hangfire.Common;
 using Hangfire.States;
 using RevolutionaryStuff.Core;
 using Traffk.Bal.Data.Rdb;
 
 namespace Traffk.Bal.BackgroundJobs
 {
-    public class TenantedBackgroundJobClient : IBackgroundJobClient
+    public class TenantedBackgroundJobClient : IBackgroundJobClient, ITraffkRecurringJobManager
     {
         private BackgroundJobClient Inner;
         private TraffkGlobalsContext GDB;
         private ITraffkTenantFinder Finder;
+        private RecurringJobManager RecurringJobManager;
 
         public TenantedBackgroundJobClient(TraffkGlobalsContext gdb, ITraffkTenantFinder finder)
         {
             Inner = new BackgroundJobClient();
             GDB = gdb;
             Finder = finder;
+            RecurringJobManager = new RecurringJobManager();
         }
 
         bool IBackgroundJobClient.ChangeState(string jobId, IState state, string expectedState)
@@ -29,6 +33,26 @@ namespace Traffk.Bal.BackgroundJobs
             j.TenantId = tenantId;
             GDB.SaveChanges();
             return jobId;
+        }
+
+        string ITraffkRecurringJobManager.Add(Hangfire.Common.Job job, string cronExpression)
+        {
+            var recurringJobId = GetRecurringJobId();
+            RecurringJobManager.AddOrUpdate(recurringJobId, job, cronExpression, new RecurringJobOptions());
+            return recurringJobId;
+        }
+
+        void ITraffkRecurringJobManager.Update(string recurringJobId, Hangfire.Common.Job job, string cronExpression)
+        {
+            //TODO: Make sure recurringJobId actually exists - need to read Hangfire.Hash table
+
+        }
+
+        private string GetRecurringJobId()
+        {
+            var tenantId = Finder.GetTenantIdAsync().ExecuteSynchronously();
+            var id = $"{tenantId}-{Guid.NewGuid().ToString()}"; 
+            return id;
         }
     }
 }

@@ -197,6 +197,7 @@ namespace TraffkPortal
             services.AddScoped<IReportVisualService, ReportVisualService>();
 
             services.AddScoped<IBackgroundJobClient, TenantedBackgroundJobClient>();
+            services.AddScoped<ITraffkRecurringJobManager, TenantedBackgroundJobClient>();
 
             services.AddScoped<TableauTrustedTicketActionFilter>();
 
@@ -208,8 +209,8 @@ namespace TraffkPortal
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddDebug();
-            loggerFactory.AddSerilog(Logger);
+            //loggerFactory.AddDebug();
+            //loggerFactory.AddSerilog(Logger);
 
             app.UseApplicationInsightsRequestTelemetry();
 

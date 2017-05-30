@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using Hangfire.States;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
@@ -79,8 +80,17 @@ namespace Traffk.BackgroundJobServer
             PostResult(downloadOptions);
         }
 
-        async void ITenantJobs.DownloadTableauPdfContinuationJob(int jobId)
+        async void ITenantJobs.DownloadTableauPdfContinuationJob()
         {
+            var awaitingState = await GlobalContext.JobStates.FirstAsync(j => j.JobId == JobId && j.Name == AwaitingState.StateName);
+
+            if (awaitingState == null)
+            {
+                throw new Exception("No parent job found.");
+            }
+
+            var jobId = awaitingState.JobStateDetails.ParentId;
+
             const string pdfFileExtension = ".pdf";
             string resultData = null;
             do
@@ -106,6 +116,11 @@ namespace Traffk.BackgroundJobServer
                 },
                 $"{downloadOptions.WorkbookName.RemoveSpecialCharacters()}{pdfFileExtension}");
             PostResult(blob);
+        }
+
+        void ITenantJobs.Schedule()
+        {
+            Console.WriteLine("Recurring job");
         }
     }
 }

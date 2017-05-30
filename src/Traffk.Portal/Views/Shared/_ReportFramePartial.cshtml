@@ -16,6 +16,9 @@
     <div class="panel-body report-embed-container @(Model != null && Model.RenderingAttributes.HasFlag(ReportDetails.RenderingAttributeFlags.Vertical) ? "report-tall" : "")" id="reportContainer">
     </div>
 </div>
+
+@{await Html.RenderPartialAsync("~/Views/Reporting/_ExportReportPartial.cshtml"); }
+
 @*<div id="userInteractionDiv">This is where user interaction messages will go.</div>*@
 
 

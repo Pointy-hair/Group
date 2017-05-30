@@ -391,13 +391,14 @@ namespace Traffk.Tableau.Tests.REST
             public async Task WhenSignedInGetUnderlyingDataWithManyRows()
             {
                 var testTimeout = TimeSpan.FromHours(12); //Required so that test itself doesn't timeout
+                var testMaxRows = 7500000;
 
                 var trustedTicketGetter = new TrustedTicketGetter(Options, TableauAdminCredentials, TableauTenantFinder);
                 var testService = new TableauVisualServices(trustedTicketGetter, Options, Logger) as ITableauVisualServices;
 
                 var worksheetName = "Avg Risk by Mbr Relationship";
 
-                var testGetUnderlyingDataOptions = new GetUnderlyingDataOptions { WorksheetName = worksheetName };
+                var testGetUnderlyingDataOptions = new GetUnderlyingDataOptions { WorksheetName = worksheetName, MaxRows = testMaxRows };
                 var task = testService.GetUnderlyingDataAsync(testGetUnderlyingDataOptions, "AverageRiskScore",
                     "1-AverageRiskScore_demo");
 

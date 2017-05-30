@@ -153,9 +153,9 @@ else
                 </div>
             }
             @if (showPageActions)
-                    {
+            {
                 <div class="col-sm-2 text-right">
-                    <button class="btn btn-large btn-white toggle" data-toggle="actions-container-page" onclick="updateSelectionMessaging()">Actions</button>
+                    <button class="btn btn-large btn-white toggle" data-toggle="actions-container-page">Actions</button>
                     <ul class="floated-filter list-right actions-container" id="actions-container-page">
                         @RenderSection("pageActionItems", false)
                     </ul>

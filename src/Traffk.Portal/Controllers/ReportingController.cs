@@ -30,6 +30,7 @@ namespace Traffk.Portal.Controllers
 
         protected readonly IReportVisualService ReportVisualService;
         protected readonly IBackgroundJobClient Backgrounder;
+        protected readonly ITraffkRecurringJobManager RecurringJobManager;
         protected readonly BlobStorageServices BlobStorageService;
 
         public static class ActionNames
@@ -47,12 +48,14 @@ namespace Traffk.Portal.Controllers
             ICacher cacher,
             IReportVisualService reportVisualService,
             IBackgroundJobClient backgrounder,
+            ITraffkRecurringJobManager recurringJobManager,
             BlobStorageServices blobStorageService
         )
             : base(AspHelpers.MainNavigationPageKeys.Reporting, db, current, logger, cacher)
         {
             ReportVisualService = reportVisualService;
             Backgrounder = backgrounder;
+            RecurringJobManager = recurringJobManager;
         }
 
         [Route("/Reporting")]
@@ -150,17 +153,30 @@ namespace Traffk.Portal.Controllers
 
             var createPdfOptions = new CreatePdfOptions(tableauReportViewModel.WorkbookName, tableauReportViewModel.ViewName, tableauReportViewModel.WorksheetName);
             var jobId = Backgrounder.Enqueue<ITenantJobs>(z => z.CreateTableauPdf(createPdfOptions));
-            Backgrounder.ContinueWith<ITenantJobs>(jobId, y => y.DownloadTableauPdfContinuationJob(int.Parse(jobId)));
+            Backgrounder.ContinueWith<ITenantJobs>(jobId, y => y.DownloadTableauPdfContinuationJob());
 
             Logger.Information("{@EventType} {@ReportId}", EventType.LoggingEventTypes.DownloadedReport.ToString(), reportVisual.Id.ToString());
 
             return NoContent(); //Placeholder - will redirect to a reportIndex page
         }
 
-        //[Route("/Reporting/Downloads")]
-        //public IActionResult Downloads()
-        //{
-        //    var blobs = BlobStorageService.GetFileInfosAsync(true, BlobStorageServices.Roots.User, )
-        //}
+
+
+        [Route("/Reporting/Schedule")]
+        public IActionResult Schedule()
+        {
+            try
+            {
+                //RecurringJobManager.Add(Hangfire.Common.Job.FromExpression(() => Console.WriteLine("Recurring test")), Cron.Minutely());
+                RecurringJobManager.Update("recurring-job:3-3abd067c-e0ef-44c1-8726-d74bcd0efbca", Hangfire.Common.Job.FromExpression(() => Console.WriteLine("Recurring test update")), Cron.Yearly());
+                return Json("success");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+        }
     }
 }

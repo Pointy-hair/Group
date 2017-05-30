@@ -15,6 +15,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
+using Hangfire.Storage;
 
 namespace Traffk.Bal.Data.Rdb
 {
@@ -39,15 +40,18 @@ namespace Traffk.Bal.Data.Rdb
 		
 		public DbSet<Job> Job { get; set; } //HangFire.Job
 
-		#endregion
+        public DbSet<JobState> JobStates { get; set; } //HangFire.State
 
-		#region Sprocs
 
-		#endregion
+        #endregion
 
-	}
+        #region Sprocs
 
-	[Table("DataSourceFetches", Schema = "dbo")]
+        #endregion
+
+    }
+
+    [Table("DataSourceFetches", Schema = "dbo")]
 	public partial class DataSourceFetche : IRdbDataEntity, IValidate, IPreSave, IPrimaryKey<int>
 	{
         public static readonly DataSourceFetche[] None = new DataSourceFetche[0];
@@ -548,4 +552,62 @@ namespace Traffk.Bal.Data.Rdb
 			PartialValidate();
         }
 	}
+
+    [Table("State", Schema = "HangFire")]
+    public partial class JobState : IRdbDataEntity, IValidate, IPreSave, IPrimaryKey<int>
+    {
+        object IPrimaryKey.Key { get { return Id; } }
+
+        int IPrimaryKey<int>.Key { get { return Id; } }
+
+        [DisplayName("Id")]
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Column("Id")]
+        public int Id { get; set; }
+
+        [DisplayName("JobId")]
+        [Column("JobId")]
+        public int JobId { get; set; }
+
+        [DisplayName("Name")]
+        [MaxLength(20)]
+        [Column("Name")]
+        public string Name { get; set; }
+
+        [DisplayName("Reason")]
+        [MaxLength(100)]
+        [Column("Reason")]
+        public string Reason { get; set; }
+
+        [DisplayName("Created At")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        [Column("CreatedAt")]
+        public DateTime CreatedAt { get; set; }
+
+        [DisplayName("Data")]
+        [Column("Data")]
+        public string Data { get; set; }
+
+        partial void PartialPreSave();
+
+        void IPreSave.PreSave()
+        {
+            OnPreSave();
+        }
+
+        protected virtual void OnPreSave()
+        {
+            PartialPreSave();
+        }
+
+        partial void PartialValidate();
+
+        public virtual void Validate()
+        {
+            Requires.Text(Name, nameof(Name), true, 0, 20);
+            Requires.NonNull(Data, nameof(Data));
+            PartialValidate();
+        }
+    }
 }

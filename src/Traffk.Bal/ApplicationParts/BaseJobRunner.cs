@@ -13,7 +13,6 @@ namespace Traffk.Bal.ApplicationParts
 {
     public abstract class BaseJobRunner : BaseDisposable
     {
-        protected readonly Stack<IDisposable> LogContextProperties = new Stack<IDisposable>();
         protected readonly ILogger Logger;
         protected readonly int InstanceId;
         protected readonly int JobId;
