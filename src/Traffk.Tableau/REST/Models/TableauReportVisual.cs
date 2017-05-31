@@ -23,8 +23,10 @@ namespace Traffk.Tableau.REST.Models
         string ITableauReportVisual.ViewName => ViewName;
         string ITableauReportVisual.WorkbookId => WorkbookId;
         string ITableauReportVisual.WorkbookName => WorkbookName;
+        string ITableauReportVisual.WorksheetName => WorksheetName;
         public string Title => Name;
         public string WorkbookName { get; set; }
+        public string WorksheetName { get; set; }
         public string ViewName { get; set; }
         public readonly string ContentUrl;
         public string WorkbookId { get; }

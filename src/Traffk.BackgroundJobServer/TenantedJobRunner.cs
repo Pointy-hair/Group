@@ -72,10 +72,6 @@ namespace Traffk.BackgroundJobServer
 
         void ITenantJobs.CreateTableauPdf(CreatePdfOptions options)
         {
-            if (String.IsNullOrEmpty(options.WorksheetName))
-            {
-                options.WorksheetName = "Average Risk Dashboard";
-            }
             var downloadOptions = TableauVisualService.CreatePdfAsync(options).ExecuteSynchronously();
             PostResult(downloadOptions);
         }

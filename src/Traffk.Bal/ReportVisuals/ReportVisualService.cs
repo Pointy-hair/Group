@@ -161,10 +161,26 @@ namespace Traffk.Bal.ReportVisuals
 
             const string siteIdKey = "SiteId";
 
-            var workbookName = new KeyValuePair<string, string>(nameof(tableauReportVisual.WorkbookName), tableauReportVisual.WorkbookName);
-            var workbookId = new KeyValuePair<string, string>(nameof(tableauReportVisual.WorkbookId), tableauReportVisual.WorkbookId);
-            var viewId = new KeyValuePair<string, string>(nameof(tableauReportVisual.Id), tableauReportVisual.Id);
-            var viewName = new KeyValuePair<string, string>(nameof(tableauReportVisual.ViewName), tableauReportVisual.ViewName);
+            var metadataWorkbookName = reportMetaData.ReportDetails.Parameters?.SingleOrDefault(x => x.Key == nameof(tableauReportVisual.WorkbookName)).Value ?? tableauReportVisual.WorkbookName;
+            var metadataWorkbookId =
+                reportMetaData.ReportDetails.Parameters?.SingleOrDefault(
+                    x => x.Key == nameof(tableauReportVisual.WorkbookId)).Value ?? tableauReportVisual.WorkbookId;
+            var metadataViewId =
+                reportMetaData.ReportDetails.Parameters?.SingleOrDefault(x => x.Key == nameof(tableauReportVisual.Id))
+                    .Value ?? tableauReportVisual.Id;
+            var metadataViewName =
+                reportMetaData.ReportDetails.Parameters?.SingleOrDefault(
+                    x => x.Key == nameof(tableauReportVisual.ViewName)).Value ?? tableauReportVisual.ViewName;
+            var metadataWorksheetName =
+                reportMetaData.ReportDetails.Parameters?.SingleOrDefault(
+                    x => x.Key == nameof(tableauReportVisual.WorksheetName)).Value;
+
+
+            var workbookName = new KeyValuePair<string, string>(nameof(tableauReportVisual.WorkbookName), metadataWorkbookName);
+            var workbookId = new KeyValuePair<string, string>(nameof(tableauReportVisual.WorkbookId), metadataWorkbookId);
+            var viewId = new KeyValuePair<string, string>(nameof(tableauReportVisual.Id), metadataViewId);
+            var viewName = new KeyValuePair<string, string>(nameof(tableauReportVisual.ViewName), metadataViewName);
+            var worksheetName = new KeyValuePair<string, string>(nameof(tableauReportVisual.WorksheetName), metadataWorksheetName);
             var siteId = new KeyValuePair<string, string>(siteIdKey, reportMetaData.TenantId.ToString());
             var parameters = new Collection<KeyValuePair<string, string>>
             {
@@ -173,6 +189,7 @@ namespace Traffk.Bal.ReportVisuals
                 viewId,
                 viewName,
                 siteId,
+                worksheetName
             };
 
             var visual = new ReportVisual();
@@ -187,7 +204,7 @@ namespace Traffk.Bal.ReportVisuals
             ((IReportVisual)visual).LastEdit = reportMetaData.ReportDetails.LastEdit;
             ((IReportVisual)visual).LastEditedField = reportMetaData.ReportDetails.LastEditedField;
             ((IReportVisual)visual).OwnerContactId = reportMetaData.OwnerContactId;
-            ((IReportVisual)visual).Parameters = reportMetaData.ReportDetails.Parameters ?? parameters;
+            ((IReportVisual)visual).Parameters = parameters;
             ((IReportVisual)visual).ParentId = reportMetaData.ParentReportMetaDataId;
             ((IReportVisual)visual).PreviewImageUrl = reportMetaData.ReportDetails.PreviewImageUrl ??
                                   $"/Reporting/PreviewImage/{tableauReportVisual.WorkbookId}/{tableauReportVisual.Id}";

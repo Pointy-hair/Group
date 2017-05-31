@@ -6,6 +6,7 @@
         string WorkbookId { get; }
         string WorkbookName { get; }
         string ViewName { get; }
+        string WorksheetName { get; }
         string Title { get; }
     }
 
