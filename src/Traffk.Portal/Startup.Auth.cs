@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.IdentityModel.Tokens;
-using RevolutionaryStuff.Core;
-using Traffk.Portal.Controllers;
-using Traffk.Portal.Permissions;
+using System;
+using System.Text;
 
 namespace TraffkPortal
 {
