@@ -17,5 +17,10 @@ namespace Traffk.Bal.Permissions
         {
             return $"{TraffkHelpers.TraffkUrn}/claims/{permissionName}";
         }
+
+        public static string CreateClaimType(ApiNames apiName)
+        {
+            return $"{TraffkHelpers.TraffkUrn}/claims/apis/{apiName}";
+        }
     }
 }

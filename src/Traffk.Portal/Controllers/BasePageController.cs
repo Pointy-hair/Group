@@ -107,20 +107,6 @@ namespace TraffkPortal.Controllers
 
         protected ICacher Cacher { get; set; }
 
-        protected ILogger GetEnrichedLogger(EventType.LoggingEventTypes eventType)
-        {
-            return GetEnrichedLogger(new ILogEventEnricher[]
-            {
-                new PropertyEnricher(typeof(EventType).Name, eventType.ToString())
-            });
-        }
-
-        protected ILogger GetEnrichedLogger(ILogEventEnricher[] enrichers)
-        {
-            var logger = Logger.ForContext(enrichers);
-            return logger;
-        }
-
         protected BasePageController(MainNavigationPageKeys mainNavPageKey, 
             TraffkRdbContext db, 
             CurrentContextServices current, 

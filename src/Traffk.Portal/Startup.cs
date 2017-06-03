@@ -37,7 +37,7 @@ using ILogger = Serilog.ILogger;
 
 namespace TraffkPortal
 {
-    public class Startup
+    public partial class Startup
     {
         public static bool IsSigninPersistent = true;
         private readonly bool RequireHttps;
@@ -113,6 +113,7 @@ namespace TraffkPortal
             services.Configure<TableauAdminCredentials>(Configuration.GetSection(nameof(TableauAdminCredentials)));
             services.Configure<DataProtectionTokenProviderOptions>(Configuration.GetSection(nameof(DataProtectionTokenProviderOptions)));
             services.Configure<TraffkHttpHeadersFilter.TraffkHttpHeadersFilterOptions>(Configuration.GetSection(nameof(TraffkHttpHeadersFilter.TraffkHttpHeadersFilterOptions)));
+            services.Configure<TokenProviderOptions>(Configuration.GetSection(nameof(TokenProviderOptions)));
 
             services.AddSingleton<CachingServices>();
 
@@ -150,6 +151,7 @@ namespace TraffkPortal
             services.Substitute<TraffkPasswordValidator>();
 
             services.AddPermissions();
+            services.AddApis();
 
             services.AddMvc(config =>
             {
@@ -242,6 +244,8 @@ namespace TraffkPortal
             
             CachingServices.Initialize(app.ApplicationServices);
             UserEnricher.Initialize(app.ApplicationServices);
+
+            ConfigureAuth(app);
 
             app.UseMvc(routes =>
             {

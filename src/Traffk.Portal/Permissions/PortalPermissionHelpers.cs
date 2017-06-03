@@ -4,6 +4,7 @@ using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Traffk.Bal.Permissions;
+using Traffk.Portal.Permissions;
 
 namespace TraffkPortal.Permissions
 {
@@ -19,6 +20,11 @@ namespace TraffkPortal.Permissions
             return auth.AuthorizeAsync(principal, CreatePolicyName(permission));
         }
 
+        public static Task<bool> HasPermission(this ClaimsPrincipal principal, IAuthorizationService auth, ApiNames api)
+        {
+            return auth.AuthorizeAsync(principal, CreatePolicyName(api));
+        }
+
         public static Task<bool> GetCanAccessProtectedHealthInformationAsync(this ClaimsPrincipal principal, IAuthorizationService auth)
         {
             return auth.AuthorizeAsync(principal, ExplicitPolicyNames.ProtectedHealthInformation);
@@ -27,6 +33,11 @@ namespace TraffkPortal.Permissions
         public static string CreatePolicyName(PermissionNames permission)
         {
             return $"{nameof(PermissionAuthorizeAttribute)}.{permission}";
+        }
+
+        public static string CreatePolicyName(ApiNames api)
+        {
+            return $"{nameof(PermissionAuthorizeAttribute)}.{api}";
         }
 
         public static string CreatePolicyName(string name)
@@ -46,6 +57,20 @@ namespace TraffkPortal.Permissions
             });
             services.AddTransient<IAuthorizationHandler, PermissionHandler>();
             services.AddTransient<IAuthorizationHandler, ProtectedHealthInformationHandler>();
+            
+        }
+
+        public static void AddApis(this IServiceCollection services)
+        {
+            services.AddAuthorization(o =>
+            {
+                foreach (ApiNames a in Enum.GetValues(typeof(ApiNames)))
+                {
+                    o.AddPolicy(CreatePolicyName(a), policy => policy.AddRequirements(new ApiRequirement(a)));
+                }
+            });
+
+            services.AddTransient<IAuthorizationHandler, ApiHandler>();
         }
     }
 }
