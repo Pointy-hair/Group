@@ -21,7 +21,7 @@ namespace Traffk.Tableau.Tests.REST
         public ITableauUserCredentials TableauUserCredentials { get; set; }
         public ILogger Logger { get; set; }
 
-    public TableauRestServiceTests()
+        public TableauRestServiceTests()
         {
             Options = MockEnvironment.TableauSignInOptions().Object;
             TableauTenantFinder = MockEnvironment.TableauTenantFinder().Object;

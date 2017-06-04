@@ -1,6 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Moq;
+using Newtonsoft.Json;
+using RevolutionaryStuff.Core;
 using Serilog;
 using ILogger = Serilog.ILogger;
 using Traffk.Tableau.REST.RestRequests;
@@ -67,5 +71,7 @@ namespace Traffk.Tableau.Tests
                         storageTableName: "AppLogsDev")
                     .CreateLogger();
         }
+
+
     }
 }

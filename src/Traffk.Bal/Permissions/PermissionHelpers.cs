@@ -20,7 +20,14 @@ namespace Traffk.Bal.Permissions
 
         public static string CreateClaimType(ApiNames apiName)
         {
-            return $"{TraffkHelpers.TraffkUrn}/claims/apis/{apiName}";
+            var apiRoot = $"{TraffkHelpers.TraffkUrn}/claims/apis";
+
+            if (apiName == ApiNames.Base)
+            {
+                return apiRoot;
+            }
+
+            return $"{apiRoot}/{apiName}";
         }
     }
 }

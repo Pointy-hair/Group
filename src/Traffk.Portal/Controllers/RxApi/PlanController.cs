@@ -7,6 +7,7 @@ using Traffk.Portal.Permissions;
 namespace Traffk.Portal.Controllers
 {
     [Authorize]
+    [ApiAuthorize(ApiNames.Base)]
     [ApiAuthorize(ApiNames.Rx)]
     [Produces("application/json")]
     [Route("api/v1/[controller]")]

@@ -16,11 +16,13 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Permissions;
 using Traffk.Portal.Permissions;
 
 namespace Traffk.Portal.Controllers
 {
     [Authorize]
+    [ApiAuthorize(ApiNames.Base)]
     [Produces("application/json")]
     [Route("api/Token")]
     public class TokenController : Controller
