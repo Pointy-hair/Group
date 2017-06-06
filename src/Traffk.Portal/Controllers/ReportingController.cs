@@ -18,6 +18,7 @@ using TraffkPortal.Models.ReportingModels;
 using TraffkPortal.Permissions;
 using TraffkPortal.Services;
 using ILogger = Serilog.ILogger;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace Traffk.Portal.Controllers
 {
@@ -42,7 +43,7 @@ namespace Traffk.Portal.Controllers
 
         
         public ReportingController(
-            TraffkRdbContext db,
+            TraffkTenantModelDbContext db,
             CurrentContextServices current,
             ILogger logger,
             ICacher cacher,

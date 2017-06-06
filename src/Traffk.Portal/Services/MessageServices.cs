@@ -7,6 +7,7 @@ using TraffkPortal.Services.Sms;
 using System;
 using System.Reflection;
 using Traffk.Bal.Communications;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace TraffkPortal.Services
 {
@@ -17,10 +18,10 @@ namespace TraffkPortal.Services
     {
         private readonly ITrackingEmailer Emailer;
         private readonly CurrentContextServices Current;
-        private readonly TraffkRdbContext DB;
+        private readonly TraffkTenantModelDbContext DB;
         private readonly ITwilioSmsSender TwilioSmsSender;
 
-        public AuthMessageSender(ITrackingEmailer emailer, CurrentContextServices current, TraffkRdbContext db, ITwilioSmsSender twilioSmsSender)
+        public AuthMessageSender(ITrackingEmailer emailer, CurrentContextServices current, TraffkTenantModelDbContext db, ITwilioSmsSender twilioSmsSender)
         {
             Emailer = emailer;
             Current = current;

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using System;
 using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Tableau;
 using Traffk.Tableau.REST;
 using Traffk.Tableau.REST.RestRequests;
@@ -12,11 +13,11 @@ namespace Traffk.Portal.Permissions
         private readonly ITableauViewerService AdminTableauRestService;
         private readonly TableauSignInOptions Options;
         private readonly ITableauUserCredentials TableauAdminCredentials;
-        private readonly TraffkRdbContext Rdb;
+        private readonly TraffkTenantModelDbContext Rdb;
 
         public TableauAuthorizationService(IOptions<TableauSignInOptions> options,
             IOptions<TableauAdminCredentials> adminSignInOptions,
-            TraffkRdbContext rdb)
+            TraffkTenantModelDbContext rdb)
         {
             TableauAdminCredentials = adminSignInOptions.Value;
                 //Instead of creating a new instance here, 

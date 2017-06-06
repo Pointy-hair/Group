@@ -9,6 +9,7 @@ using Traffk.Portal.Models.ReportMetadataModels;
 using TraffkPortal;
 using TraffkPortal.Controllers;
 using TraffkPortal.Services;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace Traffk.Portal.Controllers
 {
@@ -22,7 +23,7 @@ namespace Traffk.Portal.Controllers
         }
 
         public ReportMetadataController( 
-            TraffkRdbContext db, 
+            TraffkTenantModelDbContext db, 
             CurrentContextServices current, 
             ILogger logger, 
             ICacher cacher = null) : base(AspHelpers.MainNavigationPageKeys.NotSpecified, db, current, logger, cacher)

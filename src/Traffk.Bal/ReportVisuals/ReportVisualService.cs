@@ -11,6 +11,7 @@ using Traffk.Bal.Services;
 using Traffk.Tableau;
 using Traffk.Tableau.REST;
 using Traffk.Tableau.REST.Models;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace Traffk.Bal.ReportVisuals
 {
@@ -29,7 +30,7 @@ namespace Traffk.Bal.ReportVisuals
     public class ReportVisualService : IReportVisualService
     {
         private ITableauViewerService TableauViewerService;
-        private TraffkRdbContext Rdb;
+        private TraffkTenantModelDbContext Rdb;
         private ITableauTenantFinder TableauTenantFinder;
         private ApplicationUser CurrentUser;
         private bool CanSeePhi;
@@ -41,7 +42,7 @@ namespace Traffk.Bal.ReportVisuals
         public string TableauTenantId { get; private set; }
 
         public ReportVisualService(ITableauViewerService tableauViewerService, 
-            TraffkRdbContext rdb, 
+            TraffkTenantModelDbContext rdb, 
             ITableauTenantFinder tableauTenantFinder, 
             ICurrentUser currentUser, 
             IPhiAuthorizer phiAuthorizer,

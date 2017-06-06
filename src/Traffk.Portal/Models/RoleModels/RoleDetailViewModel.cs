@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Permissions;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace TraffkPortal.Models.RoleModels
 {

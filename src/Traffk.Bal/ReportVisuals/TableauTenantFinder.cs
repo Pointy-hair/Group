@@ -5,13 +5,14 @@ using RevolutionaryStuff.Core.ApplicationParts;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Settings;
 using Traffk.Tableau;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace Traffk.Bal.ReportVisuals
 {
     public class TableauTenantFinder : ITableauTenantFinder
     {
         public IOptions<TenantSettings> Options { get; private set; }
-        public TraffkRdbContext Rdb { get; private set; }
+        public TraffkTenantModelDbContext Rdb { get; private set; }
         public int TraffkTenantId { get; private set; }
         public string TableauTenantId
         {
@@ -29,7 +30,7 @@ namespace Traffk.Bal.ReportVisuals
 
         private string TableauTenantId_p;
 
-        public TableauTenantFinder(IOptions<TenantSettings> options, TraffkRdbContext rdb, ITraffkTenantFinder traffkTenantFinder)
+        public TableauTenantFinder(IOptions<TenantSettings> options, TraffkTenantModelDbContext rdb, ITraffkTenantFinder traffkTenantFinder)
         {
             TraffkTenantId = traffkTenantFinder.GetTenantIdAsync().Result;
             Options = options;

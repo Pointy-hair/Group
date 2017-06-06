@@ -3,6 +3,7 @@ using RevolutionaryStuff.Core;
 using System.Linq;
 using Traffk.Bal;
 using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.Settings;
 
 namespace Traffk.BackgroundJobRunner
@@ -10,9 +11,9 @@ namespace Traffk.BackgroundJobRunner
     public sealed class SmtpSettingsAdaptor : IOptions<SmtpOptions>
     {
         private readonly ITraffkTenantFinder Finder;
-        private readonly TraffkRdbContext Rdb;
+        private readonly TraffkTenantModelDbContext Rdb;
 
-        public SmtpSettingsAdaptor(ITraffkTenantFinder finder, TraffkRdbContext rdb)
+        public SmtpSettingsAdaptor(ITraffkTenantFinder finder, TraffkTenantModelDbContext rdb)
         {
             Finder = finder;
             Rdb = rdb;

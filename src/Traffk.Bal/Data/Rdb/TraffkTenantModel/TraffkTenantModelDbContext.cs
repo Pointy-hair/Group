@@ -15,9 +15,9 @@ using Traffk.Bal.Communications;
 using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
 
-namespace Traffk.Bal.Data.Rdb
+namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
 {
-    public partial class TraffkRdbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>, ICreativeSettingsFinder
+    public partial class TraffkTenantModelDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>, ICreativeSettingsFinder
     {
         public const string DefaultDatabaseConnectionStringName = "TraffkTenantPortal";
 
@@ -110,7 +110,7 @@ namespace Traffk.Bal.Data.Rdb
 
         private readonly ConfigStringFormatter Configger;
 
-        public TraffkRdbContext(DbContextOptions<TraffkRdbContext> options, ITraffkTenantFinder tenantFinder, ConfigStringFormatter configger)
+        public TraffkTenantModelDbContext(DbContextOptions<TraffkTenantModelDbContext> options, ITraffkTenantFinder tenantFinder, ConfigStringFormatter configger)
             : base(options)
         {
             TenantFinder = tenantFinder;

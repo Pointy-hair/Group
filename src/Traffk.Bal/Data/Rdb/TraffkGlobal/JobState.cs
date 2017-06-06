@@ -1,8 +1,9 @@
-﻿using System;
+﻿#if false
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using Traffk.Bal.BackgroundJobs;
 
-namespace Traffk.Bal.Data.Rdb
+namespace Traffk.Bal.Data.Rdb.TraffkGlobal
 {
     public partial class JobState
     {
@@ -25,3 +26,4 @@ namespace Traffk.Bal.Data.Rdb
         private JobStateDetails JobStateDetails_p;
     }
 }
+#endif

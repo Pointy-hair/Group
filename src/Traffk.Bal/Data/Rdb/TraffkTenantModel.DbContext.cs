@@ -20,9 +20,9 @@ using System.Data.SqlClient;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
 
-namespace Traffk.Bal.Data.Rdb
+namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
 {
-    public partial class TraffkRdbContext
+    public partial class TraffkTenantModelDbContext
     {
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{

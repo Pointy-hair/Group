@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using TraffkPortal.Models.ManageViewModels;
 using TraffkPortal.Services;
 using TraffkPortal.Services.Sms;
@@ -39,7 +40,7 @@ namespace TraffkPortal.Controllers
         private readonly bool IsSigninPersistent;
 
         public ManageController(
-            TraffkRdbContext db,
+            TraffkTenantModelDbContext db,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,

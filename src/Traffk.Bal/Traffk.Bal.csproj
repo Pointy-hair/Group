@@ -31,7 +31,7 @@
     <None Update="Data\Rdb\TraffkTenantModel.SchemaMeta.xml">
       <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
     </None>
-    <None Update="Data\Rdb\TraffkGlobals.SchemaMeta.xml">
+    <None Update="Data\Rdb\TraffkGlobal.SchemaMeta.xml">
       <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
     </None>
     <None Update="Data\Rdb\TraffkTenantShards.SchemaMeta.xml">
@@ -47,7 +47,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
     </Compile>
-    <Compile Update="Data\Rdb\TraffkGlobals.DbContext.cs">
+    <Compile Update="Data\Rdb\TraffkGlobal.DbContext.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>

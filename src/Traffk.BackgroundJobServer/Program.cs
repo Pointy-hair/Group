@@ -10,6 +10,7 @@ using Traffk.Bal.Settings;
 using RevolutionaryStuff.Core.ApplicationParts;
 using Traffk.Bal.Data.Rdb;
 using Microsoft.AspNetCore.Identity;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace Traffk.BackgroundJobRunner
 {

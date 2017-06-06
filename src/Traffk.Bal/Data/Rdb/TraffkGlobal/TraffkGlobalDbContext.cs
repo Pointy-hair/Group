@@ -3,14 +3,14 @@ using System.Threading.Tasks;
 using System.Threading;
 using RevolutionaryStuff.Core;
 
-namespace Traffk.Bal.Data.Rdb
+namespace Traffk.Bal.Data.Rdb.TraffkGlobal
 {
 
-    public partial class TraffkGlobalsContext : DbContext
+    public partial class TraffkGlobalDbContext : DbContext
     {
         public const string DefaultDatabaseConnectionStringName = "TraffkGlobal";
 
-        public TraffkGlobalsContext(DbContextOptions<TraffkGlobalsContext> options) : base(options)
+        public TraffkGlobalDbContext(DbContextOptions<TraffkGlobalDbContext> options) : base(options)
         {
         }
 

@@ -36,6 +36,9 @@ using TraffkPortal.Services.Logging;
 using TraffkPortal.Services.Sms;
 using TraffkPortal.Services.TenantServices;
 using ILogger = Serilog.ILogger;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
+using Traffk.Bal.Data.Rdb.TraffkGlobal;
+using Traffk.Bal.Data.Rdb.TraffkTenantShards;
 
 namespace TraffkPortal
 {
@@ -122,16 +125,14 @@ namespace TraffkPortal
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
 
-            services.AddDbContext<TenantRdbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString(TenantRdbContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Singleton);
+            services.AddDbContext<TraffkTenantShardsDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString(TraffkTenantShardsDbContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Singleton);
 
-            services.AddDbContext<TraffkRdbContext>((sp,options) =>
-            {
-                options.UseSqlServer(Configuration.GetConnectionString(TraffkRdbContext.DefaultDatabaseConnectionStringName));
-            }, ServiceLifetime.Scoped);
+            services.AddDbContext<TraffkTenantModelDbContext>((sp,options) =>
+                options.UseSqlServer(Configuration.GetConnectionString(TraffkTenantModelDbContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Scoped);
 
-            services.AddDbContext<TraffkGlobalsContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString(TraffkGlobalsContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Scoped);
+            services.AddDbContext<TraffkGlobalDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString(TraffkGlobalDbContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Scoped);
 
             services.Configure<IdentityOptions>(options => 
             {
@@ -140,7 +141,7 @@ namespace TraffkPortal
             });
 
             services.AddIdentity<ApplicationUser, ApplicationRole>()
-                .AddEntityFrameworkStores<TraffkRdbContext>()
+                .AddEntityFrameworkStores<TraffkTenantModelDbContext>()
                 .AddDefaultTokenProviders();
 
             /*
@@ -176,7 +177,7 @@ namespace TraffkPortal
             services.AddScoped<IEmailer, RawEmailer>();
             services.AddScoped<ITrackingEmailer, TrackingEmailer>();
             services.AddScoped<ICommunicationBlastFinder, SystemCommunicationCommunicationBlastFinder>();
-            services.AddScoped<Traffk.Bal.Communications.ICreativeSettingsFinder, TraffkRdbContext>();
+            services.AddScoped<Traffk.Bal.Communications.ICreativeSettingsFinder, TraffkTenantModelDbContext>();
             services.AddScoped<IEmailSender, AuthMessageSender>();
             services.AddScoped<ISmsSender, AuthMessageSender>();
             services.AddSingleton<ITwilioSmsSender, TwilioSmsSender>();

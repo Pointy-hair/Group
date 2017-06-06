@@ -11,6 +11,7 @@ using Traffk.Bal;
 using Traffk.Bal.ApplicationParts;
 using Traffk.Bal.BackgroundJobs;
 using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Data.Rdb.TraffkGlobal;
 using Traffk.Bal.Services;
 using RevolutionaryStuff.Core.ApplicationParts;
 using System.Collections;
@@ -20,6 +21,8 @@ using Microsoft.AspNetCore.Identity;
 using Hangfire;
 using Microsoft.Azure.SqlDatabase.ElasticScaleNetCore.ShardManagement;
 using Microsoft.Extensions.Configuration;
+using Traffk.Bal.Data.Rdb.TraffkTenantShards;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace Traffk.BackgroundJobServer
 {
@@ -28,8 +31,8 @@ namespace Traffk.BackgroundJobServer
         private const string SqlAzureManagementApiResource = "https://management.azure.com/";
         private readonly ServiceClientCredentialFactory CredentialFactory;
         private readonly IOptions<TenantManagementJobsRunnerConfiguration> ConfigurationOptions;
-        private readonly DbContextOptions<TraffkRdbContext> RdbOptions;
-        private readonly TenantRdbContext Tdb;
+        private readonly DbContextOptions<TraffkTenantModelDbContext> RdbOptions;
+        private readonly TraffkTenantShardsDbContext Tdb;
         private readonly IPasswordHasher<ApplicationUser> PasswordHasher;
         private readonly IConfiguration Config;
 
@@ -44,14 +47,14 @@ namespace Traffk.BackgroundJobServer
 
         public TenantManagementJobsRunner(
             JobRunnerProgram jobRunnerProgram,
-            TraffkGlobalsContext gdb,
+            TraffkGlobalDbContext gdb,
             Serilog.ILogger logger,
             IConfiguration config, 
-            TenantRdbContext tdb,
+            TraffkTenantShardsDbContext tdb,
             IPasswordHasher<ApplicationUser> passwordHasher,
             ServiceClientCredentialFactory credentialFactory, 
             IOptions<TenantManagementJobsRunnerConfiguration> configurationOptions,
-            DbContextOptions<TraffkRdbContext> rdbOptions)
+            DbContextOptions<TraffkTenantModelDbContext> rdbOptions)
             : base(gdb, jobRunnerProgram, logger)
         {
             CredentialFactory = credentialFactory;
@@ -180,7 +183,7 @@ namespace Traffk.BackgroundJobServer
             {
                 ShardMapManager shardMapManager;
                 ShardMapManagerFactory.TryGetSqlShardMapManager(
-                    Config.GetConnectionString(TenantRdbContext.DefaultDatabaseConnectionStringName),
+                    Config.GetConnectionString(TraffkTenantShardsDbContext.DefaultDatabaseConnectionStringName),
                     ShardMapManagerLoadPolicy.Lazy,
                     out shardMapManager);
                 ListShardMap<int> shardMap;
@@ -199,7 +202,7 @@ namespace Traffk.BackgroundJobServer
         async Task ITenantManagementJobs.InitializeNewTenantAsync(TenantInitializeDetails details)
         {
             var finder = new MyDummyTenantFinder(details.DatabaseName, details.TenantId);
-            using (var rdb = new TraffkRdbContext(RdbOptions, finder, new ConfigStringFormatter(finder) { }))
+            using (var rdb = new TraffkTenantModelDbContext(RdbOptions, finder, new ConfigStringFormatter(finder) { }))
             {
                 try
                 {

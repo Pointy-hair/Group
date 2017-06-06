@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using Serilog.Core;
 using Serilog.Core.Enrichers;
 using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Data.Rdb.TraffkGlobal;
 using ILogger = Serilog.ILogger;
 
 namespace Traffk.Bal.ApplicationParts
@@ -20,14 +21,14 @@ namespace Traffk.Bal.ApplicationParts
         protected readonly string ConstructedText = "Constructed";
         protected readonly string DisposedText = "Disposed";
 
-        protected readonly TraffkGlobalsContext GlobalContext;
+        protected readonly TraffkGlobalDbContext GlobalContext;
         protected readonly PerformContext PerformContext;
 
         protected readonly DateTime StartedAtUtc = DateTime.UtcNow;
 
         private static int InstanceId_s;
 
-        protected BaseJobRunner(TraffkGlobalsContext globalContext, 
+        protected BaseJobRunner(TraffkGlobalDbContext globalContext, 
             JobRunnerProgram jobRunnerProgram, 
             ILogger logger)
         {

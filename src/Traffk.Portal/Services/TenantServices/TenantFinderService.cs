@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using Traffk.Bal;
 using System.Collections;
 using Traffk.Bal.Services;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
+using Traffk.Bal.Data.Rdb.TraffkTenantShards;
 
 namespace TraffkPortal.Services.TenantServices
 {
@@ -60,7 +62,7 @@ namespace TraffkPortal.Services.TenantServices
 
         public string DatabaseName { get; private set; }
 
-        public TenantFinderService(IOptions<TenantServiceFinderOptions> options, TenantRdbContext db, IHttpContextAccessor acc)
+        public TenantFinderService(IOptions<TenantServiceFinderOptions> options, TraffkTenantShardsDbContext db, IHttpContextAccessor acc)
         {
             PreferredHostname = ActualHostname = acc.HttpContext == null ? null : acc.HttpContext.Request.Host.Host;
             var tso = options.Value;

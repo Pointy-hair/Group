@@ -6,14 +6,15 @@ using System.Threading.Tasks;
 using System.Threading;
 using RevolutionaryStuff.Core;
 using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace Traffk.Bal.Identity
 {
-    public class TraffkUserStore : UserStore<ApplicationUser, ApplicationRole, TraffkRdbContext, string>, IUserStore<ApplicationUser>
+    public class TraffkUserStore : UserStore<ApplicationUser, ApplicationRole, TraffkTenantModelDbContext, string>, IUserStore<ApplicationUser>
     {
         protected readonly ITraffkTenantFinder TenantFinder;
 
-        public TraffkUserStore(ITraffkTenantFinder tenantFinder, TraffkRdbContext context, IdentityErrorDescriber describer = null)
+        public TraffkUserStore(ITraffkTenantFinder tenantFinder, TraffkTenantModelDbContext context, IdentityErrorDescriber describer = null)
             : base(context, describer)
         {
             Requires.NonNull(tenantFinder, nameof(tenantFinder));

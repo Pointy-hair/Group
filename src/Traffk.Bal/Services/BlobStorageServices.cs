@@ -11,6 +11,7 @@ using Traffk.Bal.Data.Rdb;
 using Newtonsoft.Json;
 using RevolutionaryStuff.Core.Crypto;
 using RevolutionaryStuff.Core.EncoderDecoders;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace Traffk.Bal.Services
 {

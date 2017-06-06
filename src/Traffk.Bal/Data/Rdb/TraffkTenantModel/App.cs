@@ -1,4 +1,4 @@
-﻿namespace Traffk.Bal.Data.Rdb
+﻿namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
 {
     public enum AppTypes
     {

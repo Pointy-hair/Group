@@ -10,18 +10,19 @@ using Traffk.Bal.Services;
 using Traffk.Bal.Data;
 using RevolutionaryStuff.Core.Collections;
 using RevolutionaryStuff.Core.EncoderDecoders;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace Traffk.Bal.Email
 {
     public class TrackingEmailer : ITrackingEmailer
     {
         private readonly IEmailer Inner;
-        private readonly TraffkRdbContext Rdb;
+        private readonly TraffkTenantModelDbContext Rdb;
         private readonly ITraffkTenantFinder TenantFinder;
         private readonly ICommunicationBlastFinder BlastFinder;
         private readonly int TenantId;
 
-        public TrackingEmailer(IEmailer emailer, TraffkRdbContext rdb, ITraffkTenantFinder tenantFinder, ICommunicationBlastFinder blastFinder)
+        public TrackingEmailer(IEmailer emailer, TraffkTenantModelDbContext rdb, ITraffkTenantFinder tenantFinder, ICommunicationBlastFinder blastFinder)
         {
             Inner = emailer;
             Rdb = rdb;

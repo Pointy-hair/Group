@@ -7,25 +7,26 @@ using RevolutionaryStuff.Core;
 using Serilog;
 using Traffk.Bal.ApplicationParts;
 using Traffk.Bal.BackgroundJobs;
-using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
 using Traffk.Tableau;
 using Traffk.Tableau.REST;
 using Traffk.Tableau.REST.RestRequests;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
+using Traffk.Bal.Data.Rdb.TraffkGlobal;
 
 namespace Traffk.BackgroundJobServer
 {
     public class TenantedJobRunner : BaseJobRunner, ITenantJobs
     {
-        private readonly TraffkRdbContext DB;
+        private readonly TraffkTenantModelDbContext DB;
         private readonly CurrentTenantServices Current;
         private readonly ITableauAdminService TableauAdminService;
         private readonly ITableauVisualServices TableauVisualService;
         private readonly BlobStorageServices BlobStorageService;
 
-        public TenantedJobRunner(TraffkRdbContext db, 
-            TraffkGlobalsContext globalContext,
+        public TenantedJobRunner(TraffkTenantModelDbContext db, 
+            TraffkGlobalDbContext globalContext,
             JobRunnerProgram jobRunnerProgram,
             CurrentTenantServices current, 
             ITableauAdminService tableauAdminService,
@@ -78,6 +79,9 @@ namespace Traffk.BackgroundJobServer
 
         async void ITenantJobs.DownloadTableauPdfContinuationJob()
         {
+#if true
+            string resultData = null;
+#else
             var awaitingState = await GlobalContext.JobStates.FirstAsync(j => j.JobId == JobId && j.Name == AwaitingState.StateName);
 
             if (awaitingState == null)
@@ -85,20 +89,19 @@ namespace Traffk.BackgroundJobServer
                 throw new Exception("No parent job found.");
             }
 
-            var jobId = awaitingState.JobStateDetails.ParentId;
+            var parentJobId = awaitingState.JobStateDetails.ParentId;
 
-            const string pdfFileExtension = ".pdf";
             string resultData = null;
             do
             {
-                var precedingJob = await GlobalContext.Job.AsNoTracking().FirstAsync(x => x.Id == jobId);
+                var precedingJob = await GlobalContext.Job.AsNoTracking().FirstAsync(x => x.Id == parentJobId);
                 resultData = precedingJob.ResultData;
                 if (resultData == null)
                 {
                     Thread.Sleep(TimeSpan.FromMinutes(1));
                 }
             } while (resultData == null);
-
+#endif
             var downloadOptions = JsonConvert.DeserializeObject<DownloadPdfOptions>(resultData);
             var pdfBytes = await TableauVisualService.DownloadPdfAsync(downloadOptions);
             var blob = BlobStorageService.StoreFileAsync(
@@ -110,7 +113,7 @@ namespace Traffk.BackgroundJobServer
                     FileName = $"{downloadOptions.WorkbookName}{MimeType.Application.Pdf.PrimaryFileExtension}",
                     Name = $"{downloadOptions.WorkbookName}{MimeType.Application.Pdf.PrimaryFileExtension}",
                 },
-                $"{downloadOptions.WorkbookName.RemoveSpecialCharacters()}{pdfFileExtension}");
+                $"{downloadOptions.WorkbookName.RemoveSpecialCharacters()}{MimeType.Application.Pdf.PrimaryFileExtension}");
             PostResult(blob);
         }
 

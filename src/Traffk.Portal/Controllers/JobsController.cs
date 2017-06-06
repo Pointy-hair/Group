@@ -10,6 +10,8 @@ using Serilog;
 using Traffk.Bal.BackgroundJobs;
 using Traffk.Bal.Data.Rdb;
 using TraffkPortal.Services;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
+using Traffk.Bal.Data.Rdb.TraffkGlobal;
 
 namespace TraffkPortal.Controllers
 {
@@ -33,14 +35,14 @@ namespace TraffkPortal.Controllers
         }
 
         private readonly IBackgroundJobClient Backgrounder;
-        private readonly TraffkGlobalsContext GDB;
+        private readonly TraffkGlobalDbContext GDB;
 
         public JobsController(
-            TraffkRdbContext db,
+            TraffkTenantModelDbContext db,
             CurrentContextServices current,
             ILogger logger,
             IBackgroundJobClient backgrounder,
-            TraffkGlobalsContext gdb
+            TraffkGlobalDbContext gdb
             )
             : base(AspHelpers.MainNavigationPageKeys.Setup, db, current, logger)
         {

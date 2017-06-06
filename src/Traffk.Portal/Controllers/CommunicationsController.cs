@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Traffk.Bal.Communications;
 using Traffk.Bal.Data;
 using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.Permissions;
 using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
@@ -68,7 +69,7 @@ namespace TraffkPortal.Controllers
 
         public CommunicationsController(
             BlobStorageServices blobs,
-            TraffkRdbContext db,
+            TraffkTenantModelDbContext db,
             CurrentContextServices current,
             ILogger logger
             )
@@ -400,7 +401,7 @@ namespace TraffkPortal.Controllers
                         where z.TenantId == TenantId && z.CommunicationId == communicationId                        
                         select z;
             items = ApplyBrowse(
-                items, sortCol ?? nameof(Traffk.Bal.Data.Rdb.CommunicationBlast.CommunicationBlastId), sortDir,
+                items, sortCol ?? nameof(Traffk.Bal.Data.Rdb.TraffkTenantModel.CommunicationBlast.CommunicationBlastId), sortDir,
                 page, pageSize);
             SetHeroLayoutViewData(communication, CommunicationPageKeys.Blasts);
             return View(ViewNames.CommunicationBlasts, items);

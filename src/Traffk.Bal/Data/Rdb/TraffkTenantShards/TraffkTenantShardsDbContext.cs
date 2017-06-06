@@ -6,17 +6,17 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Traffk.Bal.Data.Rdb
+namespace Traffk.Bal.Data.Rdb.TraffkTenantShards
 {
-    public partial class TenantRdbContext : DbContext
+    public partial class TraffkTenantShardsDbContext : DbContext
     {
         public const string DefaultDatabaseConnectionStringName = "TraffkTenantShards";
 
-        public TenantRdbContext(DbContextOptions<TenantRdbContext> options)
+        public TraffkTenantShardsDbContext(DbContextOptions<TraffkTenantShardsDbContext> options)
             : base(options)
         { }
 
-        public async Task<ConnectionHelpers.Result<AppHostItem>> AppFindByHostname(string hostName = null, AppTypes? appType = null)
+        public async Task<ConnectionHelpers.Result<AppHostItem>> AppFindByHostname(string hostName = null, TraffkTenantModel.AppTypes? appType = null)
         {
             var ps = new SqlParameter[]
                 {
@@ -31,7 +31,7 @@ namespace Traffk.Bal.Data.Rdb
             return await conn.ExecuteReaderAsync<AppHostItem>(null, "dbo.AppFindByHostname", null, ps);
         }
 
-        public async Task<ConnectionHelpers.Result<Tenant>> TenantFindByTenantId(int tenantId)
+        public async Task<ConnectionHelpers.Result<TraffkTenantModel.Tenant>> TenantFindByTenantId(int tenantId)
         {
             var ps = new SqlParameter[]
                 {
@@ -42,7 +42,7 @@ namespace Traffk.Bal.Data.Rdb
             {
                 await conn.OpenAsync();
             }
-            return await conn.ExecuteReaderAsync<Tenant>(null, "dbo.TenantFindByTenantId", null, ps);
+            return await conn.ExecuteReaderAsync<TraffkTenantModel.Tenant>(null, "dbo.TenantFindByTenantId", null, ps);
         }
 
         public async Task<int> TenantIdReserveAsync(string hostDatabaseName)

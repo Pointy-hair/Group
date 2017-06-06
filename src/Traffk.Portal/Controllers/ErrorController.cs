@@ -8,6 +8,7 @@ using Traffk.Bal.Data;
 using Traffk.Bal.Data.Rdb;
 using TraffkPortal.Models.ErrorModels;
 using TraffkPortal.Services;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace TraffkPortal.Controllers
 {
@@ -31,7 +32,7 @@ namespace TraffkPortal.Controllers
         }
         
         public ErrorController(
-            TraffkRdbContext db,
+            TraffkTenantModelDbContext db,
             CurrentContextServices current,
             ILogger logger,
             IHostingEnvironment hostingEnvironment

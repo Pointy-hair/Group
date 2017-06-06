@@ -3,6 +3,7 @@ using RevolutionaryStuff.Core;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.Settings;
 
 namespace Traffk.Bal.Communications

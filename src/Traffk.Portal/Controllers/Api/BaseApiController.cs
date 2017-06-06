@@ -9,7 +9,7 @@ namespace Traffk.Portal.Controllers.Api
 {
     public abstract class BaseApiController : Controller
     {
-        private readonly ILogger Logger;
+        protected readonly ILogger Logger;
 
         protected BaseApiController(ILogger logger)
         {
