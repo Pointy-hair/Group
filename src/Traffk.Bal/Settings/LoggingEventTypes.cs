@@ -9,7 +9,8 @@ namespace Traffk.Bal.Settings
             ViewedReport,
             Account,
             Exception,
-            DownloadedReport
+            DownloadedReport,
+            ApiCall
         }
     }
 }
