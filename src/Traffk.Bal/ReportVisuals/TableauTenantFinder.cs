@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core.ApplicationParts;
-using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Settings;
 using Traffk.Tableau;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;

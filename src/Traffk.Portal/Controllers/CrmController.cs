@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Traffk.Bal;
 using Traffk.Bal.Communications;
-using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.Permissions;
 using Traffk.Bal.ReportVisuals;

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using RevolutionaryStuff.Core;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Permissions;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 

@@ -6,7 +6,6 @@ using Serilog;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.Permissions;
 using TraffkPortal.Models.RoleModels;

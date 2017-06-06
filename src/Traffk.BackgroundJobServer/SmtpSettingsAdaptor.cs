@@ -2,7 +2,6 @@
 using RevolutionaryStuff.Core;
 using System.Linq;
 using Traffk.Bal;
-using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.Settings;
 

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Traffk.Bal.Permissions
+﻿namespace Traffk.Bal.Permissions
 {
     public enum ApiNames
     {

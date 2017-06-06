@@ -9,7 +9,6 @@ using Serilog;
 using System;
 using System.Threading.Tasks;
 using Traffk.Bal.BackgroundJobs;
-using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Data.Rdb.TraffkGlobal;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.Data.Rdb.TraffkTenantShards;

@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Traffk.Bal.Email;
 using MimeKit;
-using Traffk.Bal.Data.Rdb;
 using TraffkPortal.Services.Sms;
 using System;
 using System.Reflection;

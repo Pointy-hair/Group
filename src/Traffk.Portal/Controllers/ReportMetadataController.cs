@@ -4,7 +4,6 @@ using RevolutionaryStuff.Core.Caching;
 using System.Linq;
 using System.Threading.Tasks;
 using Serilog;
-using Traffk.Bal.Data.Rdb;
 using Traffk.Portal.Models.ReportMetadataModels;
 using TraffkPortal;
 using TraffkPortal.Controllers;

@@ -9,7 +9,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Traffk.Bal.Communications;
-using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using TraffkPortal.Models.AccountViewModels;
 using TraffkPortal.Services;

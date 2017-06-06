@@ -9,15 +9,11 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.ApplicationParts;
-using RevolutionaryStuff.Core.Database;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data;
-using System.Data.SqlClient;
-using System.Threading.Tasks;
 using System.Runtime.Serialization;
 
 namespace Traffk.Bal.Data.Rdb.TraffkGlobal

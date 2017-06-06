@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Services;
 using System.Collections.Generic;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;

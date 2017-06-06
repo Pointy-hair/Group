@@ -1,7 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Traffk.Bal.Services;
-using Traffk.Bal.Data.Rdb;
 using TraffkPortal.Services;
 using Microsoft.Extensions.Logging;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;

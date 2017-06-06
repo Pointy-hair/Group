@@ -9,7 +9,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Traffk.Bal;
-using Traffk.Bal.Data.Rdb;
 using TraffkPortal.Models.UserModels;
 using TraffkPortal.Services;
 using TraffkPortal.Permissions;

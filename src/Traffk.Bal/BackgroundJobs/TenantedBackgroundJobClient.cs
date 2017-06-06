@@ -1,9 +1,7 @@
 ﻿using System;
 using Hangfire;
-using Hangfire.Common;
 using Hangfire.States;
 using RevolutionaryStuff.Core;
-using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Data.Rdb.TraffkGlobal;
 
 namespace Traffk.Bal.BackgroundJobs

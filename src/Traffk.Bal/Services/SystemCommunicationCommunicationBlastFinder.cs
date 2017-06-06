@@ -3,7 +3,6 @@ using RevolutionaryStuff.Core;
 using System.Linq;
 using System.Threading.Tasks;
 using Traffk.Bal.Communications;
-using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace Traffk.Bal.Services

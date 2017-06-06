@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Threading;
-using Hangfire.States;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
 using Serilog;

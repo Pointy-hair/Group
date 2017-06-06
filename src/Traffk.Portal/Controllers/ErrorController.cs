@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using Serilog;
 using Traffk.Bal.Data;
-using Traffk.Bal.Data.Rdb;
 using TraffkPortal.Models.ErrorModels;
 using TraffkPortal.Services;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;

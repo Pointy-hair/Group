@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 using Newtonsoft.Json;
-using Traffk.Bal.Data.Rdb;
 
 namespace Traffk.Bal.BackgroundJobs
 {

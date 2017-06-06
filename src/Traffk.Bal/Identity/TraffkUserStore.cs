@@ -5,7 +5,6 @@ using System;
 using System.Threading.Tasks;
 using System.Threading;
 using RevolutionaryStuff.Core;
-using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace Traffk.Bal.Identity

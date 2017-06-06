@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Traffk.Bal.BackgroundJobs;
-using Traffk.Bal.Data.Rdb;
 using TraffkPortal.Services;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.Data.Rdb.TraffkGlobal;
