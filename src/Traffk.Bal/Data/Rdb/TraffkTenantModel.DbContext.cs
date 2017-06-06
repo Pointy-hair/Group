@@ -3958,11 +3958,11 @@ namespace Traffk.Bal.Data.Rdb
 
 		[DisplayName("Tenant Type")]
 		[NotMapped]
-		public ContactTypes TenantType
+		public TenantTypes TenantType
         {
             get
             {
-                ContactTypes e;
+                TenantTypes e;
                 if (Enum.TryParse(TenantTypeStringValue, true, out e)) return e;
                 return 0;
             }

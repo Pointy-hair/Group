@@ -3,11 +3,12 @@ using RevolutionaryStuff.Core.Database;
 using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Traffk.Bal.Data.Rdb
 {
-    public class TenantRdbContext : DbContext
+    public partial class TenantRdbContext : DbContext
     {
         public const string DefaultDatabaseConnectionStringName = "TraffkTenantShards";
 
@@ -42,6 +43,21 @@ namespace Traffk.Bal.Data.Rdb
                 await conn.OpenAsync();
             }
             return await conn.ExecuteReaderAsync<Tenant>(null, "dbo.TenantFindByTenantId", null, ps);
+        }
+
+        public async Task<int> TenantIdReserveAsync(string hostDatabaseName)
+        {
+            var ps = new SqlParameter[]
+                {
+                    new SqlParameter("@hostDatabaseName", hostDatabaseName){Direction=ParameterDirection.Input},
+                };
+            var conn = Database.GetDbConnection();
+            if (conn.State != ConnectionState.Open)
+            {
+                await conn.OpenAsync();
+            }
+            var res = await conn.ExecuteReaderAsync<int>(null, "dbo.TenantIdReserve", null, ps);
+            return res.First();
         }
     }
 }

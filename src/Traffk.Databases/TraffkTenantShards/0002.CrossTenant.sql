@@ -43,3 +43,42 @@ begin
 end
 
 GO
+
+CREATE proc [dbo].[TenantIdReserve]
+	@hostDatabaseName nvarchar(128)=null
+as
+begin
+
+	set nocount on
+
+	declare @tenantId int
+	declare @maxExistingTenantId int
+	select @maxExistingTenantId=max(tenantId) from tenants
+	set @maxExistingTenantId=coalesce(@maxExistingTenantId,0)
+	
+Again:
+	insert into TenantIds
+	values
+	(@hostDatabaseName)
+
+	set @tenantId=@@identity
+
+	delete from TenantIds where tenantId=@tenantId
+
+	if (@tenantId<=@maxExistingTenantId)
+	begin
+		exec db.PrintNow 'Something got hosed... Out identity value={n0}<maxExistingTenantId={n1};  Trying again', @tenantId, @maxExistingTenantId
+		goto Again
+	end
+
+	exec db.PrintNow 'Reserved tenantId={n0}', @tenantId
+
+	select @tenantId TenantId
+
+end
+
+GO
+
+exec db.SprocPropertySet  'TenantIdReserve', '1', @propertyName='AddToDbContext'
+exec db.SprocPropertySet  'TenantIdReserve', 'Collection:int', @propertyName='SprocType'
+

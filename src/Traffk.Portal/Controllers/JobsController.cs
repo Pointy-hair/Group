@@ -49,6 +49,20 @@ namespace TraffkPortal.Controllers
         }
 
         [AllowAnonymous]
+        [Route("/Jobs/NT")]
+        public IActionResult NT()
+        {
+            var d = new TenantCreationDetails
+            {
+                AdminPassword = "1adminPassword",
+                AdminUsername = "admin",
+                TenantName = "NT1"
+            };
+            Backgrounder.Enqueue<ITenantManagementJobs>(z => z.CreateTenant(d));
+            return Ok();
+        }
+
+        [AllowAnonymous]
         [Route("/Jobs/DS")]
         public IActionResult DS()
         {

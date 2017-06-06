@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
 
 namespace RevolutionaryStuff.Core
@@ -64,6 +65,10 @@ namespace RevolutionaryStuff.Core
 
         public override string ToString()
             => $"{this.GetType().Name} contentType={this.PrimaryContentType} fileExtension={this.PrimaryFileExtension}";
+
+        
+        public static implicit operator MediaTypeHeaderValue(MimeType ct)
+            => new MediaTypeHeaderValue(ct.PrimaryContentType);
 
         public static implicit operator string(MimeType ct)
             => ct.PrimaryContentType;

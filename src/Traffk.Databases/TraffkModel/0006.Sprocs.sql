@@ -1,4 +1,4 @@
-﻿create proc [dbo].[DateDimensionsForTenantCreate]
+﻿CREATE proc [dbo].[DateDimensionsForTenantCreate]
 	@tenantId int=null
 as
 begin
@@ -61,7 +61,7 @@ begin
 	exec db.PrintNow 'Staged {n0} dates', @@rowcount 
 
 	insert into datedimensions
-	(TenantId, calendarDate, FiscalYear, FiscalQuarter, FiscalMonth, FiscalDay, FiscalYearName, FiscalQuarterName)
+	(TenantId, calendarDate, FiscalYear, FiscalPeriod, FiscalMonth, FiscalDay, FiscalYearName, FiscalPeriodName)
 	select 
 		TenantId, 
 		d, 
@@ -73,10 +73,9 @@ begin
 
 end
 
-
 GO
 
-create proc FiscalYearsConfigure
+create proc [dbo].[FiscalYearsConfigure]
 	@tenantId int,
 	@baselineFiscalYear int,
 	@baselineCalendarYear int,
@@ -93,10 +92,17 @@ begin
 
 	declare @minCalYear smallint
 
+FindMinCalYear:
 	select top(1) @minCalYear=calendaryear
 	from datedimensions
 	where tenantid=@tenantId
 	order by calendardate 
+
+	if (@minCalYear is null)
+	begin
+		exec [dbo].DateDimensionsForTenantCreate @tenantId
+		goto FindMinCalYear;
+	end
 
 	set @baselineFiscalYear = @baselineFiscalYear - (@baselineCalendarYear-@minCalYear)
 	set @baselineCalendarYear = @baselineCalendarYear - (@baselineCalendarYear-@minCalYear)
@@ -106,8 +112,8 @@ begin
 		CalendarDate date not null,
 		FiscalYear smallint not null,
 		FiscalYearName nvarchar(50) not null,
-		FiscalQuarter tinyint not null,
-		FiscalQuarterName nvarchar(50) not null,
+		FiscalPeriod tinyint not null,
+		FiscalPeriodName nvarchar(50) not null,
 		FiscalMonth tinyint not null,
 		FiscalDay smallint not null
 	)
@@ -172,8 +178,8 @@ begin
 	set
 		fiscalyear=coalesce(z.fiscalyear,0),
 		fiscalyearname=coalesce(z.fiscalyearname, 'FY??'),
-		fiscalquarter=coalesce(z.fiscalquarter,0),
-		fiscalquartername=coalesce(z.fiscalquartername, 'FQ??'),
+		fiscalperiod=coalesce(z.fiscalperiod,0),
+		fiscalperiodname=coalesce(z.fiscalperiodname, 'FQ??'),
 		fiscalmonth=coalesce(z.fiscalmonth,0),
 		fiscalday=coalesce(z.fiscalday,0)
 	from
@@ -187,6 +193,8 @@ begin
 	exec db.PrintNow 'updated {n0} datedimensions', @@rowcount
 
 end
+
+
 
 GO
 

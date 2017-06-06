@@ -1007,7 +1007,7 @@
         </Column>
         <Column name="TenantType" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80" isComputed="0">
           <Properties>
-            <Property name="EnumType" value="ContactTypes" />
+            <Property name="EnumType" value="Tenant.TenantTypes" />
           </Properties>
         </Column>
         <Column name="HostDatabaseName" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" isComputed="1" />
@@ -1043,6 +1043,29 @@
         <Collection schema="dbo" table="Contacts" column="TenantId" collectionType="actual" />
       </Collections>
     </Table>
+    <Table schema="global" name="hangfire_job" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="0" />
+        <Property name="GeneratePoco" value="0" />
+      </Properties>
+      <Columns>
+        <Column name="Id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0">
+          <Properties>
+            <Property name="CustomAttribute" value="Key" />
+          </Properties>
+        </Column>
+        <Column name="StateId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" />
+        <Column name="StateName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="20" isComputed="0" />
+        <Column name="InvocationData" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="-1" isComputed="0" />
+        <Column name="Arguments" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="-1" isComputed="0" />
+        <Column name="CreatedAt" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" isComputed="0" />
+        <Column name="ExpireAt" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="datetime" isComputed="0" />
+        <Column name="TenantId" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" />
+        <Column name="ResultData" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0" />
+        <Column name="RecurringJobId" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="256" isComputed="0" />
+        <Column name="ContactId" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" />
+      </Columns>
+    </Table>
     <Table schema="globals" name="ReportMetaData" tableType="BASE TABLE">
       <Columns>
         <Column name="ReportMetaDataId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
@@ -1052,6 +1075,38 @@
         <Column name="OwnerContactId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" isComputed="0" />
         <Column name="CreatedAtUtc" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" isComputed="0" />
         <Column name="ReportDetails" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="-1" isComputed="0" />
+      </Columns>
+    </Table>
+    <Table schema="HangFire" name="Job" tableType="VIEW">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+        <Property name="Implements" value="ITraffkTenanted" />
+      </Properties>
+      <Columns>
+        <Column name="Id" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0">
+          <Properties>
+            <Property name="CustomAttribute" value="Key" />
+          </Properties>
+        </Column>
+        <Column name="StateId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" />
+        <Column name="StateName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="20" isComputed="0" />
+        <Column name="InvocationData" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="-1" isComputed="0" />
+        <Column name="Arguments" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="-1" isComputed="0" />
+        <Column name="CreatedAt" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" isComputed="0" />
+        <Column name="ExpireAt" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="datetime" isComputed="0" />
+        <Column name="TenantId" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0">
+          <Properties>
+            <Property name="Tenants(TenantId)" value="Key" />
+          </Properties>
+        </Column>
+        <Column name="ResultData" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0" />
+        <Column name="RecurringJobId" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="256" isComputed="0" />
+        <Column name="ContactId" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0">
+          <Properties>
+            <Property name="Contacts(ContactId)" value="Key" />
+          </Properties>
+        </Column>
       </Columns>
     </Table>
     <Table schema="Health" name="CareAlerts" tableType="BASE TABLE">

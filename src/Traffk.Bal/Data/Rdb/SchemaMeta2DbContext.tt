@@ -14,8 +14,9 @@
 <#
 var details = new List<Tuple<string, string, string, string>>
 {
-	Tuple.Create("TraffkTenantModel.SchemaMeta.xml", "TraffkTenantModel.DbContext.cs", "Traffk.Bal.Data.Rdb", "TraffkRdbContext"),
+//	Tuple.Create("TraffkTenantShards.SchemaMeta.xml", "TraffkTenantShards.DbContext.cs", "Traffk.Bal.Data.Rdb", "TenantRdbContext")
 	Tuple.Create("TraffkGlobals.SchemaMeta.xml", "TraffkGlobals.DbContext.cs", "Traffk.Bal.Data.Rdb", "TraffkGlobalsContext"),
+	Tuple.Create("TraffkTenantModel.SchemaMeta.xml", "TraffkTenantModel.DbContext.cs", "Traffk.Bal.Data.Rdb", "TraffkRdbContext")
 };
 #>
 <#

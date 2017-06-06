@@ -16,7 +16,7 @@ namespace RevolutionaryStuff.Core
 
             public bool Equals(string x, string y)
             {
-                return 0 == StringHelpers.CompareIgnoreCase(x, y);
+                return 0 == string.Compare(x, y, true);
             }
 
             public int GetHashCode(string obj)

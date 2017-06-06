@@ -4,6 +4,11 @@ namespace Traffk.Bal.Data.Rdb
 {
     public partial class Tenant
     {
+        public enum TenantTypes
+        {
+            Normal,
+        }
+
         public static class StatusNames
         {
             public const string Normal = "Normal";

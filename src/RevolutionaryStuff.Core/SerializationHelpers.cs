@@ -1,6 +1,7 @@
 ﻿using RevolutionaryStuff.Core.Caching;
 using System;
 using System.IO;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 
 namespace RevolutionaryStuff.Core
@@ -28,6 +29,16 @@ namespace RevolutionaryStuff.Core
         }
 
         public static string WriteObjectToString(this DataContractJsonSerializer ser, object o)
+        {
+            using (var st = new MemoryStream())
+            {
+                ser.WriteObject(st, o);
+                st.Position = 0;
+                return st.ReadToEnd();
+            }
+        }
+
+        public static string WriteObjectToString(this DataContractSerializer ser, object o)
         {
             using (var st = new MemoryStream())
             {

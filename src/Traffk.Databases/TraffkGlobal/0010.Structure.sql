@@ -73,3 +73,51 @@ exec db.ColumnPropertySet 'DataSourceFetchItems', 'DataSourceFetchItemType', 'Da
 GO
 
 
+alter table hangfire.Job Add TenantId int null
+alter table hangfire.Job Add ResultData nvarchar(max) null
+alter table hangfire.Job Add RecurringJobId nvarchar(256) null
+alter table hangfire.Job Add ContactId int null
+
+GO
+
+CREATE TRIGGER Hangfire.JobParameterRecurringIdLinker
+   ON  Hangfire.JobParameter 
+   AFTER INSERT
+AS 
+BEGIN
+
+	SET NOCOUNT ON;
+
+
+	;with
+	jp(JobId, RecurringJobId) as
+	(
+		select JobId, right(left(value, len(value)-1), len(value)-2)
+		from inserted
+		where 
+			name='RecurringJobId' and
+			value is not null and
+			len(value)>2 and
+			len(value)<258
+	),
+	m(JobId, RecurringJobId) as
+	(
+		select distinct jp.JobId, jp.RecurringJobId
+		from 
+			jp
+				inner join
+			hangfire.[hash] h
+				on h.[key]='recurring-job:'+jp.RecurringJobId	
+	)
+	update j 
+	set
+		RecurringJobId=m.RecurringJobId
+	from 
+		hangfire.job j
+			inner join
+		m
+			on j.id=m.jobid
+
+END
+
+GO

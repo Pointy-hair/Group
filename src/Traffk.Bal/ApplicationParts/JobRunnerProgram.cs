@@ -74,6 +74,7 @@ namespace Traffk.Bal.ApplicationParts
             services.Configure<BlobStorageServices.BlobStorageServicesOptions>(Configuration.GetSection(nameof(BlobStorageServices.BlobStorageServicesOptions)));
 
             services.AddSingleton(this);
+            services.AddSingleton<IConfiguration>(Configuration);
             services.AddSingleton<ITraffkTenantFinder, MyTraffkTenantFinder>();
             services.AddSingleton<ICurrentUser>(this);
             services.AddScoped<ConfigStringFormatter>();
