@@ -17,6 +17,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Permissions;
+using Traffk.Portal.Models.ApiModels;
 using Traffk.Portal.Permissions;
 
 namespace Traffk.Portal.Controllers
@@ -24,7 +25,7 @@ namespace Traffk.Portal.Controllers
     [Authorize]
     [ApiAuthorize(ApiNames.Base)]
     [Produces("application/json")]
-    [Route("api/Token")]
+    [Route("api/token")]
     public class TokenController : Controller
     {
         private readonly TokenProviderOptions Options;
@@ -61,7 +62,8 @@ namespace Traffk.Portal.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public object Post()
+        [Route("Authenticate")]
+        public TokenResponse GetToken()
         {
             var claims =
                 GetClaims(HttpContext.Request.Form["username"], HttpContext.Request.Form["password"])
@@ -80,9 +82,11 @@ namespace Traffk.Portal.Controllers
 
             Logger.Information("Retrieved API token.");
 
-            var response = new
+            var response = new TokenResponse
             {
-                access_token = encodedJwt
+                access_token = encodedJwt,
+                expires_in = (int)Options.Expiration.TotalSeconds,
+                resource = Options.Audience,
             };
 
             return response;

@@ -40,7 +40,7 @@ namespace Traffk.Portal.Tests.ControllersTests
                 };
                 var content = new FormUrlEncodedContent(testFormContent);
 
-                var response = TestClient.PostAsync("/api/token", content).ExecuteSynchronously();
+                var response = TestClient.PostAsync("/api/token/authenticate", content).ExecuteSynchronously();
 
                 var json = response.Content.ReadAsStringAsync().ExecuteSynchronously();
                 var tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(json);

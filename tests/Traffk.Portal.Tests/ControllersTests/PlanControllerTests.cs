@@ -40,7 +40,7 @@ namespace Traffk.Portal.Tests.ControllersTests
 
                 TestClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization",$"Bearer {accessToken}");
 
-                var getPlanResponse = TestClient.GetAsync("/api/v1/Plan").ExecuteSynchronously();
+                var getPlanResponse = TestClient.GetAsync("/api/v1/Plans").ExecuteSynchronously();
                 var json = getPlanResponse.Content.ReadAsStringAsync().ExecuteSynchronously();
                 var plans = JsonConvert.DeserializeObject<ICollection<Plan>>(json);
 
@@ -57,7 +57,7 @@ namespace Traffk.Portal.Tests.ControllersTests
 
                 TestClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {accessToken}");
 
-                var getPlanResponse = TestClient.GetAsync("/api/v1/Plan").ExecuteSynchronously();
+                var getPlanResponse = TestClient.GetAsync("/api/v1/Plans").ExecuteSynchronously();
 
                 Assert.IsTrue(getPlanResponse.StatusCode == HttpStatusCode.Forbidden);
 

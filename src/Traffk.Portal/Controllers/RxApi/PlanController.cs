@@ -10,11 +10,12 @@ namespace Traffk.Portal.Controllers
     [ApiAuthorize(ApiNames.Base)]
     [ApiAuthorize(ApiNames.Rx)]
     [Produces("application/json")]
-    [Route("api/v1/[controller]")]
+    [Route("api/v1")]
     public class PlanController : Controller
     {
         [HttpGet]
-        public IEnumerable<Plan> Get()
+        [Route("Plans")]
+        public IEnumerable<Plan> GetPlans()
         {
             var plans = new List<Plan>
             {
