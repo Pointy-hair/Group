@@ -1,9 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Traffk.Bal.Services;
-using Traffk.Bal.Data.Rdb;
 using TraffkPortal.Services;
 using Microsoft.Extensions.Logging;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace Traffk.Portal.Tests.ControllersTests
 {
@@ -14,7 +14,7 @@ namespace Traffk.Portal.Tests.ControllersTests
         public class ApplicationControllerMocks
         {
             public Mock<BlobStorageServices> MockBlobStorage { get; set; }
-            public Mock<TraffkRdbContext> MockRdbContext { get; set; }
+            public Mock<TraffkTenantModelDbContext> MockRdbContext { get; set; }
             public Mock<CurrentContextServices> MockCurrentContextServices { get; set; }
             public Mock<ILoggerFactory> MockLoggerFactory { get; set; }
 

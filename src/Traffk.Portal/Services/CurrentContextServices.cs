@@ -5,7 +5,7 @@ using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using System.Linq;
 using Traffk.Bal;
-using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.Services;
 using Traffk.Portal.Permissions;
 using Traffk.Tableau;
@@ -16,7 +16,7 @@ namespace TraffkPortal.Services
     public class CurrentContextServices : CurrentTenantServices, ICurrentUser, ICurrentContextServices, ITableauUserCredentials
     {
         private readonly ITraffkTenantFinder TenantFinder;
-        private readonly TraffkRdbContext Rdb;
+        private readonly TraffkTenantModelDbContext Rdb;
         private readonly IHttpContextAccessor HttpContextAccessor;
         private readonly UserManager<ApplicationUser> UserManager;
         private readonly ITableauAuthorizationService TableauAuthorizationService;
@@ -54,7 +54,7 @@ namespace TraffkPortal.Services
         public CurrentContextServices(
             ConfigStringFormatter stringer,
             ITraffkTenantFinder tenantFinder,
-            TraffkRdbContext rdb, 
+            TraffkTenantModelDbContext rdb, 
             IHttpContextAccessor httpContextAccessor, 
             UserManager<ApplicationUser> userManager,
             IOptions<TableauSignInOptions> tableauSigninOptions,

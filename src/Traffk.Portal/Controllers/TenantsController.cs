@@ -8,7 +8,7 @@ using Traffk.Bal.Settings;
 using TraffkPortal.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
-using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.Permissions;
 using System.Collections.Generic;
 using System;
@@ -83,7 +83,7 @@ namespace TraffkPortal.Controllers
         public TenantsController(
             BlobStorageServices blobs,
             UserManager<ApplicationUser> userManager,
-            TraffkRdbContext db,
+            TraffkTenantModelDbContext db,
             CurrentContextServices current,
             ILogger logger,
             IBackgroundJobClient backgrounder

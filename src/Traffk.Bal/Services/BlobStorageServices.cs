@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 using RevolutionaryStuff.Core;
 using System.Collections.Generic;
 using Microsoft.Extensions.Options;
-using Traffk.Bal.Data.Rdb;
 using Newtonsoft.Json;
 using RevolutionaryStuff.Core.Crypto;
 using RevolutionaryStuff.Core.EncoderDecoders;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace Traffk.Bal.Services
 {

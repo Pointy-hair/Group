@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using Traffk.Bal.Permissions;
 
-namespace Traffk.Bal.Data.Rdb
+namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
 {
     public class ApplicationRole : IdentityRole, ITraffkTenanted
     {

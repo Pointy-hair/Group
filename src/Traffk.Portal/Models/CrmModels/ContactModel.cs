@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace TraffkPortal.Models.CrmModels
 {

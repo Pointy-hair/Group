@@ -1,4 +1,4 @@
-﻿using Traffk.Bal.Data.Rdb;
+﻿using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Tableau;
 
 namespace Traffk.Portal.Permissions

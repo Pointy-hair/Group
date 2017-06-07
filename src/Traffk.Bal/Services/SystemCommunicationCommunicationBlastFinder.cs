@@ -3,16 +3,16 @@ using RevolutionaryStuff.Core;
 using System.Linq;
 using System.Threading.Tasks;
 using Traffk.Bal.Communications;
-using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace Traffk.Bal.Services
 {
     public class SystemCommunicationCommunicationBlastFinder : ICommunicationBlastFinder
     {
-        private readonly TraffkRdbContext Rdb;
+        private readonly TraffkTenantModelDbContext Rdb;
         private readonly ICreativeSettingsFinder CreativeSettingsFinder;
 
-        public SystemCommunicationCommunicationBlastFinder(TraffkRdbContext rdb, ICreativeSettingsFinder creativeSettingsFinder)
+        public SystemCommunicationCommunicationBlastFinder(TraffkTenantModelDbContext rdb, ICreativeSettingsFinder creativeSettingsFinder)
         {
             Requires.NonNull(rdb, nameof(rdb));
             Rdb = rdb;

@@ -2,16 +2,16 @@
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
 using System.Threading.Tasks;
-using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace Traffk.Bal.Services
 {
     public class CurrentTenantServices : IConfigureOptions<IdentityOptions>
     {
         private readonly ITraffkTenantFinder TenantFinder;
-        private readonly TraffkRdbContext Rdb;
+        private readonly TraffkTenantModelDbContext Rdb;
 
-        public CurrentTenantServices(ITraffkTenantFinder tenantFinder, TraffkRdbContext rdb)
+        public CurrentTenantServices(ITraffkTenantFinder tenantFinder, TraffkTenantModelDbContext rdb)
         {
             TenantFinder = tenantFinder;
             Rdb = rdb;

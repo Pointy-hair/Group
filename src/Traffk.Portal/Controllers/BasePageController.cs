@@ -11,9 +11,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Traffk.Bal;
-using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.ReportVisuals;
-using Traffk.Bal.Settings;
 using TraffkPortal.Services;
 using static TraffkPortal.AspHelpers;
 using ILogger = Serilog.ILogger;
@@ -24,7 +23,7 @@ namespace TraffkPortal.Controllers
     {
         protected readonly CurrentContextServices Current;
         protected ILogger Logger;
-        protected readonly TraffkRdbContext Rdb;
+        protected readonly TraffkTenantModelDbContext Rdb;
         protected readonly MainNavigationPageKeys MainNavPageKey;
         protected int TenantId { get { return Current.TenantId;  } }
 
@@ -108,7 +107,7 @@ namespace TraffkPortal.Controllers
         protected ICacher Cacher { get; set; }
 
         protected BasePageController(MainNavigationPageKeys mainNavPageKey, 
-            TraffkRdbContext db, 
+            TraffkTenantModelDbContext db, 
             CurrentContextServices current, 
             ILogger logger, 
             ICacher cacher = null)

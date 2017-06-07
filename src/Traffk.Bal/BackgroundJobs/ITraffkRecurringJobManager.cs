@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Hangfire;
-
-namespace Traffk.Bal.BackgroundJobs
+﻿namespace Traffk.Bal.BackgroundJobs
 {
     public interface ITraffkRecurringJobManager
     {

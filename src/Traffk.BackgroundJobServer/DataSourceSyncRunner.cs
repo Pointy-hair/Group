@@ -16,7 +16,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Traffk.Bal.ApplicationParts;
 using Traffk.Bal.BackgroundJobs;
-using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Data.Rdb.TraffkGlobal;
 using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
 
@@ -29,7 +29,7 @@ namespace Traffk.BackgroundJobServer
         
         public DataSourceSyncRunner(
             JobRunnerProgram jobRunnerProgram, 
-            TraffkGlobalsContext gdb, 
+            TraffkGlobalDbContext gdb, 
             IVault vault,
             IOptions<BlobStorageServices.BlobStorageServicesOptions> blobOptions, 
             Serilog.ILogger logger)
@@ -103,7 +103,7 @@ namespace Traffk.BackgroundJobServer
         {
             private readonly DataSourceSyncRunner Runner;
             private readonly DataSource DS;
-            TraffkGlobalsContext Gdb => Runner.GlobalContext;
+            TraffkGlobalDbContext Gdb => Runner.GlobalContext;
             private readonly IDictionary<string, DataSourceFetchItem> FetchItemByEvidence = new Dictionary<string, DataSourceFetchItem>();
             private readonly string BlobRootPath;
 

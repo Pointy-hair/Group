@@ -1,9 +1,14 @@
 ﻿using Microsoft.AspNetCore.Builder;
 
-namespace Traffk.Bal.Data.Rdb
+namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
 {
     public partial class Tenant
     {
+        public enum TenantTypes
+        {
+            Normal,
+        }
+
         public static class StatusNames
         {
             public const string Normal = "Normal";

@@ -5,7 +5,7 @@ using Serilog;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.Permissions;
 using Traffk.Portal.Models.ManageViewModels;
 using Traffk.Portal.Permissions;
@@ -35,6 +35,7 @@ namespace TraffkPortal.Controllers
             SystemCommunications,
         }
 
+
         private readonly UserManager<ApplicationUser> UserManager;
         private readonly SignInManager<ApplicationUser> SignInManager;
         private readonly IEmailSender EmailSender;
@@ -42,7 +43,8 @@ namespace TraffkPortal.Controllers
         private readonly bool IsSigninPersistent;
 
         public ManageController(
-            TraffkRdbContext db,
+
+            TraffkTenantModelDbContext db,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,
@@ -52,6 +54,7 @@ namespace TraffkPortal.Controllers
             )
             : base(AspHelpers.MainNavigationPageKeys.Manage, db, current, logger)
         {
+
             UserManager = userManager;
             SignInManager = signInManager;
             EmailSender = emailSender;
@@ -100,9 +103,11 @@ namespace TraffkPortal.Controllers
             var user = await GetCurrentUserAsync();
             if (user != null)
             {
+
                 var result = await UserManager.RemoveLoginAsync(user, account.LoginProvider, account.ProviderKey);
                 if (result.Succeeded)
                 {
+
                     await SignInManager.SignInAsync(user, isPersistent: IsSigninPersistent);
                     message = ManageMessageId.RemoveLoginSuccess;
                 }
@@ -135,6 +140,7 @@ namespace TraffkPortal.Controllers
             }
             model.PhoneNumber = GetRawPhoneNumber(model.PhoneNumber);
             model.PhoneNumber = ParseCountryCode(model.PhoneNumber);
+
             var code = await UserManager.GenerateChangePhoneNumberTokenAsync(user, model.PhoneNumber);
             await SmsSender.SendSmsAsync(model.PhoneNumber, "Your security code is: " + code);
             return RedirectToAction(nameof(VerifyPhoneNumber), new { PhoneNumber = model.PhoneNumber });
@@ -155,6 +161,7 @@ namespace TraffkPortal.Controllers
                     return RedirectToAction(nameof(AddPhoneNumber), "Manage");
                 }
 
+
                 await UserManager.SetTwoFactorEnabledAsync(user, true);
                 await SignInManager.SignInAsync(user, isPersistent: IsSigninPersistent);
                 Logger.Information("User enabled two-factor authentication.");
@@ -171,6 +178,7 @@ namespace TraffkPortal.Controllers
             var user = await GetCurrentUserAsync();
             if (user != null)
             {
+
                 await UserManager.SetTwoFactorEnabledAsync(user, false);
                 await SignInManager.SignInAsync(user, isPersistent: IsSigninPersistent);
                 Logger.Information("User disabled two-factor authentication.");
@@ -188,6 +196,7 @@ namespace TraffkPortal.Controllers
             {
                 return ErrorResult();
             }
+
             var code = await UserManager.GenerateChangePhoneNumberTokenAsync(user, phoneNumber);
             // Send an SMS to verify the phone number
             return phoneNumber == null ? View("Error") : View(new VerifyPhoneNumberViewModel { PhoneNumber = phoneNumber });
@@ -206,9 +215,11 @@ namespace TraffkPortal.Controllers
             var user = await GetCurrentUserAsync();
             if (user != null)
             {
+
                 var result = await UserManager.ChangePhoneNumberAsync(user, model.PhoneNumber, model.Code);
                 if (result.Succeeded)
                 {
+
                     await SignInManager.SignInAsync(user, isPersistent: IsSigninPersistent);
                     return RedirectToAction(nameof(Index), new { Message = ManageMessageId.AddPhoneSuccess });
                 }
@@ -232,9 +243,11 @@ namespace TraffkPortal.Controllers
                     return RedirectToAction(nameof(Index), new { Message = ManageMessageId.RemovePhoneTwoFactorError });
                 }
 
+
                 var result = await UserManager.SetPhoneNumberAsync(user, null);
                 if (result.Succeeded)
                 {
+
                     await SignInManager.SignInAsync(user, isPersistent: IsSigninPersistent);
                     return RedirectToAction(nameof(Index), new { Message = ManageMessageId.RemovePhoneSuccess });
                 }
@@ -263,9 +276,11 @@ namespace TraffkPortal.Controllers
             var user = await GetCurrentUserAsync();
             if (user != null)
             {
+
                 var result = await UserManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
                 if (result.Succeeded)
                 {
+
                     await SignInManager.SignInAsync(user, isPersistent: IsSigninPersistent);
                     Logger.Information("User changed their password successfully.");
                     return RedirectToAction(nameof(Index), new { Message = ManageMessageId.ChangePasswordSuccess });
@@ -298,9 +313,11 @@ namespace TraffkPortal.Controllers
             var user = await GetCurrentUserAsync();
             if (user != null)
             {
+
                 var result = await UserManager.AddPasswordAsync(user, model.NewPassword);
                 if (result.Succeeded)
                 {
+
                     await SignInManager.SignInAsync(user, isPersistent: IsSigninPersistent);
                     return RedirectToAction(nameof(Index), new { Message = ManageMessageId.SetPasswordSuccess });
                 }
@@ -324,6 +341,8 @@ namespace TraffkPortal.Controllers
             {
                 return ErrorResult();
             }
+
+
             var userLogins = await UserManager.GetLoginsAsync(user);
             var otherLogins = SignInManager.GetExternalAuthenticationSchemes().Where(auth => userLogins.All(ul => auth.AuthenticationScheme != ul.LoginProvider)).ToList();
             ViewData["ShowRemoveButton"] = user.PasswordHash != null || userLogins.Count > 1;
@@ -342,6 +361,7 @@ namespace TraffkPortal.Controllers
         {
             // Request a redirect to the external login provider to link a login for the current user
             var redirectUrl = Url.Action("LinkLoginCallback", "Manage");
+
             var properties = SignInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl, UserManager.GetUserId(User));
             return Challenge(properties, provider);
         }
@@ -356,11 +376,13 @@ namespace TraffkPortal.Controllers
             {
                 return ErrorResult();
             }
+
             var info = await SignInManager.GetExternalLoginInfoAsync(await UserManager.GetUserIdAsync(user));
             if (info == null)
             {
                 return RedirectToAction(nameof(ManageLogins), new { Message = ManageMessageId.Error });
             }
+
             var result = await UserManager.AddLoginAsync(user, info);
             var message = result.Succeeded ? ManageMessageId.AddLoginSuccess : ManageMessageId.Error;
             return RedirectToAction(nameof(ManageLogins), new { Message = message });
@@ -426,6 +448,7 @@ namespace TraffkPortal.Controllers
 
         private Task<ApplicationUser> GetCurrentUserAsync()
         {
+
             return UserManager.GetUserAsync(HttpContext.User);
         }
 

@@ -9,7 +9,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Traffk.Bal;
-using Traffk.Bal.Data.Rdb;
 using TraffkPortal.Models.UserModels;
 using TraffkPortal.Services;
 using TraffkPortal.Permissions;
@@ -18,6 +17,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Serilog;
 using Traffk.Bal.Communications;
 using static TraffkPortal.AspHelpers;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace TraffkPortal.Controllers
 {
@@ -58,7 +58,7 @@ namespace TraffkPortal.Controllers
             IUserClaimsPrincipalFactory<ApplicationUser> userClaimsPrincipalFactory, 
             IAuthorizationService authorizationService, 
             UserManager<ApplicationUser> userManager,
-            TraffkRdbContext db, 
+            TraffkTenantModelDbContext db, 
             CurrentContextServices current, 
             ILogger logger)
             : base(AspHelpers.MainNavigationPageKeys.Setup, db, current, logger)

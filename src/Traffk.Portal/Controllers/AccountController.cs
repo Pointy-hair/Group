@@ -9,7 +9,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Traffk.Bal.Communications;
-using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using TraffkPortal.Models.AccountViewModels;
 using TraffkPortal.Services;
 using TraffkPortal.Services.Sms;
@@ -34,7 +34,7 @@ namespace TraffkPortal.Controllers
         }
 
         public AccountController(
-            TraffkRdbContext db,
+            TraffkTenantModelDbContext db,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,

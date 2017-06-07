@@ -325,6 +325,10 @@
       </Columns>
     </Table>
     <Table schema="HangFire" name="State" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+      </Properties>
       <Columns>
         <Column name="Id" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
         <Column name="JobId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="HangFire" refTable="Job" />

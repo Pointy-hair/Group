@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Traffk.Bal.Data.Rdb
+namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
 {
     public partial class Address : IAddress
     {

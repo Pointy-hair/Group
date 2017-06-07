@@ -20,9 +20,9 @@ using System.Data.SqlClient;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
 
-namespace Traffk.Bal.Data.Rdb
+namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
 {
-    public partial class TraffkRdbContext
+    public partial class TraffkTenantModelDbContext
     {
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -3958,11 +3958,11 @@ namespace Traffk.Bal.Data.Rdb
 
 		[DisplayName("Tenant Type")]
 		[NotMapped]
-		public ContactTypes TenantType
+		public TenantTypes TenantType
         {
             get
             {
-                ContactTypes e;
+                TenantTypes e;
                 if (Enum.TryParse(TenantTypeStringValue, true, out e)) return e;
                 return 0;
             }

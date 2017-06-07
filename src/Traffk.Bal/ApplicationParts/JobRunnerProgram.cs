@@ -9,7 +9,9 @@ using Serilog;
 using System;
 using System.Threading.Tasks;
 using Traffk.Bal.BackgroundJobs;
-using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Data.Rdb.TraffkGlobal;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
+using Traffk.Bal.Data.Rdb.TraffkTenantShards;
 using Traffk.Bal.Logging;
 using Traffk.Bal.ReportVisuals;
 using Traffk.Bal.Services;
@@ -33,11 +35,11 @@ namespace Traffk.Bal.ApplicationParts
             public BackgroundJobServerOptions BackgroundOptions { get; set; }
         }
 
-        private TraffkGlobalsContext GDB;
+        private TraffkGlobalDbContext GDB;
 
         protected override Task OnGoAsync()
         {
-            GDB = this.ServiceProvider.GetService<TraffkGlobalsContext>();
+            GDB = this.ServiceProvider.GetService<TraffkGlobalDbContext>();
             var o = this.ServiceProvider.GetService<IOptions<HangfireServerOptions>>().Value;
             JobRunnerLogger = this.ServiceProvider.GetService<ILogger>();
 
@@ -74,17 +76,18 @@ namespace Traffk.Bal.ApplicationParts
             services.Configure<BlobStorageServices.BlobStorageServicesOptions>(Configuration.GetSection(nameof(BlobStorageServices.BlobStorageServicesOptions)));
 
             services.AddSingleton(this);
+            services.AddSingleton<IConfiguration>(Configuration);
             services.AddSingleton<ITraffkTenantFinder, MyTraffkTenantFinder>();
             services.AddSingleton<ICurrentUser>(this);
             services.AddScoped<ConfigStringFormatter>();
-            services.AddDbContext<TenantRdbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString(TenantRdbContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Scoped);
-            services.AddDbContext<TraffkRdbContext>((sp, options) =>
+            services.AddDbContext<TraffkTenantShardsDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString(TraffkTenantShardsDbContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Scoped);
+            services.AddDbContext<TraffkTenantModelDbContext>((sp, options) =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString(TraffkRdbContext.DefaultDatabaseConnectionStringName));
+                options.UseSqlServer(Configuration.GetConnectionString(TraffkTenantModelDbContext.DefaultDatabaseConnectionStringName));
             }, ServiceLifetime.Scoped);
-            services.AddDbContext<TraffkGlobalsContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString(TraffkGlobalsContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Scoped);
+            services.AddDbContext<TraffkGlobalDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString(TraffkGlobalDbContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Scoped);
             services.AddScoped<CurrentTenantServices>();
             services.AddScoped<BlobStorageServices>();
             services.Configure<HangfireServerOptions>(Configuration.GetSection(nameof(HangfireServerOptions)));

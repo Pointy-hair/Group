@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace Traffk.Portal.Models.ReportMetadataModels
 {

@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
-using Traffk.Bal.Data.Rdb;
 using TraffkPortal.Services;
 using TraffkPortal.Permissions;
 using Traffk.Bal.Permissions;
 using Traffk.Tableau;
 using ILogger = Serilog.ILogger;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace TraffkPortal.Controllers
 {
@@ -23,7 +23,7 @@ namespace TraffkPortal.Controllers
         }
 
         public HomeController(
-            TraffkRdbContext db,
+            TraffkTenantModelDbContext db,
             CurrentContextServices current,
             ILogger logger
             )

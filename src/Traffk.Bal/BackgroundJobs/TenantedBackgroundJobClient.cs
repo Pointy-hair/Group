@@ -1,20 +1,19 @@
 ﻿using System;
 using Hangfire;
-using Hangfire.Common;
 using Hangfire.States;
 using RevolutionaryStuff.Core;
-using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Data.Rdb.TraffkGlobal;
 
 namespace Traffk.Bal.BackgroundJobs
 {
     public class TenantedBackgroundJobClient : IBackgroundJobClient, ITraffkRecurringJobManager
     {
         private BackgroundJobClient Inner;
-        private TraffkGlobalsContext GDB;
+        private TraffkGlobalDbContext GDB;
         private ITraffkTenantFinder Finder;
         private RecurringJobManager RecurringJobManager;
 
-        public TenantedBackgroundJobClient(TraffkGlobalsContext gdb, ITraffkTenantFinder finder)
+        public TenantedBackgroundJobClient(TraffkGlobalDbContext gdb, ITraffkTenantFinder finder)
         {
             Inner = new BackgroundJobClient();
             GDB = gdb;

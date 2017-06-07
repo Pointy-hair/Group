@@ -11,7 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Traffk.Bal.Communications;
-using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.Permissions;
 using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
@@ -59,7 +59,7 @@ namespace TraffkPortal.Controllers
         // GET: Applications
         public ApplicationController(
             BlobStorageServices blobs,
-            TraffkRdbContext db,
+            TraffkTenantModelDbContext db,
             CurrentContextServices current,
             ILogger logger
         )

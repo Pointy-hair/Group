@@ -4,10 +4,10 @@ using RevolutionaryStuff.Core;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Communications;
 using Traffk.Bal.Settings;
 using System;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace Traffk.Bal.Email
 {

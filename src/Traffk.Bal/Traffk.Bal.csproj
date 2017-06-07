@@ -23,6 +23,7 @@
   <ItemGroup>
     <None Update="Data\Rdb\SchemaMeta2DbContext.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SchemaMeta2DbContext.cs</LastGenOutput>
     </None>
     <None Update="Data\Rdb\MultipleOutputHelper.ttinclude">
       <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
@@ -30,10 +31,23 @@
     <None Update="Data\Rdb\TraffkTenantModel.SchemaMeta.xml">
       <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
     </None>
-    <None Update="Data\Rdb\TraffkGlobals.SchemaMeta.xml">
+    <None Update="Data\Rdb\TraffkGlobal.SchemaMeta.xml">
       <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
     </None>
-    <Compile Update="Data\Rdb\TraffkGlobals.DbContext.cs">
+    <None Update="Data\Rdb\TraffkTenantShards.SchemaMeta.xml">
+      <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
+    </None>
+    <Compile Update="Data\Rdb\TraffkTenantShards.DbContext.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Data\Rdb\SchemaMeta2DbContext.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Data\Rdb\TraffkGlobal.DbContext.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
@@ -89,6 +103,7 @@
     <PackageReference Include="Hangfire" Version="1.6.12" />
     <PackageReference Include="Microsoft.Azure.KeyVault" Version="2.2.1-preview" />
     <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="3.13.9" />
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     <PackageReference Include="Serilog" Version="2.4.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="1.4.0" />
     <PackageReference Include="Serilog.Sinks.AzureTableStorage" Version="3.0.0" />

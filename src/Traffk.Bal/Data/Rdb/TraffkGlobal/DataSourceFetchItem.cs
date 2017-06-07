@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using Traffk.Bal.Services;
 
-namespace Traffk.Bal.Data.Rdb
+namespace Traffk.Bal.Data.Rdb.TraffkGlobal
 {
     public partial class DataSourceFetchItem
     {

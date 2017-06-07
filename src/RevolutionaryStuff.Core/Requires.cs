@@ -10,6 +10,19 @@ namespace RevolutionaryStuff.Core
 {
     public static class Requires
     {
+        public static void Url(string arg, string argName)
+        {
+            Requires.Text(arg, argName);
+            try
+            {
+                new Uri(arg);
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException($"{argName} must be a valid url", ex);
+            }
+        }
+
         public static void SetMembership<T>(ICollection<T> set, string setName, T arg, string argName, bool nullInputOk = false)
         {
             if (nullInputOk && arg == null) return;

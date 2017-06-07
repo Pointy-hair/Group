@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
-using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.Email;
 
 namespace TraffkPortal.Controllers
@@ -12,9 +12,9 @@ namespace TraffkPortal.Controllers
     public class EmailRedirectorController : Controller
     {
         protected readonly ILogger Logger;
-        protected readonly TraffkRdbContext Rdb;
+        protected readonly TraffkTenantModelDbContext Rdb;
 
-        public EmailRedirectorController(TraffkRdbContext rdb, ILoggerFactory loggerFactory)
+        public EmailRedirectorController(TraffkTenantModelDbContext rdb, ILoggerFactory loggerFactory)
         {
             Rdb = rdb;
             Logger = loggerFactory.CreateLogger(this.GetType());

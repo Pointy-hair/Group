@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace TraffkPortal.Services
 {

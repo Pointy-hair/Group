@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Data.Rdb.TraffkTenantShards;
 using Traffk.Bal.Services;
 
 namespace Traffk.Bal.ApplicationParts
@@ -14,9 +14,9 @@ namespace Traffk.Bal.ApplicationParts
         public class MyTraffkTenantFinder : ITraffkTenantFinder, IEnumerable<KeyValuePair<string, object>>
         {
             private readonly JobRunnerProgram Runner;
-            private readonly TenantRdbContext DB;
+            private readonly TraffkTenantShardsDbContext DB;
 
-            public MyTraffkTenantFinder(JobRunnerProgram runner, TenantRdbContext db)
+            public MyTraffkTenantFinder(JobRunnerProgram runner, TraffkTenantShardsDbContext db)
             {
                 Runner = runner;
                 DB = db;

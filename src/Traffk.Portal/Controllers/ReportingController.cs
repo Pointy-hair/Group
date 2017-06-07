@@ -5,7 +5,6 @@ using RevolutionaryStuff.Core.Caching;
 using System;
 using Hangfire;
 using Traffk.Bal.BackgroundJobs;
-using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Permissions;
 using Traffk.Bal.ReportVisuals;
 using Traffk.Bal.Services;
@@ -18,6 +17,7 @@ using TraffkPortal.Models.ReportingModels;
 using TraffkPortal.Permissions;
 using TraffkPortal.Services;
 using ILogger = Serilog.ILogger;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace Traffk.Portal.Controllers
 {
@@ -42,7 +42,7 @@ namespace Traffk.Portal.Controllers
 
         
         public ReportingController(
-            TraffkRdbContext db,
+            TraffkTenantModelDbContext db,
             CurrentContextServices current,
             ILogger logger,
             ICacher cacher,

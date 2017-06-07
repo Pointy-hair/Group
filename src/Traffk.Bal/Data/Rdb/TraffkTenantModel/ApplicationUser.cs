@@ -9,7 +9,7 @@ using System.Runtime.Serialization;
 using Serilog;
 using Traffk.Bal.Settings;
 
-namespace Traffk.Bal.Data.Rdb
+namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
 {
     // Add profile data for application users by adding properties to the ApplicationUser class
     public partial class ApplicationUser : IdentityUser, ITraffkTenanted

@@ -19,7 +19,7 @@ exec db.ColumnPropertySet 'Tenants', 'TenantSettings', 'Bal.Settings.TenantSetti
 exec db.ColumnPropertySet 'Tenants', 'CreatedAtUtc', 'Datetime when this entity was created.'
 exec db.ColumnPropertySet 'Tenants', 'RowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
 exec db.ColumnPropertySet 'Tenants', 'RowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
-exec db.ColumnPropertySet 'Tenants', 'TenantType', 'ContactTypes', @propertyName='EnumType'
+exec db.ColumnPropertySet 'Tenants', 'TenantType', 'Tenant.TenantTypes', @propertyName='EnumType'
 
 GO
 
@@ -596,5 +596,32 @@ GO
 
 
 
+
+exec [db].TraffkGlobalTableImport 'global', 'hangfire_job', 'hangfire', 'job'
+exec db.TablePropertySet 'hangfire_job', '0', @propertyName='AddToDbContext', @tableSchema='global'
+exec db.TablePropertySet 'hangfire_job', '0', @propertyName='GeneratePoco', @tableSchema='global'
+
+deny all on HangFire.Job to tenant_all_reader
+deny all on HangFire.Job to tenant_all_writer
+
+GO
+
+create view HangFire.Job
+AS
+select j.* 
+from 
+	global.hangfire_job j
+		inner join
+	tenants t with (nolock)
+		on j.tenantid=t.tenantid
+
+GO
+
+exec db.ViewPropertySet 'Job', '1', @propertyName='AddToDbContext', @viewSchema='HangFire'
+exec db.ViewPropertySet 'Job', '0', @propertyName='GeneratePoco', @viewSchema='HangFire'
+--exec db.ViewPropertySet 'Job', 'ITraffkTenanted', @propertyName='Implements', @viewSchema='HangFire' kill this
+exec db.ViewColumnPropertySet 'Job', 'Id', 'Key', @propertyName='CustomAttribute', @viewSchema='HangFire'
+exec db.ViewColumnPropertySet 'Job', 'TenantId', 'Key', @propertyName='Tenants(TenantId)', @viewSchema='HangFire'
+exec db.ViewColumnPropertySet 'Job', 'ContactId', 'Key', @propertyName='Contacts(ContactId)', @viewSchema='HangFire'
 
 

@@ -6,7 +6,7 @@ using Serilog;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Traffk.Bal.Data.Rdb;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.Permissions;
 using TraffkPortal.Models.RoleModels;
 using TraffkPortal.Permissions;
@@ -32,7 +32,7 @@ namespace TraffkPortal.Controllers
         }
 
         public RolesController(
-            TraffkRdbContext db,
+            TraffkTenantModelDbContext db,
             CurrentContextServices current,
             ILogger logger
         )
