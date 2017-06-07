@@ -57,13 +57,26 @@ namespace Traffk.Portal.Controllers.Api
         [HttpPost]
         [AllowAnonymous]
         [Route("Authenticate")]
-        public TokenResponse GetToken()
+        public async Task<TokenResponse> GetToken()
         {
-            var claims =
-                GetClaims(HttpContext.Request.Form["username"], HttpContext.Request.Form["password"])
-                    .ExecuteSynchronously().ToList();
+            List<Claim> claims = null;
+            var username = HttpContext.Request.Form["username"];
+            var password = HttpContext.Request.Form["password"];
+            var apiKey = HttpContext.Request.Form["apiKey"];
 
-            claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Options.NonceGenerator().ExecuteSynchronously()));
+            if (!String.IsNullOrEmpty(password))
+            {
+                var userClaims = await GetClaims(username, password);
+                claims = userClaims.ToList();
+            }
+
+            if (!String.IsNullOrEmpty(apiKey))
+            {
+                var userClaims = await GetClaims(username, Guid.Parse(apiKey));
+                claims = userClaims.ToList();
+            }
+
+            claims?.Add(new Claim(JwtRegisteredClaimNames.Jti, Options.NonceGenerator().ExecuteSynchronously()));
 
             var jwt = new JwtSecurityToken(
                 issuer: Options.Issuer,
@@ -86,21 +99,32 @@ namespace Traffk.Portal.Controllers.Api
             return response;
         }
 
-        private Task<IEnumerable<Claim>> GetClaims(string username, string password)
+        private async Task<IEnumerable<Claim>> GetClaims(string username, string password)
         {
-            var user = UserManager.FindByNameAsync(username).ExecuteSynchronously();
-            var result =
-                SignInManager.PasswordSignInAsync(username, password, false, lockoutOnFailure: false)
-                    .ExecuteSynchronously();
+            var user = await UserManager.FindByNameAsync(username);
+            var result = await SignInManager.PasswordSignInAsync(username, password, false, lockoutOnFailure: false);
 
             if (result.Succeeded)
             {
                 var claimsPrincipal = UserClaimsPrincipalFactory.CreateAsync(user).ExecuteSynchronously();
 
-                return Task.FromResult(claimsPrincipal.Claims);
+                return claimsPrincipal.Claims;
             }
 
-            return Task.FromResult<IEnumerable<Claim>>(null);
+            return null;
+        }
+
+        private async Task<IEnumerable<Claim>> GetClaims(string username, Guid apiKey)
+        {
+            var user = await UserManager.FindByNameAsync(username);
+            if (user.Settings.ApiKey.Equals(apiKey))
+            {
+                await SignInManager.SignInAsync(user, false);
+                var claimsPrincipal = UserClaimsPrincipalFactory.CreateAsync(user).ExecuteSynchronously();
+                return claimsPrincipal.Claims;
+            }
+
+            return null;
         }
     }
 }

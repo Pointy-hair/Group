@@ -1,4 +1,6 @@
-﻿using RevolutionaryStuff.Core;
+﻿using System;
+using System.ComponentModel;
+using RevolutionaryStuff.Core;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 
@@ -17,6 +19,10 @@ namespace Traffk.Bal.Settings
 
         [DataMember(Name = "TableauPassword")]
         public string TableauPassword { get; set; }
+
+        [DisplayName("API Key")]
+        [DataMember(Name = "ApiKey")]
+        public Guid ApiKey { get; set; }
 
         public UserSettings()
         { }

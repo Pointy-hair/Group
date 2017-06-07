@@ -49,6 +49,26 @@ namespace Traffk.Portal.Tests.ControllersTests
                 Assert.IsTrue(response.StatusCode == HttpStatusCode.OK);
                 Assert.IsFalse(String.IsNullOrEmpty(tokenResponse.access_token));
             }
+
+            [TestMethod]
+            public void WhenGivenUsernameAndApiKeyGetBearerToken()
+            {
+                var testFormContent = new Dictionary<string, string>
+                {
+                    ["username"] = @"darren@traffk.com",
+                    ["apiKey"] = @"58f620c5-0669-44dc-a2fa-d79a3df80103"
+                };
+                var content = new FormUrlEncodedContent(testFormContent);
+
+                var response = TestClient.PostAsync("/api/token/authenticate", content).ExecuteSynchronously();
+
+                var json = response.Content.ReadAsStringAsync().ExecuteSynchronously();
+                var tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(json);
+
+                Assert.IsNotNull(response);
+                Assert.IsTrue(response.StatusCode == HttpStatusCode.OK);
+                Assert.IsFalse(String.IsNullOrEmpty(tokenResponse.access_token));
+            }
         }
     }
 }

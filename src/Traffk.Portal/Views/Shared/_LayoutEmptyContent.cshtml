@@ -107,6 +107,7 @@
                     var manageUsers = await User.HasPermission(AuthorizationService, PermissionNames.ManageUsers);
                     var manageProtectedHealthInformation = await User.HasPermission(AuthorizationService, PermissionNames.ProtectedHealthInformation);
                     var canAccessPhi = await User.GetCanAccessProtectedHealthInformationAsync(AuthorizationService);
+                    var manageApiKey = await User.HasPermission(AuthorizationService, ApiNames.Base);
                     <!--End Set Variables-->
 
                     <li class="dropdown" id="primary-subnav">
@@ -162,7 +163,7 @@
                                     </ul>
                                 </li>
                             }
-                            @if (manageJobs || manageTenants || manageRoles || manageUsers || manageProtectedHealthInformation || canAccessPhi)
+                            @if (manageJobs || manageTenants || manageRoles || manageUsers || manageProtectedHealthInformation || canAccessPhi || manageApiKey)
                             {
                                 <li class="dropdown" role="presentation">
                                     <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle @(mainNavPageKey == AspHelpers.MainNavigationPageKeys.Setup ? "active" : "")" href="#">
@@ -188,6 +189,11 @@
                                         {
                                             <li><a asp-controller="@ApplicationController.Name" asp-action="Index">Applications</a></li>
                                             <li><a asp-controller="@TenantsController.Name" asp-action="Index">Tenants</a></li>
+                                        }
+                                        @if (manageApiKey)
+                                        {
+                                            <li class="divider" role="separator"></li>
+                                            <li><a asp-controller="@ManageController.Name" asp-action="GetApiKey">API Key</a></li>
                                         }
                                     </ul>
                                 </li>
@@ -235,7 +241,7 @@
                                     </ul>
                                 </li>
                             }
-                            @if (manageJobs || manageTenants || manageRoles || manageUsers || manageProtectedHealthInformation || canAccessPhi)
+                            @if (manageJobs || manageTenants || manageRoles || manageUsers || manageProtectedHealthInformation || canAccessPhi || manageApiKey)
                             {
                                 <li class="has-child-menu">
                                     <a aria-expanded="false" aria-haspopup="true" role="button" class="@(mainNavPageKey == AspHelpers.MainNavigationPageKeys.Setup ? "active" : "")" href="#">
@@ -261,6 +267,11 @@
                                         {
                                             <li><a asp-controller="@ApplicationController.Name" asp-action="Index">Applications</a></li>
                                             <li><a asp-controller="@TenantsController.Name" asp-action="Index">Tenants</a></li>
+                                        }
+                                        @if (manageApiKey)
+                                        {
+                                            <li class="divider" role="separator"></li>
+                                            <li><a asp-controller="@ManageController.Name" asp-action="GetApiKey">API Key</a></li>
                                         }
                                     </ul>
                                 </li>

@@ -32,11 +32,10 @@ namespace Traffk.Portal.Tests.ControllersTests
         [TestClass]
         public class GetMethodTests : PlanControllerTests
         {
-            [Ignore]
             [TestMethod]
             public void WhenGivenUserWithPermissionGetPlans()
             {
-                var accessToken = MockEnvironment.GetBearerToken(TestClient, @"darren@traffk.com", "");
+                var accessToken = MockEnvironment.GetBearerToken(TestClient, @"darren@traffk.com", Guid.Parse("58f620c5-0669-44dc-a2fa-d79a3df80103"));
 
                 TestClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization",$"Bearer {accessToken}");
 

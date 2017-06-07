@@ -1,0 +1,31 @@
+@model Traffk.Portal.Models.ManageViewModels.GenerateApiKeyViewModel
+@{
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
+    ViewData.SetTitleAndHeading("API Key");
+    ViewData.IsFormPage(true);
+    ViewData.HasBreadcrumbItems(true);
+    var key = Model.ApiKey;
+}
+
+@section breadcrumbItems
+{
+    <li><a asp-controller="@ManageController.Name" asp-action="@ManageController.ActionNames.Index">Manage</a> <span>></span> </li>
+}
+
+<form asp-controller="Manage" asp-action="GetApiKey" method="post" class="inline-form">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-row">
+                <label asp-for="ApiKey"></label>
+                <input asp-for="ApiKey" class="form-control" readonly />
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 text-right">
+            <input type="submit" value="Generate API Key" class="btn btn-default btn-primary btn-large" />
+        </div>
+    </div>
+</form>
+
