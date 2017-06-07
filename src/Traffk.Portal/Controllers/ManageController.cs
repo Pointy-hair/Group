@@ -43,7 +43,6 @@ namespace TraffkPortal.Controllers
         private readonly bool IsSigninPersistent;
 
         public ManageController(
-
             TraffkTenantModelDbContext db,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,

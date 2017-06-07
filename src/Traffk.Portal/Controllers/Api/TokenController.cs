@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +5,17 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using RevolutionaryStuff.Core;
 using Serilog;
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.Permissions;
 using Traffk.Portal.Models.ApiModels;
 using Traffk.Portal.Permissions;
-using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace Traffk.Portal.Controllers.Api
 {
@@ -30,13 +30,13 @@ namespace Traffk.Portal.Controllers.Api
         private readonly SignInManager<ApplicationUser> SignInManager;
         private readonly IUserClaimsPrincipalFactory<ApplicationUser> UserClaimsPrincipalFactory;
         private readonly SigningCredentials SigningCredentials;
+        private readonly ILogger Logger; 
 
         public TokenController(IOptions<TokenProviderOptions> options,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IUserClaimsPrincipalFactory<ApplicationUser> userClaimsPrincipalFactory,
-            ILogger logger) 
-            : base(logger)
+            ILogger logger) : base(logger)
         {
             Options = options.Value;
 
