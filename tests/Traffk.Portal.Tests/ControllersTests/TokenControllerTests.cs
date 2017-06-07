@@ -13,12 +13,11 @@ namespace Traffk.Portal.Tests.ControllersTests
     [TestClass]
     public class TokenControllerTests
     {
-        private readonly HttpClient TestClient;
+        private HttpClient TestClient { get; set; }
 
         public TokenControllerTests()
         {
-            var testFixture = new TestFixture<Startup>();
-            TestClient = testFixture.Client;
+            TestClient = MockEnvironment.TestClient;
         }
 
         [TestClass]

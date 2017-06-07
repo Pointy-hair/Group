@@ -1,42 +1,35 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
+using RevolutionaryStuff.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using Newtonsoft.Json;
-using RevolutionaryStuff.Core;
 using Traffk.Portal.Controllers;
-using Traffk.Portal.Tests.Helpers;
-using TraffkPortal;
 
 namespace Traffk.Portal.Tests.ControllersTests
 {
     [TestClass]
     public class PlanControllerTests
     {
-        private readonly HttpClient TestClient;
+        private HttpClient TestClient { get; set; }
 
         public PlanControllerTests()
         {
-            var testFixture = new TestFixture<Startup>();
-            TestClient = testFixture.Client;
-        }
-
-        protected class TokenResponse
-        {
-            public string access_token { get; set; }
+            TestClient = MockEnvironment.TestClient;
         }
 
         [TestClass]
         public class GetMethodTests : PlanControllerTests
         {
+
             [TestMethod]
             public void WhenGivenUserWithPermissionGetPlans()
             {
                 var accessToken = MockEnvironment.GetBearerToken(TestClient, @"darren@traffk.com", Guid.Parse("58f620c5-0669-44dc-a2fa-d79a3df80103"));
 
-                TestClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization",$"Bearer {accessToken}");
+                TestClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {accessToken}");
 
                 var getPlanResponse = TestClient.GetAsync("/api/v1/Plans").ExecuteSynchronously();
                 var json = getPlanResponse.Content.ReadAsStringAsync().ExecuteSynchronously();
@@ -45,6 +38,7 @@ namespace Traffk.Portal.Tests.ControllersTests
                 Assert.IsNotNull(plans);
                 Assert.IsTrue(plans.Any());
                 Assert.IsTrue(plans.FirstOrDefault().Name == "Test Plan");
+
             }
 
             [Ignore]

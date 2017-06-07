@@ -29,7 +29,12 @@ namespace TraffkPortal.Controllers
             public const string Message = "ExceptionMessage";
             public const string StackTrace = "ExceptionStackTrace";
         }
-        
+
+        public static class ErrorSources
+        {
+            public const string RazorError = "Microsoft.AspNetCore.Mvc.Razor";
+        }
+
         public ErrorController(
             TraffkTenantModelDbContext db,
             CurrentContextServices current,
@@ -50,19 +55,31 @@ namespace TraffkPortal.Controllers
             if (HostingEnvironment_p.IsDevelopment() && exception != null)
             {
                 SetException(exception.Error);
+                //TODO: Refactor Error Index view to not be dependent on _LayoutUniversal
+                if (exception.Error.Source == ErrorSources.RazorError || exception.Error.Source.Contains("Razor"))
+                {
+                    var simpleException = new
+                    {
+                        Message = exception.Error.Message,
+                        StackTrace = exception.Error.StackTrace,
+                    };
+                    return new JsonResult(simpleException);
+                }
             }
-
             return RedirectToAction(ActionNames.Index, ErrorController.Name);
         }
 
         [Route("/Error")]
         [ActionName(ActionNames.Index)]
-        public IActionResult Index()
+        public IActionResult Index(ErrorModel errorModel = null)
         {
             var exception = ExceptionError.CreateExceptionErrorFromJson(TempData[Name].ToString());
 
-            var errorModel = new ErrorModel(ViewData[ErrorKeys.StatusCode]?.ToString() ?? "", exception);
-
+            if (errorModel == null)
+            {
+                errorModel = new ErrorModel(ViewData[ErrorKeys.StatusCode]?.ToString() ?? "", exception);
+            }
+            
             return View(errorModel);
         }
 

@@ -3,12 +3,31 @@ using System.Collections.Generic;
 using System.Net.Http;
 using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
+using Traffk.Portal.Tests.Helpers;
+using TraffkPortal;
 
 namespace Traffk.Portal.Tests
 {
     public static class MockEnvironment
     {
-        private static readonly string tokenAuthRoute = "/api/token/authenticate";
+        private static readonly string TokenAuthRoute = "/api/token/authenticate";
+        private static HttpClient httpClient_p = null;
+
+        public static HttpClient TestClient
+        {
+            get
+            {
+                if (httpClient_p == null)
+                {
+                    var testFixture = new TestFixture<Startup>();
+                    httpClient_p = testFixture.Client;
+                }
+
+                return httpClient_p;
+            }
+
+        }
+
 
         public static string GetBearerToken(HttpClient client, string username, string password)
         {
@@ -19,7 +38,7 @@ namespace Traffk.Portal.Tests
             };
             var content = new FormUrlEncodedContent(tokenRequestFormContent);
 
-            var response = client.PostAsync(tokenAuthRoute, content).ExecuteSynchronously();
+            var response = client.PostAsync(TokenAuthRoute, content).ExecuteSynchronously();
 
             var json = response.Content.ReadAsStringAsync().ExecuteSynchronously();
             var tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(json);
@@ -36,7 +55,7 @@ namespace Traffk.Portal.Tests
             };
             var content = new FormUrlEncodedContent(tokenRequestFormContent);
 
-            var response = client.PostAsync(tokenAuthRoute, content).ExecuteSynchronously();
+            var response = client.PostAsync(TokenAuthRoute, content).ExecuteSynchronously();
 
             var json = response.Content.ReadAsStringAsync().ExecuteSynchronously();
             var tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(json);
