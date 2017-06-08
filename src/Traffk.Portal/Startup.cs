@@ -38,12 +38,15 @@ using ILogger = Serilog.ILogger;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.Data.Rdb.TraffkGlobal;
 using Traffk.Bal.Data.Rdb.TraffkTenantShards;
+using Traffk.OrchestraRx;
+using Traffk.OrchestraRx.Models;
 
 namespace TraffkPortal
 {
     public class Startup
     {
         public static bool IsSigninPersistent = true;
+        public static string RedisConnectionString;
         private readonly bool RequireHttps;
         private readonly TimeSpan IdleLogout;
 
@@ -71,6 +74,7 @@ namespace TraffkPortal
             RequireHttps = Parse.ParseBool(Configuration["RequireHttps"], true);
             IdleLogout = Parse.ParseTimeSpan(Configuration["IdleLogout"], TimeSpan.FromMinutes(15));
             TraffkHttpHeadersFilter.IdleLogout = IdleLogout;
+            RedisConnectionString = Configuration["RedisCachingServicesOptions:ConnectionString"];
 
             Logger = new LoggerConfiguration()
                     .Enrich.WithProperty("ApplicationName", Configuration["RevolutionaryStuffCoreOptions:ApplicationName"])
@@ -118,6 +122,7 @@ namespace TraffkPortal
             services.Configure<DataProtectionTokenProviderOptions>(Configuration.GetSection(nameof(DataProtectionTokenProviderOptions)));
             services.Configure<TraffkHttpHeadersFilter.TraffkHttpHeadersFilterOptions>(Configuration.GetSection(nameof(TraffkHttpHeadersFilter.TraffkHttpHeadersFilterOptions)));
             services.Configure<TokenProviderOptions>(Configuration.GetSection(nameof(TokenProviderOptions)));
+            services.Configure<OrchestraRxOptions>(Configuration.GetSection(nameof(OrchestraRxOptions)));
 
             services.AddSingleton<CachingServices>();
 
@@ -202,6 +207,8 @@ namespace TraffkPortal
 
             services.AddScoped<IBackgroundJobClient, TenantedBackgroundJobClient>();
             services.AddScoped<ITraffkRecurringJobManager, TenantedBackgroundJobClient>();
+
+            services.AddScoped<OrchestraRxApiClient>();
 
             services.AddScoped<TableauTrustedTicketActionFilter>();
 
