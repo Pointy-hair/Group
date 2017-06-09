@@ -28,9 +28,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Traffk.OrchestraRx\Traffk.OrchestraRx.csproj" />
     <ProjectReference Include="..\RevolutionaryStuff.Core\RevolutionaryStuff.Core.csproj" />
     <ProjectReference Include="..\Traffk.Bal\Traffk.Bal.csproj" />
+    <ProjectReference Include="..\Traffk.Orchestra\Traffk.Orchestra.csproj" />
     <ProjectReference Include="..\Traffk.Tableau\Traffk.Tableau.csproj" />
   </ItemGroup>
 
