@@ -14,10 +14,16 @@ namespace Traffk.Orchestra
         private readonly string ApiVersion = "v1";
         private readonly string AcceptHeader = "application/json; charset=utf-8";
         private readonly OrchestraRxOptions Options;
+        private OrchestraRxTokenResponse Token;
 
         public OrchestraRxApiClient(IOptions<OrchestraRxOptions> options)
         {
             Options = options.Value;
+        }
+
+        public void SetToken(OrchestraRxTokenResponse token)
+        {
+            Token = token;
         }
 
         public OrchestraRxTokenResponse Authenticate()
@@ -44,12 +50,15 @@ namespace Traffk.Orchestra
 
         public async Task<PharmacyResponse> PharmacySearch(string zip, int radius)
         {
-            var tokenResponse = Authenticate();
+            if (Token == null)
+            {
+                Token = Authenticate();
+            }
 
             var apiRoute = $"/APITools/{ApiVersion}/Pharmacies/Search?zip={zip}&radius={radius}";
 
             var httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {tokenResponse.access_token}");
+            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {Token.access_token}");
             httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept", $"{AcceptHeader}");
 
             var response = await httpClient.GetAsync(Options.BaseUrl + apiRoute);

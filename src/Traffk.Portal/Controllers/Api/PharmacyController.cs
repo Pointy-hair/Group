@@ -6,11 +6,12 @@ using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Traffk.Bal.ExternalApis;
 using Traffk.Bal.Permissions;
+using Traffk.Bal.Services;
 using Traffk.Orchestra;
 using Traffk.Orchestra.Models;
 using Traffk.Portal.Permissions;
-using Traffk.Portal.Services;
 
 namespace Traffk.Portal.Controllers.Api
 {
@@ -21,21 +22,17 @@ namespace Traffk.Portal.Controllers.Api
     [Route("api/v1")]
     public class PharmacyController : BaseApiController
     {
-        private readonly OrchestraRxApiClient OrchestraRxApiClient;
-        private readonly RedisCachingServices Cache;
+        private readonly OrchestraApiService OrchestraApiService;
 
-        public PharmacyController(OrchestraRxApiClient orchestraRxApiClient, ILogger logger) : base(logger)
+        public PharmacyController(ILogger logger) : base(logger)
         {
-            Cache = new RedisCachingServices();
-            OrchestraRxApiClient = orchestraRxApiClient;
+            //OrchestraApiService = orchestraApiService;
         }
 
         [HttpGet]
         [Route("Pharmacies")]
         public IEnumerable<Pharmacy> GetPharmacies()
         {
-            OrchestraRxApiClient.Authenticate();
-
             return null;
 
             //const string cacheKey = "pharmacyList";
@@ -66,7 +63,8 @@ namespace Traffk.Portal.Controllers.Api
         [Route("Pharmacies/{zip}/{radius}")]
         public PharmacyResponse SearchPharmacies(string zip, int radius)
         {
-            return OrchestraRxApiClient.PharmacySearch(zip, radius).Result;
+            return null;
+            //return OrchestraApiService.PharmacySearch(zip, radius);
         }
 
         public class Pharmacy

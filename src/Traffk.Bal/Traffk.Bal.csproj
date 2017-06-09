@@ -95,6 +95,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RevolutionaryStuff.Core\RevolutionaryStuff.Core.csproj" />
+    <ProjectReference Include="..\Traffk.Orchestra\Traffk.Orchestra.csproj" />
     <ProjectReference Include="..\Traffk.Tableau\Traffk.Tableau.csproj" />
   </ItemGroup>
 
