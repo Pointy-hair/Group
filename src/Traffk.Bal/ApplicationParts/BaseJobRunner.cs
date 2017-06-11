@@ -7,6 +7,7 @@ using Serilog.Core;
 using Serilog.Core.Enrichers;
 using Traffk.Bal.Data.Rdb.TraffkGlobal;
 using ILogger = Serilog.ILogger;
+using Microsoft.EntityFrameworkCore;
 
 namespace Traffk.Bal.ApplicationParts
 {
@@ -25,6 +26,13 @@ namespace Traffk.Bal.ApplicationParts
         protected readonly DateTime StartedAtUtc = DateTime.UtcNow;
 
         private static int InstanceId_s;
+
+        public string GetParentJobResultData()
+        {
+            var parentId = GlobalContext.Job.Find(this.JobId).ParentJobId;
+            if (parentId == null) return null;
+            return GlobalContext.Job.Find(parentId.Value).ResultData;
+        }
 
         protected BaseJobRunner(TraffkGlobalDbContext globalContext, 
             JobRunnerProgram jobRunnerProgram, 
