@@ -608,7 +608,18 @@ GO
 
 create view HangFire.Job
 AS
-select j.* 
+select 
+	j.Id,	
+	j.StateId,	
+	j.StateName,	
+	j.InvocationData,	
+	j.Arguments,
+	j.CreatedAt,
+	j.ExpireAt,
+	t.TenantId,
+	j.ResultData,	
+	j.RecurringJobId,	
+	j.ContactId
 from 
 	global.hangfire_job j
 		inner join
@@ -618,10 +629,10 @@ from
 GO
 
 exec db.ViewPropertySet 'Job', '1', @propertyName='AddToDbContext', @viewSchema='HangFire'
-exec db.ViewPropertySet 'Job', '0', @propertyName='GeneratePoco', @viewSchema='HangFire'
---exec db.ViewPropertySet 'Job', 'ITraffkTenanted', @propertyName='Implements', @viewSchema='HangFire' kill this
+exec db.ViewPropertySet 'Job', '1', @propertyName='GeneratePoco', @viewSchema='HangFire'
+exec db.ViewPropertySet 'Job', 'ITraffkTenanted', @propertyName='Implements', @viewSchema='HangFire'
 exec db.ViewColumnPropertySet 'Job', 'Id', 'Key', @propertyName='CustomAttribute', @viewSchema='HangFire'
-exec db.ViewColumnPropertySet 'Job', 'TenantId', 'Key', @propertyName='Tenants(TenantId)', @viewSchema='HangFire'
-exec db.ViewColumnPropertySet 'Job', 'ContactId', 'Key', @propertyName='Contacts(ContactId)', @viewSchema='HangFire'
+exec db.ViewColumnPropertySet 'Job', 'TenantId', 'dbo.Tenants(TenantId)', @propertyName='LinksTo', @viewSchema='HangFire'
+exec db.ViewColumnPropertySet 'Job', 'ContactId', 'dbo.Contacts(ContactId)', @propertyName='LinksTo', @viewSchema='HangFire'
 
 

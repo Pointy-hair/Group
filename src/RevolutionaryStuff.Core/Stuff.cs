@@ -23,6 +23,8 @@ namespace RevolutionaryStuff.Core
             ApplicationFamily = StringHelpers.Coalesce(info?.Product, info?.Company, ApplicationName);
         }
 
+        public const string Qbert = "@!#?@!";
+
         public const string BaseRsllcUrn = "urn:www.revolutionarystuff.com";
 
         public static readonly CultureInfo CultureUS = new CultureInfo("en-US");

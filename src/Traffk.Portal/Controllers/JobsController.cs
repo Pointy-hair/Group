@@ -91,8 +91,8 @@ namespace TraffkPortal.Controllers
         [Route("/Jobs")]
         public IActionResult Jobs(string sortCol, string sortDir, int? page, int? pageSize)
         {
-            var items = GDB.Job.Where(j => j.TenantId == TenantId);
-            items = ApplyBrowse(items, sortCol ?? nameof(Job.CreatedAt),
+            var items = Rdb.Job.Where(j => j.TenantId == TenantId);
+            items = ApplyBrowse(items, sortCol ?? nameof(Traffk.Bal.Data.Rdb.TraffkTenantModel.Job.CreatedAt),
                 sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
             return View(ViewNames.JobList, items);
         }
@@ -113,8 +113,8 @@ namespace TraffkPortal.Controllers
             return await JsonCancelJobAsync<int>();
         }
 
-        private async Task<Job> FindJobAsync(int jobId)
-            => await GDB.Job.FirstOrDefaultAsync(j => j.Id == jobId && j.TenantId == this.TenantId);
+        private async Task<Traffk.Bal.Data.Rdb.TraffkTenantModel.Job> FindJobAsync(int jobId)
+            => await Rdb.Job.FirstOrDefaultAsync(j => j.Id == jobId && j.TenantId == this.TenantId);
 
         private async Task<IActionResult> JsonCancelJobAsync<TId>()
         {

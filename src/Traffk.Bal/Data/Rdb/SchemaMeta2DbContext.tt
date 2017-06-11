@@ -15,8 +15,8 @@
 var details = new List<Tuple<string, string, string, string>>
 {
 //	Tuple.Create("TraffkTenantShards.SchemaMeta.xml", "TraffkTenantShards.DbContext.cs", "Traffk.Bal.Data.Rdb.TraffkTenantShards", "TraffkTenantShardsDbContext")
-//	Tuple.Create("TraffkGlobal.SchemaMeta.xml", "TraffkGlobal.DbContext.cs", "Traffk.Bal.Data.Rdb.TraffkGlobal", "TraffkGlobalDbContext"),
-//	Tuple.Create("TraffkTenantModel.SchemaMeta.xml", "TraffkTenantModel.DbContext.cs", "Traffk.Bal.Data.Rdb", "TraffkRdbContext")
+	Tuple.Create("TraffkGlobal.SchemaMeta.xml", "TraffkGlobal.DbContext.cs", "Traffk.Bal.Data.Rdb.TraffkGlobal", "TraffkGlobalDbContext"),
+	Tuple.Create("TraffkTenantModel.SchemaMeta.xml", "TraffkTenantModel.DbContext.cs", "Traffk.Bal.Data.Rdb.TraffkTenantModel", "TraffkTenantModelDbContext")
 };
 #>
 <#
@@ -94,7 +94,7 @@ foreach (var z in doc.XPathSelectElements("/SchemaMeta/Tables/Table[Properties/P
 		#region Collections
 
 <#
-foreach (var z in doc.XPathSelectElements("/SchemaMeta/Tables/Table[Properties/Property/@name='AddToDbContext']"))
+foreach (var z in doc.XPathSelectElements("/SchemaMeta/Tables/Table[Properties/Property/@name='AddToDbContext']").OrderBy(wq=>GetClassName(wq)))
 {
 		if (GetPropertyValue(z, "AddToDbContext")!="1") continue;
 		var schemaTable = GetAttrVal(z, "schema") + "." + GetAttrVal(z, "name");
@@ -849,13 +849,4 @@ public static string ToTitleFriendlyString(string s)
     }
     return sb.ToString();
 }
-/*
-class TransformDetails
-{
-	public string SchemaMetaFilename {get;set;}
-	public string OutputDatasetFilename {get;set;}
-	public string SchemaName {get;set;}
-	public string DatasetName {get;set;}
-}
-*/
 #>
