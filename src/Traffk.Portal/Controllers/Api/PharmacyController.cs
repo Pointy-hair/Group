@@ -29,37 +29,24 @@ namespace Traffk.Portal.Controllers.Api
         public IEnumerable<Pharmacy> GetPharmacies()
         {
             return null;
-
-            //const string cacheKey = "pharmacyList";
-
-            //IDatabase cache = Cache.Connection.GetDatabase();
-            //string cachedPharmacyList = cache.StringGet(cacheKey);
-
-            //var pharmacies = new List<Pharmacy>();
-
-            //if (!string.IsNullOrEmpty(cachedPharmacyList))
-            //{
-            //    pharmacies = JsonConvert.DeserializeObject<List<Pharmacy>>(cachedPharmacyList);
-            //}
-            //else
-            //{
-            //    pharmacies = new List<Pharmacy>
-            //    {
-            //        new Pharmacy {PharmacyName = "Test Pharmacy" + DateTime.UtcNow}
-            //    };
-            //}
-
-            //Log();
-
-            //return pharmacies;
         }
 
         [HttpGet]
         [Route("Pharmacies/{zip}/{radius}")]
         public PharmacyResponse SearchPharmacies(string zip, int radius)
         {
-            //return null;
+            Log();
+
             return OrchestraApiService.PharmacySearch(zip, radius);
+        }
+
+        [HttpGet]
+        [Route("Drugs")]
+        public DrugResponse SearchDrugs(string query)
+        {
+            Log();
+
+            return OrchestraApiService.DrugSearch(query);
         }
 
         public class Pharmacy

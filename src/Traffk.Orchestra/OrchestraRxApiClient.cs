@@ -50,20 +50,45 @@ namespace Traffk.Orchestra
 
         public async Task<PharmacyResponse> PharmacySearch(string zip, int radius)
         {
-            if (Token == null)
-            {
-                Token = Authenticate();
-            }
-
             var apiRoute = $"/APITools/{ApiVersion}/Pharmacies/Search?zip={zip}&radius={radius}";
-
-            var httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {Token.access_token}");
-            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept", $"{AcceptHeader}");
+            VerifyToken();
+            var httpClient = CreateHttpClientWithHeaders();
 
             var response = await httpClient.GetAsync(Options.BaseUrl + apiRoute);
             var json = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<PharmacyResponse>(json);
+        }
+
+        public async Task<DrugResponse> DrugSearch(string query)
+        {
+            var apiRoute = $"/APITools/{ApiVersion}/Drugs/Search?q={query}";
+            VerifyToken();
+            var httpClient = CreateHttpClientWithHeaders();
+
+            var response = await httpClient.GetAsync(Options.BaseUrl + apiRoute);
+            var json = await response.Content.ReadAsStringAsync();
+
+            //JsonConvert can't serialize directly to DrugResponse
+            var drugArray = JsonConvert.DeserializeObject<Drug[]>(json);
+            var drugResponse = new DrugResponse {Drugs = drugArray};
+            return drugResponse;
+        }
+
+        private void VerifyToken()
+        {
+            if (Token == null)
+            {
+                Token = Authenticate();
+            }
+        }
+
+        private HttpClient CreateHttpClientWithHeaders()
+        {
+            var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {Token.access_token}");
+            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept", $"{AcceptHeader}");
+
+            return httpClient;
         }
     }
 }

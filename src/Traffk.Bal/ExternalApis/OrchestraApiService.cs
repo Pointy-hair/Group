@@ -1,6 +1,4 @@
 ﻿using System;
-using Newtonsoft.Json;
-using StackExchange.Redis;
 using Traffk.Bal.Services;
 using Traffk.Orchestra;
 using Traffk.Orchestra.Models;
@@ -33,12 +31,30 @@ namespace Traffk.Bal.ExternalApis
             var cacheKey = RevolutionaryStuff.Core.Caching.Cache.CreateKey(typeof(PharmacyResponse).Name + zip + radius);
 
             var pharmacyResponse = Cache.CheckCache<PharmacyResponse>(cacheKey);
-            pharmacyResponse = pharmacyResponse ?? Client.PharmacySearch(zip, radius).Result;
 
-            Cache.SetCacheEntry<PharmacyResponse>(cacheKey, pharmacyResponse);
+            if (pharmacyResponse == null)
+            {
+                pharmacyResponse = Client.PharmacySearch(zip, radius).Result;
+                Cache.SetCacheEntry<PharmacyResponse>(cacheKey, pharmacyResponse);
 
-            return pharmacyResponse;;
+            }
+
+            return pharmacyResponse;
         }
-        
+
+        public DrugResponse DrugSearch(string query)
+        {
+            var cacheKey = RevolutionaryStuff.Core.Caching.Cache.CreateKey(typeof(DrugResponse).Name + query);
+
+            var drugResponse = Cache.CheckCache<DrugResponse>(cacheKey);
+
+            if (drugResponse == null)
+            {
+                drugResponse = Client.DrugSearch(query).Result;
+                Cache.SetCacheEntry<DrugResponse>(cacheKey, drugResponse);
+            }
+
+            return drugResponse;
+        }
     }
 }
