@@ -209,7 +209,8 @@ namespace TraffkPortal
             services.AddScoped<ITraffkRecurringJobManager, TenantedBackgroundJobClient>();
 
             services.AddScoped<OrchestraRxApiClient>();
-            services.AddScoped<RedisCache>();
+            services.AddScoped<IRedisCache, RedisCache>();
+            services.AddScoped<ISynchronizedRedisCache, SynchronizedRedisCache>();
             services.AddScoped<OrchestraApiService>();
 
             services.AddScoped<TableauTrustedTicketActionFilter>();
@@ -222,9 +223,12 @@ namespace TraffkPortal
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            //loggerFactory.AddDebug();
-            //loggerFactory.AddSerilog(Logger);
 
+#if(!DEBUG)
+            loggerFactory.AddDebug();
+            loggerFactory.AddSerilog(Logger);
+#endif
+            
             app.UseApplicationInsightsRequestTelemetry();
 
             if (env.IsDevelopment())

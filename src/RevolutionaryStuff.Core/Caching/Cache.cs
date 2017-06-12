@@ -1,10 +1,10 @@
-﻿using System;
+﻿using RevolutionaryStuff.Core.Crypto;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using System.Threading;
-using RevolutionaryStuff.Core.Crypto;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace RevolutionaryStuff.Core.Caching
@@ -30,7 +30,7 @@ namespace RevolutionaryStuff.Core.Caching
         {
             private readonly IDictionary<string, ICacheEntry> EntriesByKey = new Dictionary<string, ICacheEntry>();
 
-            public CacheEntry<TVal> FindOrCreate<TVal>(string key, Func<string, CacheEntry<TVal>> creator, bool forceCreate)
+            public CacheEntry<TVal> FindOrCreate<TVal>(string key, Func<string, CacheEntry<TVal>> creator, bool forceCreate, TimeSpan? timeout)
             {
                 ICacheEntry e = null;
                 if (forceCreate || !EntriesByKey.TryGetValue(key, out e) || e.IsExpired)
@@ -47,14 +47,14 @@ namespace RevolutionaryStuff.Core.Caching
 
         private class PassthroughCacher : ICacher
         {
-            CacheEntry<TVal> ICacher.FindOrCreate<TVal>(string key, Func<string, CacheEntry<TVal>> creator, bool forceCreate) => creator(key);
+            CacheEntry<TVal> ICacher.FindOrCreate<TVal>(string key, Func<string, CacheEntry<TVal>> creator, bool forceCreate, TimeSpan? timeout) => creator(key);
         }
 
         public static readonly ICacher DataCacher = new SynchronizedCacher(new BasicCacher());
 
         public static readonly ICacher Passthrough = new PassthroughCacher();
 
-        private class SynchronizedCacher : ICacher
+        public class SynchronizedCacher : ICacher
         {
             private readonly ICacher Inner;
 
@@ -64,7 +64,7 @@ namespace RevolutionaryStuff.Core.Caching
                 Inner = inner;
             }
 
-            CacheEntry<TVal> ICacher.FindOrCreate<TVal>(string key, Func<string, CacheEntry<TVal>> creator, bool forceCreate)
+            CacheEntry<TVal> ICacher.FindOrCreate<TVal>(string key, Func<string, CacheEntry<TVal>> creator, bool forceCreate, TimeSpan? timeout)
             {
                 var lockName = GetLockKeyName(Inner, key);
                 Start:
@@ -84,7 +84,7 @@ namespace RevolutionaryStuff.Core.Caching
                 Run:
                 try
                 {
-                    return Inner.FindOrCreate(key, creator, forceCreate);
+                    return Inner.FindOrCreate(key, creator, forceCreate, timeout);
                 }
                 finally
                 {
@@ -109,8 +109,8 @@ namespace RevolutionaryStuff.Core.Caching
                 ScopeKey = CreateKey(keyParts);
             }
 
-            public CacheEntry<TVal> FindOrCreate<TVal>(string key, Func<string, CacheEntry<TVal>> creator, bool forceCreate)
-                => Inner.FindOrCreate(CreateKey(key, ScopeKey), creator, forceCreate);
+            public CacheEntry<TVal> FindOrCreate<TVal>(string key, Func<string, CacheEntry<TVal>> creator, bool forceCreate, TimeSpan? timeout = null)
+                => Inner.FindOrCreate(CreateKey(key, ScopeKey), creator, forceCreate, timeout);
         }
 
         public static ICacher Synchronized(ICacher inner) 

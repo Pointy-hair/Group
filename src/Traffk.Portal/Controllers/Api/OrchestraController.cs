@@ -1,8 +1,7 @@
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
 using Traffk.Bal.ExternalApis;
 using Traffk.Bal.Permissions;
 using Traffk.Orchestra.Models;
@@ -15,20 +14,13 @@ namespace Traffk.Portal.Controllers.Api
     [ApiAuthorize(ApiNames.Rx)]
     [Produces("application/json")]
     [Route("api/v1")]
-    public class PharmacyController : BaseApiController
+    public class OrchestraController : BaseApiController
     {
         private readonly OrchestraApiService OrchestraApiService;
 
-        public PharmacyController(ILogger logger, OrchestraApiService orchestraApiService) : base(logger)
+        public OrchestraController(ILogger logger, OrchestraApiService orchestraApiService) : base(logger)
         {
             OrchestraApiService = orchestraApiService;
-        }
-
-        [HttpGet]
-        [Route("Pharmacies")]
-        public IEnumerable<Pharmacy> GetPharmacies()
-        {
-            return null;
         }
 
         [HttpGet]
@@ -49,13 +41,23 @@ namespace Traffk.Portal.Controllers.Api
             return OrchestraApiService.DrugSearch(query);
         }
 
-        public class Pharmacy
+        [HttpGet]
+        [Route("Plans")]
+        public IEnumerable<Plan> GetPlans()
         {
-            [DataMember(Name = "Name")]
-            public string PharmacyName { get; set; }
+            var plans = new List<Plan>
+            {
+                new Plan {Name = "Test Plan"}
+            };
 
-            [DataMember(Name = "PharmacyId")]
-            public string Id { get; set; }
+            Log();
+
+            return plans;
+        }
+
+        public class Plan
+        {
+            public string Name { get; set; }
         }
     }
 }

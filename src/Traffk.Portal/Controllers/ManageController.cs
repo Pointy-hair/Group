@@ -415,7 +415,7 @@ namespace TraffkPortal.Controllers
             }
 
             var apiKey = Guid.NewGuid();
-            user.Settings.ApiKey = apiKey;
+            user.Settings.ApiKey = apiKey.ToString();
             await UserManager.UpdateAsync(user);
 
             model.ApiKey = user.Settings.ApiKey;

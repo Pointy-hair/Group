@@ -7,6 +7,6 @@ namespace Traffk.Portal.Models.ManageViewModels
 {
     public class GenerateApiKeyViewModel
     {
-        public Guid ApiKey { get; set; }
+        public string ApiKey { get; set; }
     }
 }

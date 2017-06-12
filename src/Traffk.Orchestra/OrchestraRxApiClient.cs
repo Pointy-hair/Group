@@ -45,10 +45,12 @@ namespace Traffk.Orchestra
             var response = httpClient.PostAsync(Options.AuthUrl, content).Result;
             var json = response.Content.ReadAsStringAsync().Result;
 
-            return JsonConvert.DeserializeObject<OrchestraRxTokenResponse>(json);
+            var tokenResponse = JsonConvert.DeserializeObject<OrchestraRxTokenResponse>(json);
+
+            return tokenResponse;
         }
 
-        public async Task<PharmacyResponse> PharmacySearch(string zip, int radius)
+        public async Task<PharmacyResponse> PharmacySearchAsync(string zip, int radius)
         {
             var apiRoute = $"/APITools/{ApiVersion}/Pharmacies/Search?zip={zip}&radius={radius}";
             VerifyToken();
@@ -59,7 +61,7 @@ namespace Traffk.Orchestra
             return JsonConvert.DeserializeObject<PharmacyResponse>(json);
         }
 
-        public async Task<DrugResponse> DrugSearch(string query)
+        public async Task<DrugResponse> DrugSearchAsync(string query)
         {
             var apiRoute = $"/APITools/{ApiVersion}/Drugs/Search?q={query}";
             VerifyToken();

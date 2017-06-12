@@ -54,22 +54,15 @@ namespace Traffk.Portal.Controllers.Api
         [HttpPost]
         [AllowAnonymous]
         [Route("Authenticate")]
-        public async Task<TokenResponse> GetToken()
+        public async Task<TokenResponse> GetTokenAsync()
         {
             List<Claim> claims = null;
             var username = HttpContext.Request.Form["username"];
-            var password = HttpContext.Request.Form["password"];
             var apiKey = HttpContext.Request.Form["apiKey"];
-
-            if (!String.IsNullOrEmpty(password))
-            {
-                var userClaims = await GetClaims(username, password);
-                claims = userClaims.ToList();
-            }
 
             if (!String.IsNullOrEmpty(apiKey))
             {
-                var userClaims = await GetClaims(username, Guid.Parse(apiKey));
+                var userClaims = await GetClaimsAsync(username, apiKey);
                 claims = userClaims.ToList();
             }
 
@@ -96,25 +89,11 @@ namespace Traffk.Portal.Controllers.Api
             return response;
         }
 
-        private async Task<IEnumerable<Claim>> GetClaims(string username, string password)
+        private async Task<IEnumerable<Claim>> GetClaimsAsync(string username, string apiKey)
         {
             var user = await UserManager.FindByNameAsync(username);
-            var result = await SignInManager.PasswordSignInAsync(username, password, false, lockoutOnFailure: false);
 
-            if (result.Succeeded)
-            {
-                var claimsPrincipal = UserClaimsPrincipalFactory.CreateAsync(user).ExecuteSynchronously();
-
-                return claimsPrincipal.Claims;
-            }
-
-            return null;
-        }
-
-        private async Task<IEnumerable<Claim>> GetClaims(string username, Guid apiKey)
-        {
-            var user = await UserManager.FindByNameAsync(username);
-            if (user.Settings.ApiKey.Equals(apiKey))
+            if (!String.IsNullOrEmpty(user.Settings.ApiKey) && !String.IsNullOrEmpty(apiKey) && user.Settings.ApiKey.Equals(apiKey))
             {
                 await SignInManager.SignInAsync(user, false);
                 var claimsPrincipal = await UserClaimsPrincipalFactory.CreateAsync(user);

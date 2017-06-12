@@ -22,7 +22,7 @@ namespace Traffk.Bal.Settings
 
         [DisplayName("API Key")]
         [DataMember(Name = "ApiKey")]
-        public Guid ApiKey { get; set; }
+        public string ApiKey { get; set; }
 
         public UserSettings()
         { }

@@ -19,15 +19,10 @@ namespace Traffk.Portal.Controllers.Api
             });
         }
 
-        protected void Log()
-        {
-            Log("");
-        }
-
-        protected void Log(string message)
+        protected void Log(string message = null)
         {
             string referer = Request.Path.Value;
-            Logger.Information("{@EventType} {@Referer} " + message, EventType.LoggingEventTypes.ApiCall.ToString(), referer);
+            Logger.Information("{@EventType} {@Referer} " + (message ?? ""), EventType.LoggingEventTypes.ApiCall.ToString(), referer);
         }
     }
 }

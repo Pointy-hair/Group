@@ -6,22 +6,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using Traffk.Portal.Controllers;
+using Traffk.Portal.Controllers.Api;
 
 namespace Traffk.Portal.Tests.ControllersTests
 {
     [TestClass]
-    public class PlanControllerTests
+    public class OrchestraControllerTests
     {
         private HttpClient TestClient { get; set; }
 
-        public PlanControllerTests()
+        public OrchestraControllerTests()
         {
             TestClient = MockEnvironment.TestClient;
         }
 
         [TestClass]
-        public class GetMethodTests : PlanControllerTests
+        public class GetMethodTests : OrchestraControllerTests
         {
 
             [TestMethod]
@@ -33,7 +33,7 @@ namespace Traffk.Portal.Tests.ControllersTests
 
                 var getPlanResponse = TestClient.GetAsync("/api/v1/Plans").ExecuteSynchronously();
                 var json = getPlanResponse.Content.ReadAsStringAsync().ExecuteSynchronously();
-                var plans = JsonConvert.DeserializeObject<ICollection<Plan>>(json);
+                var plans = JsonConvert.DeserializeObject<ICollection<OrchestraController.Plan>>(json);
 
                 Assert.IsNotNull(plans);
                 Assert.IsTrue(plans.Any());
@@ -54,7 +54,7 @@ namespace Traffk.Portal.Tests.ControllersTests
                 Assert.IsTrue(getPlanResponse.StatusCode == HttpStatusCode.Forbidden);
 
                 var json = getPlanResponse.Content.ReadAsStringAsync().ExecuteSynchronously();
-                var plans = JsonConvert.DeserializeObject<ICollection<Plan>>(json);
+                var plans = JsonConvert.DeserializeObject<ICollection<OrchestraController.Plan>>(json);
 
                 Assert.IsNull(plans);
             }
