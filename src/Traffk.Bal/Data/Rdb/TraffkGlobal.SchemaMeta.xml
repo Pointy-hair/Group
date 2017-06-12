@@ -273,8 +273,12 @@
         <Column name="ExpireAt" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="datetime" />
         <Column name="TenantId" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
         <Column name="ResultData" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
+        <Column name="RecurringJobId" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="256" />
+        <Column name="ParentJobId" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="HangFire" refTable="Job" />
+        <Column name="ContactId" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
       </Columns>
       <Collections>
+        <Collection schema="HangFire" table="Job" column="ParentJobId" collectionType="actual" />
         <Collection schema="HangFire" table="State" column="JobId" collectionType="actual" />
         <Collection schema="HangFire" table="JobParameter" column="JobId" collectionType="actual" />
       </Collections>
@@ -325,10 +329,6 @@
       </Columns>
     </Table>
     <Table schema="HangFire" name="State" tableType="BASE TABLE">
-      <Properties>
-        <Property name="AddToDbContext" value="1" />
-        <Property name="GeneratePoco" value="1" />
-      </Properties>
       <Columns>
         <Column name="Id" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
         <Column name="JobId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="HangFire" refTable="Job" />
@@ -581,13 +581,15 @@
       </Args>
       <ResultSets>
         <ResultSet resultSetNumber="0" colCount="0" isError="1">
-          <Error>The metadata could not be determined because statement 'INSERT #sessions
-		(
-			recursion,
-			session_id,
-			request_id,
-			session_number,
-			elapsed' in procedure 'WhoIsActive' uses a temp table.</Error>
+          <Error>
+            The metadata could not be determined because statement 'INSERT #sessions
+            (
+            recursion,
+            session_id,
+            request_id,
+            session_number,
+            elapsed' in procedure 'WhoIsActive' uses a temp table.
+          </Error>
         </ResultSet>
       </ResultSets>
     </Sproc>

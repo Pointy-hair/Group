@@ -76,29 +76,7 @@ namespace Traffk.BackgroundJobServer
 
         async void ITenantJobs.DownloadTableauPdfContinuationJob()
         {
-#if true
-            string resultData = null;
-#else
-            var awaitingState = await GlobalContext.JobStates.FirstAsync(j => j.JobId == JobId && j.Name == AwaitingState.StateName);
-
-            if (awaitingState == null)
-            {
-                throw new Exception("No parent job found.");
-            }
-
-            var parentJobId = awaitingState.JobStateDetails.ParentId;
-
-            string resultData = null;
-            do
-            {
-                var precedingJob = await GlobalContext.Job.AsNoTracking().FirstAsync(x => x.Id == parentJobId);
-                resultData = precedingJob.ResultData;
-                if (resultData == null)
-                {
-                    Thread.Sleep(TimeSpan.FromMinutes(1));
-                }
-            } while (resultData == null);
-#endif
+            string resultData = this.GetParentJobResultData();
             var downloadOptions = JsonConvert.DeserializeObject<DownloadPdfOptions>(resultData);
             var pdfBytes = await TableauVisualService.DownloadPdfAsync(downloadOptions);
             var blob = BlobStorageService.StoreFileAsync(

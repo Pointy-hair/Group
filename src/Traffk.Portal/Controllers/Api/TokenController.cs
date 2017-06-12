@@ -30,7 +30,6 @@ namespace Traffk.Portal.Controllers.Api
         private readonly SignInManager<ApplicationUser> SignInManager;
         private readonly IUserClaimsPrincipalFactory<ApplicationUser> UserClaimsPrincipalFactory;
         private readonly SigningCredentials SigningCredentials;
-        private readonly ILogger Logger; 
 
         public TokenController(IOptions<TokenProviderOptions> options,
             UserManager<ApplicationUser> userManager,

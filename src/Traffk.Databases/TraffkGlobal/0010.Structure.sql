@@ -73,10 +73,14 @@ exec db.ColumnPropertySet 'DataSourceFetchItems', 'DataSourceFetchItemType', 'Da
 GO
 
 
+--alter table hangfire.Job add RowStatus dbo.RowStatus not null default '1'
 alter table hangfire.Job Add TenantId int null
 alter table hangfire.Job Add ResultData nvarchar(max) null
 alter table hangfire.Job Add RecurringJobId nvarchar(256) null
+alter table hangfire.Job Add ParentJobId int null references hangfire.job(id)
 alter table hangfire.Job Add ContactId int null
+--exec db.ColumnPropertySet 'Job', 'RowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='hangfire'
+--exec db.ColumnPropertySet 'Job', 'RowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='hangfire'
 
 GO
 
@@ -117,6 +121,36 @@ BEGIN
 			inner join
 		m
 			on j.id=m.jobid
+
+END
+
+GO
+
+CREATE TRIGGER Hangfire.StateJobParentIdLinker
+   ON  Hangfire.[State] 
+   AFTER INSERT
+AS 
+BEGIN
+
+	SET NOCOUNT ON;
+
+	;with
+	jp(JobId, ParentJobId) as
+	(
+		select s.JobId, json_value(s.[data], '$.ParentId') 
+		from 
+			inserted s
+		where
+			try_cast(json_value(s.[data], '$.ParentId') as int) is not null
+	)
+	update j 
+	set
+		ParentJobId=jp.ParentJobId
+	from 
+		hangfire.job j
+			inner join
+		jp
+			on j.id=jp.jobid
 
 END
 

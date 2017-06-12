@@ -1,11 +1,10 @@
-﻿/*
-using System;
+﻿using System;
 using Hangfire.States;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using Traffk.Bal.BackgroundJobs;
 
-namespace Traffk.Bal.Data.Rdb.TraffkGlobal
+namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
 {
     public partial class Job
     {
@@ -33,4 +32,3 @@ namespace Traffk.Bal.Data.Rdb.TraffkGlobal
         private HangfireJobDetails HangfireJobDetails_p;
     }
 }
-*/

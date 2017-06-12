@@ -1095,16 +1095,16 @@
         <Column name="Arguments" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="-1" isComputed="0" />
         <Column name="CreatedAt" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" isComputed="0" />
         <Column name="ExpireAt" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="datetime" isComputed="0" />
-        <Column name="TenantId" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0">
+        <Column name="TenantId" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0">
           <Properties>
-            <Property name="Tenants(TenantId)" value="Key" />
+            <Property name="LinksTo" value="dbo.Tenants(TenantId)" />
           </Properties>
         </Column>
         <Column name="ResultData" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0" />
         <Column name="RecurringJobId" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="256" isComputed="0" />
         <Column name="ContactId" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0">
           <Properties>
-            <Property name="Contacts(ContactId)" value="Key" />
+            <Property name="LinksTo" value="dbo.Contacts(ContactId)" />
           </Properties>
         </Column>
       </Columns>

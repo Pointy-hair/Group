@@ -42,11 +42,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
     </Compile>
-    <Compile Update="Data\Rdb\SchemaMeta2DbContext.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
-    </Compile>
     <Compile Update="Data\Rdb\TraffkGlobal.DbContext.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
