@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using StackExchange.Redis;
 using Traffk.Bal.Services;
 using Traffk.Orchestra;
@@ -9,38 +10,35 @@ namespace Traffk.Bal.ExternalApis
     public class OrchestraApiService
     {
         private readonly OrchestraRxApiClient Client;
-        private readonly IDatabase Cache;
+        private readonly RedisCache Cache;
 
-        public OrchestraApiService(RedisCachingService cache, OrchestraRxApiClient client)
+        public OrchestraApiService(RedisCache cache, OrchestraRxApiClient client)
         {
-            Cache = cache.Connection.GetDatabase();
+            Cache = cache;
             Client = client;
 
-            var cachedToken = CheckCache<OrchestraRxTokenResponse>(typeof(OrchestraRxTokenResponse).Name);
-            Client.SetToken(cachedToken);
+            var cacheKey = RevolutionaryStuff.Core.Caching.Cache.CreateKey(typeof(OrchestraRxTokenResponse).Name);
+            var tokenResponse = Cache.CheckCache<OrchestraRxTokenResponse>(cacheKey);
+            if (tokenResponse == null)
+            {
+                tokenResponse = Client.Authenticate();
+                Cache.SetCacheEntry(cacheKey, tokenResponse, TimeSpan.FromSeconds(tokenResponse.expires_in));
+            }
+
+            Client.SetToken(tokenResponse);
         }
 
         public PharmacyResponse PharmacySearch(string zip, int radius)
         {
-            var cacheKey = typeof(PharmacyResponse).Name + zip + radius;
+            var cacheKey = RevolutionaryStuff.Core.Caching.Cache.CreateKey(typeof(PharmacyResponse).Name + zip + radius);
 
-            var pharmacyResponse = CheckCache<PharmacyResponse>(cacheKey);
+            var pharmacyResponse = Cache.CheckCache<PharmacyResponse>(cacheKey);
             pharmacyResponse = pharmacyResponse ?? Client.PharmacySearch(zip, radius).Result;
 
-            SetCacheEntry<PharmacyResponse>(cacheKey, pharmacyResponse);
+            Cache.SetCacheEntry<PharmacyResponse>(cacheKey, pharmacyResponse);
 
             return pharmacyResponse;;
         }
-
-        private T CheckCache<T>(string key) where T : class
-        {
-            string serializedTokenResponse = Cache.StringGet(key);
-            return JsonConvert.DeserializeObject<T>(serializedTokenResponse);
-        }
-
-        private void SetCacheEntry<T>(string key, T value) where T : class
-        {
-            Cache.StringSet(key, JsonConvert.SerializeObject(value));
-        }
+        
     }
 }

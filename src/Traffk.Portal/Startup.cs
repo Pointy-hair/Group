@@ -208,9 +208,9 @@ namespace TraffkPortal
             services.AddScoped<IBackgroundJobClient, TenantedBackgroundJobClient>();
             services.AddScoped<ITraffkRecurringJobManager, TenantedBackgroundJobClient>();
 
-            //services.AddScoped<OrchestraRxApiClient>();
-            //services.AddScoped<RedisCachingService>();
-            //services.AddScoped<OrchestraApiService>();
+            services.AddScoped<OrchestraRxApiClient>();
+            services.AddScoped<RedisCache>();
+            services.AddScoped<OrchestraApiService>();
 
             services.AddScoped<TableauTrustedTicketActionFilter>();
 

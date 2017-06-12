@@ -1,15 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Serilog;
-using StackExchange.Redis;
-using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Traffk.Bal.ExternalApis;
 using Traffk.Bal.Permissions;
-using Traffk.Bal.Services;
-using Traffk.Orchestra;
 using Traffk.Orchestra.Models;
 using Traffk.Portal.Permissions;
 
@@ -24,9 +19,9 @@ namespace Traffk.Portal.Controllers.Api
     {
         private readonly OrchestraApiService OrchestraApiService;
 
-        public PharmacyController(ILogger logger) : base(logger)
+        public PharmacyController(ILogger logger, OrchestraApiService orchestraApiService) : base(logger)
         {
-            //OrchestraApiService = orchestraApiService;
+            OrchestraApiService = orchestraApiService;
         }
 
         [HttpGet]
@@ -63,8 +58,8 @@ namespace Traffk.Portal.Controllers.Api
         [Route("Pharmacies/{zip}/{radius}")]
         public PharmacyResponse SearchPharmacies(string zip, int radius)
         {
-            return null;
-            //return OrchestraApiService.PharmacySearch(zip, radius);
+            //return null;
+            return OrchestraApiService.PharmacySearch(zip, radius);
         }
 
         public class Pharmacy
