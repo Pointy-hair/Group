@@ -3,6 +3,7 @@
     Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
     ViewData.SetTitleAndHeading("Manage Your Account");
     ViewData.IsFormPage(true);
+    var manageApiKey = await User.HasPermission(AuthorizationService, ApiNames.Base);
 }
 
 <p class="text-success">@ViewData["StatusMessage"]</p>
@@ -28,44 +29,54 @@
                 </div>
                 </div>
 
-            <div class="form-row">
-                <label class="col-sm-1">Phone Number</label>
-                <div class="col-sm-10">
-                    @(Model.PhoneNumber ?? "None")
-                    @if (Model.PhoneNumber != null)
-                    {
-                        <a asp-controller="Manage" asp-action="AddPhoneNumber" class="btn btn-default btn-primary">Change</a>
-                        <form asp-controller="Manage" asp-action="RemovePhoneNumber" method="post" class="inline-form">
-                            <button type="submit" class="btn btn-default btn-primary">Remove</button>
-                        </form>
-                    }
-                    else
-                    {
-                        <a asp-controller="Manage" asp-action="AddPhoneNumber" class="btn btn-default btn-primary">Add</a>
-                    }
-                </div>
-            </div>
-            <div class="form-row">
-                <label class="col-sm-2">
-                    Two-Factor Authentication
-                </label>
-                <div class="col-sm-10">
-                    @if (Model.TwoFactor)
-                    {
-                        <form asp-controller="Manage" asp-action="DisableTwoFactorAuthentication" method="post" class="inline-form">
-                            Enabled <button type="submit" class="btn btn-default btn-primary">Disable</button>
-                        </form>
-                    }
-                    else
-                    {
-                        <text>Disabled</text>
-                        <form asp-controller="Manage" asp-action="EnableTwoFactorAuthentication" method="post" class="inline-form">
-                            <button type="submit" class="btn btn-default btn-primary">Enable</button>
-                        </form>
-                    }
-                </div>
-
-            </div>
+    <div class="form-row">
+        <label class="col-sm-1">Phone Number</label>
+        <div class="col-sm-10">
+            @(Model.PhoneNumber ?? "None")
+            @if (Model.PhoneNumber != null)
+            {
+                <a asp-controller="Manage" asp-action="AddPhoneNumber" class="btn btn-default btn-primary">Change</a>
+                <form asp-controller="Manage" asp-action="RemovePhoneNumber" method="post" class="inline-form">
+                    <button type="submit" class="btn btn-default btn-primary">Remove</button>
+                </form>
+            }
+            else
+            {
+                <a asp-controller="Manage" asp-action="AddPhoneNumber" class="btn btn-default btn-primary">Add</a>
+            }
         </div>
+    </div>
+    <div class="form-row">
+        <label class="col-sm-2">
+            Two-Factor Authentication
+        </label>
+        <div class="col-sm-10">
+            @if (Model.TwoFactor)
+            {
+                <form asp-controller="Manage" asp-action="DisableTwoFactorAuthentication" method="post" class="inline-form">
+                    Enabled <button type="submit" class="btn btn-default btn-primary">Disable</button>
+                </form>
+            }
+            else
+            {
+                <text>Disabled</text>
+                <form asp-controller="Manage" asp-action="EnableTwoFactorAuthentication" method="post" class="inline-form">
+                    <button type="submit" class="btn btn-default btn-primary">Enable</button>
+                </form>
+            }
+        </div>
+    </div>
+    <div class="form-row">
+        @if (manageApiKey)
+        {
+            <label class="col-sm-12">
+                API
+            </label>
+            <div class="col-sm-10">
+                <a asp-controller="Manage" asp-action="GetApiKey" class="btn btn-default btn-primary">Get API Key</a>
+            </div>
+        }
+    </div>
+</div>
 
 
