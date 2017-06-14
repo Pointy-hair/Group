@@ -47,7 +47,10 @@ namespace Traffk.Bal.ApplicationParts
                             TenantId = j.TenantId;
                             JobId = j.Id;
                             ContactId = j.ContactId;
-                            CurrentUser = this.Activator.Runner.TenantDB.Users.Single(x => x.ContactId == j.ContactId?.Value);
+                            if (j.ContactId != null)
+                            {
+                                CurrentUser = this.Activator.Runner.TenantDB.Users.Single(x => x.ContactId == j.ContactId);
+                            }
                         }
                     }
                     catch (Exception) { }
