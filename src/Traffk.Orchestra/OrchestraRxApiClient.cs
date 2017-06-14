@@ -13,8 +13,10 @@ namespace Traffk.Orchestra
     {
         private readonly string ApiVersion = "v1";
         private readonly string AcceptHeader = "application/json; charset=utf-8";
+        private string ApiToolsUrlPortion => $"/APITools/{ApiVersion}";
         private readonly OrchestraRxOptions Options;
         private OrchestraRxTokenResponse Token;
+        private HttpClient HttpClientWithHeaders;
 
         public OrchestraRxApiClient(IOptions<OrchestraRxOptions> options)
         {
@@ -24,6 +26,7 @@ namespace Traffk.Orchestra
         public void SetToken(OrchestraRxTokenResponse token)
         {
             Token = token;
+            HttpClientWithHeaders = CreateHttpClientWithHeaders();
         }
 
         public OrchestraRxTokenResponse Authenticate()
@@ -44,7 +47,6 @@ namespace Traffk.Orchestra
 
             var response = httpClient.PostAsync(Options.AuthUrl, content).Result;
             var json = response.Content.ReadAsStringAsync().Result;
-
             var tokenResponse = JsonConvert.DeserializeObject<OrchestraRxTokenResponse>(json);
 
             return tokenResponse;
@@ -52,28 +54,42 @@ namespace Traffk.Orchestra
 
         public async Task<PharmacyResponse> PharmacySearchAsync(string zip, int radius)
         {
-            var apiRoute = $"/APITools/{ApiVersion}/Pharmacies/Search?zip={zip}&radius={radius}";
+            var apiRoute = $"{ApiToolsUrlPortion}/Pharmacies/Search?zip={zip}&radius={radius}";
             VerifyToken();
-            var httpClient = CreateHttpClientWithHeaders();
-
-            var response = await httpClient.GetAsync(Options.BaseUrl + apiRoute);
-            var json = await response.Content.ReadAsStringAsync();
+            var url = Options.BaseUrl + apiRoute;
+            var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
             return JsonConvert.DeserializeObject<PharmacyResponse>(json);
         }
 
         public async Task<DrugResponse> DrugSearchAsync(string query)
         {
-            var apiRoute = $"/APITools/{ApiVersion}/Drugs/Search?q={query}";
+            var apiRoute = $"{ApiToolsUrlPortion}/Drugs/Search?q={query}";
             VerifyToken();
-            var httpClient = CreateHttpClientWithHeaders();
-
-            var response = await httpClient.GetAsync(Options.BaseUrl + apiRoute);
-            var json = await response.Content.ReadAsStringAsync();
+            var url = Options.BaseUrl + apiRoute;
+            var json = await HttpClientWithHeaders.GetJsonStringAsync(url); ;
 
             //JsonConvert can't serialize directly to DrugResponse
             var drugArray = JsonConvert.DeserializeObject<Drug[]>(json);
             var drugResponse = new DrugResponse {Drugs = drugArray};
             return drugResponse;
+        }
+
+        public async Task<DrugDetailResponse> DrugDetailAsync(string ndcReference)
+        {
+            var apiRoute = $"{ApiToolsUrlPortion}/Drugs/{ndcReference}";
+            VerifyToken();
+            var url = Options.BaseUrl + apiRoute;
+            var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
+            return JsonConvert.DeserializeObject<DrugDetailResponse>(json);
+        }
+
+        public async Task<DrugDetailResponse> DrugDosageAlternativesAsync(string orchestraDrugId)
+        {
+            var apiRoute = $"{ApiToolsUrlPortion}/Drugs/Alternatives?id={orchestraDrugId}";
+            VerifyToken();
+            var url = Options.BaseUrl + apiRoute;
+            var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
+            return JsonConvert.DeserializeObject<DrugDetailResponse>(json);
         }
 
         private void VerifyToken()
@@ -93,4 +109,15 @@ namespace Traffk.Orchestra
             return httpClient;
         }
     }
+
+    public static class OrchestraHttpHelpers
+    {
+        public static async Task<string> GetJsonStringAsync(this HttpClient httpClient, string url)
+        {
+            var response = await httpClient.GetAsync(url);
+            var json = await response.Content.ReadAsStringAsync();
+            return json;
+        }
+    }
+
 }

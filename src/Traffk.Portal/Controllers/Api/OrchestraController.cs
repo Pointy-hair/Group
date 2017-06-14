@@ -42,6 +42,24 @@ namespace Traffk.Portal.Controllers.Api
         }
 
         [HttpGet]
+        [Route("Drugs/{ndcReference}")]
+        public DrugDetailResponse DrugDetail(string ndcReference)
+        {
+            Log();
+
+            return OrchestraApiService.DrugDetail(ndcReference);
+        }
+
+        [HttpGet]
+        [Route("Drugs/Alternatives/{drugId}")]
+        public DrugDetailResponse DrugDosageAlternatives(string drugId)
+        {
+            Log();
+
+            return OrchestraApiService.DrugDosageAlternatives(drugId);
+        }
+
+        [HttpGet]
         [Route("Plans")]
         public IEnumerable<Plan> GetPlans()
         {

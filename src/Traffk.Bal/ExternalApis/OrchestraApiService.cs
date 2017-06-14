@@ -27,7 +27,7 @@ namespace Traffk.Bal.ExternalApis
             var cacheKey = RevolutionaryStuff.Core.Caching.Cache.CreateKey(typeof(OrchestraRxTokenResponse).Name);
             //Just a find
             var tokenResponseCacheEntry = Cache.FindOrCreate<OrchestraRxTokenResponse>(cacheKey);
-            if (tokenResponseCacheEntry == null)
+            if (tokenResponseCacheEntry.Value == null)
             {
                 var tokenResponse = Client.Authenticate();
                 var timeoutInSeconds = tokenResponse.expires_in;
@@ -57,6 +57,21 @@ namespace Traffk.Bal.ExternalApis
             var drugResponse = Cache.FindOrCreate<DrugResponse>(cacheKey, key=> Client.DrugSearchAsync(query).Result);
 
             return drugResponse?.Value;
+        }
+
+        public DrugDetailResponse DrugDetail(string ndcReference)
+        {
+            var cacheKey = RevolutionaryStuff.Core.Caching.Cache.CreateKey(typeof(DrugDetailResponse).Name, ndcReference);
+            var drugDetailResponse = Cache.FindOrCreate<DrugDetailResponse>(cacheKey, key => Client.DrugDetailAsync(ndcReference).Result);
+            return drugDetailResponse?.Value;
+        }
+
+        //May change parameter to TraffkID or NDC ID and do a lookup to convert to OrchestraID
+        public DrugDetailResponse DrugDosageAlternatives(string orchestraDrugId)
+        {
+            var cacheKey = RevolutionaryStuff.Core.Caching.Cache.CreateKey(typeof(DrugDetailResponse).Name, orchestraDrugId);
+            var drugDetailResponse = Cache.FindOrCreate<DrugDetailResponse>(cacheKey, key => Client.DrugDosageAlternativesAsync(orchestraDrugId).Result);
+            return drugDetailResponse?.Value;
         }
     }
 }
