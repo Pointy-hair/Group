@@ -1,4 +1,5 @@
 ﻿using System;
+using MimeKit;
 using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
 using Serilog;
@@ -74,16 +75,17 @@ namespace Traffk.BackgroundJobServer
             PostResult(downloadOptions);
         }
 
-        async void ITenantJobs.DownloadTableauPdfContinuationJob()
+        async void ITenantJobs.DownloadTableauPdfContinuationJobAsync()
         {
             string resultData = this.GetParentJobResultData();
             var downloadOptions = JsonConvert.DeserializeObject<DownloadPdfOptions>(resultData);
             var pdfBytes = await TableauVisualService.DownloadPdfAsync(downloadOptions);
-            var blob = BlobStorageService.StoreFileAsync(
+            var blob = await BlobStorageService.StoreFileAsync(
                 true, 
                 BlobStorageServices.Roots.User, 
                 new BasicFormFile(pdfBytes)
                 {
+                    ContentDisposition = ContentDisposition.Attachment,
                     ContentType = MimeType.Application.Pdf,
                     FileName = $"{downloadOptions.WorkbookName}{MimeType.Application.Pdf.PrimaryFileExtension}",
                     Name = $"{downloadOptions.WorkbookName}{MimeType.Application.Pdf.PrimaryFileExtension}",

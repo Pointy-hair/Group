@@ -36,10 +36,12 @@ namespace Traffk.Bal.ApplicationParts
         }
 
         private TraffkGlobalDbContext GDB;
+        private TraffkTenantModelDbContext TenantDB;
 
         protected override Task OnGoAsync()
         {
             GDB = this.ServiceProvider.GetService<TraffkGlobalDbContext>();
+            TenantDB = this.ServiceProvider.GetService<TraffkTenantModelDbContext>();
             var o = this.ServiceProvider.GetService<IOptions<HangfireServerOptions>>().Value;
             JobRunnerLogger = this.ServiceProvider.GetService<ILogger>();
 
@@ -63,9 +65,10 @@ namespace Traffk.Bal.ApplicationParts
         [ThreadStatic]
         private MyActivator.MyScope CurrentThreadScope;
 
-        ApplicationUser ICurrentUser.User => null;
+        ApplicationUser ICurrentUser.User => CurrentThreadScope.CurrentUser;
 
         public int? JobId => CurrentThreadScope.JobId;
+        public int? ContactId => CurrentThreadScope.ContactId;
 
         protected override void OnConfigureServices(IServiceCollection services)
         {

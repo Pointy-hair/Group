@@ -2,6 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using RevolutionaryStuff.Core.Caching;
 using System;
+using System.Linq;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace Traffk.Bal.ApplicationParts
 {
@@ -27,6 +29,8 @@ namespace Traffk.Bal.ApplicationParts
 
                 public int? TenantId { get; private set; }
                 public int? JobId { get; private set; }
+                public int? ContactId { get; private set; }
+                public ApplicationUser CurrentUser { get; private set; }
 
                 public MyScope(MyActivator activator, IServiceProvider sp, JobActivatorContext context)
                 {
@@ -42,6 +46,8 @@ namespace Traffk.Bal.ApplicationParts
                         {
                             TenantId = j.TenantId;
                             JobId = j.Id;
+                            ContactId = j.ContactId;
+                            CurrentUser = this.Activator.Runner.TenantDB.Users.Single(x => x.ContactId == j.ContactId?.Value);
                         }
                     }
                     catch (Exception) { }

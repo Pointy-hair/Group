@@ -153,7 +153,7 @@ namespace Traffk.Portal.Controllers
 
             var createPdfOptions = new CreatePdfOptions(tableauReportViewModel.WorkbookName, tableauReportViewModel.ViewName, tableauReportViewModel.WorksheetName);
             var jobId = Backgrounder.Enqueue<ITenantJobs>(z => z.CreateTableauPdf(createPdfOptions));
-            Backgrounder.ContinueWith<ITenantJobs>(jobId, y => y.DownloadTableauPdfContinuationJob());
+            Backgrounder.ContinueWith<ITenantJobs>(jobId, y => y.DownloadTableauPdfContinuationJobAsync());
 
             Logger.Information("{@EventType} {@ReportId}", EventType.LoggingEventTypes.DownloadedReport.ToString(), reportVisual.Id.ToString());
 

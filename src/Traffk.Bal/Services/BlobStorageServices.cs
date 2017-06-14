@@ -181,6 +181,7 @@ namespace Traffk.Bal.Services
             blob.Metadata["UploadedFileName"] = file.FileName;
             blob.Metadata["UploadedByUserName"] = CurrentUser.User.UserName;
             blob.Metadata["UploadedByUserId"] = CurrentUser.User.Id;
+            //Metadata fields cannot be null
             await blob.SetPropertiesAsync();
             await blob.SetMetadataAsync();
             return new CloudFilePointer

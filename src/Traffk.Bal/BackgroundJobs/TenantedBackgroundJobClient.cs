@@ -3,6 +3,7 @@ using Hangfire;
 using Hangfire.States;
 using RevolutionaryStuff.Core;
 using Traffk.Bal.Data.Rdb.TraffkGlobal;
+using Traffk.Bal.Services;
 
 namespace Traffk.Bal.BackgroundJobs
 {
@@ -12,12 +13,14 @@ namespace Traffk.Bal.BackgroundJobs
         private TraffkGlobalDbContext GDB;
         private ITraffkTenantFinder Finder;
         private RecurringJobManager RecurringJobManager;
+        private ICurrentUser CurrentUser;
 
-        public TenantedBackgroundJobClient(TraffkGlobalDbContext gdb, ITraffkTenantFinder finder)
+        public TenantedBackgroundJobClient(TraffkGlobalDbContext gdb, ITraffkTenantFinder finder, ICurrentUser currentUser = null)
         {
             Inner = new BackgroundJobClient();
             GDB = gdb;
             Finder = finder;
+            CurrentUser = currentUser;
             RecurringJobManager = new RecurringJobManager();
         }
 
@@ -30,6 +33,7 @@ namespace Traffk.Bal.BackgroundJobs
             var jobId = Inner.Create(job, state);
             var j = GDB.Job.Find(int.Parse(jobId));
             j.TenantId = tenantId;
+            j.ContactId = CurrentUser?.User?.ContactId;
             GDB.SaveChanges();
             return jobId;
         }
