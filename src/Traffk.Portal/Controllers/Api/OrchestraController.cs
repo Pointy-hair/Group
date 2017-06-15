@@ -6,6 +6,7 @@ using Traffk.Bal.ExternalApis;
 using Traffk.Bal.Permissions;
 using Traffk.Orchestra.Models;
 using Traffk.Portal.Permissions;
+using PharmacyResponse = Traffk.Bal.Data.ApiModels.Rx.PharmacyResponse;
 
 namespace Traffk.Portal.Controllers.Api
 {
@@ -29,7 +30,7 @@ namespace Traffk.Portal.Controllers.Api
         {
             Log();
 
-            return OrchestraApiService.PharmacySearch(zip, radius);
+            return new PharmacyResponse(OrchestraApiService.PharmacySearch(zip, radius));
         }
 
         [HttpGet]
