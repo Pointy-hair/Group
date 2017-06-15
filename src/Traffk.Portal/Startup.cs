@@ -262,6 +262,8 @@ namespace TraffkPortal
 
             ConfigureAuth(app);
 
+            app.UseMiddleware<TokenAuthenticationMiddleware>();
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -290,11 +292,9 @@ namespace TraffkPortal
             {
                 Audience = Configuration.GetSection("TokenProviderOptions:Audience").Value,
                 AutomaticAuthenticate = true,
-                TokenValidationParameters = tokenValidationParameters
-            });
-
-            //May use TokenMiddleware in the future
-            //app.UseMiddleware<TokenProviderMiddleware>(Options.Create(tokenProviderOptions));
+                TokenValidationParameters = tokenValidationParameters,
+                SaveToken = true
+            });    
         }
     }
 }

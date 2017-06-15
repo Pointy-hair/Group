@@ -7,11 +7,13 @@ using RevolutionaryStuff.Core;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Traffk.Bal;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.Permissions;
 using Traffk.Portal.Models.ApiModels;
@@ -30,11 +32,13 @@ namespace Traffk.Portal.Controllers.Api
         private readonly SignInManager<ApplicationUser> SignInManager;
         private readonly IUserClaimsPrincipalFactory<ApplicationUser> UserClaimsPrincipalFactory;
         private readonly SigningCredentials SigningCredentials;
+        private readonly ITraffkTenantFinder TraffkTenantFinder;
 
         public TokenController(IOptions<TokenProviderOptions> options,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IUserClaimsPrincipalFactory<ApplicationUser> userClaimsPrincipalFactory,
+            ITraffkTenantFinder traffkTenantFinder,
             ILogger logger) : base(logger)
         {
             Options = options.Value;
@@ -49,6 +53,7 @@ namespace Traffk.Portal.Controllers.Api
             UserManager = userManager;
             SignInManager = signInManager;
             UserClaimsPrincipalFactory = userClaimsPrincipalFactory;
+            TraffkTenantFinder = traffkTenantFinder;
         }
 
         [HttpPost]
@@ -97,7 +102,13 @@ namespace Traffk.Portal.Controllers.Api
             {
                 await SignInManager.SignInAsync(user, false);
                 var claimsPrincipal = await UserClaimsPrincipalFactory.CreateAsync(user);
-                return claimsPrincipal.Claims;
+
+                var tenantId = await TraffkTenantFinder.GetTenantIdAsync();
+                var tenantIdClaim = new Claim("TenantId", tenantId.ToString());
+                var claims = claimsPrincipal.Claims.ToList();
+                claims.Add(tenantIdClaim);
+
+                return claims;
             }
 
             return null;
