@@ -77,8 +77,8 @@ namespace Traffk.Portal.Controllers.Api
                 issuer: Options.Issuer,
                 audience: Options.Audience,
                 claims: claims,
-                notBefore: DateTime.Now,
-                expires: DateTime.Now.Add(Options.Expiration),
+                notBefore: DateTime.UtcNow,
+                expires: DateTime.UtcNow.Add(Options.Expiration),
                 signingCredentials: SigningCredentials);
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
@@ -102,11 +102,13 @@ namespace Traffk.Portal.Controllers.Api
             {
                 await SignInManager.SignInAsync(user, false);
                 var claimsPrincipal = await UserClaimsPrincipalFactory.CreateAsync(user);
-
                 var tenantId = await TraffkTenantFinder.GetTenantIdAsync();
-                var tenantIdClaim = new Claim("TenantId", tenantId.ToString());
+                var tenantIdClaim = new Claim(JwtRegisteredClaimNames.Sub, tenantId.ToString());
                 var claims = claimsPrincipal.Claims.ToList();
                 claims.Add(tenantIdClaim);
+
+                //Must sign out
+                await SignInManager.SignOutAsync();
 
                 return claims;
             }

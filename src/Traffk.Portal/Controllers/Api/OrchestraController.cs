@@ -6,6 +6,7 @@ using Traffk.Bal.ExternalApis;
 using Traffk.Bal.Permissions;
 using Traffk.Orchestra.Models;
 using Traffk.Portal.Permissions;
+using DrugResponse = Traffk.Bal.Data.ApiModels.Rx.DrugResponse;
 using PharmacyResponse = Traffk.Bal.Data.ApiModels.Rx.PharmacyResponse;
 
 namespace Traffk.Portal.Controllers.Api
@@ -25,7 +26,7 @@ namespace Traffk.Portal.Controllers.Api
         }
 
         [HttpGet]
-        [Route("Pharmacies/{zip}/{radius}")]
+        [Route("Pharmacies")]
         public PharmacyResponse SearchPharmacies(string zip, int radius)
         {
             Log();
@@ -49,6 +50,21 @@ namespace Traffk.Portal.Controllers.Api
             Log();
 
             return OrchestraApiService.DrugDetail(ndcReference);
+        }
+
+        [HttpGet]
+        [Route("Drugs/{ndcReference}/Alternative/{metricQuantity}/{daysOfSupply}")]
+        public DrugAlternativeResponse DrugAlternative(string ndcReference, double metricQuantity, double daysOfSupply)
+        {
+            Log();
+
+            var query = new DrugAlternativeSearchQuery
+            {
+                DaysOfSupply = daysOfSupply,
+                MetricQuantity = metricQuantity,
+                NDC = ndcReference
+            };
+            return OrchestraApiService.DrugAlternativeSingleSearch(query);
         }
 
         [HttpGet]

@@ -1,10 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Runtime.Serialization;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using System.Collections.Generic;
 
 namespace Traffk.Bal.Data.ApiModels.Rx
 {
     public class PharmacyResponse
     {
+        public PharmacyResponse()
+        { }
+
         public PharmacyResponse(Orchestra.Models.PharmacyResponse response)
         {
             Object = "list";
@@ -14,84 +18,114 @@ namespace Traffk.Bal.Data.ApiModels.Rx
                 var pharmacy = new Pharmacy(orchestraPharmacy);
                 pharmacyList.Add(pharmacy);
             }
-            data = pharmacyList.ToArray();
+            Data = pharmacyList.ToArray();
         }
 
-        [DataMember(Name = "object")]
+        [JsonProperty("object")]
         public string Object { get; set; }
-        public Pharmacy[] data { get; set; }
+        [JsonProperty("data")]
+        public Pharmacy[] Data { get; set; }
     }
 
     public class Pharmacy
     {
+        public Pharmacy()
+        { }
+
         public Pharmacy(Orchestra.Models.Pharmacy pharmacy)
         {
             Object = typeof(Pharmacy).Name.ToString();
-            id = pharmacy.PharmacyID;
-            name = pharmacy.Name;
-            nabp = "";
-            address = new ApiAddress(pharmacy);
-            phone = pharmacy.PharmacyPhone;
-            chain_id = pharmacy.Chain;
-            chain_name = pharmacy.ChainName;
-            services = new PharmacyServices(pharmacy);
+            Id = pharmacy.PharmacyID;
+            Name = pharmacy.Name;
+            Nabp = "";
+            Address = new ApiAddress(pharmacy);
+            Phone = pharmacy.PharmacyPhone;
+            ChainId = pharmacy.Chain;
+            ChainName = pharmacy.ChainName;
+            Services = new PharmacyServices(pharmacy);
         }
-
-        [DataMember(Name = "object")]
+        
+        [JsonProperty("object")]
         public string Object { get; set; }
-        public string id { get; set; }
-        public string name { get; set; }
-        public string nabp { get; set; }
-        public ApiAddress address { get; set; }
-        public string phone { get; set; }
-        public string chain_id { get; set; }
-        public string chain_name { get; set; }
-        public PharmacyServices services { get; set; }
+        [JsonProperty("id")]
+        public string Id { get; set; }
+        [JsonProperty("name")]
+        public string Name { get; set; }
+        [JsonProperty("nabp")]
+        public string Nabp { get; set; }
+        [JsonProperty("address")]
+        public ApiAddress Address { get; set; }
+        [JsonProperty("phone")]
+        public string Phone { get; set; }
+        [JsonProperty("chain_id")]
+        public string ChainId { get; set; }
+        [JsonProperty("chain_name")]
+        public string ChainName { get; set; }
+        [JsonProperty("services")]
+        public PharmacyServices Services { get; set; }
     }
 
     public class ApiAddress
     {
+        public ApiAddress()
+        { }
+
         public ApiAddress(Orchestra.Models.Pharmacy pharmacy)
         {
-            line_1 = pharmacy.Address1;
-            line_2 = pharmacy.Address2;
-            city = pharmacy.City;
-            state = pharmacy.State;
-            zip = pharmacy.Zip;
-            latitude = pharmacy.Latitude;
-            longitude = pharmacy.Longitude;
+            Line1 = pharmacy.Address1;
+            Line2 = pharmacy.Address2;
+            City = pharmacy.City;
+            State = pharmacy.State;
+            Zip = pharmacy.Zip;
+            Latitude = pharmacy.Latitude;
+            Longitude = pharmacy.Longitude;
         }
-
-        public string line_1 { get; set; }
-        public string line_2 { get; set; }
-        public string city { get; set; }
-        public string state { get; set; }
-        public string zip { get; set; }
-        public float latitude { get; set; }
-        public float longitude { get; set; }
+        [JsonProperty("line_1")]
+        public string Line1 { get; set; }
+        [JsonProperty("line_2")]
+        public string Line2 { get; set; }
+        [JsonProperty("city")]
+        public string City { get; set; }
+        [JsonProperty("state")]
+        public string State { get; set; }
+        [JsonProperty("zip")]
+        public string Zip { get; set; }
+        [JsonProperty("latitude")]
+        public float Latitude { get; set; }
+        [JsonProperty("longitude")]
+        public float Longitude { get; set; }
     }
 
     public class PharmacyServices
     {
+        public PharmacyServices()
+        { }
+
         public PharmacyServices(Orchestra.Models.Pharmacy pharmacy)
         {
             var pharmacyService = pharmacy.PharmacyServices;
-            has_24hr_service = pharmacyService.Has24hrService;
-            has_compounding = pharmacyService.HasCompounding;
-            has_delivery = pharmacyService.HasDelivery;
-            has_driveup = pharmacyService.HasDriveup;
-            has_durable_equipment = pharmacyService.HasDurableEquipment;
-            has_e_prescriptions = pharmacyService.HasEPrescriptions;
-            has_handicapAccess = pharmacyService.HasHandicapAccess;
+            Has24HrService = pharmacyService.Has24hrService;
+            HasCompounding = pharmacyService.HasCompounding;
+            HasDelivery = pharmacyService.HasDelivery;
+            HasDriveup = pharmacyService.HasDriveup;
+            HasDurableEquipment = pharmacyService.HasDurableEquipment;
+            HasEPrescriptions = pharmacyService.HasEPrescriptions;
+            HasHandicapAccess = pharmacyService.HasHandicapAccess;
         }
-
-        public bool has_24hr_service { get; set; }
-        public bool has_compounding { get; set; }
-        public bool has_delivery { get; set; }
-        public bool has_driveup { get; set; }
-        public bool has_durable_equipment { get; set; }
-        public bool has_e_prescriptions { get; set; }
-        public bool has_handicapAccess { get; set; }
+        [JsonProperty("has_24hr_service")]
+        public bool Has24HrService { get; set; }
+        [JsonProperty("has_compounding")]
+        public bool HasCompounding { get; set; }
+        [JsonProperty("has_delivery")]
+        public bool HasDelivery { get; set; }
+        [JsonProperty("has_driveup")]
+        public bool HasDriveup { get; set; }
+        [JsonProperty("has_durable_equipment")]
+        public bool HasDurableEquipment { get; set; }
+        [JsonProperty("has_e_prescriptions")]
+        public bool HasEPrescriptions { get; set; }
+        [JsonProperty("has_handicapAccess")]
+        public bool HasHandicapAccess { get; set; }
     }
 
 }

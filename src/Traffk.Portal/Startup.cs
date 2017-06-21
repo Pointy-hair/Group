@@ -14,6 +14,7 @@ using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using Serilog;
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Traffk.Bal;
@@ -262,6 +263,7 @@ namespace TraffkPortal
 
             ConfigureAuth(app);
 
+            //Needs to be after app.UseIdentity()
             app.UseMiddleware<TokenAuthenticationMiddleware>();
 
             app.UseMvc(routes =>
@@ -278,6 +280,8 @@ namespace TraffkPortal
 
             var tokenValidationParameters = new TokenValidationParameters
             {
+                RequireExpirationTime = true,
+                RequireSignedTokens = true,
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = signingKey,
                 ValidateIssuer = true,
@@ -291,6 +295,7 @@ namespace TraffkPortal
             app.UseJwtBearerAuthentication(new JwtBearerOptions
             {
                 Audience = Configuration.GetSection("TokenProviderOptions:Audience").Value,
+                ClaimsIssuer = Configuration.GetSection("TokenProviderOptions:Issuer").Value,
                 AutomaticAuthenticate = true,
                 TokenValidationParameters = tokenValidationParameters,
                 SaveToken = true

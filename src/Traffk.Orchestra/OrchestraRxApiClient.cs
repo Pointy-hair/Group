@@ -3,6 +3,9 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Security.Authentication;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using Traffk.Orchestra.Models;
@@ -14,6 +17,7 @@ namespace Traffk.Orchestra
         private readonly string ApiVersion = "v1";
         private readonly string AcceptHeader = "application/json; charset=utf-8";
         private string ApiToolsUrlPortion => $"/APITools/{ApiVersion}";
+        private string DrugCompareUrlPortion => $"/API/{ApiVersion}";
         private readonly OrchestraRxOptions Options;
         private OrchestraRxTokenResponse Token;
         private HttpClient HttpClientWithHeaders;
@@ -52,13 +56,99 @@ namespace Traffk.Orchestra
             return tokenResponse;
         }
 
-        public async Task<PharmacyResponse> PharmacySearchAsync(string zip, int radius)
+        public async Task<DrugAlternativeResponse> DrugAlternativeMultipleSearchAsync(
+            IEnumerable<DrugAlternativeSearchQuery> searchQueries)
         {
-            var apiRoute = $"{ApiToolsUrlPortion}/Pharmacies/Search?zip={zip}&radius={radius}";
+            var drugFilter = "";
+            foreach (var query in searchQueries)
+            {
+                drugFilter += $"{query.NDC}|{query.DaysOfSupply}|{query.MetricQuantity},";
+            }
+            //TODO: Test if trailing comma causes error
+            var apiRoute = $"{DrugCompareUrlPortion}/Drugs/Alternatives?drugFilters={drugFilter}";
             VerifyToken();
             var url = Options.BaseUrl + apiRoute;
             var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
-            return JsonConvert.DeserializeObject<PharmacyResponse>(json);
+            return JsonConvert.DeserializeObject<DrugAlternativeResponse>(json);
+        }
+
+        public async Task<DrugAlternativeResponse> DrugAlternativeSingleSearchAsync(
+            DrugAlternativeSearchQuery searchQuery)
+        {
+            var apiRoute = $"{DrugCompareUrlPortion}/Drugs/{searchQuery.NDC}/Alternatives?DaysOfSupply={searchQuery.DaysOfSupply}&MetricQuantity={searchQuery.MetricQuantity}";
+            VerifyToken();
+            var url = Options.BaseUrl + apiRoute;
+            var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
+            return JsonConvert.DeserializeObject<DrugAlternativeResponse>(json);
+        }
+
+        public async Task<bool> HasAlternatives(string ndcReference)
+        {
+            var apiRoute = $"{DrugCompareUrlPortion}/Drugs/{ndcReference}";
+            VerifyToken();
+            var url = Options.BaseUrl + apiRoute;
+            var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
+            return JsonConvert.DeserializeObject<bool>(json);
+        }
+
+        public async Task<DrugAlternativeResponse> PlanDrugAlternativeMultipleSearchAsync(
+            string planId,
+            IEnumerable<DrugAlternativeSearchQuery> searchQueries, 
+            IEnumerable<DrugAlternativePharmacyFilterQuery> pharmacyFilterQueries)
+        {
+            var drugFilter = "";
+            foreach (var query in searchQueries)
+            {
+                drugFilter += $"{query.NDC}|{query.DaysOfSupply}|{query.MetricQuantity},";
+            }
+
+            var pharmacyFilter = "";
+            foreach (var query in pharmacyFilterQueries)
+            {
+                pharmacyFilter += $"{query.PharmacyID}|{query.PharmacyIDType}|{query.isMailOrder}";
+            }
+            //TODO: Test if trailing comma causes error
+            var apiRoute = $"{DrugCompareUrlPortion}/Plans/{planId}/Drugs/Compare?drugFilters={drugFilter}&pharmacyFilters={pharmacyFilter}";
+            VerifyToken();
+            var url = Options.BaseUrl + apiRoute;
+            var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
+            return JsonConvert.DeserializeObject<DrugAlternativeResponse>(json);
+        }
+
+        public async Task<DrugAlternativeResponse> PlanDrugAlternativeSingleSearchAsync(
+        string planId,
+        DrugAlternativeSearchQuery searchQuery,
+        IEnumerable<DrugAlternativePharmacyFilterQuery> pharmacyFilterQueries)
+        {
+            var pharmacyFilter = "";
+            foreach (var query in pharmacyFilterQueries)
+            {
+                pharmacyFilter += $"{query.PharmacyID}|{query.PharmacyIDType}|{query.isMailOrder}";
+            }
+            //TODO: Test if trailing comma causes error
+            var apiRoute = $"{DrugCompareUrlPortion}/Plans/{planId}/Drugs/{searchQuery.NDC}/Compare?DaysOfSupply={searchQuery.DaysOfSupply}&MetricQuantity={searchQuery.MetricQuantity}&pharmacyFilters={pharmacyFilter}";
+            VerifyToken();
+            var url = Options.BaseUrl + apiRoute;
+            var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
+            return JsonConvert.DeserializeObject<DrugAlternativeResponse>(json);
+        }
+        
+        public async Task<County> CountySearchAsync(string zip)
+        {
+            var apiRoute = $"{ApiToolsUrlPortion}/Counties/{zip}";
+            VerifyToken();
+            var url = Options.BaseUrl + apiRoute;
+            var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
+            return JsonConvert.DeserializeObject<County>(json);
+        }
+
+        public async Task<Dosage> DrugDosageDetailAsync(string orchestraDrugId, string orchestraDosageId)
+        {
+            var apiRoute = $"{ApiToolsUrlPortion}/Drugs/{orchestraDrugId}/Dosages/{orchestraDosageId}";
+            VerifyToken();
+            var url = Options.BaseUrl + apiRoute;
+            var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
+            return JsonConvert.DeserializeObject<Dosage>(json);
         }
 
         public async Task<DrugResponse> DrugSearchAsync(string query)
@@ -70,19 +160,30 @@ namespace Traffk.Orchestra
 
             //JsonConvert can't serialize directly to DrugResponse
             var drugArray = JsonConvert.DeserializeObject<Drug[]>(json);
-            var drugResponse = new DrugResponse {Drugs = drugArray};
+            var drugResponse = new DrugResponse { Drugs = drugArray };
             return drugResponse;
         }
 
-        public async Task<DrugDetailResponse> DrugDetailAsync(string ndcReference)
+        public async Task<DrugDetailResponse> DrugDetailAsync(string ndcOrOrchestraId)
         {
-            var apiRoute = $"{ApiToolsUrlPortion}/Drugs/{ndcReference}";
+            var apiRoute = $"{ApiToolsUrlPortion}/Drugs/{ndcOrOrchestraId}";
             VerifyToken();
             var url = Options.BaseUrl + apiRoute;
             var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
             return JsonConvert.DeserializeObject<DrugDetailResponse>(json);
         }
 
+        public async Task<PharmacyResponse> PharmacySearchAsync(string zip, int radius)
+        {
+            var apiRoute = $"{ApiToolsUrlPortion}/Pharmacies/Search?zip={zip}&radius={radius}";
+            VerifyToken();
+            var url = Options.BaseUrl + apiRoute;
+            var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
+            return JsonConvert.DeserializeObject<PharmacyResponse>(json);
+        }
+
+
+        //DrugDosageAlternativesAsync - Not documented but returns a result
         public async Task<DrugDetailResponse> DrugDosageAlternativesAsync(string orchestraDrugId)
         {
             var apiRoute = $"{ApiToolsUrlPortion}/Drugs/Alternatives?id={orchestraDrugId}";
@@ -91,6 +192,7 @@ namespace Traffk.Orchestra
             var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
             return JsonConvert.DeserializeObject<DrugDetailResponse>(json);
         }
+
 
         private void VerifyToken()
         {
@@ -102,7 +204,12 @@ namespace Traffk.Orchestra
 
         private HttpClient CreateHttpClientWithHeaders()
         {
-            var httpClient = new HttpClient();
+            var httpClient = new HttpClient(new HttpClientHandler
+            {
+                ClientCertificateOptions = ClientCertificateOption.Manual,
+                SslProtocols = SslProtocols.Tls12,
+                ClientCertificates = {new X509Certificate2("C:\\Users\\Darren\\Desktop\\TraffkStar.crt") }
+            });
             httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {Token.access_token}");
             httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept", $"{AcceptHeader}");
 

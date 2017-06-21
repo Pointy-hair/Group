@@ -1,8 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
+using Traffk.Bal.Data.ApiModels.Rx;
 using Traffk.Bal.Services;
 using Traffk.Orchestra;
 using Traffk.Orchestra.Models;
+using Drug = Traffk.Bal.Data.ApiModels.Rx.Drug;
+using DrugResponse = Traffk.Orchestra.Models.DrugResponse;
+using PharmacyResponse = Traffk.Orchestra.Models.PharmacyResponse;
 
 namespace Traffk.Bal.ExternalApis
 {
@@ -50,20 +58,47 @@ namespace Traffk.Bal.ExternalApis
             return pharmacyResponse?.Value;
         }
 
-        public DrugResponse DrugSearch(string query)
+        public Data.ApiModels.Rx.DrugResponse DrugSearch(string query)
         {
-            var cacheKey = RevolutionaryStuff.Core.Caching.Cache.CreateKey(typeof(DrugResponse).Name, query);
+            var cacheKey = RevolutionaryStuff.Core.Caching.Cache.CreateKey(typeof(DrugResponse).Name, query, "traffk");
+            var tDrugResponse = Cache.FindOrCreate<Data.ApiModels.Rx.DrugResponse>(cacheKey, outerKey =>
+            {
+                var searchCacheKey = RevolutionaryStuff.Core.Caching.Cache.CreateKey(typeof(DrugResponse).Name, query);
+                var oDrugResponse = Cache.FindOrCreate<DrugResponse>(searchCacheKey,
+                    key => Client.DrugSearchAsync(query).Result);
+                var oDrugs = oDrugResponse.Value.Drugs.ToList();
 
-            var drugResponse = Cache.FindOrCreate<DrugResponse>(cacheKey, key=> Client.DrugSearchAsync(query).Result);
+                var tDrugs = new List<Drug>();
 
-            return drugResponse?.Value;
+                Parallel.ForEach(oDrugs, (oDrug) =>
+                    {
+                        var tDrug = new Drug(oDrug);
+                        var oDrugDetail = Cache.FindOrCreate<DrugDetailResponse>((oDrug.DrugID.ToString()),
+                            key => Client.DrugDetailAsync(oDrug.DrugID.ToString()).ExecuteSynchronously());
+                        var oDosages = oDrugDetail.Value.Dosages;
+                        tDrug.Dosages = new Dosages(oDosages);
+                        tDrugs.Add(tDrug);
+                    }
+                );
+
+                var drugResponse = new Data.ApiModels.Rx.DrugResponse {Data = tDrugs.ToArray()};
+                return drugResponse;
+            });
+
+            return tDrugResponse.Value;
         }
 
-        public DrugDetailResponse DrugDetail(string ndcReference)
+        public DrugDetailResponse DrugDetail(string ndcOrOrchestraId)
         {
-            var cacheKey = RevolutionaryStuff.Core.Caching.Cache.CreateKey(typeof(DrugDetailResponse).Name, ndcReference);
-            var drugDetailResponse = Cache.FindOrCreate<DrugDetailResponse>(cacheKey, key => Client.DrugDetailAsync(ndcReference).Result);
+            var cacheKey = RevolutionaryStuff.Core.Caching.Cache.CreateKey(typeof(DrugDetailResponse).Name, ndcOrOrchestraId);
+            var drugDetailResponse = Cache.FindOrCreate<DrugDetailResponse>(cacheKey, key => Client.DrugDetailAsync(ndcOrOrchestraId).Result);
             return drugDetailResponse?.Value;
+        }
+
+        public DrugAlternativeResponse DrugAlternativeSingleSearch(DrugAlternativeSearchQuery searchQuery)
+        {
+            var drugAlternativeResponse = Client.DrugAlternativeSingleSearchAsync(searchQuery).ExecuteSynchronously();
+            return drugAlternativeResponse;
         }
 
         //May change parameter to TraffkID or NDC ID and do a lookup to convert to OrchestraID

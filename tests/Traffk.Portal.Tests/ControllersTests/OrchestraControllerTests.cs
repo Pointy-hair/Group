@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using Traffk.Orchestra.Models;
 using Traffk.Portal.Controllers.Api;
 
 namespace Traffk.Portal.Tests.ControllersTests
@@ -57,6 +58,20 @@ namespace Traffk.Portal.Tests.ControllersTests
                 var plans = JsonConvert.DeserializeObject<ICollection<OrchestraController.Plan>>(json);
 
                 Assert.IsNull(plans);
+            }
+
+            [TestMethod]
+            public void WhenGivenDrugAlternativeQueryReturnValidResponse()
+            {
+                var accessToken = MockEnvironment.GetBearerToken(TestClient, @"darren@traffk.com", Guid.Parse("58f620c5-0669-44dc-a2fa-d79a3df80103"));
+
+                TestClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {accessToken}");
+
+                var response = TestClient.GetAsync("api/v1/Drugs/59746017710/Alternative/30/30").ExecuteSynchronously();
+                var json = response.Content.ReadAsStringAsync().ExecuteSynchronously();
+                var drugAlternativeResponse = JsonConvert.DeserializeObject<DrugAlternativeResponse>(json);
+
+                Assert.IsNotNull(drugAlternativeResponse);
             }
         }
     }

@@ -23,16 +23,16 @@
         public Package[] Packages { get; set; }
     }
 
-    public class Package
+    public partial class Package
     {
-        public int CommonUserQuantity { get; set; }
-        public int CommonMetricQuantity { get; set; }
+        public double CommonUserQuantity { get; set; }
+        public double CommonMetricQuantity { get; set; }
         public string PackageDescription { get; set; }
         public bool IsCommonPackage { get; set; }
-        public int PackageSize { get; set; }
+        public double PackageSize { get; set; }
         public string PackageSizeUnitOfMeasure { get; set; }
         public int PackageQuantity { get; set; }
-        public int TotalPackageQuantity { get; set; }
+        public double TotalPackageQuantity { get; set; }
         public string ReferenceNDC { get; set; }
     }
 
