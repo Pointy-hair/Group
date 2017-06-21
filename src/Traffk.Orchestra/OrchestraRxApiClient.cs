@@ -4,8 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Security.Authentication;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using Traffk.Orchestra.Models;
@@ -207,8 +205,7 @@ namespace Traffk.Orchestra
             var httpClient = new HttpClient(new HttpClientHandler
             {
                 ClientCertificateOptions = ClientCertificateOption.Manual,
-                SslProtocols = SslProtocols.Tls12,
-                ClientCertificates = {new X509Certificate2("C:\\Users\\Darren\\Desktop\\TraffkStar.crt") }
+                SslProtocols = SslProtocols.Tls12
             });
             httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {Token.access_token}");
             httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept", $"{AcceptHeader}");
