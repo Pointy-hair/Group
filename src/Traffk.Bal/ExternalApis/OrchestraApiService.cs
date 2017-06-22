@@ -18,7 +18,7 @@ namespace Traffk.Bal.ExternalApis
         private readonly OrchestraRxApiClient Client;
         private readonly ICacher ScopedCacher;
 
-        public OrchestraApiService(ISynchronizedRedisCache cache, OrchestraRxApiClient client, ITraffkTenantFinder tenantFinder)
+        public OrchestraApiService(ICacher cache, OrchestraRxApiClient client, ITraffkTenantFinder tenantFinder)
         {
             var tenantId = tenantFinder.GetTenantIdAsync().Result;
             ScopedCacher = cache.CreateScope(tenantId);

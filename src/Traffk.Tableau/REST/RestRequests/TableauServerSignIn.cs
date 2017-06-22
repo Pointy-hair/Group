@@ -4,12 +4,14 @@ using System.Net;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using RevolutionaryStuff.Core.Caching;
 
 namespace Traffk.Tableau.REST.RestRequests
 {
     /// <summary>
     /// Manages the signed in session for a Tableau Server site's sign in
     /// </summary>
+    [IsSerializable(false)]
     public class TableauServerSignIn : TableauServerRequestBase
     {
         private readonly TableauServerUrls _onlineUrls;

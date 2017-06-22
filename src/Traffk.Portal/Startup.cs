@@ -216,7 +216,7 @@ namespace TraffkPortal
 
             services.AddScoped<TableauTrustedTicketActionFilter>();
 
-            services.Add(new ServiceDescriptor(typeof(ICacher), Cache.DataCacher));
+            services.AddScoped<ICacher, TraffkCache>();
 
             services.AddScoped<ILogger>(provider => Logger.ForContext<Startup>());
         }
