@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Net;
 using Newtonsoft.Json;
+using RevolutionaryStuff.Core;
+using Traffk.Tableau.REST.Models;
 using Traffk.Tableau.REST.RestRequests;
 
 namespace Traffk.Tableau.REST
@@ -61,6 +63,24 @@ namespace Traffk.Tableau.REST
 
     public class CreatePdfOptions
     {
+        public CreatePdfOptions()
+        {
+            //Required for Hangfire
+        }
+
+        public CreatePdfOptions(ITableauReportVisual reportVisual, int pixelWidth = 1024,
+            int pixelHeight = 768)
+        {
+            Requires.NonNull(reportVisual.WorkbookName, nameof(reportVisual.WorkbookName));
+            Requires.NonNull(reportVisual.ViewName, nameof(reportVisual.ViewName));
+            Requires.NonNull(reportVisual.WorksheetName, nameof(reportVisual.WorksheetName));
+            WorkbookName = reportVisual.WorkbookName;
+            ViewName = reportVisual.ViewName;
+            WorksheetName = reportVisual.WorksheetName;
+            PixelWidth = pixelWidth;
+            PixelHeight = pixelHeight;
+        }
+
         public CreatePdfOptions(string workbookName, string viewName, string worksheetName, int pixelWidth = 1024,
             int pixelHeight = 768)
         {

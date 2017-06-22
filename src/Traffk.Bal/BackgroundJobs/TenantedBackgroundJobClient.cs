@@ -42,6 +42,7 @@ namespace Traffk.Bal.BackgroundJobs
         {
             var recurringJobId = GetRecurringJobId();
             RecurringJobManager.AddOrUpdate(recurringJobId, job, cronExpression, new RecurringJobOptions());
+            //Look at lines 35-36 and add new rows to store the TenantId/ContactId related to the recurringJob
             return recurringJobId;
         }
 
@@ -54,7 +55,8 @@ namespace Traffk.Bal.BackgroundJobs
         private string GetRecurringJobId()
         {
             var tenantId = Finder.GetTenantIdAsync().ExecuteSynchronously();
-            var id = $"{tenantId}-{Guid.NewGuid().ToString()}"; 
+            var contactId = CurrentUser.User.ContactId;
+            var id = $"{tenantId}--{contactId}--{Guid.NewGuid().ToString()}"; 
             return id;
         }
     }

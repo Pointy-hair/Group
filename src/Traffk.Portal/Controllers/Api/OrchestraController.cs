@@ -54,27 +54,31 @@ namespace Traffk.Portal.Controllers.Api
 
         [HttpGet]
         [Route("Drugs/{ndcReference}/Alternative/{metricQuantity}/{daysOfSupply}")]
-        public DrugAlternativeResponse DrugAlternative(string ndcReference, double metricQuantity, double daysOfSupply)
+        public DrugOption[] DrugAlternative(string ndcReference, double metricQuantity, double daysOfSupply)
         {
             Log();
 
-            var query = new DrugAlternativeSearchQuery
+            var queries = new List<DrugAlternativeSearchQuery>
             {
-                DaysOfSupply = daysOfSupply,
-                MetricQuantity = metricQuantity,
-                NDC = ndcReference
+                new DrugAlternativeSearchQuery
+                {
+                    DaysOfSupply = daysOfSupply,
+                    MetricQuantity = metricQuantity,
+                    NDC = ndcReference
+                }
             };
-            return OrchestraApiService.DrugAlternativeSingleSearch(query);
+            
+            return OrchestraApiService.DrugAlternativeSearch(queries);
         }
 
-        [HttpGet]
-        [Route("Drugs/Alternatives/{drugId}")]
-        public DrugDetailResponse DrugDosageAlternatives(string drugId)
-        {
-            Log();
+        //[HttpGet]
+        //[Route("Drugs/Alternatives/{drugId}")]
+        //public DrugDetailResponse DrugDosageAlternatives(string drugId)
+        //{
+        //    Log();
 
-            return OrchestraApiService.DrugDosageAlternatives(drugId);
-        }
+        //    return OrchestraApiService.DrugDosageAlternatives(drugId);
+        //}
 
         [HttpGet]
         [Route("Plans")]

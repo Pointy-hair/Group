@@ -69,7 +69,7 @@ namespace Traffk.Portal.Tests.ControllersTests
 
                 var response = TestClient.GetAsync("api/v1/Drugs/59746017710/Alternative/30/30").ExecuteSynchronously();
                 var json = response.Content.ReadAsStringAsync().ExecuteSynchronously();
-                var drugAlternativeResponse = JsonConvert.DeserializeObject<DrugAlternativeResponse>(json);
+                var drugAlternativeResponse = JsonConvert.DeserializeObject<DrugOption>(json);
 
                 Assert.IsNotNull(drugAlternativeResponse);
             }

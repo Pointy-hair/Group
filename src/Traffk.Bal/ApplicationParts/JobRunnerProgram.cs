@@ -8,6 +8,7 @@ using RevolutionaryStuff.Core.ApplicationParts;
 using Serilog;
 using System;
 using System.Threading.Tasks;
+using RevolutionaryStuff.Core.Caching;
 using Traffk.Bal.BackgroundJobs;
 using Traffk.Bal.Data.Rdb.TraffkGlobal;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
@@ -104,6 +105,12 @@ namespace Traffk.Bal.ApplicationParts
             services.AddScoped<ITrustedTicketGetter, TrustedTicketGetter>();
             services.AddScoped<ITableauVisualServices, TableauVisualServices>();
             services.AddScoped<ITableauAdminService, TableauAdminService>();
+            services.AddScoped<IReportVisualService, ReportVisualService>();
+
+            services.AddScoped<IBackgroundJobClient, TenantedBackgroundJobClient>();
+            services.AddScoped<ITraffkRecurringJobManager, TenantedBackgroundJobClient>();
+            services.AddScoped<IRecurringJobManager, RecurringJobManager>();
+            services.Add(new ServiceDescriptor(typeof(ICacher), Cache.DataCacher));
 
             var logger = new LoggerConfiguration()
                 .Enrich.WithProperty("ApplicationName", Configuration["RevolutionaryStuffCoreOptions:ApplicationName"])

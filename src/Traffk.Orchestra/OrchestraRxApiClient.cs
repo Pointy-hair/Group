@@ -54,7 +54,7 @@ namespace Traffk.Orchestra
             return tokenResponse;
         }
 
-        public async Task<DrugAlternativeResponse> DrugAlternativeMultipleSearchAsync(
+        public async Task<DrugOption[]> DrugAlternativeMultipleSearchAsync(
             IEnumerable<DrugAlternativeSearchQuery> searchQueries)
         {
             var drugFilter = "";
@@ -62,34 +62,23 @@ namespace Traffk.Orchestra
             {
                 drugFilter += $"{query.NDC}|{query.DaysOfSupply}|{query.MetricQuantity},";
             }
-            //TODO: Test if trailing comma causes error
             var apiRoute = $"{DrugCompareUrlPortion}/Drugs/Alternatives?drugFilters={drugFilter}";
             VerifyToken();
             var url = Options.BaseUrl + apiRoute;
             var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
-            return JsonConvert.DeserializeObject<DrugAlternativeResponse>(json);
+            return JsonConvert.DeserializeObject<DrugOption[]>(json);
         }
 
-        public async Task<DrugAlternativeResponse> DrugAlternativeSingleSearchAsync(
-            DrugAlternativeSearchQuery searchQuery)
-        {
-            var apiRoute = $"{DrugCompareUrlPortion}/Drugs/{searchQuery.NDC}/Alternatives?DaysOfSupply={searchQuery.DaysOfSupply}&MetricQuantity={searchQuery.MetricQuantity}";
-            VerifyToken();
-            var url = Options.BaseUrl + apiRoute;
-            var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
-            return JsonConvert.DeserializeObject<DrugAlternativeResponse>(json);
-        }
-
-        public async Task<bool> HasAlternatives(string ndcReference)
+        public async Task<HasAlternativesResponse> HasAlternatives(string ndcReference)
         {
             var apiRoute = $"{DrugCompareUrlPortion}/Drugs/{ndcReference}";
             VerifyToken();
             var url = Options.BaseUrl + apiRoute;
             var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
-            return JsonConvert.DeserializeObject<bool>(json);
+            return JsonConvert.DeserializeObject<HasAlternativesResponse>(json);
         }
 
-        public async Task<DrugAlternativeResponse> PlanDrugAlternativeMultipleSearchAsync(
+        public async Task<DrugOption[]> PlanDrugAlternativeMultipleSearchAsync(
             string planId,
             IEnumerable<DrugAlternativeSearchQuery> searchQueries, 
             IEnumerable<DrugAlternativePharmacyFilterQuery> pharmacyFilterQueries)
@@ -105,12 +94,12 @@ namespace Traffk.Orchestra
             {
                 pharmacyFilter += $"{query.PharmacyID}|{query.PharmacyIDType}|{query.isMailOrder}";
             }
-            //TODO: Test if trailing comma causes error
             var apiRoute = $"{DrugCompareUrlPortion}/Plans/{planId}/Drugs/Compare?drugFilters={drugFilter}&pharmacyFilters={pharmacyFilter}";
             VerifyToken();
             var url = Options.BaseUrl + apiRoute;
             var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
-            return JsonConvert.DeserializeObject<DrugAlternativeResponse>(json);
+            var drugOptions = JsonConvert.DeserializeObject<DrugOption[]>(json);
+            return drugOptions;
         }
 
         public async Task<DrugAlternativeResponse> PlanDrugAlternativeSingleSearchAsync(
@@ -123,7 +112,6 @@ namespace Traffk.Orchestra
             {
                 pharmacyFilter += $"{query.PharmacyID}|{query.PharmacyIDType}|{query.isMailOrder}";
             }
-            //TODO: Test if trailing comma causes error
             var apiRoute = $"{DrugCompareUrlPortion}/Plans/{planId}/Drugs/{searchQuery.NDC}/Compare?DaysOfSupply={searchQuery.DaysOfSupply}&MetricQuantity={searchQuery.MetricQuantity}&pharmacyFilters={pharmacyFilter}";
             VerifyToken();
             var url = Options.BaseUrl + apiRoute;
@@ -180,6 +168,16 @@ namespace Traffk.Orchestra
             return JsonConvert.DeserializeObject<PharmacyResponse>(json);
         }
 
+        //Consider deprecating
+        public async Task<DrugOption> DrugAlternativeSingleSearchAsync(
+            DrugAlternativeSearchQuery searchQuery)
+        {
+            var apiRoute = $"{DrugCompareUrlPortion}/Drugs/{searchQuery.NDC}/Alternatives?DaysOfSupply={searchQuery.DaysOfSupply}&MetricQuantity={searchQuery.MetricQuantity}";
+            VerifyToken();
+            var url = Options.BaseUrl + apiRoute;
+            var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
+            return JsonConvert.DeserializeObject<DrugOption>(json);
+        }
 
         //DrugDosageAlternativesAsync - Not documented but returns a result
         public async Task<DrugDetailResponse> DrugDosageAlternativesAsync(string orchestraDrugId)

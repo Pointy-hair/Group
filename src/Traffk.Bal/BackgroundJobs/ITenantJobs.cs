@@ -16,6 +16,8 @@ namespace Traffk.Bal.BackgroundJobs
 
         void DownloadTableauPdfContinuationJobAsync();
 
+        void ScheduleTableauPdfDownload(CreatePdfOptions options);
+
         void Schedule();
     }
 }

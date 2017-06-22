@@ -1,4 +1,5 @@
 ﻿using System;
+using Hangfire;
 using MimeKit;
 using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
@@ -22,6 +23,7 @@ namespace Traffk.BackgroundJobServer
         private readonly ITableauAdminService TableauAdminService;
         private readonly ITableauVisualServices TableauVisualService;
         private readonly BlobStorageServices BlobStorageService;
+        private readonly IBackgroundJobClient InnerBackgroundJobClient;
 
         public TenantedJobRunner(TraffkTenantModelDbContext db, 
             TraffkGlobalDbContext globalContext,
@@ -30,7 +32,8 @@ namespace Traffk.BackgroundJobServer
             ITableauAdminService tableauAdminService,
             ILogger logger,
             ITableauVisualServices tableauVisualService,
-            BlobStorageServices blobStorageService) : base(globalContext, 
+            BlobStorageServices blobStorageService,
+            IBackgroundJobClient innerBackgroundJobClient) : base(globalContext, 
                 jobRunnerProgram, 
                 logger)
         {
@@ -39,6 +42,7 @@ namespace Traffk.BackgroundJobServer
             TableauAdminService = tableauAdminService;
             TableauVisualService = tableauVisualService;
             BlobStorageService = blobStorageService;
+            InnerBackgroundJobClient = innerBackgroundJobClient;
         }
 
         void ITenantJobs.ReconfigureFiscalYears(FiscalYearSettings settings)
@@ -80,6 +84,7 @@ namespace Traffk.BackgroundJobServer
             string resultData = this.GetParentJobResultData();
             var downloadOptions = JsonConvert.DeserializeObject<DownloadPdfOptions>(resultData);
             var pdfBytes = await TableauVisualService.DownloadPdfAsync(downloadOptions);
+            var dateTime = DateTime.UtcNow;
             var blob = await BlobStorageService.StoreFileAsync(
                 true, 
                 BlobStorageServices.Roots.User, 
@@ -90,8 +95,14 @@ namespace Traffk.BackgroundJobServer
                     FileName = $"{downloadOptions.WorkbookName}{MimeType.Application.Pdf.PrimaryFileExtension}",
                     Name = $"{downloadOptions.WorkbookName}{MimeType.Application.Pdf.PrimaryFileExtension}",
                 },
-                $"{downloadOptions.WorkbookName.RemoveSpecialCharacters()}{MimeType.Application.Pdf.PrimaryFileExtension}");
+                $"{downloadOptions.WorkbookName.RemoveSpecialCharacters()}-{dateTime.ToString().RemoveSpecialCharacters()}{MimeType.Application.Pdf.PrimaryFileExtension}");
             PostResult(blob);
+        }
+
+        void ITenantJobs.ScheduleTableauPdfDownload(CreatePdfOptions options)
+        {
+            var jobId = InnerBackgroundJobClient.Enqueue<ITenantJobs>(z => z.CreateTableauPdf(options));
+            InnerBackgroundJobClient.ContinueWith<ITenantJobs>(jobId, y => y.DownloadTableauPdfContinuationJobAsync());
         }
 
         void ITenantJobs.Schedule()

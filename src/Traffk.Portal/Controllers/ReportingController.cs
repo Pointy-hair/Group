@@ -1,10 +1,12 @@
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using System;
-using Hangfire;
+using Hangfire.Storage;
 using Traffk.Bal.BackgroundJobs;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.Permissions;
 using Traffk.Bal.ReportVisuals;
 using Traffk.Bal.Services;
@@ -17,7 +19,6 @@ using TraffkPortal.Models.ReportingModels;
 using TraffkPortal.Permissions;
 using TraffkPortal.Services;
 using ILogger = Serilog.ILogger;
-using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace Traffk.Portal.Controllers
 {
@@ -152,23 +153,32 @@ namespace Traffk.Portal.Controllers
             var tableauReportViewModel = new TableauReportViewModel(reportVisual);
 
             var createPdfOptions = new CreatePdfOptions(tableauReportViewModel.WorkbookName, tableauReportViewModel.ViewName, tableauReportViewModel.WorksheetName);
-            var jobId = Backgrounder.Enqueue<ITenantJobs>(z => z.CreateTableauPdf(createPdfOptions));
-            Backgrounder.ContinueWith<ITenantJobs>(jobId, y => y.DownloadTableauPdfContinuationJobAsync());
+            QueueReportDownload(createPdfOptions);
 
             Logger.Information("{@EventType} {@ReportId}", EventType.LoggingEventTypes.DownloadedReport.ToString(), reportVisual.Id.ToString());
 
             return NoContent(); //Placeholder - will redirect to a reportIndex page
         }
 
-
-
-        [Route("/Reporting/Schedule")]
-        public IActionResult Schedule()
+        [Route("/Reporting/Report/Schedule/{id}/{anchorName}")]
+        public IActionResult Schedule(string id, string anchorName)
         {
             try
             {
-                //RecurringJobManager.Add(Hangfire.Common.Job.FromExpression(() => Console.WriteLine("Recurring test")), Cron.Minutely());
-                RecurringJobManager.Update("recurring-job:3-3abd067c-e0ef-44c1-8726-d74bcd0efbca", Hangfire.Common.Job.FromExpression(() => Console.WriteLine("Recurring test update")), Cron.Yearly());
+                var reportSearchCriteria = new ReportSearchCriteria
+                {
+                    VisualContext = ReportVisualContext,
+                    ReportId = Parse.ParseInt32(id)
+                };
+                var reportVisual = ReportVisualService.GetReportVisual(reportSearchCriteria);
+                if (reportVisual == null)
+                {
+                    return RedirectToAction(ActionNames.Index);
+                }
+                var tableauReportViewModel = new TableauReportViewModel(reportVisual);
+
+                var createPdfOptions = new CreatePdfOptions(tableauReportViewModel.WorkbookName, tableauReportViewModel.ViewName, tableauReportViewModel.WorksheetName);
+                RecurringJobManager.Add(Hangfire.Common.Job.FromExpression<ITenantJobs>(x => x.ScheduleTableauPdfDownload(createPdfOptions)), Cron.Minutely());
                 return Json("success");
             }
             catch (Exception e)
@@ -177,6 +187,12 @@ namespace Traffk.Portal.Controllers
                 throw;
             }
 
+        }
+
+        public void QueueReportDownload(CreatePdfOptions options)
+        {
+            var jobId = Backgrounder.Enqueue<ITenantJobs>(z => z.CreateTableauPdf(options));
+            Backgrounder.ContinueWith<ITenantJobs>(jobId, y => y.DownloadTableauPdfContinuationJobAsync());
         }
     }
 }

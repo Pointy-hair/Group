@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Traffk.Orchestra.Models
+﻿namespace Traffk.Orchestra.Models
 {
     public class DrugAlternativeResponse
     {
-        public OriginalDrug[] OriginalDrug { get; set; }
+        public DrugOption[] DrugOptions { get; set; }
     }
 
-    public class OriginalDrug
+    public class DrugOption
     {
         public string ConditionDescription { get; set; }
         public string ConditionName { get; set; }
@@ -118,6 +114,11 @@ namespace Traffk.Orchestra.Models
         public bool HasReferencePrice { get; set; }
         public string DoseIDReference { get; set; }
         public bool IsAWPSourced { get; set; }
+    }
+
+    public class HasAlternativesResponse
+    {
+        public bool HasAlternatives { get; set; }
     }
 
     public class DrugAlternativeSearchQuery
