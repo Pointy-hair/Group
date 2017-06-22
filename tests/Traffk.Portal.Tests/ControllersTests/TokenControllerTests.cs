@@ -28,30 +28,30 @@ namespace Traffk.Portal.Tests.ControllersTests
                 public string access_token { get; set; }
             }
 
-            [Ignore]
             [TestMethod]
-            public void WhenGivenUsernameAndPasswordGetBearerToken()
+            public void WhenGivenUsernameAndIncorrectApiKeyDoNotGetBearerToken()
             {
+                TestClient.DefaultRequestHeaders.Remove("Authorization");
+
                 var testFormContent = new Dictionary<string, string>
                 {
                     ["username"] = @"darren@traffk.com",
-                    ["password"] = @""
+                    ["apiKey"] = @"48f620c5-0669-44dc-a2fa-d79a3df80103"
                 };
                 var content = new FormUrlEncodedContent(testFormContent);
 
                 var response = TestClient.PostAsync("/api/token/authenticate", content).ExecuteSynchronously();
 
-                var json = response.Content.ReadAsStringAsync().ExecuteSynchronously();
-                var tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(json);
-
                 Assert.IsNotNull(response);
-                Assert.IsTrue(response.StatusCode == HttpStatusCode.OK);
-                Assert.IsFalse(String.IsNullOrEmpty(tokenResponse.access_token));
+                Assert.IsTrue(response.StatusCode != HttpStatusCode.OK);
+                Assert.IsFalse(response.IsSuccessStatusCode);
             }
 
             [TestMethod]
             public void WhenGivenUsernameAndApiKeyGetBearerToken()
             {
+                TestClient.DefaultRequestHeaders.Remove("Authorization");
+
                 var testFormContent = new Dictionary<string, string>
                 {
                     ["username"] = @"darren@traffk.com",

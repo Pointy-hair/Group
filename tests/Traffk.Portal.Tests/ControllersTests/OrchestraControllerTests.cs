@@ -1,7 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -28,18 +27,15 @@ namespace Traffk.Portal.Tests.ControllersTests
             [TestMethod]
             public void WhenGivenUserWithPermissionGetPlans()
             {
-                var accessToken = MockEnvironment.GetBearerToken(TestClient, @"darren@traffk.com", Guid.Parse("58f620c5-0669-44dc-a2fa-d79a3df80103"));
+                var testClient = MockEnvironment.TestClient;
 
-                TestClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {accessToken}");
-
-                var getPlanResponse = TestClient.GetAsync("/api/v1/Plans").ExecuteSynchronously();
+                var getPlanResponse = testClient.GetAsync("/api/v1/Plans").ExecuteSynchronously();
                 var json = getPlanResponse.Content.ReadAsStringAsync().ExecuteSynchronously();
                 var plans = JsonConvert.DeserializeObject<ICollection<OrchestraController.Plan>>(json);
 
                 Assert.IsNotNull(plans);
                 Assert.IsTrue(plans.Any());
                 Assert.IsTrue(plans.FirstOrDefault().Name == "Test Plan");
-
             }
 
             [Ignore]
@@ -63,15 +59,14 @@ namespace Traffk.Portal.Tests.ControllersTests
             [TestMethod]
             public void WhenGivenDrugAlternativeQueryReturnValidResponse()
             {
-                var accessToken = MockEnvironment.GetBearerToken(TestClient, @"darren@traffk.com", Guid.Parse("58f620c5-0669-44dc-a2fa-d79a3df80103"));
+                var testClient = MockEnvironment.TestClient;
 
-                TestClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {accessToken}");
-
-                var response = TestClient.GetAsync("api/v1/Drugs/59746017710/Alternative/30/30").ExecuteSynchronously();
+                var response = testClient.GetAsync("api/v1/Drugs/59746017710/Alternative/30/30").ExecuteSynchronously();
                 var json = response.Content.ReadAsStringAsync().ExecuteSynchronously();
-                var drugAlternativeResponse = JsonConvert.DeserializeObject<DrugOption>(json);
+                var drugAlternativeResponse = JsonConvert.DeserializeObject<DrugOption[]>(json);
 
                 Assert.IsNotNull(drugAlternativeResponse);
+                Assert.AreEqual("Cyclobenzaprine HCl", drugAlternativeResponse[0].ChemicalName);
             }
         }
     }
