@@ -73,9 +73,10 @@ begin
 
 end
 
+
 GO
 
-create proc [dbo].[FiscalYearsConfigure]
+CREATE proc [dbo].[FiscalYearsConfigure]
 	@tenantId int,
 	@baselineFiscalYear int,
 	@baselineCalendarYear int,

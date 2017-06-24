@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core.Caching;
 using Traffk.BackgroundJobServer;
@@ -10,6 +11,8 @@ using Traffk.Bal.Settings;
 using RevolutionaryStuff.Core.ApplicationParts;
 using Microsoft.AspNetCore.Identity;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
+using Microsoft.Extensions.Configuration;
+using Traffk.Bal.Data.Rdb.TraffkTenantShardManager;
 
 namespace Traffk.BackgroundJobRunner
 {
@@ -33,8 +36,13 @@ namespace Traffk.BackgroundJobRunner
             services.AddScoped<IDataSourceSyncJobs, DataSourceSyncRunner>();
             services.AddScoped<ITenantManagementJobs, TenantManagementJobsRunner>();
             services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<ApplicationUser>>();
+            services.AddDbContext<TraffkTenantShardManagerDbContext>((sp, options) =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString(TraffkTenantShardManagerDbContext.DefaultDatabaseConnectionStringName));
+            }, ServiceLifetime.Scoped);
         }
 
+        //BUGBUG: requires newtonsoft 9.0.1!  to prevent binder problem... yuck!  [Cannot get SerializationBinder because an ISerializationBinder was previously set.]
         //https://github.com/Azure/azure-sdk-for-net/issues/2552 -- requires newtonsoft 9.0.1!  to prevent binder problem... yuck!  [Cannot get SerializationBinder because an ISerializationBinder was previously set.]
         //https://stackoverflow.com/questions/35409905/how-do-i-create-an-azure-credential-that-will-give-access-to-the-websitemanageme
         //https://login.windows.net/traffk.onmicrosoft.com/.well-known/openid-configuration

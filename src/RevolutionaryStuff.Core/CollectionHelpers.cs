@@ -86,13 +86,22 @@ namespace RevolutionaryStuff.Core
             return q;
         }
 
+        private static Expression NestedProperty(Expression arg, string fieldName)
+        {
+            var left = fieldName.LeftOf(".");
+            var right = StringHelpers.TrimOrNull(fieldName.RightOf("."));
+            var leftExp = Expression.Property(arg, left);
+            if (right == null) return leftExp;
+            return NestedProperty(leftExp, right);
+        }
+
         /// <remarks>http://stackoverflow.com/questions/12284085/sort-using-linq-expressions-expression</remarks>
         public static IQueryable<T> OrderByField<T>(this IQueryable<T> q, string sortColumn, bool asc)
         {
             if (string.IsNullOrEmpty(sortColumn)) return q;
-            Requires.Match(RegexHelpers.Common.CSharpIdentifier, sortColumn, nameof(sortColumn));
+            //Requires.Match(RegexHelpers.Common.CSharpIdentifier, sortColumn, nameof(sortColumn));
             var param = Expression.Parameter(typeof(T), "p");
-            var prop = Expression.Property(param, sortColumn);
+            var prop = NestedProperty(param, sortColumn);
             var exp = Expression.Lambda(prop, param);
             string method = asc ? "OrderBy" : "OrderByDescending";
             Type[] types = new[] { q.ElementType, exp.Body.Type };

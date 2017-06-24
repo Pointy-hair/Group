@@ -6,6 +6,6 @@ namespace Traffk.Bal.BackgroundJobs
     {
         void CreateTenant(TenantCreationDetails details);
         Task InitializeNewTenantAsync(TenantInitializeDetails details);
-        void AddTenantToShardManager(string databaseServer, string databaseName);
+        Task AddTenantToShardManagerAsync(TenantInitializeDetails details);
     }
 }

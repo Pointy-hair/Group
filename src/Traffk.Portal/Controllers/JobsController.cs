@@ -50,14 +50,15 @@ namespace TraffkPortal.Controllers
         }
 
         [AllowAnonymous]
-        [Route("/Jobs/NT")]
-        public IActionResult NT()
+        [Route("/Jobs/CreateTenant/{tenantName}")]
+        public IActionResult CreateTenant(string tenantName)
         {
+            if (tenantName == null) return BadRequest();
             var d = new TenantCreationDetails
             {
                 AdminPassword = "1adminPassword",
                 AdminUsername = "admin",
-                TenantName = "NT1"
+                TenantName = tenantName
             };
             Backgrounder.Enqueue<ITenantManagementJobs>(z => z.CreateTenant(d));
             return Ok();
@@ -67,7 +68,7 @@ namespace TraffkPortal.Controllers
         [Route("/Jobs/DS")]
         public IActionResult DS()
         {
-            var ds = new DataSource
+            var ds = new Traffk.Bal.Data.Rdb.TraffkGlobal.DataSource
             {
                 TenantId = 3,
                 DataSourceSettings = new Traffk.Bal.Settings.DataSourceSettings

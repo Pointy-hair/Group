@@ -29,7 +29,9 @@ namespace Traffk.Bal.ApplicationParts
                 private readonly JobActivatorContext Context;
 
                 public int? TenantId { get; private set; }
+                public int? ParentJobId { get; private set; }
                 public int? JobId { get; private set; }
+                public string RecurringJobId { get; private set; }
                 public int? ContactId { get; private set; }
                 public ApplicationUser CurrentUser { get; private set; }
 
@@ -47,9 +49,11 @@ namespace Traffk.Bal.ApplicationParts
                         {
                             TenantId = j.TenantId;
                             JobId = j.Id;
+                            ParentJobId = j.ParentJobId;
+                            RecurringJobId = j.RecurringJobId;
                             ContactId = j.ContactId;
                         }
-
+/*
                         if ((TenantId == null || ContactId == null) && context.GetJobParameter<string>("RecurringJobId") != null)
                         {
                             var tenantIdContactIdRegex = new Regex(@"^(?<tenantId>[0-9]+)\-\-(?<contactId>[0-9]+)\-\-([a-zA-Z0-9\-]{36})$");
@@ -71,7 +75,7 @@ namespace Traffk.Bal.ApplicationParts
                                 }
                             }
                         }
-
+*/
                         if (ContactId != null && ContactId > 0)
                         {
                             CurrentUser = this.Activator.Runner.TenantDB.Users.Single(x => x.ContactId == ContactId);

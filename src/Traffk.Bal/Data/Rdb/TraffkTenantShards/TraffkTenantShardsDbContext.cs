@@ -1,6 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RevolutionaryStuff.Core.ApplicationParts;
 using RevolutionaryStuff.Core.Database;
 using System;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -31,7 +35,7 @@ namespace Traffk.Bal.Data.Rdb.TraffkTenantShards
             return await conn.ExecuteReaderAsync<AppHostItem>(null, "dbo.AppFindByHostname", null, ps);
         }
 
-        public async Task<ConnectionHelpers.Result<TraffkTenantModel.Tenant>> TenantFindByTenantId(int tenantId)
+        public async Task<ConnectionHelpers.Result<Tenant>> TenantFindByTenantId(int tenantId)
         {
             var ps = new SqlParameter[]
                 {
@@ -42,7 +46,34 @@ namespace Traffk.Bal.Data.Rdb.TraffkTenantShards
             {
                 await conn.OpenAsync();
             }
-            return await conn.ExecuteReaderAsync<TraffkTenantModel.Tenant>(null, "dbo.TenantFindByTenantId", null, ps);
+            return await conn.ExecuteReaderAsync<Tenant>(null, "dbo.TenantFindByTenantId", null, ps);
+        }
+
+        public class Tenant
+        {
+            [DisplayName("Tenant Id")]
+            [Key]
+            [Column("TenantId")]
+            public int TenantId { get; set; }
+
+            [DisplayName("Tenant Name")]
+            [NotNull]
+            [Required]
+            [MaxLength(255)]
+            [Column("TenantName")]
+            public string TenantName { get; set; }
+
+            [DisplayName("Login Domain")]
+            [MaxLength(80)]
+            [Column("LoginDomain")]
+            public string LoginDomain { get; set; }
+
+            [DisplayName("Host Database Name")]
+            [MaxLength(128)]
+            [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+            [Column("HostDatabaseName")]
+            public string HostDatabaseName { get; set; }
+
         }
 
         public async Task<int> TenantIdReserveAsync(string hostDatabaseName)

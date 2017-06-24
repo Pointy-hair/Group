@@ -207,7 +207,7 @@ namespace TraffkPortal
             currentSortDir = currentSortDir ?? hh.ViewBag.SortDir as string;
 
             actionName = actionName ?? hh.ViewContext.RouteData.Values["action"] as string;
-            var colName = columnExpression.GetName();
+            var colName = columnExpression.GetFullyQualifiedName();
             var displayName = hh.FriendlyNameFor(columnExpression);
             if (colName == currentSortColName)
             {
