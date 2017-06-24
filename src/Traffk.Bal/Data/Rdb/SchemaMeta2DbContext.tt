@@ -752,6 +752,7 @@ public string GetClrTypeFromColumn(XElement f, out bool isNullable, out string m
 		case "bit":
 			dataType = "bool" + (isNullable ? "?" : "");
 			break;
+		case "datetime2":
 		case "datetime":
 		case "date":
 			dataType = "DateTime" + (isNullable ? "?" : "");
@@ -800,6 +801,7 @@ public string SqlTypeToClrType(string sqlType)
 			return "char";
 		case "bit":
 			return "bool";
+		case "datetime2":
 		case "datetime":
 		case "date":
 			return "DateTime";

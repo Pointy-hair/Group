@@ -74,18 +74,30 @@ GO
 
 
 --alter table hangfire.Job add RowStatus dbo.RowStatus not null default '1'
+--exec db.ColumnPropertySet 'Job', 'RowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='hangfire'
+--exec db.ColumnPropertySet 'Job', 'RowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='hangfire'
 alter table hangfire.Job Add TenantId int null
 alter table hangfire.Job Add ResultData nvarchar(max) null
 alter table hangfire.Job Add RecurringJobId nvarchar(256) null
 alter table hangfire.Job Add ParentJobId int null references hangfire.job(id)
 alter table hangfire.Job Add ContactId int null
---exec db.ColumnPropertySet 'Job', 'RowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='hangfire'
---exec db.ColumnPropertySet 'Job', 'RowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='hangfire'
+
+
+
+exec db.TablePropertySet  'Job', '1', @propertyName='AddToDbContext', @tableSchema='hangfire'
+exec db.TablePropertySet  'Job', '1', @propertyName='GeneratePoco', @tableSchema='hangfire'
+exec db.TablePropertySet  'Job', 'HangfireJob', @propertyName='ClassName', @tableSchema='hangfire'
+exec db.TablePropertySet  'Job', 'HangfireJobs', @propertyName='CollectionName', @tableSchema='hangfire'
+exec db.TablePropertySet  'Hash', '1', @propertyName='AddToDbContext', @tableSchema='hangfire'
+exec db.TablePropertySet  'Hash', '1', @propertyName='GeneratePoco', @tableSchema='hangfire'
+exec db.TablePropertySet  'Hash', 'HangfireHash', @propertyName='ClassName', @tableSchema='hangfire'
+exec db.TablePropertySet  'Hash', 'HangfireHashes', @propertyName='CollectionName', @tableSchema='hangfire'
+
 
 GO
 
-CREATE TRIGGER Hangfire.JobParameterRecurringIdLinker
-   ON  Hangfire.JobParameter 
+CREATE TRIGGER [HangFire].[JobParameterRecurringIdLinker]
+   ON  [HangFire].[JobParameter] 
    AFTER INSERT
 AS 
 BEGIN
@@ -115,12 +127,18 @@ BEGIN
 	)
 	update j 
 	set
-		RecurringJobId=m.RecurringJobId
+		RecurringJobId=m.RecurringJobId,
+		TenantId=t.TenantId,
+		ContactId=c.ContactId
 	from 
 		hangfire.job j
 			inner join
 		m
 			on j.id=m.jobid
+			outer apply
+		(select try_cast(value as int) TenantId from hangfire.hash where field='TenantId' and [key]=m.RecurringJobId) t
+			outer apply
+		(select try_cast(value as int) ContactId from hangfire.hash where field='ContactId' and [key]=m.RecurringJobId) c
 
 END
 

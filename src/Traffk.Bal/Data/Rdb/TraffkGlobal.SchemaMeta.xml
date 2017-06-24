@@ -250,6 +250,12 @@
       </Columns>
     </Table>
     <Table schema="HangFire" name="Hash" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="ClassName" value="HangfireHash" />
+        <Property name="CollectionName" value="HangfireHashes" />
+        <Property name="GeneratePoco" value="1" />
+      </Properties>
       <Columns>
         <Column name="Id" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
         <Column name="Key" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="100" />
@@ -261,6 +267,8 @@
     <Table schema="HangFire" name="Job" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
+        <Property name="ClassName" value="HangfireJob" />
+        <Property name="CollectionName" value="HangfireJobs" />
         <Property name="GeneratePoco" value="1" />
       </Properties>
       <Columns>
@@ -581,15 +589,13 @@
       </Args>
       <ResultSets>
         <ResultSet resultSetNumber="0" colCount="0" isError="1">
-          <Error>
-            The metadata could not be determined because statement 'INSERT #sessions
-            (
-            recursion,
-            session_id,
-            request_id,
-            session_number,
-            elapsed' in procedure 'WhoIsActive' uses a temp table.
-          </Error>
+          <Error>The metadata could not be determined because statement 'INSERT #sessions
+		(
+			recursion,
+			session_id,
+			request_id,
+			session_number,
+			elapsed' in procedure 'WhoIsActive' uses a temp table.</Error>
         </ResultSet>
       </ResultSets>
     </Sproc>

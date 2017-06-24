@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using RevolutionaryStuff.Core.Caching;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
@@ -53,35 +54,25 @@ namespace Traffk.Bal.ApplicationParts
                             RecurringJobId = j.RecurringJobId;
                             ContactId = j.ContactId;
                         }
-/*
-                        if ((TenantId == null || ContactId == null) && context.GetJobParameter<string>("RecurringJobId") != null)
+                        if (TenantId == null)
                         {
-                            var tenantIdContactIdRegex = new Regex(@"^(?<tenantId>[0-9]+)\-\-(?<contactId>[0-9]+)\-\-([a-zA-Z0-9\-]{36})$");
-                            var recurringJobId = context.GetJobParameter<string>("RecurringJobId");
-                            var matches = tenantIdContactIdRegex.Matches(recurringJobId);
-                            foreach (Match m in matches)
+                            RecurringJobId = RecurringJobId ?? context.GetJobParameter<string>("RecurringJobId");
+                            if (RecurringJobId != null)
                             {
-                                var tenantId = int.Parse(m.Groups["tenantId"].ToString());
-                                var contactId = int.Parse(m.Groups["contactId"].ToString());
-
-                                if (tenantId > 0)
-                                {
-                                    TenantId = tenantId;
-                                }
-
-                                if (contactId > 0)
-                                {
-                                    ContactId = contactId;
-                                }
+                                var z = BackgroundJobs.TenantedBackgroundJobClient.ParseRecurringJobId(RecurringJobId);
+                                TenantId = z.TenantId;
+                                ContactId = z.ContactId;
                             }
                         }
-*/
                         if (ContactId != null && ContactId > 0)
                         {
-                            CurrentUser = this.Activator.Runner.TenantDB.Users.Single(x => x.ContactId == ContactId);
+                            CurrentUser = this.Activator.Runner.TenantDB.Users.FirstOrDefault(x => x.ContactId == ContactId);
                         }
                     }
-                    catch (Exception e) { }
+                    catch (Exception ex)
+                    {
+                        Trace.WriteLine(ex);
+                    }
                 }
 
                 public override object Resolve(Type type)
