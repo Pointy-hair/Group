@@ -52,7 +52,7 @@ namespace Traffk.BackgroundJobServer
                 existingSettings.CalendarYear != settings.CalendarYear ||
                 existingSettings.CalendarMonth != settings.CalendarMonth)
             {
-                //DB.FiscalYearsConfigureAsync(Current.TenantId, settings.FiscalYear, settings.CalendarYear, settings.CalendarMonth).ExecuteSynchronously();
+                DB.FiscalYearsConfigureAsync(Current.TenantId, settings.FiscalYear, settings.CalendarYear, settings.CalendarMonth).ExecuteSynchronously();
                 Current.Tenant.TenantSettings.FiscalYearSettings = settings;
                 DB.SaveChanges();
                 PostResult(Current.Tenant.TenantSettings.FiscalYearSettings);

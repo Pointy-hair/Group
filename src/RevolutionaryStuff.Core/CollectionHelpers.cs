@@ -90,9 +90,9 @@ namespace RevolutionaryStuff.Core
         public static IQueryable<T> OrderByField<T>(this IQueryable<T> q, string sortColumn, bool asc)
         {
             if (string.IsNullOrEmpty(sortColumn)) return q;
-            Requires.Match(RegexHelpers.Common.CSharpIdentifier, sortColumn, nameof(sortColumn));
+            //Requires.Match(RegexHelpers.Common.CSharpIdentifier, sortColumn, nameof(sortColumn));
             var param = Expression.Parameter(typeof(T), "p");
-            var prop = Expression.Property(param, sortColumn);
+            var prop = NestedProperty(param, sortColumn);
             var exp = Expression.Lambda(prop, param);
             string method = asc ? "OrderBy" : "OrderByDescending";
             Type[] types = new[] { q.ElementType, exp.Body.Type };
@@ -139,8 +139,7 @@ namespace RevolutionaryStuff.Core
             foreach (var item in items)
             {
                 var key = keyGetter(item);
-                V val;
-                if (map.TryGetValue(key, out val))
+                if (map.TryGetValue(key, out V val))
                 {
                     ret.Add(outputTransformer(val));
                 }
@@ -287,10 +286,7 @@ namespace RevolutionaryStuff.Core
         }
 
         public static V GetValue<K, V>(this IDictionary<K, V> d, K key, V fallback = default(V))
-        {
-            V ret;
-            return d.TryGetValue(key, out ret) ? ret : fallback;
-        }
+            => d.TryGetValue(key, out V ret) ? ret : fallback;
 
         public static IEnumerable<T> ForEach<T>(this IEnumerable<T> items, Action<T> action)
         {
@@ -378,8 +374,7 @@ namespace RevolutionaryStuff.Core
             var ret = new List<V>(d.Count);
             foreach (var k in orderedKeys)
             {
-                V v;
-                if (k != null && d.TryGetValue(k, out v))
+                if (k != null && d.TryGetValue(k, out V v))
                 {
                     Stuff.Noop();
                 }
@@ -504,8 +499,7 @@ namespace RevolutionaryStuff.Core
 
         public static int Increment<K>(this IDictionary<K, int> d, K key, int incrementAmount, int initialAmount)
         {
-            int val;
-            if (d.TryGetValue(key, out val))
+            if (d.TryGetValue(key, out int val))
             {
                 val += incrementAmount;
             }
@@ -519,8 +513,7 @@ namespace RevolutionaryStuff.Core
 
         public static V FindOrMissing<K, V>(this IDictionary<K, V> d, K key, V missing)
         {
-            V ret;
-            if (!d.TryGetValue(key, out ret))
+            if (!d.TryGetValue(key, out V ret))
             {
                 ret = missing;
             }
@@ -530,8 +523,7 @@ namespace RevolutionaryStuff.Core
 
         public static V FindOrDefault<K, V>(this IDictionary<K, V> d, K key)
         {
-            V ret;
-            if (!d.TryGetValue(key, out ret))
+            if (!d.TryGetValue(key, out V ret))
             {
                 ret = default(V);
             }
@@ -540,8 +532,7 @@ namespace RevolutionaryStuff.Core
 
         public static V FindOrCreate<K, V>(this IDictionary<K, V> d, K key, Func<V> creator)
         {
-            V ret;
-            if (!d.TryGetValue(key, out ret))
+            if (!d.TryGetValue(key, out V ret))
             {
                 ret = creator();
                 d[key] = ret;
@@ -551,8 +542,7 @@ namespace RevolutionaryStuff.Core
 
         public static V FindOrCreate<K, V>(this IDictionary<K, V> d, K key, Func<K, V> creator)
         {
-            V ret;
-            if (!d.TryGetValue(key, out ret))
+            if (!d.TryGetValue(key, out V ret))
             {
                 ret = creator(key);
                 d[key] = ret;

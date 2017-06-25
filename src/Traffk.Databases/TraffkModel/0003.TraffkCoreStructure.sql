@@ -601,8 +601,8 @@ exec [db].TraffkGlobalTableImport 'global', 'hangfire_job', 'hangfire', 'job'
 exec db.TablePropertySet 'hangfire_job', '0', @propertyName='AddToDbContext', @tableSchema='global'
 exec db.TablePropertySet 'hangfire_job', '0', @propertyName='GeneratePoco', @tableSchema='global'
 
-deny all on HangFire.Job to tenant_all_reader
-deny all on HangFire.Job to tenant_all_writer
+deny all on global.HangFire_Job to tenant_all_reader
+deny all on global.HangFire_Job to tenant_all_writer
 
 GO
 
@@ -635,4 +635,94 @@ exec db.ViewColumnPropertySet 'Job', 'Id', 'Key', @propertyName='CustomAttribute
 exec db.ViewColumnPropertySet 'Job', 'TenantId', 'dbo.Tenants(TenantId)', @propertyName='LinksTo', @viewSchema='HangFire'
 exec db.ViewColumnPropertySet 'Job', 'ContactId', 'dbo.Contacts(ContactId)', @propertyName='LinksTo', @viewSchema='HangFire'
 
+
+exec db.TablePropertySet  'ShardMappingsLocal', '1', @propertyName='AddToDbContext', @tableSchema='__ShardManagement'
+exec db.TablePropertySet  'ShardMappingsLocal', '1', @propertyName='GeneratePoco', @tableSchema='__ShardManagement'
+exec db.TablePropertySet  'ShardMapsLocal', '1', @propertyName='AddToDbContext', @tableSchema='__ShardManagement'
+exec db.TablePropertySet  'ShardMapsLocal', '1', @propertyName='GeneratePoco', @tableSchema='__ShardManagement'
+exec db.TablePropertySet  'ShardsLocal', '1', @propertyName='AddToDbContext', @tableSchema='__ShardManagement'
+exec db.TablePropertySet  'ShardsLocal', '1', @propertyName='GeneratePoco', @tableSchema='__ShardManagement'
+
+
+
+
+exec [db].TraffkGlobalTableImport 'global', 'dbo_datasources', 'dbo', 'datasources'
+exec [db].TraffkGlobalTableImport 'global', 'dbo_datasourcefetches', 'dbo', 'datasourcefetches'
+exec [db].TraffkGlobalTableImport 'global', 'dbo_datasourcefetchitems', 'dbo', 'datasourcefetchitems'
+exec db.TablePropertySet 'dbo_datasources', '0', @propertyName='AddToDbContext', @tableSchema='global'
+exec db.TablePropertySet 'dbo_datasources', '0', @propertyName='GeneratePoco', @tableSchema='global'
+exec db.TablePropertySet 'dbo_datasourcefetches', '0', @propertyName='AddToDbContext', @tableSchema='global'
+exec db.TablePropertySet 'dbo_datasourcefetches', '0', @propertyName='GeneratePoco', @tableSchema='global'
+exec db.TablePropertySet 'dbo_datasourcefetchitems', '0', @propertyName='AddToDbContext', @tableSchema='global'
+exec db.TablePropertySet 'dbo_datasourcefetchitems', '0', @propertyName='GeneratePoco', @tableSchema='global'
+
+GO
+
+create view DataSources
+AS
+SELECT g.[DataSourceId]
+      ,g.[RowStatus]
+      ,t.[TenantId]
+      ,g.[CreatedAtUtc]
+      ,g.[DataSourceSettings]
+FROM 
+	[global].[dbo_datasources] g
+		inner join
+	dbo.Tenants t with (nolock)
+		on g.tenantid=t.tenantid
+GO
+
+exec db.ViewPropertySet 'DataSources', '1', @propertyName='AddToDbContext', @viewSchema='dbo'
+exec db.ViewPropertySet 'DataSources', '1', @propertyName='GeneratePoco', @viewSchema='dbo'
+exec db.ViewPropertySet 'DataSources', 'ITraffkTenanted', @propertyName='Implements', @viewSchema='dbo'
+exec db.ViewColumnPropertySet 'DataSources', 'DataSourceId', 'Key', @propertyName='CustomAttribute', @viewSchema='dbo'
+exec db.ViewColumnPropertySet 'DataSources', 'TenantId', 'dbo.Tenants(TenantId)', @propertyName='LinksTo', @viewSchema='dbo'
+
+GO
+
+create view DataSourceFetches
+AS
+SELECT g.[DataSourceFetchId]
+      ,g.[DataSourceId]
+      ,g.[CreatedAtUtc]
+  FROM 
+	[global].[dbo_datasourcefetches] g
+		inner join
+	dbo.DataSources ds
+		on ds.DataSourceId=g.DataSourceId
+
+GO
+
+exec db.ViewPropertySet 'DataSourceFetches', '1', @propertyName='AddToDbContext', @viewSchema='dbo'
+exec db.ViewPropertySet 'DataSourceFetches', '1', @propertyName='GeneratePoco', @viewSchema='dbo'
+exec db.ViewColumnPropertySet 'DataSourceFetches', 'DataSourceFetchId', 'Key', @propertyName='CustomAttribute', @viewSchema='dbo'
+exec db.ViewColumnPropertySet 'DataSourceFetches', 'DataSourceId', 'dbo.DataSources(DataSourceId)', @propertyName='LinksTo', @viewSchema='dbo'
+
+GO
+
+CREATE VIEW DataSourceFetchItems
+AS
+SELECT g.[DataSourceFetchItemId]
+      ,f.[DataSourceFetchId]
+      ,g.[DataSourceFetchItemType]
+      ,g.[ParentDataSourceFetchItemId]
+      ,g.[SameDataSourceReplicatedDataSourceFetchItemId]
+      ,g.[Name]
+      ,g.[Size]
+      ,g.[Url]
+      ,g.[DataSourceFetchItemProperties]
+  FROM 
+	[global].[dbo_datasourcefetchitems] g
+		inner join
+	DataSourceFetches f
+		on f.DataSourceFetchId=g.DataSourceFetchId
+
+GO
+
+exec db.ViewPropertySet 'DataSourceFetchItems', '1', @propertyName='AddToDbContext', @viewSchema='dbo'
+exec db.ViewPropertySet 'DataSourceFetchItems', '1', @propertyName='GeneratePoco', @viewSchema='dbo'
+exec db.ViewColumnPropertySet 'DataSourceFetchItems', 'DataSourceFetchItemId', 'Key', @propertyName='CustomAttribute', @viewSchema='dbo'
+exec db.ViewColumnPropertySet 'DataSourceFetchItems', 'DataSourceFetchId', 'dbo.DataSourceFetches(DataSourceFetchId)', @propertyName='LinksTo', @viewSchema='dbo'
+
+GO
 

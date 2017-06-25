@@ -37,6 +37,14 @@
     <None Update="Data\Rdb\TraffkTenantShards.SchemaMeta.xml">
       <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
     </None>
+    <None Update="Data\Rdb\TraffkTenantShardManager.SchemaMeta.xml">
+      <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
+    </None>
+    <Compile Update="Data\Rdb\TraffkTenantShardManager.DbContext.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
+    </Compile>
     <Compile Update="Data\Rdb\TraffkTenantShards.DbContext.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

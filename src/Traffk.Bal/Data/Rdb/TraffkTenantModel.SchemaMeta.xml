@@ -1,5 +1,64 @@
 ﻿<SchemaMeta>
   <Tables>
+    <Table schema="__ShardManagement" name="ShardMapManagerLocal" tableType="BASE TABLE">
+      <Columns>
+        <Column name="StoreVersionMajor" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
+        <Column name="StoreVersionMinor" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
+      </Columns>
+    </Table>
+    <Table schema="__ShardManagement" name="ShardMappingsLocal" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+      </Properties>
+      <Columns>
+        <Column name="MappingId" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="uniqueidentifier" isComputed="0" />
+        <Column name="ShardId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="uniqueidentifier" isComputed="0" refSchema="__ShardManagement" refTable="ShardsLocal" />
+        <Column name="ShardMapId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="uniqueidentifier" isComputed="0" refSchema="__ShardManagement" refTable="ShardMapsLocal" />
+        <Column name="MinValue" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varbinary" maxLen="128" isComputed="0" />
+        <Column name="MaxValue" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varbinary" maxLen="128" isComputed="0" />
+        <Column name="Status" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
+        <Column name="LockOwnerId" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="uniqueidentifier" default="('00000000-0000-0000-0000-000000000000')" isComputed="0" />
+        <Column name="LastOperationId" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="uniqueidentifier" default="('00000000-0000-0000-0000-000000000000')" isComputed="0" />
+      </Columns>
+    </Table>
+    <Table schema="__ShardManagement" name="ShardMapsLocal" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+      </Properties>
+      <Columns>
+        <Column name="ShardMapId" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="uniqueidentifier" isComputed="0" />
+        <Column name="Name" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="50" isComputed="0" />
+        <Column name="MapType" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
+        <Column name="KeyType" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
+        <Column name="LastOperationId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="uniqueidentifier" default="('00000000-0000-0000-0000-000000000000')" isComputed="0" />
+      </Columns>
+      <Collections>
+        <Collection schema="__ShardManagement" table="ShardsLocal" column="ShardMapId" collectionType="actual" />
+        <Collection schema="__ShardManagement" table="ShardMappingsLocal" column="ShardMapId" collectionType="actual" />
+      </Collections>
+    </Table>
+    <Table schema="__ShardManagement" name="ShardsLocal" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+      </Properties>
+      <Columns>
+        <Column name="ShardId" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="uniqueidentifier" isComputed="0" />
+        <Column name="Version" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="uniqueidentifier" isComputed="0" />
+        <Column name="ShardMapId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="uniqueidentifier" isComputed="0" refSchema="__ShardManagement" refTable="ShardMapsLocal" />
+        <Column name="Protocol" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
+        <Column name="ServerName" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="Port" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
+        <Column name="DatabaseName" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="Status" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
+        <Column name="LastOperationId" position="9" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="uniqueidentifier" default="('00000000-0000-0000-0000-000000000000')" isComputed="0" />
+      </Columns>
+      <Collections>
+        <Collection schema="__ShardManagement" table="ShardMappingsLocal" column="ShardId" collectionType="actual" />
+      </Collections>
+    </Table>
     <Table schema="CmsGov" name="BerensonEggersTypeOfServices" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
@@ -773,6 +832,72 @@
         <Collection schema="dbo" table="CommunicationBlasts" column="CreativeId" collectionType="actual" />
       </Collections>
     </Table>
+    <Table schema="dbo" name="DataSourceFetches" tableType="VIEW">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+      </Properties>
+      <Columns>
+        <Column name="DataSourceFetchId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0">
+          <Properties>
+            <Property name="CustomAttribute" value="Key" />
+          </Properties>
+        </Column>
+        <Column name="DataSourceId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0">
+          <Properties>
+            <Property name="LinksTo" value="dbo.DataSources(DataSourceId)" />
+          </Properties>
+        </Column>
+        <Column name="CreatedAtUtc" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" isComputed="0" />
+      </Columns>
+    </Table>
+    <Table schema="dbo" name="DataSourceFetchItems" tableType="VIEW">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+      </Properties>
+      <Columns>
+        <Column name="DataSourceFetchItemId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0">
+          <Properties>
+            <Property name="CustomAttribute" value="Key" />
+          </Properties>
+        </Column>
+        <Column name="DataSourceFetchId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0">
+          <Properties>
+            <Property name="LinksTo" value="dbo.DataSourceFetches(DataSourceFetchId)" />
+          </Properties>
+        </Column>
+        <Column name="DataSourceFetchItemType" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80" isComputed="0" />
+        <Column name="ParentDataSourceFetchItemId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" />
+        <Column name="SameDataSourceReplicatedDataSourceFetchItemId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" />
+        <Column name="Name" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1024" isComputed="0" />
+        <Column name="Size" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" isComputed="0" />
+        <Column name="Url" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1024" isComputed="0" />
+        <Column name="DataSourceFetchItemProperties" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0" />
+      </Columns>
+    </Table>
+    <Table schema="dbo" name="DataSources" tableType="VIEW">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+        <Property name="Implements" value="ITraffkTenanted" />
+      </Properties>
+      <Columns>
+        <Column name="DataSourceId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0">
+          <Properties>
+            <Property name="CustomAttribute" value="Key" />
+          </Properties>
+        </Column>
+        <Column name="RowStatus" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" isComputed="0" />
+        <Column name="TenantId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0">
+          <Properties>
+            <Property name="LinksTo" value="dbo.Tenants(TenantId)" />
+          </Properties>
+        </Column>
+        <Column name="CreatedAtUtc" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" isComputed="0" />
+        <Column name="DataSourceSettings" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0" />
+      </Columns>
+    </Table>
     <Table schema="dbo" name="DateDimensions" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
@@ -1042,6 +1167,80 @@
         <Collection schema="Health" table="Eligibility" column="TenantId" collectionType="actual" />
         <Collection schema="dbo" table="Contacts" column="TenantId" collectionType="actual" />
       </Collections>
+    </Table>
+    <Table schema="global" name="dbo_datasourcefetches" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="0" />
+        <Property name="GeneratePoco" value="0" />
+      </Properties>
+      <Columns>
+        <Column name="DataSourceFetchId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0">
+          <Properties>
+            <Property name="CustomAttribute" value="Key" />
+          </Properties>
+        </Column>
+        <Column name="DataSourceId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
+        <Column name="CreatedAtUtc" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" isComputed="0" />
+      </Columns>
+    </Table>
+    <Table schema="global" name="dbo_datasourcefetchitems" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="0" />
+        <Property name="GeneratePoco" value="0" />
+      </Properties>
+      <Columns>
+        <Column name="DataSourceFetchItemId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0">
+          <Properties>
+            <Property name="CustomAttribute" value="Key" />
+          </Properties>
+        </Column>
+        <Column name="DataSourceFetchId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
+        <Column name="DataSourceFetchItemType" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80" isComputed="0">
+          <Properties>
+            <Property name="EnumType" value="DataSourceFetchItem.DataSourceFetchItemTypes" />
+          </Properties>
+        </Column>
+        <Column name="ParentDataSourceFetchItemId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" />
+        <Column name="SameDataSourceReplicatedDataSourceFetchItemId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" />
+        <Column name="Name" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1024" isComputed="0" />
+        <Column name="Size" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="bigint" isComputed="0" />
+        <Column name="Url" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1024" isComputed="0" />
+        <Column name="DataSourceFetchItemProperties" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0">
+          <Properties>
+            <Property name="JsonSettingsClass" value="Bal.Settings.DataSourceFetchItemProperties" />
+          </Properties>
+        </Column>
+      </Columns>
+    </Table>
+    <Table schema="global" name="dbo_datasources" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="0" />
+        <Property name="GeneratePoco" value="0" />
+      </Properties>
+      <Columns>
+        <Column name="DataSourceId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0">
+          <Properties>
+            <Property name="CustomAttribute" value="Key" />
+          </Properties>
+        </Column>
+        <Column name="RowStatus" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" isComputed="0">
+          <Properties>
+            <Property name="AccessModifier" value="missing" />
+            <Property name="ImplementsRowStatusSemantics" value="1" />
+          </Properties>
+        </Column>
+        <Column name="TenantId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" />
+        <Column name="CreatedAtUtc" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" isComputed="0">
+          <Properties>
+            <Property name="MS_Description" value="Datetime when this entity was created." />
+          </Properties>
+        </Column>
+        <Column name="DataSourceSettings" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0">
+          <Properties>
+            <Property name="JsonSettingsClass" value="Bal.Settings.DataSourceSettings" />
+          </Properties>
+        </Column>
+      </Columns>
     </Table>
     <Table schema="global" name="hangfire_job" tableType="BASE TABLE">
       <Properties>
@@ -1861,6 +2060,67 @@
     </Table>
   </Tables>
   <Sprocs>
+    <Sproc schema="__ShardManagement" name="spAddShardLocal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spBulkOperationShardMappingsLocal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spFindShardMappingByKeyLocal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spGetAllShardMappingsLocal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spGetAllShardsLocal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spGetStoreVersionLocalHelper" />
+    <Sproc schema="__ShardManagement" name="spKillSessionsForShardMappingLocal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spRemoveShardLocal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spUpdateShardLocal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spValidateShardLocal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spValidateShardMappingLocal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
     <Sproc schema="db" name="AssertEquals">
       <Args>
         <Arg position="1" mode="IN" name="@expected" sqlType="sql_variant" maxLen="0" />

@@ -23,6 +23,10 @@ namespace RevolutionaryStuff.Core
             public static readonly MimeType Json = "application/json";
             public static readonly MimeType OctetStream = "application/octet-stream";
             public static readonly MimeType Pdf = new MimeType("application/pdf", ".pdf");
+            public static class SpreadSheet
+            {
+                public static readonly MimeType Xlsx = new MimeType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", ".xlsx");
+            }
         }
 
         public static class Image

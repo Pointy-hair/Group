@@ -18,10 +18,9 @@ using System.Linq;
 using Traffk.Bal.Permissions;
 using Microsoft.AspNetCore.Identity;
 using Hangfire;
-using Microsoft.Azure.SqlDatabase.ElasticScaleNetCore.ShardManagement;
-using Microsoft.Extensions.Configuration;
 using Traffk.Bal.Data.Rdb.TraffkTenantShards;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
+using Traffk.Bal.Data.Rdb.TraffkTenantShardManager;
 
 namespace Traffk.BackgroundJobServer
 {
@@ -32,14 +31,16 @@ namespace Traffk.BackgroundJobServer
         private readonly IOptions<TenantManagementJobsRunnerConfiguration> ConfigurationOptions;
         private readonly DbContextOptions<TraffkTenantModelDbContext> RdbOptions;
         private readonly TraffkTenantShardsDbContext Tdb;
+        private readonly TraffkTenantShardManagerDbContext Smdb;
         private readonly IPasswordHasher<ApplicationUser> PasswordHasher;
-        private readonly IConfiguration Config;
 
         public class TenantManagementJobsRunnerConfiguration
         {
+            public string ShardMapName { get; set; }
             public string SubscriptionId { get; set; }
             public string ResourceGroupName { get; set; }
             public string ServerName { get; set; }
+            public string FullyQualifiedServerName { get; set; }
             public string TenantModelDatabaseName { get; set; }
             public string NewTenantDatabaseNameFormat { get; set; }
         }
@@ -48,8 +49,8 @@ namespace Traffk.BackgroundJobServer
             JobRunnerProgram jobRunnerProgram,
             TraffkGlobalDbContext gdb,
             Serilog.ILogger logger,
-            IConfiguration config, 
             TraffkTenantShardsDbContext tdb,
+            TraffkTenantShardManagerDbContext smdb,
             IPasswordHasher<ApplicationUser> passwordHasher,
             ServiceClientCredentialFactory credentialFactory, 
             IOptions<TenantManagementJobsRunnerConfiguration> configurationOptions,
@@ -59,9 +60,9 @@ namespace Traffk.BackgroundJobServer
             CredentialFactory = credentialFactory;
             ConfigurationOptions = configurationOptions;
             RdbOptions = rdbOptions;
+            Smdb = smdb;
             Tdb = tdb;
             PasswordHasher = passwordHasher;
-            Config = config;
         }
 
         void ITenantManagementJobs.CreateTenant(TenantCreationDetails details)
@@ -76,15 +77,6 @@ namespace Traffk.BackgroundJobServer
             Stuff.Noop(c.Capabilities);
             foreach (var s in c.Servers.List())
             {
-                Stuff.Noop(s);
-                foreach (var p in c.ElasticPools.ListByServer(sqlAzureManagementConfiguration.ResourceGroupName, s.Name))
-                {
-                    Stuff.Noop(p);
-                }
-                foreach (var db in c.Databases.ListByServer(sqlAzureManagementConfiguration.ResourceGroupName, s.Name))
-                {
-                    Stuff.Noop(db);
-                }
                 if (s.Name == sqlAzureManagementConfiguration.ServerName)
                 {
                     foreach (var db in c.Databases.ListByServer(sqlAzureManagementConfiguration.ResourceGroupName, s.Name))
@@ -101,8 +93,10 @@ namespace Traffk.BackgroundJobServer
                                 TenantId = tenantId
                             };
                             var initJob = BackgroundJob.ContinueWith<ITenantManagementJobs>(JobId.ToString(), j => j.InitializeNewTenantAsync(id));
-                            BackgroundJob.ContinueWith<ITenantManagementJobs>(initJob, j => j.AddTenantToShardManager(s.Name, newDatabaseName));
-                            break;
+                            initJob = BackgroundJob.ContinueWith<ITenantManagementJobs>(initJob, j => j.AddTenantToShardManagerAsync(id));
+                            var bj = (IBackgroundJobClient)new TenantedBackgroundJobClient(GlobalContext, new HardcodedTraffkTenantFinder(tenantId));
+                            bj.ContinueWith<ITenantJobs>(initJob, j => j.ReconfigureFiscalYears(new Bal.Settings.FiscalYearSettings { CalendarMonth = 1, CalendarYear = 2000, FiscalYear = 2000 }));
+                            return;
                         }
                     }
                 }
@@ -174,28 +168,51 @@ namespace Traffk.BackgroundJobServer
                 => Task.FromResult(TenantId);
         }
 
-        private static object AddTenantToShardManagerAsyncLocker = new object();
-
-        void ITenantManagementJobs.AddTenantToShardManager(string databaseServer, string databaseName)
+        async Task ITenantManagementJobs.AddTenantToShardManagerAsync(TenantInitializeDetails details)
         {
-            lock (AddTenantToShardManagerAsyncLocker)
+            var shardMapName = ConfigurationOptions.Value.ShardMapName;
+            var shardMapId = (await Smdb.ShardMapsGlobal.Where(z => z.Name == shardMapName).FirstAsync()).ShardMapId;
+
+            var shardId = Guid.NewGuid();
+            var shardVersion = Guid.NewGuid();
+            var lastOperationId = Guid.NewGuid();
+
+            var finder = new MyDummyTenantFinder(details.DatabaseName, details.TenantId);
+            using (var rdb = new TraffkTenantModelDbContext(RdbOptions, finder, new ConfigStringFormatter(finder) { }))
             {
-                ShardMapManager shardMapManager;
-                ShardMapManagerFactory.TryGetSqlShardMapManager(
-                    Config.GetConnectionString(TraffkTenantShardsDbContext.DefaultDatabaseConnectionStringName),
-                    ShardMapManagerLoadPolicy.Lazy,
-                    out shardMapManager);
-                ListShardMap<int> shardMap;
-                shardMapManager.TryGetListShardMap(Config["ShardMapName"], out shardMap);
-                var shardKey = shardMap.GetShards().Count() + 1;
-                var shardLocation = new ShardLocation(databaseServer, databaseName);
-                Shard shard;
-                if (!shardMap.TryGetShard(shardLocation, out shard))
-                {
-                    shard = shardMap.CreateShard(shardLocation);
-                }
-                shardMap.CreatePointMapping(shardKey, shard);
+                rdb.ShardMapsLocal.Add(new ShardMapsLocal {
+                    ShardMapId = shardMapId,
+                    Name = shardMapName,
+                    MapType = 1,
+                    KeyType = 1,
+                    LastOperationId = lastOperationId
+                });
+                rdb.ShardsLocal.Add(new ShardsLocal {
+                    ShardId = shardId,
+                    Version = shardVersion,
+                    ShardMapId = shardMapId,
+                    Protocol = 0,
+                    ServerName = details.DatabaseServer,
+                    Port = 0,
+                    DatabaseName = details.DatabaseName,
+                    Status = 1,
+                    LastOperationId = lastOperationId
+                });
+                await rdb.SaveChangesAsync();
             }
+
+            Smdb.ShardsGlobal.Add(new ShardsGlobal {
+                ShardId = shardId,
+                Readable = true,
+                Version = shardVersion,
+                ShardMapId = shardMapId,
+                Protocol = 0,
+                ServerName = ConfigurationOptions.Value.FullyQualifiedServerName,
+                Port = 0,
+                DatabaseName = details.DatabaseName,
+                Status = 1
+            });
+            await Smdb.SaveChangesAsync();
         }
 
         async Task ITenantManagementJobs.InitializeNewTenantAsync(TenantInitializeDetails details)
@@ -223,6 +240,12 @@ namespace Traffk.BackgroundJobServer
                             TenantType = Tenant.TenantTypes.Normal,                             
                         };
                         rdb.Tenants.Add(t);
+                        rdb.Apps.Add(new App
+                        {
+                            Tenant = t,
+                            AppType = AppTypes.Portal,
+                            AppName = AppTypes.Portal.ToString(),
+                        });
                         await rdb.SaveChangesAsync();
                         var r = new ApplicationRole
                         {
@@ -267,8 +290,6 @@ namespace Traffk.BackgroundJobServer
                     await rdb.SaveChangesAsync();
                     trans.Commit();
                 }
-                var bj = (IBackgroundJobClient) new TenantedBackgroundJobClient(GlobalContext, finder);
-                bj.ContinueWith<ITenantJobs>(JobId.ToString(), j => j.ReconfigureFiscalYears(new Bal.Settings.FiscalYearSettings { CalendarMonth = 1, CalendarYear=2000, FiscalYear=2000 }));
             }
         }
 

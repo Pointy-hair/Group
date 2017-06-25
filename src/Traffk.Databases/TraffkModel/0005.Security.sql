@@ -11,8 +11,11 @@ CREATE USER _TraffkPortalApp
 	FOR LOGIN _TraffkPortalApp
 	WITH DEFAULT_SCHEMA = dbo
 GO
-EXEC sp_addrolemember N'tenant_all_writer', N'_TraffkPortalApp'
-EXEC sp_addrolemember N'tenant_all_reader', N'_TraffkPortalApp'
+create role _TraffkPortalAppRole
+GO
+EXEC sp_addrolemember N'_TraffkPortalAppRole', N'_TraffkPortalApp'
+EXEC sp_addrolemember N'tenant_all_writer', N'_TraffkPortalAppRole'
+EXEC sp_addrolemember N'tenant_all_reader', N'_TraffkPortalAppRole'
 GO
 CREATE USER _TraffkTenantShardsUser
 	FOR LOGIN _TraffkTenantShardsUser
@@ -20,6 +23,26 @@ CREATE USER _TraffkTenantShardsUser
 GO
 EXEC sp_addrolemember N'tenant_all_reader', N'_TraffkTenantShardsUser'
 GO
+
+
+CREATE USER _TraffkBackgroundJobServer
+	FOR LOGIN _TraffkBackgroundJobServer
+	WITH DEFAULT_SCHEMA = dbo
+GO
+create role _TraffkBackgroundJobServerRole
+GO
+EXEC sp_addrolemember N'_TraffkBackgroundJobServerRole', N'_TraffkBackgroundJobServer'
+EXEC sp_addrolemember N'tenant_all_writer', N'_TraffkBackgroundJobServer'
+EXEC sp_addrolemember N'tenant_all_reader', N'_TraffkBackgroundJobServer'
+
+
+deny all on __ShardManagement.ShardMappingsLocal to _TraffkPortalAppRole
+deny all on __ShardManagement.ShardMapsLocal to _TraffkPortalAppRole
+deny all on __ShardManagement.ShardsLocal to _TraffkPortalAppRole
+grant all on __ShardManagement.ShardMappingsLocal to _TraffkBackgroundJobServerRole
+grant all on __ShardManagement.ShardMapsLocal to _TraffkBackgroundJobServerRole
+grant all on __ShardManagement.ShardsLocal to _TraffkBackgroundJobServerRole
+
 
 
 GO

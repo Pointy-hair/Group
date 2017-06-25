@@ -4,6 +4,7 @@ using Hangfire.States;
 using RevolutionaryStuff.Core;
 using Traffk.Bal.Data.Rdb.TraffkGlobal;
 using Traffk.Bal.Services;
+using System.Text.RegularExpressions;
 
 namespace Traffk.Bal.BackgroundJobs
 {
@@ -46,22 +47,15 @@ namespace Traffk.Bal.BackgroundJobs
 
         string ITraffkRecurringJobManager.Add(Hangfire.Common.Job job, string cronExpression)
         {
+            var tenantId = Finder.GetTenantIdAsync().ExecuteSynchronously();
+            var contactId = CurrentUser?.User?.ContactId;
             var recurringJobId = GetRecurringJobId();
             RecurringJobManager.AddOrUpdate(recurringJobId, job, cronExpression, new RecurringJobOptions());
-            var rjContactIdRow = new RecurringJobRow
+            GDB.Hash.Add(new HangfireHash { Key = "recurring-job:"+recurringJobId, Field = "TenantId", Value = tenantId.ToString() });
+            if (contactId != null)
             {
-                Key = GetRecurringJobIdForRowCreation(recurringJobId),
-                Field = ContactIdField,
-                Value = CurrentUser?.User?.ContactId.ToString()
-            };
-            var rjTenantIdRow = new RecurringJobRow
-            {
-                Key = GetRecurringJobIdForRowCreation(recurringJobId),
-                Field = TenantIdField,
-                Value = TenantId.ToString()
-            };
-            GDB.RecurringJobRow.Add(rjTenantIdRow);
-            GDB.RecurringJobRow.Add(rjContactIdRow);
+                GDB.Hash.Add(new HangfireHash { Key = "recurring-job:" + recurringJobId, Field = "ContactId", Value = contactId.ToString() });
+            }
             GDB.SaveChanges();
             return recurringJobId;
         }
@@ -72,11 +66,32 @@ namespace Traffk.Bal.BackgroundJobs
 
         }
 
+        public class RecurringJobIdContext
+        {
+            public string RecurringJobId { get; set; }
+            public int? TenantId { get; set; }
+            public int? ContactId { get; set; }
+        }
+
+        private static readonly Regex RecurringJobIdContextParsingExpr = new Regex(@"t:([^,]*),c:([^,]*),(.+)", RegexOptions.Compiled);
+
+        public static RecurringJobIdContext ParseRecurringJobId(string recurringJobId)
+        {
+            var m = RecurringJobIdContextParsingExpr.Match(recurringJobId);
+            var c = new RecurringJobIdContext
+            {
+                RecurringJobId = recurringJobId,
+                TenantId = Parse.ParseNullableInt32(m.Success?m.Groups[1].Value : null),
+                ContactId = Parse.ParseNullableInt32(m.Success ? m.Groups[2].Value : null),
+            };
+            return c;
+        }
+
         private string GetRecurringJobId()
         {
             var tenantId = Finder.GetTenantIdAsync().ExecuteSynchronously();
-            var contactId = CurrentUser.User.ContactId;
-            var id = $"{tenantId}--{contactId}--{Guid.NewGuid().ToString()}"; 
+            var contactId = CurrentUser?.User?.ContactId;
+            var id = $"t:{tenantId},c:{contactId},{Guid.NewGuid().ToString()}"; 
             return id;
         }
 

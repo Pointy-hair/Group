@@ -1,0 +1,407 @@
+﻿<SchemaMeta>
+  <Tables>
+    <Table schema="__ShardManagement" name="OperationsLogGlobal" tableType="BASE TABLE">
+      <Columns>
+        <Column name="OperationId" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="uniqueidentifier" isComputed="0" />
+        <Column name="OperationCode" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
+        <Column name="Data" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="xml" maxLen="-1" isComputed="0" />
+        <Column name="UndoStartState" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" default="((100))" isComputed="0" />
+        <Column name="ShardVersionRemoves" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="uniqueidentifier" isComputed="0" />
+        <Column name="ShardVersionAdds" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="uniqueidentifier" isComputed="0" />
+      </Columns>
+    </Table>
+    <Table schema="__ShardManagement" name="ShardedDatabaseSchemaInfosGlobal" tableType="BASE TABLE">
+      <Columns>
+        <Column name="Name" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="SchemaInfo" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="xml" maxLen="-1" isComputed="0" />
+      </Columns>
+    </Table>
+    <Table schema="__ShardManagement" name="ShardMapManagerGlobal" tableType="BASE TABLE">
+      <Columns>
+        <Column name="StoreVersionMajor" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
+        <Column name="StoreVersionMinor" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
+      </Columns>
+    </Table>
+    <Table schema="__ShardManagement" name="ShardMappingsGlobal" tableType="BASE TABLE">
+      <Columns>
+        <Column name="MappingId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="uniqueidentifier" isComputed="0" />
+        <Column name="Readable" position="2" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="bit" isComputed="0" />
+        <Column name="ShardId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="uniqueidentifier" isComputed="0" refSchema="__ShardManagement" refTable="ShardsGlobal" />
+        <Column name="ShardMapId" position="4" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="uniqueidentifier" isComputed="0" refSchema="__ShardManagement" refTable="ShardMapsGlobal" />
+        <Column name="OperationId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="uniqueidentifier" isComputed="0" />
+        <Column name="MinValue" position="6" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="varbinary" maxLen="128" isComputed="0" />
+        <Column name="MaxValue" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varbinary" maxLen="128" isComputed="0" />
+        <Column name="Status" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
+        <Column name="LockOwnerId" position="9" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="uniqueidentifier" default="('00000000-0000-0000-0000-000000000000')" isComputed="0" />
+      </Columns>
+    </Table>
+    <Table schema="__ShardManagement" name="ShardMapsGlobal" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+      </Properties>
+      <Columns>
+        <Column name="ShardMapId" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="uniqueidentifier" isComputed="0" />
+        <Column name="Name" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="50" isComputed="0" />
+        <Column name="ShardMapType" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
+        <Column name="KeyType" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
+      </Columns>
+      <Collections>
+        <Collection schema="__ShardManagement" table="ShardsGlobal" column="ShardMapId" collectionType="actual" />
+        <Collection schema="__ShardManagement" table="ShardMappingsGlobal" column="ShardMapId" collectionType="actual" />
+      </Collections>
+    </Table>
+    <Table schema="__ShardManagement" name="ShardsGlobal" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+      </Properties>
+      <Columns>
+        <Column name="ShardId" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="uniqueidentifier" isComputed="0" />
+        <Column name="Readable" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" isComputed="0" />
+        <Column name="Version" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="uniqueidentifier" isComputed="0" />
+        <Column name="ShardMapId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="uniqueidentifier" isComputed="0" refSchema="__ShardManagement" refTable="ShardMapsGlobal" />
+        <Column name="OperationId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="uniqueidentifier" isComputed="0" />
+        <Column name="Protocol" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
+        <Column name="ServerName" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="Port" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
+        <Column name="DatabaseName" position="9" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="Status" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
+      </Columns>
+      <Collections>
+        <Collection schema="__ShardManagement" table="ShardMappingsGlobal" column="ShardId" collectionType="actual" />
+      </Collections>
+    </Table>
+    <Table schema="db" name="ColumnProperties" tableType="VIEW">
+      <Columns>
+        <Column name="SchemaName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="TableName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="ColumnName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="PropertyName" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="PropertyValue" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" isComputed="0" />
+      </Columns>
+    </Table>
+    <Table schema="db" name="ProcResultsetColumns" tableType="BASE TABLE">
+      <Columns>
+        <Column name="TABLE_SCHEMA" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="TABLE_NAME" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="RESULT_SET" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
+        <Column name="ResultType" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" isComputed="0" />
+        <Column name="COLUMN_NAME" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="ORDINAL_POSITION" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
+        <Column name="IS_NULLABLE" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="3" isComputed="0" />
+        <Column name="DATA_TYPE" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="CHARACTER_MAXIMUM_LENGTH" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" />
+        <Column name="ErrorMessage" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="4000" isComputed="0" />
+      </Columns>
+    </Table>
+    <Table schema="db" name="SchemaMeta" tableType="VIEW">
+      <Columns>
+        <Column name="HostDatabaseName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="X" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="xml" maxLen="-1" isComputed="0" />
+        <Column name="T" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0" />
+      </Columns>
+    </Table>
+    <Table schema="db" name="SchemaTables" tableType="VIEW">
+      <Columns>
+        <Column name="ObjectId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
+        <Column name="SchemaName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="TableName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="TableType" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="10" isComputed="0" />
+      </Columns>
+    </Table>
+    <Table schema="db" name="SprocParameterProperties" tableType="VIEW">
+      <Columns>
+        <Column name="SchemaName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="SprocName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="ParameterName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="PropertyName" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="PropertyValue" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" isComputed="0" />
+      </Columns>
+    </Table>
+    <Table schema="db" name="SprocProperties" tableType="VIEW">
+      <Columns>
+        <Column name="SchemaName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="SprocName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="PropertyName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="PropertyValue" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" isComputed="0" />
+      </Columns>
+    </Table>
+    <Table schema="db" name="TableProperties" tableType="VIEW">
+      <Columns>
+        <Column name="SchemaName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="TableName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="PropertyName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="PropertyValue" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" isComputed="0" />
+      </Columns>
+    </Table>
+    <Table schema="db" name="ViewColumnProperties" tableType="VIEW">
+      <Columns>
+        <Column name="SchemaName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="ViewName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="ColumnName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="PropertyName" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="PropertyValue" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" isComputed="0" />
+      </Columns>
+    </Table>
+    <Table schema="db" name="ViewProperties" tableType="VIEW">
+      <Columns>
+        <Column name="SchemaName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="ViewName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="PropertyName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="PropertyValue" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" isComputed="0" />
+      </Columns>
+    </Table>
+    <Table schema="sys" name="database_firewall_rules" tableType="VIEW">
+      <Columns>
+        <Column name="id" position="1" isPrimaryKey="0" isIdentity="1" isNullable="0" sqlType="int" isComputed="0" />
+        <Column name="name" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" isComputed="0" />
+        <Column name="start_ip_address" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="45" isComputed="0" />
+        <Column name="end_ip_address" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="45" isComputed="0" />
+        <Column name="create_date" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" isComputed="0" />
+        <Column name="modify_date" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" isComputed="0" />
+      </Columns>
+    </Table>
+  </Tables>
+  <Sprocs>
+    <Sproc schema="__ShardManagement" name="spAddShardingSchemaInfoGlobal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spAddShardMapGlobal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spAttachShardGlobal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spBulkOperationShardMappingsGlobalBegin">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spBulkOperationShardMappingsGlobalEnd">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spBulkOperationShardsGlobalBegin">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spBulkOperationShardsGlobalEnd">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spDetachShardGlobal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spFindAndUpdateOperationLogEntryByIdGlobal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spFindShardByLocationGlobal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spFindShardingSchemaInfoByNameGlobal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spFindShardMapByNameGlobal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spFindShardMappingByIdGlobal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spFindShardMappingByKeyGlobal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spGetAllDistinctShardLocationsGlobal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spGetAllShardingSchemaInfosGlobal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spGetAllShardMappingsGlobal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spGetAllShardMapsGlobal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spGetAllShardsGlobal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spGetOperationLogEntryGlobalHelper">
+      <Args>
+        <Arg position="1" mode="IN" name="@operationId" sqlType="uniqueidentifier" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spGetStoreVersionGlobalHelper" />
+    <Sproc schema="__ShardManagement" name="spLockOrUnlockShardMappingsGlobal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spRemoveShardingSchemaInfoGlobal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spRemoveShardMapGlobal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spReplaceShardMappingsGlobal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="__ShardManagement" name="spUpdateShardingSchemaInfoGlobal">
+      <Args>
+        <Arg position="1" mode="IN" name="@input" sqlType="xml" maxLen="-1" />
+        <Arg position="2" mode="INOUT" name="@result" sqlType="int" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="ColumnPropertySet">
+      <Args>
+        <Arg position="1" mode="IN" name="@tableName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@columnName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="3" mode="IN" name="@propertyVal" sqlType="nvarchar" maxLen="3750" />
+        <Arg position="4" mode="IN" name="@tableSchema" sqlType="nvarchar" maxLen="128" />
+        <Arg position="5" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="PrintNow">
+      <Args>
+        <Arg position="1" mode="IN" name="@format" sqlType="nvarchar" maxLen="-1" />
+        <Arg position="2" mode="IN" name="@n0" sqlType="int" />
+        <Arg position="3" mode="IN" name="@n1" sqlType="int" />
+        <Arg position="4" mode="IN" name="@n2" sqlType="int" />
+        <Arg position="5" mode="IN" name="@n3" sqlType="int" />
+        <Arg position="6" mode="IN" name="@n4" sqlType="int" />
+        <Arg position="7" mode="IN" name="@n5" sqlType="int" />
+        <Arg position="8" mode="IN" name="@n6" sqlType="int" />
+        <Arg position="9" mode="IN" name="@n7" sqlType="int" />
+        <Arg position="10" mode="IN" name="@s0" sqlType="nvarchar" maxLen="-1" />
+        <Arg position="11" mode="IN" name="@s1" sqlType="nvarchar" maxLen="-1" />
+        <Arg position="12" mode="IN" name="@s2" sqlType="nvarchar" maxLen="-1" />
+        <Arg position="13" mode="IN" name="@s3" sqlType="nvarchar" maxLen="-1" />
+        <Arg position="14" mode="IN" name="@d0" sqlType="datetime" />
+        <Arg position="15" mode="IN" name="@d1" sqlType="datetime" />
+        <Arg position="16" mode="IN" name="@d2" sqlType="datetime" />
+        <Arg position="17" mode="IN" name="@d3" sqlType="datetime" />
+        <Arg position="18" mode="IN" name="@b0" sqlType="bit" />
+        <Arg position="19" mode="IN" name="@b1" sqlType="bit" />
+        <Arg position="20" mode="IN" name="@b2" sqlType="bit" />
+        <Arg position="21" mode="IN" name="@b3" sqlType="bit" />
+        <Arg position="22" mode="IN" name="@m0" sqlType="money" />
+        <Arg position="23" mode="IN" name="@m1" sqlType="money" />
+        <Arg position="24" mode="IN" name="@m2" sqlType="money" />
+        <Arg position="25" mode="IN" name="@m3" sqlType="money" />
+        <Arg position="26" mode="IN" name="@startedAt" sqlType="datetime" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="PrintSql">
+      <Args>
+        <Arg position="1" mode="IN" name="@sql" sqlType="nvarchar" maxLen="-1" />
+        <Arg position="2" mode="IN" name="@debugMode" sqlType="bit" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="ProcResultsetColumnsPopulate" />
+    <Sproc schema="db" name="SprocParameterPropertySet">
+      <Args>
+        <Arg position="1" mode="IN" name="@sprocName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@parameterName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="3" mode="IN" name="@propertyVal" sqlType="nvarchar" maxLen="3750" />
+        <Arg position="4" mode="IN" name="@sprocSchema" sqlType="nvarchar" maxLen="128" />
+        <Arg position="5" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="SprocPropertySet">
+      <Args>
+        <Arg position="1" mode="IN" name="@sprocName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@propertyVal" sqlType="sql_variant" maxLen="0" />
+        <Arg position="3" mode="IN" name="@routineSchema" sqlType="nvarchar" maxLen="128" />
+        <Arg position="4" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="TablePropertySet">
+      <Args>
+        <Arg position="1" mode="IN" name="@tableName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@propertyVal" sqlType="sql_variant" maxLen="0" />
+        <Arg position="3" mode="IN" name="@tableSchema" sqlType="nvarchar" maxLen="128" />
+        <Arg position="4" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="ViewColumnPropertySet">
+      <Args>
+        <Arg position="1" mode="IN" name="@viewName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@columnName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="3" mode="IN" name="@propertyVal" sqlType="nvarchar" maxLen="3750" />
+        <Arg position="4" mode="IN" name="@viewSchema" sqlType="nvarchar" maxLen="128" />
+        <Arg position="5" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="ViewPropertySet">
+      <Args>
+        <Arg position="1" mode="IN" name="@viewName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@propertyVal" sqlType="sql_variant" maxLen="0" />
+        <Arg position="3" mode="IN" name="@viewSchema" sqlType="nvarchar" maxLen="128" />
+        <Arg position="4" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="5" mode="IN" name="@remove" sqlType="bit" />
+      </Args>
+    </Sproc>
+  </Sprocs>
+</SchemaMeta>
