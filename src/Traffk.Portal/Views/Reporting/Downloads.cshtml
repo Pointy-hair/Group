@@ -1,0 +1,82 @@
+﻿@model IEnumerable<Traffk.Bal.Data.Rdb.TraffkTenantModel.Job>
+@using Traffk.Portal.Controllers
+
+@{
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
+    ViewData.SetTitleAndHeading("Report Downloads");
+    ViewData.HasBreadcrumbItems(true);
+    ViewData.IsListingPage(true);
+    ViewData.HasPageActions(true);
+}
+@section breadCrumbItems {
+    <li><a asp-controller="@ReportingController.Name" asp-action="Index">Reports</a> <span>></span> </li>
+}
+@section pageActionItems
+{
+    <li class="multiselect-action">
+        <a onclick="cancelJobs()" class="confirm-on-click" confirmHeading="Are you sure?" confirmMessage="Are you sure you want to cancel these jobs?">Cancel Jobs</a>
+    </li>
+}
+@section listingTable
+{
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th><input type="checkbox" id="all-items-selector" /></th>
+                <th>
+                    @Html.SortableHeaderFor(model => model.Id)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(model => model.CreatedAt)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.HangfireJobDetails.Method)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.StateName)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr jobId="@item.Id">
+                    <td><input type="checkbox" class="item-selector" contextId="@item.Id" /></td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreatedAt)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.HangfireJobDetails.Method)
+                    </td>
+                    <td class="job-status">
+                        @Html.DisplayFor(modelItem => item.StateName)
+                    </td>
+                    <td class="text-center">
+                        @if (item.CanBeCancelled || item.Downloadable)
+                        {
+                            <i class="fa fa-ellipsis-h toggle" aria-hidden="true" data-toggle="row-action-@item.Id"></i>
+                            <ul id="row-action-@item.Id" class="floated-filter list-right">
+                                @if (item.CanBeCancelled)
+                                {
+                                    <li>
+                                        <a asp-action="@JobsController.ActionNames.JobCancel" asp-route-id="@item.Id" onclick="cancelJob(@item.Id)" class="confirm-on-click" confirmHeading="Are you sure?" confirmMessage="Are you sure you want to cancel Job @item.Id?">Cancel Job</a>
+                                    </li>
+                                }
+                                @if (item.Downloadable)
+                                {
+                                    <li>
+                                        <a href="@item.DownloadLink">Download</a>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System;
+using Microsoft.Extensions.Configuration;
 using RevolutionaryStuff.Core;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
@@ -24,7 +25,7 @@ namespace TraffkPortal.Services.TenantServices
         {
             public int? TenantId { get; set; }
             public Dictionary<string, int> TenantIdByHostname { get; } = new Dictionary<string, int>(Comparers.CaseInsensitiveStringComparer);
-
+            public string DefaultTenantFinderHostPattern { get; set; }
             public TenantServiceFinderOptions()
             {
 
@@ -84,11 +85,20 @@ namespace TraffkPortal.Services.TenantServices
                     var res = db.AppFindByHostname(ActualHostname, AppTypes.Portal).ExecuteSynchronously().FirstOrDefault();
                     return res;
                 });
+
                 if (z != null)
                 {
+                    //if (z.ActualHostname != z.PreferredHostname)
+                    //{
+                    //    var tenant = db.TenantFindByTenantId(z.TenantId).ExecuteSynchronously().FirstOrDefault();
+                    //    z.ActualHostname = tso.DefaultTenantFinderHostPattern.Replace(@"{0}", tenant.LoginDomain);
+                    //}
+
                     TenantId_p = z.TenantId;
                     PreferredHostname = z.PreferredHostname;
                     DatabaseName = z.HostDatabaseName;
+
+                    //acc.HttpContext.Request.Host = new HostString(z.ActualHostname);
                 }
             }
             acc.HttpContext.Items[HttpContextTenantIdKey] = TenantId_p;
