@@ -31,7 +31,7 @@ namespace Traffk.Bal.ExternalApis
 
         private OrchestraRxTokenResponse FindOrCreateTokenResponseWithExpiration()
         {
-            var cacheKey = Cache.CreateKey(typeof(OrchestraRxTokenResponse).Name);
+            var cacheKey = RevolutionaryStuff.Core.Caching.Cache.CreateKey(typeof(OrchestraRxTokenResponse).Name);
             //Just a find
             var tokenResponseCacheEntry = ScopedCacher.FindOrCreate<OrchestraRxTokenResponse>(cacheKey);
             if (tokenResponseCacheEntry.Value == null)
@@ -50,7 +50,7 @@ namespace Traffk.Bal.ExternalApis
 
         public PharmacyResponse PharmacySearch(string zip, int radius)
         {
-            var cacheKey = Cache.CreateKey(typeof(PharmacyResponse).Name, zip, radius);
+            var cacheKey = RevolutionaryStuff.Core.Caching.Cache.CreateKey(typeof(PharmacyResponse).Name, zip, radius);
 
             var pharmacyResponse = ScopedCacher.FindOrCreate<PharmacyResponse>(cacheKey, key => Client.PharmacySearchAsync(zip,radius).Result);
 
@@ -59,10 +59,10 @@ namespace Traffk.Bal.ExternalApis
 
         public Data.ApiModels.Rx.DrugResponse DrugSearch(string query)
         {
-            var cacheKey = Cache.CreateKey(typeof(DrugResponse).Name, query, "traffk");
+            var cacheKey = RevolutionaryStuff.Core.Caching.Cache.CreateKey(typeof(DrugResponse).Name, query, "traffk");
             var tDrugResponse = ScopedCacher.FindOrCreate<Data.ApiModels.Rx.DrugResponse>(cacheKey, outerKey =>
             {
-                var searchCacheKey = Cache.CreateKey(typeof(DrugResponse).Name, query);
+                var searchCacheKey = RevolutionaryStuff.Core.Caching.Cache.CreateKey(typeof(DrugResponse).Name, query);
                 var oDrugResponse = ScopedCacher.FindOrCreate<DrugResponse>(searchCacheKey,
                     key => Client.DrugSearchAsync(query).Result);
                 var oDrugs = oDrugResponse.Value.Drugs.ToList();
@@ -89,14 +89,14 @@ namespace Traffk.Bal.ExternalApis
 
         public DrugDetailResponse DrugDetail(string ndcOrOrchestraId)
         {
-            var cacheKey = Cache.CreateKey(typeof(DrugDetailResponse).Name, ndcOrOrchestraId);
+            var cacheKey = RevolutionaryStuff.Core.Caching.Cache.CreateKey(typeof(DrugDetailResponse).Name, ndcOrOrchestraId);
             var drugDetailResponse = ScopedCacher.FindOrCreate<DrugDetailResponse>(cacheKey, key => Client.DrugDetailAsync(ndcOrOrchestraId).Result);
             return drugDetailResponse?.Value;
         }
 
         public DrugOption[] DrugAlternativeSearch(IEnumerable<DrugAlternativeSearchQuery> searchQuery)
         {
-            var queryCacheKey = Cache.CreateKey(typeof(DrugOption[]).Name, searchQuery);
+            var queryCacheKey = RevolutionaryStuff.Core.Caching.Cache.CreateKey(typeof(DrugOption[]).Name, searchQuery);
             var drugOptions = ScopedCacher.FindOrCreate<DrugOption[]>(queryCacheKey,
                 key => Client.DrugAlternativeMultipleSearchAsync(searchQuery).ExecuteSynchronously());
             return drugOptions.Value;

@@ -40,6 +40,8 @@ namespace Traffk.Portal.Controllers
             public const string ShowReport = "ShowReport";
             public const string Index = "Index";
             public const string Report = "Report";
+            public const string DownloadedReports = "Downloads";
+            public const string ScheduledReports = "ScheduledReportIndex";
         }
 
         public static class ViewNames
@@ -166,6 +168,7 @@ namespace Traffk.Portal.Controllers
         }
 
         [Route("/Reporting/Report/Downloads")]
+        [ActionName(ActionNames.DownloadedReports)]
         public IActionResult DownloadedReportIndex(string sortCol, string sortDir, int? page, int? pageSize)
         {
             var currentUserContactId = Current.User.ContactId;
@@ -197,7 +200,7 @@ namespace Traffk.Portal.Controllers
                 var tableauReportViewModel = new TableauReportViewModel(reportVisual);
 
                 var createPdfOptions = new CreatePdfOptions(tableauReportViewModel.WorkbookName, tableauReportViewModel.ViewName, tableauReportViewModel.WorksheetName);
-                RecurringJobManager.Add(Hangfire.Common.Job.FromExpression<ITenantJobs>(x => x.ScheduleTableauPdfDownload(createPdfOptions)), Cron.Weekly());
+                RecurringJobManager.Add(Hangfire.Common.Job.FromExpression<ITenantJobs>(x => x.ScheduleTableauPdfDownload(createPdfOptions)), Cron.MinuteInterval(2));
                 return Json("success");
             }
             catch (Exception e)
@@ -205,7 +208,14 @@ namespace Traffk.Portal.Controllers
                 Console.WriteLine(e);
                 throw;
             }
+        }
 
+        [Route("/Reporting/Report/Scheduled")]
+        [ActionName(ActionNames.ScheduledReports)]
+        public IActionResult ScheduledReportIndex()
+        {
+            var userRecurringJobs = RecurringJobManager.GetUserRecurringJobs();
+            return View(userRecurringJobs);
         }
 
         private void QueueReportDownload(CreatePdfOptions options)

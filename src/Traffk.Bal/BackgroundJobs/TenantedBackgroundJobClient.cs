@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Hangfire;
 using Hangfire.States;
 using RevolutionaryStuff.Core;
 using Traffk.Bal.Data.Rdb.TraffkGlobal;
 using Traffk.Bal.Services;
 using System.Text.RegularExpressions;
+using Hangfire.Storage;
 
 namespace Traffk.Bal.BackgroundJobs
 {
@@ -16,10 +19,6 @@ namespace Traffk.Bal.BackgroundJobs
         private readonly RecurringJobManager RecurringJobManager;
         private readonly ICurrentUser CurrentUser;
         private int TenantId;
-
-        private const string ContactIdField = "ContactId";
-        private const string TenantIdField = "TenantId";
-        private const string RecurringJobPrefix = @"recurring-job:";
 
         public TenantedBackgroundJobClient(TraffkGlobalDbContext gdb, ITraffkTenantFinder finder, ICurrentUser currentUser = null)
         {
@@ -66,6 +65,15 @@ namespace Traffk.Bal.BackgroundJobs
 
         }
 
+        List<RecurringJobDto> ITraffkRecurringJobManager.GetUserRecurringJobs()
+        {
+            var recurringJobs = Hangfire.JobStorage.Current.GetConnection().GetRecurringJobs();
+            var currentUserRecurringJobs = recurringJobs.Where(x =>
+                ParseRecurringJobId(x.Id).ContactId == CurrentUser?.User?.ContactId
+                && ParseRecurringJobId(x.Id).TenantId == TenantId);
+            return currentUserRecurringJobs.ToList();
+        }
+
         public class RecurringJobIdContext
         {
             public string RecurringJobId { get; set; }
@@ -93,11 +101,6 @@ namespace Traffk.Bal.BackgroundJobs
             var contactId = CurrentUser?.User?.ContactId;
             var id = $"t:{tenantId},c:{contactId},{Guid.NewGuid().ToString()}"; 
             return id;
-        }
-
-        private static string GetRecurringJobIdForRowCreation(string recurringJobId)
-        {
-            return RecurringJobPrefix + recurringJobId;
         }
     }
 }

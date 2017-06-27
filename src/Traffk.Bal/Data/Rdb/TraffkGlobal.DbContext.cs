@@ -47,7 +47,6 @@ namespace Traffk.Bal.Data.Rdb.TraffkGlobal
 		
 		public DbSet<HangfireJob> Job { get; set; } //HangFire.Job
 
-        public DbSet<RecurringJobRow> RecurringJobRow { get; set; } //Hangfire.Hash
 		#endregion
 
 		#region Sprocs
@@ -678,56 +677,4 @@ namespace Traffk.Bal.Data.Rdb.TraffkGlobal
 			PartialValidate();
         }
 	}
-
-    [Table("Hash", Schema = "HangFire")]
-    public partial class RecurringJobRow : IRdbDataEntity, IValidate, IPreSave, IPrimaryKey<int>
-    {
-        object IPrimaryKey.Key { get { return Id; } }
-
-        int IPrimaryKey<int>.Key { get { return Id; } }
-
-        [DisplayName("Id")]
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Column("Id")]
-        public int Id { get; set; }
-
-        [DisplayName("Recurring Job Id")]
-        [MaxLength(100)]
-        [Column("Key")]
-        public string Key { get; set; }
-
-        [DisplayName("Field")]
-        [MaxLength(100)]
-        [Column("Field")]
-        public string Field { get; set; }
-
-        [DisplayName("Value")]
-        [Column("Value")]
-        public string Value { get; set; }
-
-        partial void PartialPreSave();
-
-        void IPreSave.PreSave()
-        {
-            OnPreSave();
-        }
-
-        protected virtual void OnPreSave()
-        {
-            PartialPreSave();
-        }
-
-        partial void PartialValidate();
-
-        public virtual void Validate()
-        {
-            Requires.Text(Key, nameof(Key), true, 0, 100);
-            Requires.Text(Field, nameof(Field), true, 0, 100);
-            Requires.Text(Value, nameof(Value), true, 0, 100);
-            PartialValidate();
-        }
-
-
-    }
 }
