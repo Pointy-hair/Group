@@ -54,7 +54,7 @@ namespace Traffk.Bal.ApplicationParts
                             RecurringJobId = j.RecurringJobId;
                             ContactId = j.ContactId;
                         }
-                        if (TenantId == null)
+                        if (TenantId == null || ContactId == null)
                         {
                             RecurringJobId = RecurringJobId ?? context.GetJobParameter<string>("RecurringJobId");
                             if (RecurringJobId != null)
