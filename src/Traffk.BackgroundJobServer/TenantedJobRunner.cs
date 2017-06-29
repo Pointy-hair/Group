@@ -25,17 +25,17 @@ namespace Traffk.BackgroundJobServer
         private readonly BlobStorageServices BlobStorageService;
         private readonly IBackgroundJobClient InnerBackgroundJobClient;
 
-        public TenantedJobRunner(TraffkTenantModelDbContext db, 
+        public TenantedJobRunner(
+            TraffkTenantModelDbContext db, 
             TraffkGlobalDbContext globalContext,
-            JobRunnerProgram jobRunnerProgram,
+            IJobInfoFinder jobInfoFinder,
             CurrentTenantServices current, 
             ITableauAdminService tableauAdminService,
             ILogger logger,
             ITableauVisualServices tableauVisualService,
             BlobStorageServices blobStorageService,
-            IBackgroundJobClient innerBackgroundJobClient) : base(globalContext, 
-                jobRunnerProgram, 
-                logger)
+            IBackgroundJobClient innerBackgroundJobClient) 
+            : base(globalContext, jobInfoFinder, logger)
         {
             DB = db;
             Current = current;

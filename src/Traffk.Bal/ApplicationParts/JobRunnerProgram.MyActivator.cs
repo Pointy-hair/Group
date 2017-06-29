@@ -2,10 +2,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using RevolutionaryStuff.Core.Caching;
 using System;
-using System.Diagnostics;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
+using Traffk.Bal.Services;
 
 namespace Traffk.Bal.ApplicationParts
 {
@@ -13,65 +12,56 @@ namespace Traffk.Bal.ApplicationParts
     {
         private class MyActivator : JobActivator
         {
-            private readonly JobRunnerProgram Runner;
+            private readonly IServiceProvider ServiceProvider; 
 
             public MyActivator(JobRunnerProgram runner)
             {
-                Runner = runner;
+                ServiceProvider = runner.ServiceProvider.CreateScope().ServiceProvider;
             }
 
             public override JobActivatorScope BeginScope(JobActivatorContext context)
-                => new MyScope(this, this.Runner.ServiceProvider.CreateScope().ServiceProvider, context);
+                => new MyScope(ServiceProvider.CreateScope().ServiceProvider, context);
 
             public class MyScope : JobActivatorScope
             {
-                private readonly MyActivator Activator;
                 private readonly IServiceProvider SP;
                 private readonly JobActivatorContext Context;
 
-                public int? TenantId { get; private set; }
-                public int? ParentJobId { get; private set; }
-                public int? JobId { get; private set; }
-                public string RecurringJobId { get; private set; }
-                public int? ContactId { get; private set; }
-                public ApplicationUser CurrentUser { get; private set; }
+                private readonly JobInfo JobInfo = new JobInfo();
 
-                public MyScope(MyActivator activator, IServiceProvider sp, JobActivatorContext context)
+                public MyScope(IServiceProvider sp, JobActivatorContext context)
                 {
-                    Activator = activator;
                     SP = sp;
                     Context = context;
-                    Activator.Runner.CurrentThreadScope = this;
-                    try
+
+                    var gdb = sp.GetRequiredService<Data.Rdb.TraffkGlobal.TraffkGlobalDbContext>();
+                    JobInfo.JobId = int.Parse(context.BackgroundJob.Id);
+                    var j = gdb.Job.Find(JobInfo.JobId);
+                    if (j != null)
                     {
-                        var jobId = int.Parse(context.BackgroundJob.Id);
-                        var j = this.Activator.Runner.GDB.Job.Find(jobId);
-                        if (j != null)
+                        JobInfo.TenantId = j.TenantId;
+                        JobInfo.ParentJobId = j.ParentJobId;
+                        JobInfo.RecurringJobId = j.RecurringJobId;
+                        JobInfo.ContactId = j.ContactId;
+                    }
+                    if (JobInfo.TenantId == null)
+                    {
+                        JobInfo.RecurringJobId = JobInfo.RecurringJobId ?? context.GetJobParameter<string>("RecurringJobId");
+                        if (JobInfo.RecurringJobId != null)
                         {
-                            TenantId = j.TenantId;
-                            JobId = j.Id;
-                            ParentJobId = j.ParentJobId;
-                            RecurringJobId = j.RecurringJobId;
-                            ContactId = j.ContactId;
-                        }
-                        if (TenantId == null)
-                        {
-                            RecurringJobId = RecurringJobId ?? context.GetJobParameter<string>("RecurringJobId");
-                            if (RecurringJobId != null)
-                            {
-                                var z = BackgroundJobs.TenantedBackgroundJobClient.ParseRecurringJobId(RecurringJobId);
-                                TenantId = z.TenantId;
-                                ContactId = z.ContactId;
-                            }
-                        }
-                        if (ContactId != null && ContactId > 0)
-                        {
-                            CurrentUser = this.Activator.Runner.TenantDB.Users.FirstOrDefault(x => x.ContactId == ContactId);
+                            var z = BackgroundJobs.TenantedBackgroundJobClient.ParseRecurringJobId(JobInfo.RecurringJobId);
+                            JobInfo.TenantId = z.TenantId;
+                            JobInfo.ContactId = z.ContactId;
                         }
                     }
-                    catch (Exception ex)
+                    ((MyJobInfoFinder)sp.GetRequiredService<IJobInfoFinder>()).JobInfo = JobInfo;
+                    var tenantFinder = (MyTraffkTenantFinder)sp.GetRequiredService<ITraffkTenantFinder>();
+                    tenantFinder.TenantId = JobInfo.TenantId;
+                    if (JobInfo.ContactId != null)
                     {
-                        Trace.WriteLine(ex);
+                        var currentUser = (MyCurrentUser)sp.GetRequiredService<ICurrentUser>();
+                        var tdb = sp.GetRequiredService<TraffkTenantModelDbContext>();
+                        currentUser.User = tdb.Users.FirstOrDefault(u=>u.TenantId==JobInfo.TenantId && u.ContactId==JobInfo.ContactId);
                     }
                 }
 

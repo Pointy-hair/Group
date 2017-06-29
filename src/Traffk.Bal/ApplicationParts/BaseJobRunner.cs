@@ -7,7 +7,6 @@ using Serilog.Core;
 using Serilog.Core.Enrichers;
 using Traffk.Bal.Data.Rdb.TraffkGlobal;
 using ILogger = Serilog.ILogger;
-using Microsoft.EntityFrameworkCore;
 
 namespace Traffk.Bal.ApplicationParts
 {
@@ -15,7 +14,7 @@ namespace Traffk.Bal.ApplicationParts
     {
         protected readonly ILogger Logger;
         protected readonly int InstanceId;
-        protected readonly int JobId;
+        protected readonly IJobInfo JobInfo;
 
         protected readonly string ConstructedText = "Constructed";
         protected readonly string DisposedText = "Disposed";
@@ -29,25 +28,25 @@ namespace Traffk.Bal.ApplicationParts
 
         public string GetParentJobResultData()
         {
-            var parentId = GlobalContext.Job.Find(this.JobId).ParentJobId;
+            var parentId = GlobalContext.Job.Find(JobInfo.JobId).ParentJobId;
             if (parentId == null) return null;
             return GlobalContext.Job.Find(parentId.Value).ResultData;
         }
 
-        protected BaseJobRunner(TraffkGlobalDbContext globalContext, 
-            JobRunnerProgram jobRunnerProgram, 
+        protected BaseJobRunner(
+            TraffkGlobalDbContext globalContext,
+            IJobInfoFinder jobInfoFinder,
             ILogger logger)
         {
             GlobalContext = globalContext;
             InstanceId = Interlocked.Increment(ref InstanceId_s);
-
-            JobId = jobRunnerProgram.JobId ?? 0;
+            JobInfo = jobInfoFinder.JobInfo;
 
             Logger = logger.ForContext(new ILogEventEnricher[]
             {
                 new PropertyEnricher(nameof(InstanceId), InstanceId),
-                new PropertyEnricher(nameof(JobId), JobId),
-                new PropertyEnricher(typeof(Type).Name, this.GetType().Name),
+                new PropertyEnricher(nameof(JobInfo.JobId), JobInfo.JobId),
+                new PropertyEnricher(typeof(Type).Name, GetType().Name),
             });
 
             Logger.Information(ConstructedText);
@@ -59,7 +58,7 @@ namespace Traffk.Bal.ApplicationParts
         protected void PostResult(string serializedResult)
         {
             if (serializedResult == null) return;
-            var j = GlobalContext.Job.Find(JobId);
+            var j = GlobalContext.Job.Find(JobInfo.JobId);
             j.ResultData = serializedResult;
             GlobalContext.SaveChanges();
         }

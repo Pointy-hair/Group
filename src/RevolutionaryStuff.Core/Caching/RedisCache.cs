@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using StackExchange.Redis;
@@ -83,7 +82,7 @@ namespace RevolutionaryStuff.Core.Caching
     {
     }
 
-    public class SynchronizedRedisCache : Cache.SynchronizedCacher, ISynchronizedRedisCache
+    public class SynchronizedRedisCache : SynchronizedCacher, ISynchronizedRedisCache
     {
         public SynchronizedRedisCache(IRedisCache inner) : base(inner)
         {

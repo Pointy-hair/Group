@@ -13,12 +13,11 @@ namespace Traffk.Bal.ApplicationParts
     {
         public class MyTraffkTenantFinder : ITraffkTenantFinder, IEnumerable<KeyValuePair<string, object>>
         {
-            private readonly JobRunnerProgram Runner;
             private readonly TraffkTenantShardsDbContext DB;
+            internal int? TenantId;
 
-            public MyTraffkTenantFinder(JobRunnerProgram runner, TraffkTenantShardsDbContext db)
+            public MyTraffkTenantFinder(TraffkTenantShardsDbContext db)
             {
-                Runner = runner;
                 DB = db;
             }
 
@@ -28,18 +27,17 @@ namespace Traffk.Bal.ApplicationParts
             }
 
             Task<int> ITenantFinder<int>.GetTenantIdAsync()
-                => Task.FromResult(Runner.CurrentThreadScope.TenantId.Value);
+                => Task.FromResult(TenantId.Value);
 
             IEnumerator<KeyValuePair<string, object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator()
             {
-                var tenantId = Runner.CurrentThreadScope.TenantId.Value;
+                var tenantId = TenantId.Value;
                 var databaseName = GetTenantDatabaseName(tenantId);
                 yield return new KeyValuePair<string, object>(ConfigStringFormatter.CommonTerms.DatabaseName, databaseName);
             }
 
             IEnumerator IEnumerable.GetEnumerator()
                 => CollectionHelpers.GetEnumerator(this);
-
         }
     }
 }

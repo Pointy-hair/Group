@@ -28,12 +28,13 @@ namespace Traffk.BackgroundJobServer
         private readonly IVault Vault;
         
         public DataSourceSyncRunner(
+            IJobInfoFinder jobInfoFinder,
             JobRunnerProgram jobRunnerProgram, 
             TraffkGlobalDbContext gdb, 
             IVault vault,
             IOptions<BlobStorageServices.BlobStorageServicesOptions> blobOptions, 
             Serilog.ILogger logger)
-            : base(gdb, jobRunnerProgram, logger)
+            : base(gdb, jobInfoFinder, logger)
         {
             BlobOptions = blobOptions;
             Vault = vault;

@@ -46,7 +46,7 @@ namespace Traffk.BackgroundJobServer
         }
 
         public TenantManagementJobsRunner(
-            JobRunnerProgram jobRunnerProgram,
+            IJobInfoFinder jobInfoFinder,
             TraffkGlobalDbContext gdb,
             Serilog.ILogger logger,
             TraffkTenantShardsDbContext tdb,
@@ -55,7 +55,7 @@ namespace Traffk.BackgroundJobServer
             ServiceClientCredentialFactory credentialFactory, 
             IOptions<TenantManagementJobsRunnerConfiguration> configurationOptions,
             DbContextOptions<TraffkTenantModelDbContext> rdbOptions)
-            : base(gdb, jobRunnerProgram, logger)
+            : base(gdb, jobInfoFinder, logger)
         {
             CredentialFactory = credentialFactory;
             ConfigurationOptions = configurationOptions;
@@ -92,7 +92,7 @@ namespace Traffk.BackgroundJobServer
                                 DatabaseName = newDatabaseName,
                                 TenantId = tenantId
                             };
-                            var initJob = BackgroundJob.ContinueWith<ITenantManagementJobs>(JobId.ToString(), j => j.InitializeNewTenantAsync(id));
+                            var initJob = BackgroundJob.ContinueWith<ITenantManagementJobs>(JobInfo.JobId.ToString(), j => j.InitializeNewTenantAsync(id));
                             initJob = BackgroundJob.ContinueWith<ITenantManagementJobs>(initJob, j => j.AddTenantToShardManagerAsync(id));
                             var bj = (IBackgroundJobClient)new TenantedBackgroundJobClient(GlobalContext, new HardcodedTraffkTenantFinder(tenantId));
                             bj.ContinueWith<ITenantJobs>(initJob, j => j.ReconfigureFiscalYears(new Bal.Settings.FiscalYearSettings { CalendarMonth = 1, CalendarYear = 2000, FiscalYear = 2000 }));
