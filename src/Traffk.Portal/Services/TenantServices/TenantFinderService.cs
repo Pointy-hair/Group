@@ -1,19 +1,20 @@
 ﻿using System;
-using Microsoft.Extensions.Configuration;
-using RevolutionaryStuff.Core;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using RevolutionaryStuff.Core.Caching;
-using System.Linq;
-using Traffk.Bal.Data.Rdb;
+using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.ApplicationParts;
+using RevolutionaryStuff.Core.Caching;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Traffk.Bal;
-using System.Collections;
-using Traffk.Bal.Services;
+using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.Data.Rdb.TraffkTenantShards;
+using Traffk.Bal.Services;
 
 namespace TraffkPortal.Services.TenantServices
 {
@@ -80,25 +81,47 @@ namespace TraffkPortal.Services.TenantServices
             }
             if (TenantId_p == 0)
             {
-                var z = HostMapCache.Do(ActualHostname, () =>
-                {
-                    var res = db.AppFindByHostname(ActualHostname, AppTypes.Portal).ExecuteSynchronously().FirstOrDefault();
-                    return res;
-                });
+                var defaultTenantFinderHostPattern = tso.DefaultTenantFinderHostPattern;
+                var defaultHostNamePattern = defaultTenantFinderHostPattern.Replace(@"{0}", @"([^\.]*)");
+                var defaultHostNameRegexPattern = new Regex(defaultHostNamePattern, RegexOptions.Compiled);
 
+                AppHostItem z = null;
+
+                if (defaultHostNameRegexPattern.IsMatch(ActualHostname))
+                {
+                    var m = defaultHostNameRegexPattern.Match(ActualHostname);
+                    var loginDomain = m.Success ? m.Groups[1].Value : null;
+
+                    var matchedTenant = db.Tenants.SingleOrDefault(x => StringHelpers.IsSameIgnoreCase(x.LoginDomain, loginDomain));
+                    if (matchedTenant != null)
+                    {
+                        z = HostMapCache.Do(ActualHostname, () =>
+                        {
+                            var app = new AppHostItem
+                            {
+                                TenantId = matchedTenant.TenantId,
+                                PreferredHostname = ActualHostname,
+                                HostDatabaseName = matchedTenant.HostDatabaseName
+                            };
+                            return app;
+                        });
+                    }
+                }
+
+                if (z == null)
+                {
+                    z = HostMapCache.Do(ActualHostname, () =>
+                    {
+                        var res = db.AppFindByHostname(ActualHostname, AppTypes.Portal).ExecuteSynchronously().FirstOrDefault();
+                        return res;
+                    });
+                }
+                
                 if (z != null)
                 {
-                    //if (z.ActualHostname != z.PreferredHostname)
-                    //{
-                    //    var tenant = db.TenantFindByTenantId(z.TenantId).ExecuteSynchronously().FirstOrDefault();
-                    //    z.ActualHostname = tso.DefaultTenantFinderHostPattern.Replace(@"{0}", tenant.LoginDomain);
-                    //}
-
                     TenantId_p = z.TenantId;
                     PreferredHostname = z.PreferredHostname;
                     DatabaseName = z.HostDatabaseName;
-
-                    //acc.HttpContext.Request.Host = new HostString(z.ActualHostname);
                 }
             }
             acc.HttpContext.Items[HttpContextTenantIdKey] = TenantId_p;

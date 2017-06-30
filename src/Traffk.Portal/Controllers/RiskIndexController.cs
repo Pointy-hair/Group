@@ -7,8 +7,8 @@ using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.Permissions;
 using Traffk.Bal.ReportVisuals;
 using Traffk.Bal.Settings;
+using Traffk.Portal.Models.ReportingModels;
 using Traffk.Tableau;
-using TraffkPortal.Models.ReportingModels;
 using TraffkPortal.Permissions;
 using TraffkPortal.Services;
 

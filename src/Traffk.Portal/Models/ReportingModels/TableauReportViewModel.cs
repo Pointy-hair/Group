@@ -1,7 +1,8 @@
 ﻿using System.Linq;
+using Traffk.Bal.Data;
 using Traffk.Bal.ReportVisuals;
 
-namespace TraffkPortal.Models.ReportingModels
+namespace Traffk.Portal.Models.ReportingModels
 {
     public class TableauReportViewModel
     {
@@ -28,5 +29,11 @@ namespace TraffkPortal.Models.ReportingModels
         public string WorksheetName { get; private set; }
         public string Description { get; private set; }
         public ReportDetails.RenderingAttributeFlags RenderingAttributes { get; private set; }
+    }
+
+    public class ScheduleReportViewModel
+    {
+        public TableauReportViewModel ReportViewModel { get; set; }
+        public RecurrenceSettings RecurrenceSettings { get; set; }
     }
 }

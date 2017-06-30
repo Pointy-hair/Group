@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Hangfire;
 
 namespace Traffk.Bal.Data
 {
@@ -278,6 +279,11 @@ namespace Traffk.Bal.Data
                 default:
                     throw new UnexpectedSwitchValueException(PatternType);
             }
+        }
+
+        public string ConvertToCronString()
+        {
+            
         }
     }
 }

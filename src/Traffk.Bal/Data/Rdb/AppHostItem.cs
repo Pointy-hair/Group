@@ -7,5 +7,6 @@
         public string ActualHostname { get; set; }
         public string PreferredHostname { get; set; }
         public string HostDatabaseName { get; set; }
+        public string LoginDomain { get; set; }
     }
 }

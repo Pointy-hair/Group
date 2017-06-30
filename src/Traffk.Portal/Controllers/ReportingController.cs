@@ -4,19 +4,19 @@ using Microsoft.AspNetCore.Mvc;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using System;
+using System.Diagnostics;
 using System.Linq;
-using Hangfire.Storage;
 using Traffk.Bal.BackgroundJobs;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.Permissions;
 using Traffk.Bal.ReportVisuals;
 using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
+using Traffk.Portal.Models.ReportingModels;
 using Traffk.Tableau;
 using Traffk.Tableau.REST;
 using TraffkPortal;
 using TraffkPortal.Controllers;
-using TraffkPortal.Models.ReportingModels;
 using TraffkPortal.Permissions;
 using TraffkPortal.Services;
 using ILogger = Serilog.ILogger;
@@ -182,6 +182,7 @@ namespace Traffk.Portal.Controllers
             return View(ViewNames.DownloadList, items);
         }
 
+        [HttpGet]
         [Route("/Reporting/Report/Schedule/{id}/{anchorName}")]
         public IActionResult Schedule(string id, string anchorName)
         {
@@ -199,9 +200,27 @@ namespace Traffk.Portal.Controllers
                 }
                 var tableauReportViewModel = new TableauReportViewModel(reportVisual);
 
+                return View(tableauReportViewModel);
+            }
+            catch (Exception e)
+            {
+                Trace.WriteLine(e);
+                throw;
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Schedule(ScheduleReportViewModel model)
+        {
+            try
+            {
+                var tableauReportViewModel = model.ReportViewModel;
                 var createPdfOptions = new CreatePdfOptions(tableauReportViewModel.WorkbookName, tableauReportViewModel.ViewName, tableauReportViewModel.WorksheetName);
+
+                
+
                 RecurringJobManager.Add(Hangfire.Common.Job.FromExpression<ITenantJobs>(x => x.ScheduleTableauPdfDownload(createPdfOptions)), Cron.MinuteInterval(2));
-                return Json("success");
+
             }
             catch (Exception e)
             {
