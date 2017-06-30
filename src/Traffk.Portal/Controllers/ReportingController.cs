@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using System;
+using System.Linq;
 using Hangfire.Storage;
 using Traffk.Bal.BackgroundJobs;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
@@ -39,9 +40,15 @@ namespace Traffk.Portal.Controllers
             public const string ShowReport = "ShowReport";
             public const string Index = "Index";
             public const string Report = "Report";
+            public const string DownloadedReports = "Downloads";
+            public const string ScheduledReports = "ScheduledReportIndex";
         }
 
-        
+        public static class ViewNames
+        {
+            public const string DownloadList = "Downloads";
+        }
+
         public ReportingController(
             TraffkTenantModelDbContext db,
             CurrentContextServices current,
@@ -160,6 +167,21 @@ namespace Traffk.Portal.Controllers
             return NoContent(); //Placeholder - will redirect to a reportIndex page
         }
 
+        [Route("/Reporting/Report/Downloads")]
+        [ActionName(ActionNames.DownloadedReports)]
+        public IActionResult DownloadedReportIndex(string sortCol, string sortDir, int? page, int? pageSize)
+        {
+            var currentUserContactId = Current.User.ContactId;
+            var items = Rdb.Job.Where(j => j.TenantId == TenantId 
+                && j.ContactId == currentUserContactId
+                && j.HangfireJobDetails.Method.Contains("Download",true));
+
+            items = ApplyBrowse(items, sortCol ?? nameof(Job.CreatedAt),
+                sortDir ?? AspHelpers.SortDirDescending, page, pageSize);
+
+            return View(ViewNames.DownloadList, items);
+        }
+
         [Route("/Reporting/Report/Schedule/{id}/{anchorName}")]
         public IActionResult Schedule(string id, string anchorName)
         {
@@ -178,7 +200,7 @@ namespace Traffk.Portal.Controllers
                 var tableauReportViewModel = new TableauReportViewModel(reportVisual);
 
                 var createPdfOptions = new CreatePdfOptions(tableauReportViewModel.WorkbookName, tableauReportViewModel.ViewName, tableauReportViewModel.WorksheetName);
-                RecurringJobManager.Add(Hangfire.Common.Job.FromExpression<ITenantJobs>(x => x.ScheduleTableauPdfDownload(createPdfOptions)), Cron.Minutely());
+                RecurringJobManager.Add(Hangfire.Common.Job.FromExpression<ITenantJobs>(x => x.ScheduleTableauPdfDownload(createPdfOptions)), Cron.MinuteInterval(2));
                 return Json("success");
             }
             catch (Exception e)
@@ -186,10 +208,17 @@ namespace Traffk.Portal.Controllers
                 Console.WriteLine(e);
                 throw;
             }
-
         }
 
-        public void QueueReportDownload(CreatePdfOptions options)
+        [Route("/Reporting/Report/Scheduled")]
+        [ActionName(ActionNames.ScheduledReports)]
+        public IActionResult ScheduledReportIndex()
+        {
+            var userRecurringJobs = RecurringJobManager.GetUserRecurringJobs();
+            return View(userRecurringJobs);
+        }
+
+        private void QueueReportDownload(CreatePdfOptions options)
         {
             var jobId = Backgrounder.Enqueue<ITenantJobs>(z => z.CreateTableauPdf(options));
             Backgrounder.ContinueWith<ITenantJobs>(jobId, y => y.DownloadTableauPdfContinuationJobAsync());

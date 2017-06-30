@@ -66,7 +66,9 @@ namespace TraffkPortal.Controllers
                     return new JsonResult(simpleException);
                 }
             }
-            return RedirectToAction(ActionNames.Index, ErrorController.Name);
+            var exceptionError = ExceptionError.CreateExceptionErrorFromJson(TempData[Name].ToString());
+
+            return View(ActionNames.Index, new ErrorModel(ViewData[ErrorKeys.StatusCode]?.ToString() ?? "", exceptionError));
         }
 
         [Route("/Error")]

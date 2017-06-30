@@ -20,6 +20,14 @@ namespace Traffk.Orchestra
         private OrchestraRxTokenResponse Token;
         private HttpClient HttpClientWithHeaders;
 
+        public static class OrchestraEndpoints
+        {
+            public const string PharmacySearch = @"/Pharmacies/Search";
+            public const string DrugSearch = @"/Drugs/Search";
+            public const string DrugDetail = @"/Drugs/{DrugID}";
+            public const string DrugAlternatives = @"Drugs/Alternatives";
+        }
+
         public OrchestraRxApiClient(IOptions<OrchestraRxOptions> options)
         {
             Options = options.Value;
@@ -168,7 +176,6 @@ namespace Traffk.Orchestra
             return JsonConvert.DeserializeObject<PharmacyResponse>(json);
         }
 
-        //Consider deprecating
         public async Task<DrugOption> DrugAlternativeSingleSearchAsync(
             DrugAlternativeSearchQuery searchQuery)
         {

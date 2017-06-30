@@ -1,20 +1,24 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Hangfire;
 using Hangfire.States;
 using RevolutionaryStuff.Core;
 using Traffk.Bal.Data.Rdb.TraffkGlobal;
 using Traffk.Bal.Services;
 using System.Text.RegularExpressions;
+using Hangfire.Storage;
 
 namespace Traffk.Bal.BackgroundJobs
 {
     public class TenantedBackgroundJobClient : IBackgroundJobClient, ITraffkRecurringJobManager
     {
-        private BackgroundJobClient Inner;
-        private TraffkGlobalDbContext GDB;
-        private ITraffkTenantFinder Finder;
-        private RecurringJobManager RecurringJobManager;
-        private ICurrentUser CurrentUser;
+        private readonly BackgroundJobClient Inner;
+        private readonly TraffkGlobalDbContext GDB;
+        private readonly ITraffkTenantFinder Finder;
+        private readonly RecurringJobManager RecurringJobManager;
+        private readonly ICurrentUser CurrentUser;
+        private int TenantId;
 
         public TenantedBackgroundJobClient(TraffkGlobalDbContext gdb, ITraffkTenantFinder finder, ICurrentUser currentUser = null)
         {
@@ -23,6 +27,7 @@ namespace Traffk.Bal.BackgroundJobs
             Finder = finder;
             CurrentUser = currentUser;
             RecurringJobManager = new RecurringJobManager();
+            TenantId = Finder.GetTenantIdAsync().ExecuteSynchronously();
         }
 
         bool IBackgroundJobClient.ChangeState(string jobId, IState state, string expectedState)
@@ -30,7 +35,7 @@ namespace Traffk.Bal.BackgroundJobs
 
         string IBackgroundJobClient.Create(Hangfire.Common.Job job, IState state)
         {
-            var tenantId = Finder.GetTenantIdAsync().ExecuteSynchronously();
+            var tenantId = TenantId;
             var jobId = Inner.Create(job, state);
             var j = GDB.Job.Find(int.Parse(jobId));
             j.TenantId = tenantId;
@@ -58,6 +63,15 @@ namespace Traffk.Bal.BackgroundJobs
         {
             //TODO: Make sure recurringJobId actually exists - need to read Hangfire.Hash table
 
+        }
+
+        List<RecurringJobDto> ITraffkRecurringJobManager.GetUserRecurringJobs()
+        {
+            var recurringJobs = Hangfire.JobStorage.Current.GetConnection().GetRecurringJobs();
+            var currentUserRecurringJobs = recurringJobs.Where(x =>
+                ParseRecurringJobId(x.Id).ContactId == CurrentUser?.User?.ContactId
+                && ParseRecurringJobId(x.Id).TenantId == TenantId);
+            return currentUserRecurringJobs.ToList();
         }
 
         public class RecurringJobIdContext

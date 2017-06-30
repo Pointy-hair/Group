@@ -2,7 +2,9 @@
 using Hangfire.States;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 using Traffk.Bal.BackgroundJobs;
+using Traffk.Bal.Services;
 
 namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
 {
@@ -15,6 +17,28 @@ namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
 
         [NotMapped]
         public bool CanBeCancelled => CancellableStateNames.Contains(this.StateName);
+
+        [NotMapped]
+        public bool Downloadable
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(ResultData)) return false;
+                var cloudFilePointer = JsonConvert.DeserializeObject<CloudFilePointer>(ResultData) ?? null;
+
+                return (this.StateName == SucceededState.StateName && cloudFilePointer != null);
+            }
+        }
+
+        public Uri DownloadLink
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(ResultData)) return null;
+                var cloudFilePointer = JsonConvert.DeserializeObject<CloudFilePointer>(this.ResultData) ?? null;
+                return cloudFilePointer?.Uri;
+            }
+        }
 
         [NotMapped]
         public HangfireJobDetails HangfireJobDetails

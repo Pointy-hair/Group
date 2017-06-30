@@ -10,7 +10,9 @@ namespace Traffk.Bal.Settings
             Account,
             Exception,
             DownloadedReport,
-            ApiCall
+            ApiCall,
+            ExternalApiCall,
+            Default
         }
     }
 }

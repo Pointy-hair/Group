@@ -58,7 +58,7 @@ namespace Traffk.Portal.Controllers.Api
 
         [HttpPost]
         [AllowAnonymous]
-        [Route("Authenticate")]
+        [Route("authenticate")]
         public async Task<TokenResponse> GetTokenAsync()
         {
             List<Claim> claims = null;
@@ -68,6 +68,14 @@ namespace Traffk.Portal.Controllers.Api
             if (!String.IsNullOrEmpty(apiKey))
             {
                 var userClaims = await GetClaimsAsync(username, apiKey);
+                if (userClaims == null)
+                {
+                    //null userClaims means incorrect apiKey
+                    return new TokenResponse
+                    {
+                        access_token = "Authentication error."
+                    };
+                }
                 claims = userClaims.ToList();
             }
 

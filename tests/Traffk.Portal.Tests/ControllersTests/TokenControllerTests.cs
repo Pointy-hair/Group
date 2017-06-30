@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Traffk.Portal.Tests.Helpers;
 using TraffkPortal;
 
@@ -42,9 +43,12 @@ namespace Traffk.Portal.Tests.ControllersTests
 
                 var response = TestClient.PostAsync("/api/token/authenticate", content).ExecuteSynchronously();
 
+                var json = response.Content.ReadAsStringAsync().ExecuteSynchronously();
+                var tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(json);
+
                 Assert.IsNotNull(response);
-                Assert.IsTrue(response.StatusCode != HttpStatusCode.OK);
-                Assert.IsFalse(response.IsSuccessStatusCode);
+                Assert.IsTrue(response.StatusCode == HttpStatusCode.OK);
+                Assert.AreEqual("Authentication error.", tokenResponse.access_token);
             }
 
             [TestMethod]

@@ -26,7 +26,7 @@ namespace Traffk.Portal.Controllers.Api
         }
 
         [HttpGet]
-        [Route("Pharmacies")]
+        [Route("pharmacies")]
         public PharmacyResponse SearchPharmacies(string zip, int radius)
         {
             Log();
@@ -35,7 +35,7 @@ namespace Traffk.Portal.Controllers.Api
         }
 
         [HttpGet]
-        [Route("Drugs")]
+        [Route("drugs")]
         public DrugResponse SearchDrugs(string query)
         {
             Log();
@@ -44,7 +44,7 @@ namespace Traffk.Portal.Controllers.Api
         }
 
         [HttpGet]
-        [Route("Drugs/{ndcReference}")]
+        [Route("drugs/{ndcReference}")]
         public DrugDetailResponse DrugDetail(string ndcReference)
         {
             Log();
@@ -53,7 +53,7 @@ namespace Traffk.Portal.Controllers.Api
         }
 
         [HttpGet]
-        [Route("Drugs/{ndcReference}/Alternative/{metricQuantity}/{daysOfSupply}")]
+        [Route("drugs/{ndcReference}/alternative/{metricQuantity}/{daysOfSupply}")]
         public DrugOption[] DrugAlternative(string ndcReference, double metricQuantity, double daysOfSupply)
         {
             Log();
@@ -81,7 +81,7 @@ namespace Traffk.Portal.Controllers.Api
         //}
 
         [HttpGet]
-        [Route("Plans")]
+        [Route("plans")]
         public IEnumerable<Plan> GetPlans()
         {
             var plans = new List<Plan>

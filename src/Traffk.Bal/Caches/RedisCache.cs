@@ -1,9 +1,10 @@
 ﻿using System;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using RevolutionaryStuff.Core.Caching;
 using StackExchange.Redis;
 
-namespace RevolutionaryStuff.Core.Caching
+namespace Traffk.Bal.Caches
 {
     public interface IRedisCache : ICacher
     {
@@ -82,7 +83,7 @@ namespace RevolutionaryStuff.Core.Caching
     {
     }
 
-    public class SynchronizedRedisCache : SynchronizedCacher, ISynchronizedRedisCache
+    public class SynchronizedRedisCache : RevolutionaryStuff.Core.Caching.Cache.SynchronizedCacher, ISynchronizedRedisCache
     {
         public SynchronizedRedisCache(IRedisCache inner) : base(inner)
         {

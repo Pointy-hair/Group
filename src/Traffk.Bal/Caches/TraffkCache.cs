@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
+using RevolutionaryStuff.Core;
+using RevolutionaryStuff.Core.Caching;
 
-namespace RevolutionaryStuff.Core.Caching
+namespace Traffk.Bal.Caches
 {
     public class TraffkCache : ICacher
     {
@@ -11,7 +13,7 @@ namespace RevolutionaryStuff.Core.Caching
         public TraffkCache(ISynchronizedRedisCache redisCache)
         {
             RedisCache = redisCache;
-            InnerDataCacher = Cache.DataCacher;
+            InnerDataCacher = RevolutionaryStuff.Core.Caching.Cache.DataCacher;
         }
 
         CacheEntry<TVal> ICacher.FindOrCreate<TVal>(string key, Func<string, CacheEntry<TVal>> creator, bool forceCreate, TimeSpan? timeout)

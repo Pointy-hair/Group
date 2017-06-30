@@ -147,7 +147,18 @@
                             }
                             @if (await User.HasPermission(AuthorizationService, PermissionNames.BasicReporting))
                             {
-                                <li><a asp-controller="@ReportingController.Name" asp-action="Index" class="@(mainNavPageKey == AspHelpers.MainNavigationPageKeys.Reporting ? "active" : "")">Reports</a></li>
+                                <li class="dropdown" role="presentation">
+                                    <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle @(mainNavPageKey == AspHelpers.MainNavigationPageKeys.Reporting ? "active" : "")" href="#">
+                                        Reports
+                                        <b class="caret"></b>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-submenu" style="width: auto;">
+                                        <li><a asp-controller="@ReportingController.Name" asp-action="@ReportingController.ActionNames.Index">All</a></li>
+                                        <li><a asp-controller="@ReportingController.Name" asp-action="@ReportingController.ActionNames.DownloadedReports">Downloads</a></li>
+                                        <li><a asp-controller="@ReportingController.Name" asp-action="@ReportingController.ActionNames.ScheduledReports">Scheduled</a></li>
+                                    </ul>
+                                </li>
+
                             }
                             @if (await User.HasPermission(AuthorizationService, PermissionNames.Messaging))
                             {
@@ -220,7 +231,17 @@
                             }                            
                             @if (await User.HasPermission(AuthorizationService, PermissionNames.BasicReporting))
                             {
-                                <li><a asp-controller="@ReportingController.Name" asp-action="Index" class="@(mainNavPageKey == AspHelpers.MainNavigationPageKeys.Reporting ? "active" : "")">Reports</a></li>
+                                <li class="has-child-menu">
+                                    <a aria-expanded="false" aria-haspopup="true" role="button" class="dropdown-toggle @(mainNavPageKey == AspHelpers.MainNavigationPageKeys.Reporting ? "active" : "")" href="#">
+                                        Reports
+                                        <i class="fa fa-caret-right" aria-hidden="true"></i>
+                                    </a>
+                                    <ul style="width: auto;">
+                                        <li><a asp-controller="@ReportingController.Name" asp-action="@ReportingController.ActionNames.Index">All</a></li>
+                                        <li><a asp-controller="@ReportingController.Name" asp-action="@ReportingController.ActionNames.DownloadedReports">Downloads</a></li>
+                                        <li><a asp-controller="@ReportingController.Name" asp-action="@ReportingController.ActionNames.ScheduledReports">Scheduled</a></li>
+                                    </ul>
+                                </li>
                             }
                             @if (await User.HasPermission(AuthorizationService, PermissionNames.Messaging))
                             {
