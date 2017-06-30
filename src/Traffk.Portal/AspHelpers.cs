@@ -209,6 +209,7 @@ namespace TraffkPortal
             actionName = actionName ?? hh.ViewContext.RouteData.Values["action"] as string;
             var colName = columnExpression.GetFullyQualifiedName();
             var displayName = hh.FriendlyNameFor(columnExpression);
+
             if (colName == currentSortColName)
             {
                 var tb = hh.ActionLink(

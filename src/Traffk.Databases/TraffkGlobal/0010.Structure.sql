@@ -173,3 +173,41 @@ BEGIN
 END
 
 GO
+
+create proc HangfireJobReset
+	@jobId int
+as
+begin
+
+	set nocount on
+
+	declare @stateId int
+	declare @stateName nvarchar(20)
+
+	select top(1) @stateId=Id, @stateName=name
+	from hangfire.[state]
+	where jobid=@jobId
+	order by Id
+
+	exec db.PrintNow 'HangfireJobReset jobId={n0} => stateId={n1}, stateName=[{s0}]', @jobId, @stateId, @s0=@stateName
+
+	update hangfire.Job
+	set
+		StateId=@stateId,
+		StateName=@stateName
+	where
+		Id=@jobId
+
+	exec db.PrintNow 'Updated {n0} job rows', @@rowcount
+
+	delete 
+	from hangfire.[State]
+	where
+		jobId=@jobId and
+		id<>@stateId
+
+	exec db.PrintNow 'Deleted {n0} state rows', @@rowcount
+
+end
+
+GO

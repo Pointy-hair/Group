@@ -83,7 +83,7 @@ namespace Traffk.Bal.Caches
     {
     }
 
-    public class SynchronizedRedisCache : RevolutionaryStuff.Core.Caching.Cache.SynchronizedCacher, ISynchronizedRedisCache
+    public class SynchronizedRedisCache : SynchronizedCacher, ISynchronizedRedisCache
     {
         public SynchronizedRedisCache(IRedisCache inner) : base(inner)
         {

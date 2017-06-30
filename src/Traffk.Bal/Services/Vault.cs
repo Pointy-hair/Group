@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Newtonsoft.Json;
-using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using System;
 using System.Threading.Tasks;
@@ -23,6 +22,7 @@ namespace Traffk.Bal.Services
 
         private readonly IOptions<ActiveDirectoryApplicationIdentificationSettings> AppIdOptions;
         private readonly ICacher Cacher;
+        private readonly TimeSpan CacheTimeout = TimeSpan.FromMinutes(5);
 
         public Vault(IOptions<ActiveDirectoryApplicationIdentificationSettings> appIdOptions, ICacher cacher)
         {
@@ -30,36 +30,32 @@ namespace Traffk.Bal.Services
             Cacher = cacher;
         }
 
-        private Task<string> KeyVaultClientAuthenticationCallback(string authority, string resource, string scope)
-        {
-            return Task.FromResult(Cacher.FindOrCreate(
-                Cache.CreateKey(typeof(Vault), nameof(KeyVaultClientAuthenticationCallback), authority, resource, scope),
-                async k =>
+        private Task<string> KeyVaultClientAuthenticationCallbackAsync(string authority, string resource, string scope)
+            => Cacher.FindOrCreateValWithSimpleKeyAsync(
+                Cache.CreateKey(typeof(Vault), nameof(KeyVaultClientAuthenticationCallbackAsync), authority, resource, scope),
+                async () =>
                 {
                     var ac = new AuthenticationContext(authority);
                     var appId = AppIdOptions.Value;
                     var cc = new ClientCredential(appId.ApplicationId, appId.ApplicationSecret);
                     var res = await ac.AcquireTokenAsync(resource, cc);
-                    return new CacheEntry<string>(res.AccessToken, TimeSpan.FromMinutes(5));
-                }).Value);
-        }
+                    return res.AccessToken;
+                }, CacheTimeout);
 
-        private async Task<SecretBundle> GetSecretBundleAsync(string uri)
-        {
-            return await Task.FromResult(Cacher.FindOrCreate(
+        private Task<SecretBundle> GetSecretBundleAsync(string uri)
+            => Cacher.FindOrCreateValWithSimpleKeyAsync(
                 Cache.CreateKey(typeof(Vault), nameof(GetSecretBundleAsync), uri),
-                async k =>
+                async () =>
                 {
-                    var kv = new Microsoft.Azure.KeyVault.KeyVaultClient(KeyVaultClientAuthenticationCallback, new System.Net.Http.HttpClient());
+                    var kv = new Microsoft.Azure.KeyVault.KeyVaultClient(KeyVaultClientAuthenticationCallbackAsync, new System.Net.Http.HttpClient());
                     var u = new Uri(uri);
                     var parts = u.LocalPath.Split('/', '\\');
                     var vaultBaseUrl = u.GetComponents(UriComponents.SchemeAndServer, UriFormat.SafeUnescaped);
                     var secretName = parts[parts.Length - 2];
                     var secretVersion = parts[parts.Length - 1];
                     var ret = await kv.GetSecretWithHttpMessagesAsync(vaultBaseUrl, secretName, secretVersion);
-                    return new CacheEntry<SecretBundle>(ret.Body, TimeSpan.FromMinutes(5));
-                }).Value);
-        }
+                    return ret.Body;
+                }, CacheTimeout);
 
         async Task<string> IVault.GetSecretAsync(string uri)
             => (await GetSecretBundleAsync(uri)).Value;
@@ -80,7 +76,6 @@ namespace Traffk.Bal.Services
             public string ToJson() => JsonConvert.SerializeObject(this);
 
             [JsonProperty("username")]
-
             public string Username { get; set; }
 
             [JsonProperty("password")]

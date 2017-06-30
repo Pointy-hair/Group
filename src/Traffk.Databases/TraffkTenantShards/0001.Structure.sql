@@ -145,3 +145,7 @@ EXEC sp_addrolemember N'db_datawriter', N'_TraffkTenantShardsUser'
 grant execute on [dbo].[TenantIdReserve] to _TraffkTenantShardsUser  
 
 GO
+
+grant select on tenants to _TraffkPortalApp
+
+GO

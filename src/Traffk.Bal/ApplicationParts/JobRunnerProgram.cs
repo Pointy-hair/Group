@@ -24,7 +24,7 @@ using ILogger = Serilog.ILogger;
 
 namespace Traffk.Bal.ApplicationParts
 {
-    public abstract partial class JobRunnerProgram : CommandLineProgram, ICurrentUser
+    public abstract partial class JobRunnerProgram : CommandLineProgram
     {
         public static new void Main<TProgram>(string[] args) where TProgram : CommandLineProgram => CommandLineProgram.Main<TProgram>(args);
 
@@ -36,13 +36,8 @@ namespace Traffk.Bal.ApplicationParts
             public BackgroundJobServerOptions BackgroundOptions { get; set; }
         }
 
-        private TraffkGlobalDbContext GDB;
-        private TraffkTenantModelDbContext TenantDB;
-
         protected override Task OnGoAsync()
         {
-            GDB = this.ServiceProvider.GetService<TraffkGlobalDbContext>();
-            TenantDB = this.ServiceProvider.GetService<TraffkTenantModelDbContext>();
             var o = this.ServiceProvider.GetService<IOptions<HangfireServerOptions>>().Value;
             JobRunnerLogger = this.ServiceProvider.GetService<ILogger>();
 
@@ -63,14 +58,6 @@ namespace Traffk.Bal.ApplicationParts
             return Task.CompletedTask;
         }
 
-        [ThreadStatic]
-        private MyActivator.MyScope CurrentThreadScope;
-
-        ApplicationUser ICurrentUser.User => CurrentThreadScope.CurrentUser;
-
-        public int? JobId => CurrentThreadScope.JobId;
-        public int? ContactId => CurrentThreadScope.ContactId;
-
         protected override void OnConfigureServices(IServiceCollection services)
         {
             base.OnConfigureServices(services);
@@ -81,8 +68,9 @@ namespace Traffk.Bal.ApplicationParts
 
             services.AddSingleton(this);
             services.AddSingleton<IConfiguration>(Configuration);
-            services.AddSingleton<ITraffkTenantFinder, MyTraffkTenantFinder>();
-            services.AddSingleton<ICurrentUser>(this);
+            services.AddScoped<ITraffkTenantFinder, MyTraffkTenantFinder>();
+            services.AddScoped<IJobInfoFinder, MyJobInfoFinder>();
+            services.AddScoped<ICurrentUser, MyCurrentUser>();
             services.AddScoped<ConfigStringFormatter>();
             services.AddDbContext<TraffkTenantShardsDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString(TraffkTenantShardsDbContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Scoped);

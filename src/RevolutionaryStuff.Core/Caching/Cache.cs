@@ -14,36 +14,52 @@ namespace RevolutionaryStuff.Core.Caching
     /// </summary>
     public static class Cache
     {
-        private static readonly IDictionary<int, object> LockByKey = new Dictionary<int, object>();
+        internal static readonly IDictionary<int, object> LockByKey = new Dictionary<int, object>();
 
-        private static int GetLockKeyName(object cacheGuy, object key) => (cacheGuy.GetHashCode() ^ (key ?? "").GetHashCode()) & 0x0FFF;
+        internal static int GetLockKeyName(object cacheGuy, object key) 
+            => (cacheGuy.GetHashCode() ^ (key ?? "").GetHashCode()) & 0x0FFF;
+
+        #region FindOrCreate
 
         public static CacheEntry<TVal> FindOrCreate<TVal>(this ICacher cacher, string key, Func<string, TVal> creator, TimeSpan? timeout = null)
-        {
-            return cacher.FindOrCreate(key, k => {
+            => cacher.FindOrCreate(key, k => {
                 var val = creator(k);
                 return new CacheEntry<TVal>(val, timeout);
             });
-        }
 
-        public class BasicCacher : ICacher
+        public static Task<CacheEntry<TVal>> FindOrCreateAsync<TVal>(this ICacher inner, string key, Func<string, Task<CacheEntry<TVal>>> asynccreator)
+            => Task.FromResult(inner.FindOrCreate(key, k => asynccreator(k).ExecuteSynchronously()));
+
+        public static TVal FindOrCreateValWithSimpleKey<TVal>(this ICacher inner, object key, Func<TVal> creator, TimeSpan? expiresIn = null)
+            => inner.FindOrCreate(
+                CreateKey(typeof(TVal), key),
+                _ => new CacheEntry<TVal>(creator(), expiresIn)
+                ).Value;
+
+        public static async Task<TVal> FindOrCreateValWithSimpleKeyAsync<TVal>(this ICacher inner, object key, Func<Task<TVal>> asynccreator, TimeSpan? expiresIn = null)
+            => (await inner.FindOrCreateAsync(
+                CreateKey(typeof(TVal), key),
+                async _ => new CacheEntry<TVal>(await asynccreator(), expiresIn)
+                )).Value;
+
+        public static CacheEntry<TVal> FindOrCreate<TVal>(this ICacher inner, string key, Func<IEnumerable<Tuple<string, CacheEntry<TVal>>>> creator)
         {
-            private readonly IDictionary<string, ICacheEntry> EntriesByKey = new Dictionary<string, ICacheEntry>();
-
-            public CacheEntry<TVal> FindOrCreate<TVal>(string key, Func<string, CacheEntry<TVal>> creator, bool forceCreate, TimeSpan? timeout)
+            var ret = inner.FindOrCreate<TVal>(key, null);
+            if (ret == null)
             {
-                ICacheEntry e = null;
-                if (forceCreate || !EntriesByKey.TryGetValue(key, out e) || e.IsExpired)
+                foreach (var t in creator())
                 {
-                    if (creator != null)
+                    inner.FindOrCreate(t.Item1, _ => t.Item2, true);
+                    if (t.Item1 == key)
                     {
-                        e = creator(key);
-                        EntriesByKey[key] = e;
+                        ret = t.Item2;
                     }
                 }
-                return e as CacheEntry<TVal>;
             }
+            return ret;
         }
+
+        #endregion
 
         private class PassthroughCacher : ICacher
         {
@@ -53,49 +69,6 @@ namespace RevolutionaryStuff.Core.Caching
         public static readonly ICacher DataCacher = new SynchronizedCacher(new BasicCacher());
 
         public static readonly ICacher Passthrough = new PassthroughCacher();
-
-        public class SynchronizedCacher : ICacher
-        {
-            private readonly ICacher Inner;
-
-            public SynchronizedCacher(ICacher inner)
-            {
-                Requires.NonNull(inner, nameof(inner));
-                Inner = inner;
-            }
-
-            CacheEntry<TVal> ICacher.FindOrCreate<TVal>(string key, Func<string, CacheEntry<TVal>> creator, bool forceCreate, TimeSpan? timeout)
-            {
-                var lockName = GetLockKeyName(Inner, key);
-                Start:
-                object o;
-                lock (LockByKey)
-                {
-                    if (!LockByKey.TryGetValue(lockName, out o))
-                    {
-                        o = new object();
-                        LockByKey[lockName] = o;
-                    }
-                    if (Monitor.TryEnter(o)) goto Run;
-                }
-                Monitor.Enter(o);
-                Monitor.Exit(o);
-                goto Start;
-                Run:
-                try
-                {
-                    return Inner.FindOrCreate(key, creator, forceCreate, timeout);
-                }
-                finally
-                {
-                    lock (LockByKey)
-                    {
-                        LockByKey.Remove(lockName);
-                    }
-                    Monitor.Exit(o);
-                }
-            }
-        }
 
         private class ScopedCacher : ICacher
         {
@@ -119,28 +92,8 @@ namespace RevolutionaryStuff.Core.Caching
         public static ICacher CreateScope(this ICacher inner, params object[] keyParts) 
             => new ScopedCacher(inner, keyParts);
 
-        public static CacheEntry<TVal> FindOrCreate<TVal>(this ICacher inner, string key, Func<string, Task<CacheEntry<TVal>>> asynccreator)
-            => inner.FindOrCreate(key, k => asynccreator(k).ExecuteSynchronously());
-
         public static ICache<K, V> CreateSynchronized<K, V>(int maxItems = int.MaxValue)
             => new SynchronizedCache<K, V>(new RandomCache<K, V>(maxItems));
-
-        public static CacheEntry<TVal> FindOrCreate<TVal>(this ICacher inner, string key, Func<IEnumerable<Tuple<string, CacheEntry<TVal>>>> creator)
-        {
-            var ret = inner.FindOrCreate<TVal>(key, null);
-            if (ret == null)
-            {
-                foreach (var t in creator())
-                {
-                    inner.FindOrCreate(t.Item1, _ => t.Item2, true);
-                    if (t.Item1 == key)
-                    {
-                        ret = t.Item2;
-                    }
-                }
-            }
-            return ret;
-        }
 
         public static bool ContainsKey<K, D>(this ICache<K, D> cache, K key)
         {
