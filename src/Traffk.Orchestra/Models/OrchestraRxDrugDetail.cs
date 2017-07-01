@@ -8,10 +8,10 @@
         public string DrugType { get; set; }
         public int DrugTypeID { get; set; }
         public string ChemicalName { get; set; }
-        public Dosage[] Dosages { get; set; }
+        public OrchestraDosage[] Dosages { get; set; }
     }
 
-    public class Dosage
+    public class OrchestraDosage
     {
         public string DosageID { get; set; }
         public string ReferenceNDC { get; set; }
@@ -20,10 +20,10 @@
         public double CommonMetricQuantity { get; set; }
         public double CommonDaysOfSupply { get; set; }
         public bool IsCommonDosage { get; set; }
-        public Package[] Packages { get; set; }
+        public OrchestraPackage[] Packages { get; set; }
     }
 
-    public partial class Package
+    public partial class OrchestraPackage
     {
         public double CommonUserQuantity { get; set; }
         public double CommonMetricQuantity { get; set; }

@@ -22,6 +22,7 @@ namespace Traffk.Orchestra
 
         public static class OrchestraEndpoints
         {
+            public const string Auth = @"/auth/token?format=json";
             public const string PharmacySearch = @"/Pharmacies/Search";
             public const string DrugSearch = @"/Drugs/Search";
             public const string DrugDetail = @"/Drugs/{DrugID}";
@@ -136,13 +137,13 @@ namespace Traffk.Orchestra
             return JsonConvert.DeserializeObject<County>(json);
         }
 
-        public async Task<Dosage> DrugDosageDetailAsync(string orchestraDrugId, string orchestraDosageId)
+        public async Task<OrchestraDosage> DrugDosageDetailAsync(string orchestraDrugId, string orchestraDosageId)
         {
             var apiRoute = $"{ApiToolsUrlPortion}/Drugs/{orchestraDrugId}/Dosages/{orchestraDosageId}";
             VerifyToken();
             var url = Options.BaseUrl + apiRoute;
             var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
-            return JsonConvert.DeserializeObject<Dosage>(json);
+            return JsonConvert.DeserializeObject<OrchestraDosage>(json);
         }
 
         public async Task<DrugResponse> DrugSearchAsync(string query)

@@ -8,6 +8,7 @@ using Traffk.Bal.Email;
 
 namespace TraffkPortal.Controllers
 {
+    [ApiExplorerSettings(IgnoreApi = true)]
     [Route("e")]
     public class EmailRedirectorController : Controller
     {

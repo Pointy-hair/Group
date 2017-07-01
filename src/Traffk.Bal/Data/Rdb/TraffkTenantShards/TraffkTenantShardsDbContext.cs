@@ -38,40 +38,6 @@ namespace Traffk.Bal.Data.Rdb.TraffkTenantShards
             return await conn.ExecuteReaderAsync<AppHostItem>(null, "dbo.AppFindByHostname", null, ps);
         }
 
-        //public async Task<ConnectionHelpers.Result<AppHostItem>> AppFindByTenantId(int tenantId,
-        //    TraffkTenantModel.AppTypes? appType = null)
-        //{
-        //    var ps = new SqlParameter[]
-        //        {
-        //            new SqlParameter("@tenantId", tenantId){Direction=ParameterDirection.Input},
-        //            new SqlParameter("@appType", appType==null ? DBNull.Value:(object) appType.ToString()){Direction=ParameterDirection.Input},
-        //        };
-        //    const string sql = "SELECT * FROM dbo.apps WHERE TenantId = @tenantId";
-        //    var conn = Database.GetDbConnection();
-
-        //    if (conn.State != ConnectionState.Open)
-        //    {
-        //        await conn.OpenAsync();
-        //    }
-        //    return await conn.ExecuteReaderAsync<AppHostItem>(null, sql, null, ps);
-        //}
-
-        //public async Task<ConnectionHelpers.Result<Tenant>> TenantFindByLoginDomain(string loginDomain,
-        //    TraffkTenantModel.AppTypes? appType = null)
-        //{
-        //    var ps = new SqlParameter[]
-        //        {
-        //            new SqlParameter("@loginDomain", loginDomain){Direction=ParameterDirection.Input},
-        //        };
-        //    const string sql = "SELECT * FROM dbo.tenants WHERE LoginDomain = @loginDomain";
-        //    var conn = Database.GetDbConnection();
-        //    if (conn.State != ConnectionState.Open)
-        //    {
-        //        await conn.OpenAsync();
-        //    }
-        //    return await conn.ExecuteReaderAsync<Tenant>(null, sql, null, ps);
-        //}
-
         public async Task<ConnectionHelpers.Result<Tenant>> TenantFindByTenantId(int tenantId)
         {
             var ps = new SqlParameter[]

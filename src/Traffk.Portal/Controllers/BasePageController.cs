@@ -19,6 +19,7 @@ using ILogger = Serilog.ILogger;
 
 namespace TraffkPortal.Controllers
 {
+    [ApiExplorerSettings(IgnoreApi = true)]
     public abstract class BasePageController : Controller
     {
         protected readonly CurrentContextServices Current;

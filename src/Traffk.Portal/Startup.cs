@@ -16,6 +16,7 @@ using RevolutionaryStuff.Core.Caching;
 using Serilog;
 using System;
 using System.Text;
+using Swashbuckle.AspNetCore.Swagger;
 using Traffk.Bal;
 using Traffk.Bal.BackgroundJobs;
 using Traffk.Bal.Caches;
@@ -219,6 +220,11 @@ namespace TraffkPortal
             services.AddScoped<ICacher, TraffkCache>();
 
             services.AddScoped<ILogger>(provider => Logger.ForContext<Startup>());
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "Traffk", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -271,6 +277,15 @@ namespace TraffkPortal
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+            });
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS etc.), specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Traffk");
             });
         }
 

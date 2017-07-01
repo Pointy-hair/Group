@@ -209,25 +209,25 @@ namespace Traffk.Portal.Controllers
             }
         }
 
-        [HttpPost]
-        public IActionResult Schedule(ScheduleReportViewModel model)
-        {
-            try
-            {
-                var tableauReportViewModel = model.ReportViewModel;
-                var createPdfOptions = new CreatePdfOptions(tableauReportViewModel.WorkbookName, tableauReportViewModel.ViewName, tableauReportViewModel.WorksheetName);
+        //[HttpPost]
+        //public IActionResult Schedule(ScheduleReportViewModel model)
+        //{
+        //    try
+        //    {
+        //        var tableauReportViewModel = model.ReportViewModel;
+        //        var createPdfOptions = new CreatePdfOptions(tableauReportViewModel.WorkbookName, tableauReportViewModel.ViewName, tableauReportViewModel.WorksheetName);
 
                 
 
-                RecurringJobManager.Add(Hangfire.Common.Job.FromExpression<ITenantJobs>(x => x.ScheduleTableauPdfDownload(createPdfOptions)), Cron.MinuteInterval(2));
+        //        RecurringJobManager.Add(Hangfire.Common.Job.FromExpression<ITenantJobs>(x => x.ScheduleTableauPdfDownload(createPdfOptions)), Cron.MinuteInterval(2));
 
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Console.WriteLine(e);
+        //        throw;
+        //    }
+        //}
 
         [Route("/Reporting/Report/Scheduled")]
         [ActionName(ActionNames.ScheduledReports)]

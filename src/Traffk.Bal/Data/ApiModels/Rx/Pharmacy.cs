@@ -32,7 +32,7 @@ namespace Traffk.Bal.Data.ApiModels.Rx
         public Pharmacy()
         { }
 
-        public Pharmacy(Orchestra.Models.Pharmacy pharmacy)
+        public Pharmacy(Orchestra.Models.OrchestraPharmacy pharmacy)
         {
             Object = typeof(Pharmacy).Name.ToString();
             Id = pharmacy.PharmacyID;
@@ -70,7 +70,7 @@ namespace Traffk.Bal.Data.ApiModels.Rx
         public ApiAddress()
         { }
 
-        public ApiAddress(Orchestra.Models.Pharmacy pharmacy)
+        public ApiAddress(Orchestra.Models.OrchestraPharmacy pharmacy)
         {
             Line1 = pharmacy.Address1;
             Line2 = pharmacy.Address2;
@@ -101,7 +101,7 @@ namespace Traffk.Bal.Data.ApiModels.Rx
         public PharmacyServices()
         { }
 
-        public PharmacyServices(Orchestra.Models.Pharmacy pharmacy)
+        public PharmacyServices(Orchestra.Models.OrchestraPharmacy pharmacy)
         {
             var pharmacyService = pharmacy.PharmacyServices;
             Has24HrService = pharmacyService.Has24hrService;

@@ -3,10 +3,10 @@
     public class PharmacyResponse
     {
         public double Radius { get; set; }
-        public Pharmacy[] PharmacyList { get; set; }
+        public OrchestraPharmacy[] PharmacyList { get; set; }
     }
 
-    public class Pharmacy
+    public class OrchestraPharmacy
     {
         public string PharmacyID { get; set; }
         public string Name { get; set; }
@@ -20,11 +20,11 @@
         public float Latitude { get; set; }
         public float Longitude { get; set; }
         public string Chain { get; set; }
-        public PharmacyServices PharmacyServices { get; set; }
+        public OrchestraPharmacyServices PharmacyServices { get; set; }
         public string ChainName { get; set; }
     }
 
-    public class PharmacyServices
+    public class OrchestraPharmacyServices
     {
         public bool Has24hrService { get; set; }
         public bool HasCompounding { get; set; }

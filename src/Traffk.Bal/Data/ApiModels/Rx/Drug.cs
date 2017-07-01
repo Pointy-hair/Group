@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Collections.Generic;
 
@@ -75,7 +76,7 @@ namespace Traffk.Bal.Data.ApiModels.Rx
             Object = "list";
         }
 
-        public Dosages(Orchestra.Models.Dosage[] orchestraDosages)
+        public Dosages(Orchestra.Models.OrchestraDosage[] orchestraDosages)
         {
             var tDosages = new List<Dosage>();
             foreach (var dosage in orchestraDosages)
@@ -99,7 +100,7 @@ namespace Traffk.Bal.Data.ApiModels.Rx
             Object = typeof(Dosage).Name;
         }
 
-        public Dosage(Orchestra.Models.Dosage orchestraDosage)
+        public Dosage(Orchestra.Models.OrchestraDosage orchestraDosage)
         {
             Object = typeof(Dosage).Name;
             Id = orchestraDosage.DosageID;

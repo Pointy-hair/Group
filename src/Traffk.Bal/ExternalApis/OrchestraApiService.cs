@@ -39,6 +39,7 @@ namespace Traffk.Bal.ExternalApis
         private OrchestraRxTokenResponse FindOrCreateTokenResponseWithExpiration()
         {
             var cacheKey = RevolutionaryStuff.Core.Caching.Cache.CreateKey(typeof(OrchestraRxTokenResponse).Name);
+            Log(EventType, OrchestraRxApiClient.OrchestraEndpoints.Auth);
             //Just a find
             var tokenResponseCacheEntry = ScopedCacher.FindOrCreate<OrchestraRxTokenResponse>(cacheKey);
             if (tokenResponseCacheEntry.Value == null)

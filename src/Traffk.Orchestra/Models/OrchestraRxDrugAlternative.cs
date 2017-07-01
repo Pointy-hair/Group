@@ -11,7 +11,7 @@
         public string ConditionName { get; set; }
         public string Warning { get; set; }
         public Option[] Options { get; set; }
-        public Pharmacy[] Pharmacies { get; set; }
+        public OrchestraPharmacy[] Pharmacies { get; set; }
         public float AveragePrice { get; set; }
         public string ChemicalName { get; set; }
         public int DEASchedule { get; set; }
@@ -28,7 +28,7 @@
         public bool HasAlternatives { get; set; }
         public string LabelName { get; set; }
         public float MetricQuantity { get; set; }
-        public Package Package { get; set; }
+        public OrchestraPackage Package { get; set; }
         public string ReferenceNDC { get; set; }
         public string RouteOfAdministration { get; set; }
         public string RouteOfAdministrationCode { get; set; }
@@ -36,7 +36,7 @@
         public PriceData[] PriceDataList { get; set; }
     }
 
-    public partial class Package
+    public partial class OrchestraPackage
     {
         public string PackageDisplayDescription { get; set; }
         public string PackageSizeUOM { get; set; }
@@ -73,7 +73,7 @@
         public bool HasAlternatives { get; set; }
         public string LabelName { get; set; }
         public float MetricQuantity { get; set; }
-        public Package Package { get; set; }
+        public OrchestraPackage Package { get; set; }
         public string ReferenceNDC { get; set; }
         public string RouteOfAdministration { get; set; }
         public string RouteOfAdministrationCode { get; set; }
