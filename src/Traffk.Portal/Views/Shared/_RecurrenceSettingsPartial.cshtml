@@ -50,28 +50,28 @@
     <div class="col-sm-10">
             <div class="col-md-2">
                 <div class="row">
-                    <input type="radio" class="radio-inline" id="PatternTypeDaily" name="PatternType" value="Daily" @(Model.PatternType == PatternTypes.Daily ? "checked='checked'" : "") /> 
+                    <input type="radio" class="radio-inline" id="PatternTypeDaily" name="PatternType" value="Daily" @(Model.PatternType == RecurrenceSettings.PatternTypes.Daily ? "checked='checked'" : "") /> 
                     <label for="PatternTypeDaily">Daily</label>
                 </div>
                 <div class="row">
-                    <input type="radio" class="radio-inline" id="PatternTypeWeekly" name="PatternType" value="Weekly" @(Model.PatternType == PatternTypes.Weekly ? "checked='checked'" : "") />
+                    <input type="radio" class="radio-inline" id="PatternTypeWeekly" name="PatternType" value="Weekly" @(Model.PatternType == RecurrenceSettings.PatternTypes.Weekly ? "checked='checked'" : "") />
                     <label for="PatternTypeWeekly">Weekly</label>
                 </div>
             </div>
             <div class="col-md-8">
-                <div class="row pattern-section" id="pattern-section-daily" style="@(Model.PatternType==PatternTypes.Daily ? "":"display:none")">
+                <div class="row pattern-section" id="pattern-section-daily" style="@(Model.PatternType==RecurrenceSettings.PatternTypes.Daily ? "":"display:none")">
                     <div class="form-row">
-                        <input type="radio" name="dailyPatternType" value="EveryNDays" @(Model.DailyPattern.EveryWeekday ? "" : "checked='checked'") />
+                        @Html.RadioButtonFor(m => m.DailyPattern.EveryWeekday, "false", new { name = "dailyPatternType" })
                         <label asp-for="DailyPattern.EveryNDays" class="control-label"></label>
-                        <input asp-for="DailyPattern.EveryNDays" class="form-control inline-block" type="number" />
-                        <span asp-validation-for="DailyPattern.EveryNDays" class="text-danger" />
+                        <input asp-for="DailyPattern.EveryNDays" class="form-control inline-block" type="number"/>
+                        <span asp-validation-for="DailyPattern.EveryNDays" class="text-danger"/>
                     </div>
                     <div class="form-row">
-                        <input type="radio" name="dailyPatternType" value="EveryWeekday" @(Model.DailyPattern.EveryWeekday ? "checked='checked'" : "") />
+                        @Html.RadioButtonFor(m => m.DailyPattern.EveryWeekday, "true", new {name = "dailyPatternType" })
                         <label asp-for="DailyPattern.EveryWeekday" class="control-label"></label>
                     </div>
                 </div>
-                <div class="row pattern-section" id="pattern-section-weekly" style="@(Model.PatternType==PatternTypes.Weekly ? "":"display:none")">
+                <div class="row pattern-section" id="pattern-section-weekly" style="@(Model.PatternType==RecurrenceSettings.PatternTypes.Weekly ? "":"display:none")">
                     <div>
                         <label asp-for="WeeklyPattern.RecurEveryNWeeksOn"></label>
                         <input asp-for="WeeklyPattern.RecurEveryNWeeksOn" class="form-control" />
@@ -105,10 +105,10 @@
                         <label asp-for="WeeklyPattern.Saturday"></label>
                     </div>
                 </div>
-                <div class="row pattern-section" id="pattern-section-monthly" style="@(Model.PatternType==PatternTypes.Monthly ? "":"display:none")">
+                <div class="row pattern-section" id="pattern-section-monthly" style="@(Model.PatternType==RecurrenceSettings.PatternTypes.Monthly ? "":"display:none")">
                     MONTHLY
                 </div>
-                <div class="row pattern-section" id="pattern-section-yearly" style="@(Model.PatternType==PatternTypes.Yearly ? "":"display:none")">
+                <div class="row pattern-section" id="pattern-section-yearly" style="@(Model.PatternType==RecurrenceSettings.PatternTypes.Yearly ? "":"display:none")">
                     YEARLY
                 </div>
         </div>

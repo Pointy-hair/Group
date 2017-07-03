@@ -234,18 +234,7 @@ namespace Traffk.Portal.Controllers
         [ValidateAntiForgeryToken]
         [ActionName(ActionNames.ScheduleReportSave)]
         public IActionResult Schedule(
-            [Bind(
-            nameof(ScheduleReportViewModel.TableauReportViewModel),
-            nameof(ScheduleReportViewModel.TableauReportViewModel)+"."+nameof(TableauReportViewModel.Id),
-            nameof(ScheduleReportViewModel.TableauReportViewModel)+"."+nameof(TableauReportViewModel.WorkbookName),
-            nameof(ScheduleReportViewModel.TableauReportViewModel)+"."+nameof(TableauReportViewModel.ViewName),
-            nameof(ScheduleReportViewModel.TableauReportViewModel)+"."+nameof(TableauReportViewModel.WorksheetName),
-            nameof(ScheduleReportViewModel.RecurrenceSettings),
-            nameof(ScheduleReportViewModel.RecurrenceSettings)+"."+nameof(RecurrenceSettings.StartDate),
-            nameof(ScheduleReportViewModel.RecurrenceSettings)+"."+nameof(RecurrenceSettings.DailyPatternSettings)+"."+nameof(RecurrenceSettings.DailyPatternSettings.EveryNDays),
-            nameof(ScheduleReportViewModel.RecurrenceSettings)+"."+nameof(RecurrenceSettings.DailyPatternSettings)+"."+nameof(RecurrenceSettings.DailyPatternSettings.EveryWeekday)
-            )]
-            ScheduleReportViewModel scheduleReportViewModel)
+            [FromForm]ScheduleReportViewModel scheduleReportViewModel)
         {
             try
             {
