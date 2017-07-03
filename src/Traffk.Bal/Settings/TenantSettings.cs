@@ -59,13 +59,13 @@ namespace Traffk.Bal.Settings
             static PasswordOptions()
             {
                 var passwords = new HashSet<string>();
-                using (var st = Stuff.GetEmbeddedResourceAsStream(TraffkHelpers.ThisAssembly, "DefaultProhibitedPasswordList.txt"))
+                using (var st = ResourceHelpers.GetEmbeddedResourceAsStream(TraffkHelpers.ThisAssembly, "DefaultProhibitedPasswordList.txt"))
                 {
                     Populate(passwords, st);
                 }
                 DefaultProhibitedPasswords = passwords.AsReadOnly();
                 var passwordMustNotContainWords = new HashSet<string>(Comparers.CaseInsensitiveStringComparer);
-                using (var st = Stuff.GetEmbeddedResourceAsStream(TraffkHelpers.ThisAssembly, "DefaultPasswordUnallowedWordList.txt"))
+                using (var st = ResourceHelpers.GetEmbeddedResourceAsStream(TraffkHelpers.ThisAssembly, "DefaultPasswordUnallowedWordList.txt"))
                 {
                     Populate(passwordMustNotContainWords, st);
                 }

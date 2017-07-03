@@ -37,7 +37,7 @@ namespace Traffk.Bal.ApplicationParts
             public BackgroundJobServerOptions BackgroundOptions { get; set; }
         }
 
-        protected async override Task OnGoAsync()
+        protected override Task OnGoAsync()
         {
             var o = this.ServiceProvider.GetService<IOptions<HangfireServerOptions>>().Value;
             JobRunnerLogger = this.ServiceProvider.GetService<ILogger>();
@@ -52,9 +52,6 @@ namespace Traffk.Bal.ApplicationParts
             bo.Queues.Where(q => q.StartsWith("-")).ForEach(q => queues.Remove(q.Substring(1)));
             bo.Queues = queues.ToArray();
 
-            var e = this.ServiceProvider.GetRequiredService<IEtlJobs>();
-            await e.LoadInternationalClassificationDiseasesAsync();
-
             using (var s = new BackgroundJobServer(bo))
             {
                 var timeout = Parse.ParseTimeSpan(Configuration["JobRunner:TimeOut"], TimeSpan.FromSeconds(60));
@@ -65,7 +62,7 @@ namespace Traffk.Bal.ApplicationParts
                 while (!ShutdownRequested.WaitOne(timeout));
             }
 
-//            return Task.CompletedTask;
+            return Task.CompletedTask;
         }
 
         protected override void OnConfigureServices(IServiceCollection services)
