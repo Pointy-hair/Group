@@ -25,6 +25,8 @@ namespace Traffk.Portal.Controllers.Api
     [ApiAuthorize(ApiNames.Base)]
     [Produces("application/json")]
     [Route("api/token")]
+    [ApiExplorerSettings(IgnoreApi = false)]
+    [ApiControllerDisplayName("Token")]
     public class TokenController : BaseApiController
     {
         private readonly TokenProviderOptions Options;

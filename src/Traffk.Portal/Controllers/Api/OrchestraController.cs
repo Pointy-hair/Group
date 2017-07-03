@@ -1,7 +1,7 @@
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using System.Collections.Generic;
 using Traffk.Bal.ExternalApis;
 using Traffk.Bal.Permissions;
 using Traffk.Orchestra.Models;
@@ -16,6 +16,8 @@ namespace Traffk.Portal.Controllers.Api
     [ApiAuthorize(ApiNames.Rx)]
     [Produces("application/json")]
     [Route("api/v1")]
+    [ApiExplorerSettings(IgnoreApi = false)]
+    [ApiControllerDisplayName("Rx")]
     public class OrchestraController : BaseApiController
     {
         private readonly OrchestraApiService OrchestraApiService;
@@ -27,6 +29,7 @@ namespace Traffk.Portal.Controllers.Api
 
         [HttpGet]
         [Route("pharmacies")]
+        [ApiExplorerSettings(GroupName = "Test")]
         public PharmacyResponse SearchPharmacies(string zip, int radius)
         {
             Log();

@@ -7,6 +7,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using Traffk.Bal.BackgroundJobs;
+using Traffk.Bal.Data;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.Permissions;
 using Traffk.Bal.ReportVisuals;
@@ -42,6 +43,7 @@ namespace Traffk.Portal.Controllers
             public const string Report = "Report";
             public const string DownloadedReports = "Downloads";
             public const string ScheduledReports = "ScheduledReportIndex";
+            public const string ScheduleReportSave = "ScheduleReportSave";
         }
 
         public static class ViewNames
@@ -188,6 +190,23 @@ namespace Traffk.Portal.Controllers
         {
             try
             {
+
+                //var reportSearchCriteria = new ReportSearchCriteria
+                //{
+                //    VisualContext = ReportVisualContext,
+                //    ReportId = Parse.ParseInt32(id)
+                //};
+                //var reportVisual = ReportVisualService.GetReportVisual(reportSearchCriteria);
+                //if (reportVisual == null)
+                //{
+                //    return RedirectToAction(ActionNames.Index);
+                //}
+                //var tableauReportViewModel = new TableauReportViewModel(reportVisual);
+
+                //var createPdfOptions = new CreatePdfOptions(tableauReportViewModel.WorkbookName, tableauReportViewModel.ViewName, tableauReportViewModel.WorksheetName);
+                //RecurringJobManager.Add(Hangfire.Common.Job.FromExpression<ITenantJobs>(x => x.ScheduleTableauPdfDownload(createPdfOptions)), Cron.MinuteInterval(2));
+                //return Json("success");
+
                 var reportSearchCriteria = new ReportSearchCriteria
                 {
                     VisualContext = ReportVisualContext,
@@ -199,8 +218,10 @@ namespace Traffk.Portal.Controllers
                     return RedirectToAction(ActionNames.Index);
                 }
                 var tableauReportViewModel = new TableauReportViewModel(reportVisual);
+                var scheduleReportViewModel = new ScheduleReportViewModel(tableauReportViewModel,
+                    new RecurrenceSettings());
 
-                return View(tableauReportViewModel);
+                return View(scheduleReportViewModel);
             }
             catch (Exception e)
             {
@@ -209,25 +230,38 @@ namespace Traffk.Portal.Controllers
             }
         }
 
-        //[HttpPost]
-        //public IActionResult Schedule(ScheduleReportViewModel model)
-        //{
-        //    try
-        //    {
-        //        var tableauReportViewModel = model.ReportViewModel;
-        //        var createPdfOptions = new CreatePdfOptions(tableauReportViewModel.WorkbookName, tableauReportViewModel.ViewName, tableauReportViewModel.WorksheetName);
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionName(ActionNames.ScheduleReportSave)]
+        public IActionResult Schedule(
+            [Bind(
+            nameof(ScheduleReportViewModel.TableauReportViewModel),
+            nameof(ScheduleReportViewModel.TableauReportViewModel)+"."+nameof(TableauReportViewModel.Id),
+            nameof(ScheduleReportViewModel.TableauReportViewModel)+"."+nameof(TableauReportViewModel.WorkbookName),
+            nameof(ScheduleReportViewModel.TableauReportViewModel)+"."+nameof(TableauReportViewModel.ViewName),
+            nameof(ScheduleReportViewModel.TableauReportViewModel)+"."+nameof(TableauReportViewModel.WorksheetName),
+            nameof(ScheduleReportViewModel.RecurrenceSettings),
+            nameof(ScheduleReportViewModel.RecurrenceSettings)+"."+nameof(RecurrenceSettings.StartDate),
+            nameof(ScheduleReportViewModel.RecurrenceSettings)+"."+nameof(RecurrenceSettings.DailyPatternSettings)+"."+nameof(RecurrenceSettings.DailyPatternSettings.EveryNDays),
+            nameof(ScheduleReportViewModel.RecurrenceSettings)+"."+nameof(RecurrenceSettings.DailyPatternSettings)+"."+nameof(RecurrenceSettings.DailyPatternSettings.EveryWeekday)
+            )]
+            ScheduleReportViewModel scheduleReportViewModel)
+        {
+            try
+            {
+                var tableauReportViewModel = scheduleReportViewModel.TableauReportViewModel;
+                var createPdfOptions = new CreatePdfOptions(tableauReportViewModel.WorkbookName, tableauReportViewModel.ViewName, tableauReportViewModel.WorksheetName);
+                var cronString = scheduleReportViewModel.RecurrenceSettings.ConvertToCronString();
+                RecurringJobManager.Add(Hangfire.Common.Job.FromExpression<ITenantJobs>(x => x.ScheduleTableauPdfDownload(createPdfOptions)), cronString);
 
-                
-
-        //        RecurringJobManager.Add(Hangfire.Common.Job.FromExpression<ITenantJobs>(x => x.ScheduleTableauPdfDownload(createPdfOptions)), Cron.MinuteInterval(2));
-
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Console.WriteLine(e);
-        //        throw;
-        //    }
-        //}
+                return RedirectToAction(ActionNames.ScheduledReports);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
 
         [Route("/Reporting/Report/Scheduled")]
         [ActionName(ActionNames.ScheduledReports)]

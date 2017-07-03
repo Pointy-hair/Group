@@ -6,6 +6,9 @@ namespace Traffk.Portal.Models.ReportingModels
 {
     public class TableauReportViewModel
     {
+        public TableauReportViewModel()
+        { }
+
         public TableauReportViewModel(IReportVisual reportVisual)
         {
             Id = reportVisual.Id;
@@ -21,19 +24,32 @@ namespace Traffk.Portal.Models.ReportingModels
             }
         }
 
-        public long Id { get; private set; }
-        public string Title { get; private set; }
-        public string FolderName { get; private set; }
-        public string WorkbookName { get; private set; }
-        public string ViewName { get; private set; }
-        public string WorksheetName { get; private set; }
-        public string Description { get; private set; }
+        public long Id { get; set; }
+        public string Title { get; set; }
+        public string FolderName { get; set; }
+        public string WorkbookName { get; set; }
+        public string ViewName { get; set; }
+        public string WorksheetName { get; set; }
+        public string Description { get; set; }
         public ReportDetails.RenderingAttributeFlags RenderingAttributes { get; private set; }
     }
 
     public class ScheduleReportViewModel
     {
-        public TableauReportViewModel ReportViewModel { get; set; }
+        public TableauReportViewModel TableauReportViewModel { get; set; }
         public RecurrenceSettings RecurrenceSettings { get; set; }
+
+
+        public ScheduleReportViewModel()
+        {
+            //Required for model binding
+        }
+
+        public ScheduleReportViewModel(TableauReportViewModel tableauReportViewModel,
+        RecurrenceSettings recurrenceSettings)
+        {
+            TableauReportViewModel = tableauReportViewModel;
+            RecurrenceSettings = recurrenceSettings;
+        }
     }
 }

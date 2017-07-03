@@ -7,6 +7,7 @@ using Traffk.Bal.Settings;
 
 namespace Traffk.Portal.Controllers.Api
 {
+    [ApiExplorerSettings(IgnoreApi = false)]
     public abstract class BaseApiController : Controller
     {
         protected readonly ILogger Logger;

@@ -15,8 +15,10 @@ using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using Serilog;
 using System;
+using System.Linq;
 using System.Text;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using Traffk.Bal;
 using Traffk.Bal.BackgroundJobs;
 using Traffk.Bal.Caches;
@@ -33,6 +35,7 @@ using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
 using Traffk.Orchestra;
 using Traffk.Orchestra.Models;
+using Traffk.Portal.Controllers.Api;
 using Traffk.Portal.Permissions;
 using Traffk.Tableau;
 using Traffk.Tableau.REST;
@@ -224,6 +227,10 @@ namespace TraffkPortal
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Traffk", Version = "v1" });
+                c.TagActionsBy(api =>
+                {
+                    return api.ControllerAttributes().FirstOrDefault(a => a.GetType() == typeof(ApiControllerDisplayNameAttribute)).ToString();
+                });
             });
         }
 

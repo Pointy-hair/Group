@@ -7,7 +7,9 @@ using RevolutionaryStuff.Core;
 using Traffk.Bal.Data.Rdb.TraffkGlobal;
 using Traffk.Bal.Services;
 using System.Text.RegularExpressions;
+using Hangfire.Server;
 using Hangfire.Storage;
+using Traffk.Bal.ApplicationParts;
 
 namespace Traffk.Bal.BackgroundJobs
 {
@@ -18,9 +20,10 @@ namespace Traffk.Bal.BackgroundJobs
         private readonly ITraffkTenantFinder Finder;
         private readonly RecurringJobManager RecurringJobManager;
         private readonly ICurrentUser CurrentUser;
+        private readonly IJobInfoFinder JobInfoFinder;
         private int TenantId;
 
-        public TenantedBackgroundJobClient(TraffkGlobalDbContext gdb, ITraffkTenantFinder finder, ICurrentUser currentUser = null)
+        public TenantedBackgroundJobClient(TraffkGlobalDbContext gdb, ITraffkTenantFinder finder, IJobInfoFinder jobInfoFinder = null, ICurrentUser currentUser = null)
         {
             Inner = new BackgroundJobClient();
             GDB = gdb;
@@ -28,6 +31,7 @@ namespace Traffk.Bal.BackgroundJobs
             CurrentUser = currentUser;
             RecurringJobManager = new RecurringJobManager();
             TenantId = Finder.GetTenantIdAsync().ExecuteSynchronously();
+            JobInfoFinder = jobInfoFinder;
         }
 
         bool IBackgroundJobClient.ChangeState(string jobId, IState state, string expectedState)
@@ -40,6 +44,7 @@ namespace Traffk.Bal.BackgroundJobs
             var j = GDB.Job.Find(int.Parse(jobId));
             j.TenantId = tenantId;
             j.ContactId = CurrentUser?.User?.ContactId;
+            j.RecurringJobId = JobInfoFinder?.JobInfo?.RecurringJobId;
             GDB.SaveChanges();
             return jobId;
         }

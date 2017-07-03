@@ -283,7 +283,41 @@ namespace Traffk.Bal.Data
 
         public string ConvertToCronString()
         {
-            
+            //http://www.cronmaker.com/
+            switch (PatternType)
+            {
+                case PatternTypes.Daily:
+                    Requires.NonNull(DailyPattern, nameof(DailyPattern));
+                    Requires.Valid(DailyPattern, nameof(DailyPattern));
+                    if (DailyPattern.EveryNDays > 0)
+                    {
+                        return Cron.DayInterval(Convert.ToInt32(DailyPattern.EveryNDays));
+                    }
+                    if (DailyPattern.EveryWeekday)
+                    {
+                        return @"0 0 12 ? * MON-FRI *";
+                    }
+                    break;
+                case PatternTypes.Weekly:
+                    Requires.NonNull(WeeklyPattern, nameof(WeeklyPattern));
+                    Requires.Valid(WeeklyPattern, nameof(WeeklyPattern));
+                    if (WeeklyPattern.RecurEveryNWeeksOn > 0)
+                    {
+                        return Cron.DayInterval(Convert.ToInt32((WeeklyPattern.RecurEveryNWeeksOn * 7) + 1));
+                    }
+                    else
+                    {
+                        return "";
+                    }
+                case PatternTypes.Monthly:
+                    throw new NotImplementedException();
+                case PatternTypes.Yearly:
+                    throw new NotImplementedException();
+                default:
+                    throw new UnexpectedSwitchValueException(PatternType);
+            }
+
+            return "";
         }
     }
 }
