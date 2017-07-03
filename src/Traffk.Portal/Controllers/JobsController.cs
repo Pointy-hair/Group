@@ -54,6 +54,15 @@ namespace TraffkPortal.Controllers
         private readonly ITraffkRecurringJobManager RJM;
 
         [AllowAnonymous]
+        [Route("/Jobs/LoadInternationalClassificationDiseases")]
+        public IActionResult LoadInternationalClassificationDiseases(string msg)
+        {
+            Backgrounder.Enqueue<IEtlJobs>(z => z.LoadInternationalClassificationDiseasesAsync());
+            return Ok();
+        }
+
+
+        [AllowAnonymous]
         [Route("/Jobs/CreateRecurringTrace/{msg}")]
         public IActionResult CreateRecurringTrace(string msg)
         {

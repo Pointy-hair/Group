@@ -16,6 +16,22 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='VSTS-CI|AnyCPU'" />
 
   <ItemGroup>
+    <None Remove="SsisPackages\CmsGov.dtsx" />
+    <None Remove="SsisPackages\Deerwalk.dtsx" />
+    <None Remove="SsisPackages\InternationalClassificationDiseases.dtsx" />
+    <None Remove="SsisPackages\NationalDrugCode.dtsx" />
+    <None Remove="SsisPackages\ZipCodes.dtsx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="SsisPackages\CmsGov.dtsx" />
+    <EmbeddedResource Include="SsisPackages\Deerwalk.dtsx" />
+    <EmbeddedResource Include="SsisPackages\InternationalClassificationDiseases.dtsx" />
+    <EmbeddedResource Include="SsisPackages\NationalDrugCode.dtsx" />
+    <EmbeddedResource Include="SsisPackages\ZipCodes.dtsx" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -41,6 +57,7 @@
     <PackageReference Include="Serilog.Sinks.AzureTableStorage" Version="3.0.0" />
     <PackageReference Include="Serilog.Sinks.Trace" Version="2.1.0" />
     <PackageReference Include="SSH.NET" Version="2016.0.0" />
+    <PackageReference Include="SSISPackage" Version="1.0.0" />
   </ItemGroup>
 
 </Project>

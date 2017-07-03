@@ -235,7 +235,7 @@ namespace RevolutionaryStuff.Core.Database
                 {
                     var pi = mi as PropertyInfo;
                     if (pi == null) continue;
-                    if (pi.Attributes.HasFlag(PropertyAttributes.SpecialName | PropertyAttributes.RTSpecialName)) continue;
+                    if (pi.Attributes.HasFlag(System.Reflection.PropertyAttributes.SpecialName | System.Reflection.PropertyAttributes.RTSpecialName)) continue;
                     var colAttr = mi.GetCustomAttribute<ColumnAttribute>();
                     d[colAttr?.Name??mi.Name] = mi;
                 }

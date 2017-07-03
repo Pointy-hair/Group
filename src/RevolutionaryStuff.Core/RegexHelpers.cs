@@ -1,6 +1,7 @@
 ﻿using RevolutionaryStuff.Core.Caching;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace RevolutionaryStuff.Core
@@ -34,6 +35,15 @@ namespace RevolutionaryStuff.Core
             public static readonly Regex N = new Regex("\n", RegexOptions.Compiled);
             public static readonly Regex NN = new Regex("\n\n", RegexOptions.Compiled);
             public static readonly Regex NullJsonMember = new Regex(@"(""\w+""\s*:\s*null\s*,?)|(,?\s*""\w+""\s*:\s*null\s*)", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
+
+            public static readonly Regex InvalidPathChars =
+                new Regex(
+                    String.Format(
+                        @"([\*\?{0}])",
+                        Regex.Escape(new string(Path.GetInvalidPathChars()))
+                        ),
+                    RegexOptions.Compiled
+                    );
         }
 
         public static IList<string> GetMatchesGroupValue(this Regex r, string input, int groupNum = 1)

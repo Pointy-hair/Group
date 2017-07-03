@@ -22,6 +22,7 @@ namespace RevolutionaryStuff.Core
             public static readonly MimeType Any = "application/*";
             public static readonly MimeType Json = "application/json";
             public static readonly MimeType OctetStream = "application/octet-stream";
+            public static readonly MimeType SqlServerIntegrationServicesEtlPackage = new MimeType(OctetStream, ".dtsx");
             public static readonly MimeType Pdf = new MimeType("application/pdf", ".pdf");
             public static class SpreadSheet
             {

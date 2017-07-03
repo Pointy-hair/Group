@@ -349,7 +349,6 @@ namespace Traffk.Tableau
 
         async Task<byte[]> ITableauVisualServices.DownloadPdfAsync(DownloadPdfOptions options)
         {
-
             var handler = new HttpClientHandler
             {
                 CookieContainer = options.Cookies,

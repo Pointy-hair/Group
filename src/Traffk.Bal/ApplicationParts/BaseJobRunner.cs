@@ -45,7 +45,7 @@ namespace Traffk.Bal.ApplicationParts
             Logger = logger.ForContext(new ILogEventEnricher[]
             {
                 new PropertyEnricher(nameof(InstanceId), InstanceId),
-                new PropertyEnricher(nameof(JobInfo.JobId), JobInfo.JobId),
+                new PropertyEnricher(nameof(JobInfo.JobId), JobInfo?.JobId),
                 new PropertyEnricher(typeof(Type).Name, GetType().Name),
             });
 

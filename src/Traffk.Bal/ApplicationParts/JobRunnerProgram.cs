@@ -20,7 +20,8 @@ using Traffk.Tableau;
 using Traffk.Tableau.REST;
 using Traffk.Tableau.REST.RestRequests;
 using ILogger = Serilog.ILogger;
-
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Traffk.Bal.ApplicationParts
 {
@@ -36,7 +37,7 @@ namespace Traffk.Bal.ApplicationParts
             public BackgroundJobServerOptions BackgroundOptions { get; set; }
         }
 
-        protected override Task OnGoAsync()
+        protected async override Task OnGoAsync()
         {
             var o = this.ServiceProvider.GetService<IOptions<HangfireServerOptions>>().Value;
             JobRunnerLogger = this.ServiceProvider.GetService<ILogger>();
@@ -45,7 +46,16 @@ namespace Traffk.Bal.ApplicationParts
             GlobalConfiguration.Configuration.UseActivator(new MyActivator(this));
             GlobalJobFilters.Filters.Add(new TraffkJobFilterAttribute(Configuration));
 
-            using (var s = new BackgroundJobServer(o.BackgroundOptions ?? new BackgroundJobServerOptions()))
+            var bo = o.BackgroundOptions ?? new BackgroundJobServerOptions();
+            var queues = new List<string>();
+            queues.AddRange(bo.Queues.Where(q => !q.StartsWith("-")).ToArray());
+            bo.Queues.Where(q => q.StartsWith("-")).ForEach(q => queues.Remove(q.Substring(1)));
+            bo.Queues = queues.ToArray();
+
+            var e = this.ServiceProvider.GetRequiredService<IEtlJobs>();
+            await e.LoadInternationalClassificationDiseasesAsync();
+
+            using (var s = new BackgroundJobServer(bo))
             {
                 var timeout = Parse.ParseTimeSpan(Configuration["JobRunner:TimeOut"], TimeSpan.FromSeconds(60));
                 do
@@ -55,7 +65,7 @@ namespace Traffk.Bal.ApplicationParts
                 while (!ShutdownRequested.WaitOne(timeout));
             }
 
-            return Task.CompletedTask;
+//            return Task.CompletedTask;
         }
 
         protected override void OnConfigureServices(IServiceCollection services)
