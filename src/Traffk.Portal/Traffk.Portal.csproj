@@ -28,7 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RevolutionaryStuff.Core\RevolutionaryStuff.Core.csproj" />
     <ProjectReference Include="..\Traffk.Bal\Traffk.Bal.csproj" />
     <ProjectReference Include="..\Traffk.Orchestra\Traffk.Orchestra.csproj" />
     <ProjectReference Include="..\Traffk.Tableau\Traffk.Tableau.csproj" />
@@ -37,6 +36,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.SecretManager" Version="1.0.0-rc1-final" />
+    <PackageReference Include="RevolutionaryStuff.Core" Version="1.0.6" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="1.0.0" />
     <PackageReference Include="WindowsAzure.Storage" Version="8.1.1" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="1.0.2" />
