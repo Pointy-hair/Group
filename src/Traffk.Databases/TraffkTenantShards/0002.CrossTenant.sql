@@ -11,7 +11,7 @@ begin
 		@s0=@hostName,
 		@s1=@appType
 
-	select a.AppId, a.TenantId, t.HostDatabaseName, d.Hostname ActualHostname, JSON_VALUE(a.appsettings, '$.Hosts.HostInfos[0].Hostname') as PreferredHostname
+	select a.AppId, a.TenantId, t.HostDatabaseName, d.Hostname ActualHostname, JSON_VALUE(a.appsettings, '$.Hosts.HostInfos[0].Hostname') as PreferredHostname, LoginDomain
 	from 
 		tenants t
 			inner join

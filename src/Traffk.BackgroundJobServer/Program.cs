@@ -33,7 +33,9 @@ namespace Traffk.BackgroundJobRunner
             services.AddScoped<ITrackingEmailer, TrackingEmailer>();
             services.AddScoped<ITenantJobs, TenantedJobRunner>();
             services.AddScoped<IGlobalJobs, GlobalJobRunner>();
+#if NET462
             services.AddScoped<IEtlJobs, EtlJobRunner>();
+#endif
             services.AddScoped<IDataSourceSyncJobs, DataSourceSyncRunner>();
             services.AddScoped<ITenantManagementJobs, TenantManagementJobsRunner>();
             services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<ApplicationUser>>();

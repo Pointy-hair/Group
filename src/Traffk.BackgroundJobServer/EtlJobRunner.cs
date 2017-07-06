@@ -1,4 +1,5 @@
-﻿using Microsoft.SqlServer.Dts.Runtime;
+﻿#if NET462
+using Microsoft.SqlServer.Dts.Runtime;
 using RevolutionaryStuff.Core;
 using Serilog;
 using System.IO;
@@ -46,10 +47,7 @@ namespace Traffk.BackgroundJobServer
                 }
                 var app = new Application();
                 var package = app.LoadPackage(dtsxPath, this);
-                if (packageInit != null)
-                {
-                    packageInit(package);
-                }
+                packageInit?.Invoke(package);
                 var res = package.Execute(null, null, this, this, null);
             }
             finally
@@ -173,3 +171,4 @@ namespace Traffk.BackgroundJobServer
 
     }
 }
+#endif
