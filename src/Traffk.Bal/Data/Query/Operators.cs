@@ -1,34 +1,34 @@
-﻿using System.ComponentModel;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Traffk.Bal.Data.Query
 {
     public enum Operators
     {
-        [DisplayName("any of")]
+        [Display(Name = "any of")]
         AnyOf,
-        [DisplayName("none of")]
+        [Display(Name = "none of")]
         NoneOf,
-        [DisplayName("==")]
+        [Display(Name = "==")]
         Equals,
-        [DisplayName("<>")]
+        [Display(Name = "<>")]
         NotEquals,
-        [DisplayName(">")]
+        [Display(Name = ">")]
         GreaterThan,
-        [DisplayName(">=")]
+        [Display(Name = ">=")]
         GreaterThanOrEqual,
-        [DisplayName("<")]
+        [Display(Name = "<")]
         LessThan,
-        [DisplayName("<=")]
+        [Display(Name = "<=")]
         LessThanOrEqual,
-        [DisplayName("is true")]
+        [Display(Name = "is true")]
         IsTrue,
-        [DisplayName("is false")]
+        [Display(Name = "is false")]
         IsFalse,
-        [DisplayName("is defined")]
+        [Display(Name = "is defined")]
         IsDefined,
-        [DisplayName("is not defined")]
+        [Display(Name = "is not defined")]
         IsNotDefined,
-        [DisplayName("is null")]
+        [Display(Name = "is null")]
         IsNotNull,
     }
 }

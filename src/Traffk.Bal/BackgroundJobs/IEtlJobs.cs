@@ -6,7 +6,7 @@ namespace Traffk.Bal.BackgroundJobs
     [Queue(BackgroundJobHelpers.QueueNames.SsisQueue)]
     public interface IEtlJobs
     {
-        [Queue(BackgroundJobHelpers.QueueNames.SsisQueue)]
+        Task LoadCmsGovAsync();
         Task LoadInternationalClassificationDiseasesAsync();
     }
 }

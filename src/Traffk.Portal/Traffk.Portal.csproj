@@ -1,18 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <TargetFrameworks>netcoreapp1.1</TargetFrameworks>
     <DebugType>portable</DebugType>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <AssemblyName>Traffk.Portal</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>Traffk.Portal</PackageId>
     <UserSecretsId>as  -TraffkPortal-577e2973-1095-4cc2-acd6-1f3fe3f47073</UserSecretsId>
-    <PackageTargetFallback>$(PackageTargetFallback);dotnet5.6;dnxcore50;portable-net451+win8</PackageTargetFallback>
-    <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='VSTS-CI|AnyCPU'" />
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp1.1'">
+    <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
+    <PackageTargetFallback>$(PackageTargetFallback);dotnet5.6;dnxcore50;portable-net451+win8</PackageTargetFallback>
+  </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Properties\PublishProfiles\traffkSite-dev - FTP.pubxml" />
@@ -36,7 +39,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.SecretManager" Version="1.0.0-rc1-final" />
-    <PackageReference Include="RevolutionaryStuff.Core" Version="1.0.6" />
+    <PackageReference Include="RevolutionaryStuff.Core" Version="1.0.8" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="1.0.0" />
     <PackageReference Include="WindowsAzure.Storage" Version="8.1.1" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="1.0.2" />
