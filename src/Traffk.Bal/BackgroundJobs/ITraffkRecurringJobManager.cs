@@ -10,5 +10,7 @@ namespace Traffk.Bal.BackgroundJobs
         void Update(string recurringJobId, Hangfire.Common.Job job, string cronExpression);
 
         List<RecurringJobDto> GetUserRecurringJobs();
+
+        RecurringJobDto GetRecurringJobById(string id);
     }
 }

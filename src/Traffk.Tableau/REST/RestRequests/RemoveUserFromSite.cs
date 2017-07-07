@@ -1,4 +1,5 @@
-﻿using Traffk.Tableau.REST.Models;
+﻿using System.Net.Http;
+using Traffk.Tableau.REST.Models;
 
 namespace Traffk.Tableau.REST.RestRequests
 {
@@ -15,9 +16,9 @@ namespace Traffk.Tableau.REST.RestRequests
         public void ExecuteRequest(SiteUser userToRemove)
         {
             var urlQuery = Urls.UrlRemoveUserFromSite(Login, userToRemove);
-            var webRequest = CreateLoggedInWebRequest(urlQuery, "DELETE");
+            var webRequest = CreateLoggedInRequest(urlQuery, HttpMethod.Delete);
 
-            var response = GetWebReponseLogErrors(webRequest, TableauOperationDescription);
+            var response = SendHttpRequest(webRequest, TableauOperationDescription);
         }
 
     }

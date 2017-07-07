@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net.Http;
+using System.Text;
 using System.Xml;
 using Traffk.Tableau.REST.Models;
 
@@ -27,11 +28,9 @@ namespace Traffk.Tableau.REST.RestRequests
             var xmlText = sb.ToString();
 
             var urlQuery = Urls.UrlUpdateDatasourceConnection(Login, datasourceToUpdate, connectionToUpdate);
-            var webRequest = CreateLoggedInWebRequest(urlQuery, "PUT");
+            var webRequest = CreateLoggedInRequest(urlQuery, HttpMethod.Put);
 
-            TableauServerRequestBase.SendPutContents(webRequest, xmlText);
-
-            var response = GetWebReponseLogErrors(webRequest, TableauOperationDescription);
+            SendHttpRequest(webRequest, xmlText);
         }
     }
 }

@@ -8,28 +8,12 @@ using System.Net.Http;
 /// </summary>
 public class TableauServerWebClient : HttpClient
 {
-    public readonly int WebRequestTimeout;
+    public readonly int TimeoutInMilliseconds;
     public const int DefaultLongRequestTimeOutMs = 15 * 60 * 1000;  //15 minutes * 60 sec/minute * 1000 ms/sec
 
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    /// <param name="timeoutMs"></param>
-    public TableauServerWebClient(int timeoutMs = DefaultLongRequestTimeOutMs)
+    public TableauServerWebClient(int timeoutInMilliseconds = DefaultLongRequestTimeOutMs)
     {
-        this.WebRequestTimeout = timeoutMs;
-    }
-
-    /// <summary>
-    /// Returns a Web Request object (used for download operations) with
-    /// our specifically set timeout
-    /// </summary>
-    /// <param name="address"></param>
-    /// <returns></returns>
-    protected WebRequest GetWebRequest(Uri address)
-    {
-        var request = WebRequest.Create(address);
-        return request;
+        this.TimeoutInMilliseconds = timeoutInMilliseconds;
     }
 
     public HttpResponseMessage DownloadFile(string url, string tempFilepath)

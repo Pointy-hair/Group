@@ -1,77 +1,86 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
+using System.Xml;
+using RevolutionaryStuff.Core;
+using Traffk.Tableau.REST.Helpers;
 
-namespace Traffk.Tableau.REST
+namespace Traffk.Tableau.REST.RestRequests
 {
     /// <summary>
     /// Base class on top of which requests to Tableau Server are based
     /// </summary>
     public abstract class TableauServerRequestBase
     {
-        /// <summary>
-        /// Sends the body text up to the server, using the PUT method
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="bodyText"></param>
-        protected static void SendPutContents(WebRequest request, string bodyText)
-        {
-            SendHttpRequestContents_Inner(request, bodyText, "PUT");
-        }
 
         /// <summary>
         /// Sends the body text up to the server
         /// </summary>
         /// <param name="request"></param>
         /// <param name="bodyText"></param>
-        protected static void SendPostContents(WebRequest request, string bodyText)
+        protected HttpResponseMessage SendHttpRequest(HttpRequestMessage request, string bodyText = "")
         {
-            SendHttpRequestContents_Inner(request, bodyText, "POST");
-        }
-
-        /// <summary>
-        /// Sends the body text up to the server
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="bodyText"></param>
-        private static void SendHttpRequestContents_Inner(WebRequest request, string bodyText, string httpMethod = "POST")
-        {
-            request.Method = httpMethod;
-            // Set the ContentType property of the WebRequest.
-            request.ContentType = "application/xml;charset=utf-8"; //[2016-06-17] We want to be very explicit on the content type; to give servers very clear instructions on how to parse
-            // Set the ContentLength property of the WebRequest.
-            byte[] byteArray = Encoding.UTF8.GetBytes(bodyText);
-            //request.ContentLength = byteArray.Length;
-
-            // Get the request stream.
-            var dataStream = request.GetRequestStreamAsync().Result;
-            // Write the data to the request stream.
-            dataStream.Write(byteArray, 0, byteArray.Length);
-            // Close the Stream object.
-
-            dataStream.Dispose();
-        }
-
-
-        /// <summary>
-        /// Debugging function: Allows us to test that all of our content was replaced
-        /// </summary>
-        /// <param name="text"></param>
-        protected void AssertTemplateFullyReplaced(string text)
-        {
-            if (text.Contains("{{iws"))
+            Requires.NonNull(request.Method, nameof(request.Method));
+            request.Headers.TryAddWithoutValidation("Content-Type", "application/xml;charset=utf-8");
+            if (!String.IsNullOrEmpty(bodyText))
             {
-                System.Diagnostics.Debug.Assert(false, "Text still contains template fragments");
+                byte[] byteArray = Encoding.UTF8.GetBytes(bodyText);
+                request.Content = new ByteArrayContent(byteArray, 0, byteArray.Length);
+            }
+            
+            return GetHttpResponseAsync(request).ExecuteSynchronously();
+        }
+
+        protected HttpResponseMessage SendHttpRequest(HttpRequestMessage request, MimeWriterBase mimeToSend)
+        {
+            Requires.NonNull(request.Method, nameof(request.Method));
+            var uploadMimeChunk = mimeToSend.GenerateMimeEncodedChunk();
+            request.Headers.TryAddWithoutValidation("Content-Type", "multipart/mixed; boundary=" + mimeToSend.MimeBoundaryMarker);
+            request.Content = new ByteArrayContent(uploadMimeChunk, 0, uploadMimeChunk.Length);
+            return GetHttpResponseLongRunningAsync(request).ExecuteSynchronously();
+        }
+
+        private async Task<HttpResponseMessage> GetHttpResponseAsync(HttpRequestMessage request)
+        {
+            try
+            {
+                Requires.NonNull(request.RequestUri, nameof(request.RequestUri));
+                Requires.NonNull(request.Method, nameof(request.Method));
+
+                var httpClient = new HttpClient();
+                var response = httpClient.SendAsync(request);
+                return await response;
+            }
+            catch (Exception e)
+            {
+                throw;
             }
         }
 
-        /// <summary>
-        /// Gets the web response as a XML document
-        /// </summary>
-        protected static System.Xml.XmlDocument GetWebResponseAsXml(WebResponse response)
+        private async Task<HttpResponseMessage> GetHttpResponseLongRunningAsync(HttpRequestMessage request)
+        {
+            try
+            {
+                Requires.NonNull(request.RequestUri, nameof(request.RequestUri));
+                Requires.NonNull(request.Method, nameof(request.Method));
+
+                var httpClient = new TableauServerWebClient();
+                var response = httpClient.SendAsync(request);
+                return await response;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
+
+        protected XmlDocument GetHttpResponseAsXml(HttpResponseMessage response)
         {
             string streamText = "";
-            var responseStream = response.GetResponseStream();
+            var responseStream = response.Content.ReadAsStreamAsync().ExecuteSynchronously();
             using (responseStream)
             {
                 var streamReader = new StreamReader(responseStream);
@@ -87,27 +96,5 @@ namespace Traffk.Tableau.REST
             xmlDoc.LoadXml(streamText);
             return xmlDoc;
         }
-
-        /// <summary>
-        /// Gets the web response as a XML document
-        /// </summary>
-        protected static string GetWebResponseAsText(WebResponse response)
-        {
-            string streamText = "";
-            var responseStream = response.GetResponseStream();
-            using (responseStream)
-            {
-                var streamReader = new StreamReader(responseStream);
-                using (streamReader)
-                {
-                    streamText = streamReader.ReadToEnd();
-                    streamReader.Dispose();
-                }
-                responseStream.Dispose();
-            }
-
-            return streamText;
-        }
-
     }
 }

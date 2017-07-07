@@ -1,4 +1,6 @@
-﻿namespace Traffk.Tableau.REST.RestRequests
+﻿using System.Net.Http;
+
+namespace Traffk.Tableau.REST.RestRequests
 {
     /// <summary>
     /// Handles sign out
@@ -32,12 +34,11 @@
 
             //Create a web request, in including the users logged-in auth information in the request headers
             var urlRequest = _onlineUrls.UrlLogout;
-            var webRequest = CreateLoggedInWebRequest(urlRequest);
-            webRequest.Method = "POST";
+            var webRequest = CreateLoggedInRequest(urlRequest, HttpMethod.Post);
 
             //Request the data from server
-            Login.StatusLog.AddStatus("Web request: " + urlRequest, -10);
-            var response = GetWebReponseLogErrors(webRequest, "sign out");
+            //Login.StatusLog.AddStatus("Web request: " + urlRequest, -10);
+            var response = SendHttpRequest(webRequest);
 
         }
     }

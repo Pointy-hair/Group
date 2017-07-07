@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -39,30 +40,18 @@ namespace Traffk.Tableau.REST.RestRequests
             var xmlText = sb.ToString();
 
             var urlQuery = Urls.UrlCreateSite();
-            var webRequest = CreateLoggedInWebRequest(urlQuery, "POST");
-            TableauServerRequestBase.SendPostContents(webRequest, xmlText);
+            var request = CreateLoggedInRequest(urlQuery, HttpMethod.Post);
 
-            Login.StatusLog.AddStatus("Web request: " + urlQuery, -10);
-            var response = GetWebReponseLogErrors(webRequest, TableauOperationDescription);
+            //Login.StatusLog.AddStatus("Web request: " + urlQuery, -10);
+            var response = SendHttpRequest(request, xmlText);
 
-            using (response)
-            {
-                var xmlDoc = GetWebResponseAsXml(response);
+            var xmlDoc = GetHttpResponseAsXml(response);
 
-                //if (!xmlDoc.ToString().Contains("Created"))
-                //{
-                //    throw new Exception("Site not created.");
-                //}
+            var xDoc = xmlDoc.ToXDocument();
+            var siteElement = xDoc.Root.Descendants(XName.Get(TableauObjectName, XmlNamespace)).FirstOrDefault();
 
-                var xDoc = xmlDoc.ToXDocument();
-                var siteElement = xDoc.Root.Descendants(XName.Get(TableauObjectName, XmlNamespace)).FirstOrDefault();
-
-                return new SiteInfo(siteElement.ToXmlNode());
-            }
-
-
-
-
+            return new SiteInfo(siteElement.ToXmlNode());
+            
         }
     }
 }

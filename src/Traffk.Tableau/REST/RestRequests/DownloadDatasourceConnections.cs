@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Net.Http;
 using System.Xml.Linq;
 
 namespace Traffk.Tableau.REST.RestRequests
@@ -35,23 +36,17 @@ namespace Traffk.Tableau.REST.RestRequests
             DatasourceId = datasourceId;
         }
 
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="serverName"></param>
         public void ExecuteRequest()
         {
             var dsConnections = new List<SiteConnection>();
 
             //Create a web request, in including the users logged-in auth information in the request headers
             var urlQuery = Urls.Url_DatasourceConnectionsList(Login, DatasourceId);
-            var webRequest = CreateLoggedInWebRequest(urlQuery);
-            webRequest.Method = "GET";
+            var httpRequestMessage = CreateLoggedInRequest(urlQuery, HttpMethod.Get);
 
-            Login.StatusLog.AddStatus("Web request: " + urlQuery, -10);
-            var response = GetWebReponseLogErrors(webRequest, "get datasources's connections list");
-            var xmlDoc = GetWebResponseAsXml(response);
+            //Login.StatusLog.AddStatus("Web request: " + urlQuery, -10);
+            var response = SendHttpRequest(httpRequestMessage);
+            var xmlDoc = GetHttpResponseAsXml(response);
 
             //Get all the workbook nodes
             //Get all the nodes

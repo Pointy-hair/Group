@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -385,11 +386,10 @@ namespace Traffk.Tableau.REST.RestRequests
 
             //NOTE: The publish finalization step can take several minutes, because server needs to unpack the uploaded ZIP and file it away.
             //      For this reason, we pass in a long timeout
-            var webRequest = CreateAndSendMimeLoggedInRequest(urlFinalizeUpload, "POST", mimeGenerator, TableauServerWebClient.DefaultLongRequestTimeOutMs); 
-            var response = GetWebReponseLogErrors(webRequest, "finalize workbook publish");
+            var response = CreateAndSendMimeLoggedInRequest(urlFinalizeUpload, HttpMethod.Post, mimeGenerator); 
             using (response)
             {
-                var xmlDoc = GetWebResponseAsXml(response);
+                var xmlDoc = GetHttpResponseAsXml(response);
                 var xDoc = xmlDoc.ToXDocument();
                 var workbookXml = xDoc.Root.Descendants(XName.Get("workbook", XmlNamespace)).FirstOrDefault();
                 try
