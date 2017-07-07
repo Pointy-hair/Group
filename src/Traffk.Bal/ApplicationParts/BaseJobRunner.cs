@@ -7,6 +7,7 @@ using Serilog.Core;
 using Serilog.Core.Enrichers;
 using Traffk.Bal.Data.Rdb.TraffkGlobal;
 using ILogger = Serilog.ILogger;
+using System.IO;
 
 namespace Traffk.Bal.ApplicationParts
 {
@@ -25,6 +26,21 @@ namespace Traffk.Bal.ApplicationParts
         protected readonly DateTime StartedAtUtc = DateTime.UtcNow;
 
         private static int InstanceId_s;
+
+        protected string TempFolderPath
+        {
+            get
+            {
+                if (TempFolderPath_p == null)
+                {
+                    TempFolderPath_p = $"{Path.GetTempPath()}{Stuff.ApplicationInstanceId}\\{this.GetType().Name}\\{InstanceId}\\{JobInfo?.JobId}\\";
+                    Directory.CreateDirectory(TempFolderPath_p);
+                }
+                return TempFolderPath_p;
+            }
+        }
+        private string TempFolderPath_p;
+
 
         public string GetParentJobResultData()
         {
@@ -66,6 +82,14 @@ namespace Traffk.Bal.ApplicationParts
         protected override void OnDispose(bool disposing)
         {
             Logger.Information(DisposedText);
+            if (TempFolderPath_p!=null)
+            {
+                try
+                {
+                    Directory.Delete(TempFolderPath, true);
+                }
+                catch (Exception) { }
+            }
             base.OnDispose(disposing);
         }
     }

@@ -35,7 +35,7 @@ namespace Traffk.BackgroundJobServer
         {
             Requires.SingleCall(ref ExecuteAsyncCalled);
 
-            var dtsxPath = Stuff.GetTempFileName(MimeType.Application.SqlServerIntegrationServicesEtlPackage.PrimaryFileExtension);
+            var dtsxPath = Path.Combine(TempFolderPath, packageName);
             try
             {
                 using (var rst = ResourceHelpers.GetEmbeddedResourceAsStream(EtlPackageAssembly, packageName))
@@ -159,13 +159,35 @@ namespace Traffk.BackgroundJobServer
 
         #region IEtlJobs
 
+        private void SetParameterIfPresent(Package p, string parameterName, object parameterValue)
+        {
+            if (p.Parameters.Contains(parameterName))
+            {
+                p.Parameters[parameterName].Value = parameterValue;
+            }
+        }
+
+        private void ConfigureCommonParameters(Package p)
+        {
+            SetParameterIfPresent(p, "WorkingFolderName", $"{TempFolderPath}work");
+        }
+
+        T.Task IEtlJobs.LoadCmsGovAsync()
+        {
+            return ExecuteAsync("Cmsgov.dtsx", p =>
+            {
+                ConfigureCommonParameters(p);
+            });
+        }
+
         T.Task IEtlJobs.LoadInternationalClassificationDiseasesAsync()
         {
             return ExecuteAsync("InternationalClassificationDiseases.dtsx", p=> 
             {
-                Stuff.Noop(p);
+                ConfigureCommonParameters(p);
             });
         }
+
 
         #endregion
 
