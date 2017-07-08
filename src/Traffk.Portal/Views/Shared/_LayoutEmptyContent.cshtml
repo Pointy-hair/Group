@@ -78,7 +78,7 @@
     {
         <link rel="shortcut icon" href="@R.FaviconLink" />
     }
-    @Html.ApplicationInsightsJavaScript(TelemetryConfiguration)
+    @Html.Raw(JavaScriptSnippet.FullScript)
 </head>
 
 <body onload="setUI();">
