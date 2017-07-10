@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <VersionPrefix>1.1.0</VersionPrefix>
-    <TargetFrameworks>netcoreapp1.1</TargetFrameworks>
-    <AssemblyName>Traffk.CommunicationBlaster.Tests</AssemblyName>
-    <PackageId>Traffk.CommunicationBlaster.Tests</PackageId>
+    <TargetFrameworks>net462</TargetFrameworks>
+    <AssemblyName>Traffk.BackgroundJobServer.Tests</AssemblyName>
+    <PackageId>Traffk.BackgroundJobServer.Tests</PackageId>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
@@ -13,17 +13,34 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='VSTS-CI|AnyCPU'" />
 
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp1.1'">
+    <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
+    <PackageTargetFallback>$(PackageTargetFallback);dotnet5.6;dnxcore50;portable-net451+win8</PackageTargetFallback>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net462'">
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp1.1'">
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net462'">
+    <Reference Include="Microsoft.SqlServer.ManagedDTS">
+      <HintPath>assemblies\Microsoft.SqlServer.ManagedDTS.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.1.17" />
     <PackageReference Include="MSTest.TestFramework" Version="1.1.17" />
-    <PackageReference Include="Traffk.Bal" Version="1.0.0-*" />
-    <PackageReference Include="Traffk.BackgroundJobServer" Version="1.0.0-*" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Traffk.BackgroundJobServer\Traffk.BackgroundJobServer.csproj" />
-    <ProjectReference Include="..\..\src\Traffk.Bal\Traffk.Bal.csproj" />
   </ItemGroup>
 
   <ItemGroup>

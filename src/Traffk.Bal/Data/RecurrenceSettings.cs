@@ -295,7 +295,8 @@ namespace Traffk.Bal.Data
                     }
                     if (DailyPattern.EveryWeekday)
                     {
-                        return @"0 0 12 ? * MON-FRI *";
+                        var startTime = StartTimeUtc.Hour.ToString();
+                        return $"0 {startTime} * * 1-5";
                     }
                     break;
                 case PatternTypes.Weekly:

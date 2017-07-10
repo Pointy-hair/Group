@@ -21,7 +21,7 @@
     <input type="hidden" asp-for="TableauReportViewModel.ViewName" />
     <input type="hidden" asp-for="TableauReportViewModel.WorksheetName" />
     
-    @await Html.PartialAsync("~/Views/Shared/_RecurrenceSettingsPartial.cshtml", @Model.RecurrenceSettings, z => z.RecurrenceSettings);
+    @await Html.PartialAsync("~/Views/Shared/_BasicRecurrenceSettingsPartial.cshtml", @Model.RecurrenceSettings, z => z.RecurrenceSettings);
 
     <div class="form-row">
         <label class="col-sm-1"></label>

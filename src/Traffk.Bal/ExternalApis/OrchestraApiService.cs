@@ -97,12 +97,14 @@ namespace Traffk.Bal.ExternalApis
             return tDrugResponse.Value;
         }
 
-        public DrugDetailResponse DrugDetail(string ndcOrOrchestraId)
+        public Drug DrugDetail(string ndc)
         {
-            var cacheKey = RevolutionaryStuff.Core.Caching.Cache.CreateKey(typeof(DrugDetailResponse).Name, ndcOrOrchestraId);
+            var cacheKey = RevolutionaryStuff.Core.Caching.Cache.CreateKey(typeof(DrugDetailResponse).Name, ndc);
             Log(EventType, OrchestraRxApiClient.OrchestraEndpoints.DrugDetail);
-            var drugDetailResponse = ScopedCacher.FindOrCreate<DrugDetailResponse>(cacheKey, key => Client.DrugDetailAsync(ndcOrOrchestraId).Result);
-            return drugDetailResponse?.Value;
+            var oDrugDetail = ScopedCacher.FindOrCreate<DrugDetailResponse>((ndc),
+                key => Client.DrugDetailAsync(ndc).ExecuteSynchronously());
+
+            return new Drug(oDrugDetail?.Value);
         }
 
         public DrugOption[] DrugAlternativeSearch(IEnumerable<DrugAlternativeSearchQuery> searchQuery)

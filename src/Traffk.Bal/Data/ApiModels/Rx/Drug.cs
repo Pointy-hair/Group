@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Traffk.Bal.Data.ApiModels.Rx
 {
@@ -49,6 +50,19 @@ namespace Traffk.Bal.Data.ApiModels.Rx
             Ndc = orchestraDrug.ReferenceNDC;
         }
 
+        public Drug(Orchestra.Models.DrugDetailResponse o)
+        {
+            Object = typeof(Drug).Name;
+            Id = o.DrugID;
+            Name = o.DrugName;
+            Type = o.DrugType;
+            ChemicalName = o.ChemicalName;
+            GenericDrugId = o.GenericDrugID;
+            GenericDrugName = o.GenericDrugName;
+            Ndc = o.Dosages.FirstOrDefault().ReferenceNDC;
+            Dosages = new Dosages(o.Dosages);
+        }
+
         [JsonProperty("object")]
         public string Object { get; set; }
         [JsonProperty("id")]
@@ -78,6 +92,7 @@ namespace Traffk.Bal.Data.ApiModels.Rx
 
         public Dosages(Orchestra.Models.OrchestraDosage[] orchestraDosages)
         {
+            Object = "list";
             var tDosages = new List<Dosage>();
             foreach (var dosage in orchestraDosages)
             {
