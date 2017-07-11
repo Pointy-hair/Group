@@ -6,6 +6,7 @@ using Traffk.Bal.ExternalApis;
 using Traffk.Bal.Permissions;
 using Traffk.Orchestra.Models;
 using Traffk.Portal.Permissions;
+using Traffk.Bal.Data.ApiModels.Rx;
 using DrugResponse = Traffk.Bal.Data.ApiModels.Rx.DrugResponse;
 using PharmacyResponse = Traffk.Bal.Data.ApiModels.Rx.PharmacyResponse;
 
@@ -47,12 +48,21 @@ namespace Traffk.Portal.Controllers.Api
         }
 
         [HttpGet]
-        [Route("drugs/{ndcReference}")]
-        public DrugDetailResponse DrugDetail(string ndcReference)
+        [Route("drugs/ndc/{ndcReference}")]
+        public Bal.Data.ApiModels.Rx.Drug DrugDetailNdc(string ndcReference)
         {
             Log();
 
             return OrchestraApiService.DrugDetail(ndcReference);
+        }
+
+        [HttpGet]
+        [Route("drugs/{id}")]
+        public Bal.Data.ApiModels.Rx.Drug DrugDetail(string id)
+        {
+            Log();
+
+            return OrchestraApiService.DrugDetail(id);
         }
 
         [HttpGet]

@@ -79,6 +79,16 @@ namespace Traffk.Bal.BackgroundJobs
             return currentUserRecurringJobs.ToList();
         }
 
+        RecurringJobDto ITraffkRecurringJobManager.GetRecurringJobById(string id)
+        {
+            var recurringJobs = Hangfire.JobStorage.Current.GetConnection().GetRecurringJobs();
+            var job = recurringJobs.SingleOrDefault(x =>
+                ParseRecurringJobId(x.Id).ContactId == CurrentUser?.User?.ContactId
+                && ParseRecurringJobId(x.Id).TenantId == TenantId
+                && ParseRecurringJobId(x.Id).RecurringJobId == id);
+            return job;
+        }
+
         public class RecurringJobIdContext
         {
             public string RecurringJobId { get; set; }
@@ -107,5 +117,6 @@ namespace Traffk.Bal.BackgroundJobs
             var id = $"t:{tenantId},c:{contactId},{Guid.NewGuid().ToString()}"; 
             return id;
         }
+
     }
 }

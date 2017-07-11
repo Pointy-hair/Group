@@ -1,4 +1,7 @@
 ﻿using System.IO;
+using System.Net.Http;
+using RevolutionaryStuff.Core;
+using Traffk.Tableau.REST.Helpers;
 
 namespace Traffk.Tableau.REST.RestRequests
 {
@@ -24,12 +27,11 @@ namespace Traffk.Tableau.REST.RestRequests
         {
             //Create a web request, in including the users logged-in auth information in the request headers
             var urlQuery = urls.UrlDownloadPreviewImageForView(Login, workbookId, viewId);
-            var webRequest = CreateLoggedInWebRequest(urlQuery);
-            webRequest.Method = "GET";
+            var request = CreateLoggedInRequest(urlQuery, HttpMethod.Get);
 
-            Login.StatusLog.AddStatus("Web request: " + urlQuery, -10);
-            var response = GetWebReponseLogErrors(webRequest, "get preview image for view");
-            var responseStream = response.GetResponseStream();
+            //Login.StatusLog.AddStatus("Web request: " + urlQuery, -10);
+            var response = SendHttpRequest(request);
+            var responseStream = response.GetResponseStreamAsync().ExecuteSynchronously();
 
             using (MemoryStream ms = new MemoryStream())
             {

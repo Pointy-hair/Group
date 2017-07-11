@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Xml.Linq;
 using Traffk.Tableau.REST.Models;
 
@@ -35,11 +36,11 @@ namespace Traffk.Tableau.REST.RestRequests
 
             //Get all users from default site
             var urlQuery = Urls.Url_UsersList(Login, pageSize, pageToRequest);
-            var webRequest = CreateLoggedInWebRequest(urlQuery);
+            var request = CreateLoggedInRequest(urlQuery, HttpMethod.Get);
 
             //Login.StatusLog.AddStatus("Web request: " + urlQuery, -10);
-            var response = GetWebReponseLogErrors(webRequest, TableauOperationDescription);
-            var xmlDoc = GetWebResponseAsXml(response);
+            var response = SendHttpRequest(request);
+            var xmlDoc = GetHttpResponseAsXml(response);
 
             var xDoc = xmlDoc.ToXDocument();
             var userElements = xDoc.Root.Descendants(XName.Get(TableauObjectName, XmlNamespace));

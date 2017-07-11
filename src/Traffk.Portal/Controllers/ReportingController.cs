@@ -44,6 +44,7 @@ namespace Traffk.Portal.Controllers
             public const string DownloadedReports = "Downloads";
             public const string ScheduledReports = "ScheduledReportIndex";
             public const string ScheduleReportSave = "ScheduleReportSave";
+            public const string ScheduledReportDetail = "ScheduledReportDetail";
         }
 
         public static class ViewNames
@@ -190,23 +191,6 @@ namespace Traffk.Portal.Controllers
         {
             try
             {
-
-                //var reportSearchCriteria = new ReportSearchCriteria
-                //{
-                //    VisualContext = ReportVisualContext,
-                //    ReportId = Parse.ParseInt32(id)
-                //};
-                //var reportVisual = ReportVisualService.GetReportVisual(reportSearchCriteria);
-                //if (reportVisual == null)
-                //{
-                //    return RedirectToAction(ActionNames.Index);
-                //}
-                //var tableauReportViewModel = new TableauReportViewModel(reportVisual);
-
-                //var createPdfOptions = new CreatePdfOptions(tableauReportViewModel.WorkbookName, tableauReportViewModel.ViewName, tableauReportViewModel.WorksheetName);
-                //RecurringJobManager.Add(Hangfire.Common.Job.FromExpression<ITenantJobs>(x => x.ScheduleTableauPdfDownload(createPdfOptions)), Cron.MinuteInterval(2));
-                //return Json("success");
-
                 var reportSearchCriteria = new ReportSearchCriteria
                 {
                     VisualContext = ReportVisualContext,
@@ -252,12 +236,19 @@ namespace Traffk.Portal.Controllers
             }
         }
 
-        [Route("/Reporting/Report/Scheduled")]
+        [Route("/Reporting/ScheduledReports")]
         [ActionName(ActionNames.ScheduledReports)]
         public IActionResult ScheduledReportIndex()
         {
             var userRecurringJobs = RecurringJobManager.GetUserRecurringJobs();
             return View(userRecurringJobs);
+        }
+
+        [Route("/Reporting/ScheduledReports/{id}")]
+        public IActionResult ScheduledReportDetail(string id)
+        {
+            var recurringJob = RecurringJobManager.GetRecurringJobById(id);
+            return View(recurringJob);
         }
 
         private void QueueReportDownload(CreatePdfOptions options)

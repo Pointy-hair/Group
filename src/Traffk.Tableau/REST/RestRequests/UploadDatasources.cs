@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -326,25 +327,21 @@ namespace Traffk.Tableau.REST.RestRequests
 
             //NOTE: The publish finalization step can take several minutes, because server needs to unpack the uploaded ZIP and file it away.
             //      For this reason, we pass in a long timeout
-            var webRequest = this.CreateAndSendMimeLoggedInRequest(urlFinalizeUpload, "POST", mimeGenerator, TableauServerWebClient.DefaultLongRequestTimeOutMs); 
-            var response = GetWebReponseLogErrors(webRequest, "finalize datasource publish");
-            using (response)
+            var response = this.CreateAndSendMimeLoggedInRequest(urlFinalizeUpload, HttpMethod.Post, mimeGenerator); 
+            var xmlDoc = GetHttpResponseAsXml(response);
+
+            //Get all the datasource node from the response
+            var xDoc = xmlDoc.ToXDocument();
+            var dataSourceXml = xDoc.Root.Descendants(XName.Get("datasource", XmlNamespace)).FirstOrDefault();
+
+            try
             {
-                var xmlDoc = GetWebResponseAsXml(response);
-
-                //Get all the datasource node from the response
-                var xDoc = xmlDoc.ToXDocument();
-                var dataSourceXml = xDoc.Root.Descendants(XName.Get("datasource", XmlNamespace)).FirstOrDefault();
-
-                try
-                {
-                    return new SiteDatasource(dataSourceXml.ToXmlNode(), XmlNamespace);
-                }
-                catch(Exception parseXml)
-                {
-                    Login.StatusLog.AddError("Data source upload, error parsing XML response " + parseXml.Message + "\r\n" + dataSourceXml.ToXmlNode());
-                    return null;
-                }
+                return new SiteDatasource(dataSourceXml.ToXmlNode(), XmlNamespace);
+            }
+            catch (Exception parseXml)
+            {
+                Login.StatusLog.AddError("Data source upload, error parsing XML response " + parseXml.Message + "\r\n" + dataSourceXml.ToXmlNode());
+                return null;
             }
         }
 

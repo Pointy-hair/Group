@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Xml.Linq;
 using Traffk.Tableau.REST.Helpers;
 
@@ -131,11 +132,10 @@ namespace Traffk.Tableau.REST.RestRequests
             var urlAppendChunk = Urls.Url_AppendFileUploadChunk(Login, uploadSessionId);
 
             var uploadChunkAsMime = new MimeWriterFileUploadChunk(uploadDataBuffer, numBytes);
-            var webRequest = this.CreateAndSendMimeLoggedInRequest(urlAppendChunk, "PUT", uploadChunkAsMime); //NOTE: This command requires a PUT not a GET
-            var response = this.GetWebReponseLogErrors(webRequest, "upload file chunk");
+            var response = this.CreateAndSendMimeLoggedInRequest(urlAppendChunk, HttpMethod.Put, uploadChunkAsMime); //NOTE: This command requires a PUT not a GET
             using(response)
             {
-                var xmlDoc = GetWebResponseAsXml(response);
+                var xmlDoc = GetHttpResponseAsXml(response);
 
                 //Get all the workbook nodes
                 var xDoc = xmlDoc.ToXDocument();
@@ -165,9 +165,9 @@ namespace Traffk.Tableau.REST.RestRequests
         {
             var urlInitiateFileUpload = Urls.Url_InitiateFileUpload(Login);
 
-            var webRequest = this.CreateLoggedInWebRequest(urlInitiateFileUpload, "POST"); //NOTE: This command requires a POST not a GET
-            var response = GetWebReponseLogErrors(webRequest, "get datasources list");
-            var xmlDoc = GetWebResponseAsXml(response);
+            var webRequest = this.CreateLoggedInRequest(urlInitiateFileUpload, HttpMethod.Post); //NOTE: This command requires a POST not a GET
+            var response = SendHttpRequest(webRequest);
+            var xmlDoc = GetHttpResponseAsXml(response);
 
             //Get all the workbook nodes
             var xDoc = xmlDoc.ToXDocument();

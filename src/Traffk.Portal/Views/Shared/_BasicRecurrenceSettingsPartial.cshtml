@@ -1,0 +1,115 @@
+﻿@using Traffk.Bal.Data
+@using static Traffk.Bal.Data.RecurrenceSettings
+@model RecurrenceSettings
+@{
+    bool showDuration = false;
+    if (ViewData["RecurrenceSettingsShowDuration"] is bool)
+    {
+        showDuration = (bool)ViewData["RecurrenceSettingsShowDuration"];
+    }
+}
+
+<div class="form-row">
+    <label class="col-sm-1">First Occurrence</label>
+    <div class="col-sm-10">
+        <div class="row">
+            <label asp-for="StartDate" class="col-sm-1"></label>
+            <div class="col-md-8">
+                <input asp-for="StartDate" class="form-control" type="date" />
+                <span asp-validation-for="StartDate" class="text-danger" />
+            </div>
+        </div>
+        <div class="row">
+            <label asp-for="StartTimeUtc" class="col-sm-1"></label>
+            <div class="col-md-8">
+                <input asp-for="StartTimeUtc" class="form-control" type="time" />
+                <span asp-validation-for="StartTimeUtc" class="text-danger" />
+            </div>
+        </div>
+    </div>
+</div>
+<div class="form-row">
+    <label class="col-sm-1">Recurrence pattern</label>
+    <div class="col-sm-10">
+            <div class="col-md-2">
+                <div class="row">
+                    <input type="radio" class="radio-inline" id="PatternTypeDaily" name="PatternType" value="Daily" @(Model.PatternType == RecurrenceSettings.PatternTypes.Daily ? "checked='checked'" : "") /> 
+                    <label for="PatternTypeDaily">Daily</label>
+                </div>
+                <div class="row">
+                    <input type="radio" class="radio-inline" id="PatternTypeWeekly" name="PatternType" value="Weekly" @(Model.PatternType == RecurrenceSettings.PatternTypes.Weekly ? "checked='checked'" : "") />
+                    <label for="PatternTypeWeekly">Weekly</label>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="row pattern-section" id="pattern-section-daily" style="@(Model.PatternType==RecurrenceSettings.PatternTypes.Daily ? "":"display:none")">
+                    <div class="form-row">
+                        @Html.RadioButtonFor(m => m.DailyPattern.EveryWeekday, "false", new { name = "dailyPatternType" })
+                        <label asp-for="DailyPattern.EveryNDays" class="control-label"></label>
+                        <input asp-for="DailyPattern.EveryNDays" class="form-control inline-block" type="number"/>
+                        <span asp-validation-for="DailyPattern.EveryNDays" class="text-danger"/>
+                    </div>
+                    <div class="form-row">
+                        @Html.RadioButtonFor(m => m.DailyPattern.EveryWeekday, "true", new {name = "dailyPatternType" })
+                        <label asp-for="DailyPattern.EveryWeekday" class="control-label"></label>
+                    </div>
+                </div>
+                <div class="row pattern-section" id="pattern-section-weekly" style="@(Model.PatternType==RecurrenceSettings.PatternTypes.Weekly ? "":"display:none")">
+                    <div>
+                        <input asp-for="WeeklyPattern.Sunday" class="form-control checkbox-inline" />
+                        <label asp-for="WeeklyPattern.Sunday"></label>
+                    </div>
+                    <div>
+                        <input asp-for="WeeklyPattern.Monday" class="form-control checkbox-inline" />
+                        <label asp-for="WeeklyPattern.Monday"></label>
+                    </div>
+                    <div>
+                        <input asp-for="WeeklyPattern.Tuesday" class="form-control checkbox-inline" />
+                        <label asp-for="WeeklyPattern.Tuesday"></label>
+                    </div>
+                    <div>
+                        <input asp-for="WeeklyPattern.Wednesday" class="form-control checkbox-inline" />
+                        <label asp-for="WeeklyPattern.Wednesday"></label>
+                    </div>
+                    <div>
+                        <input asp-for="WeeklyPattern.Thursday" class="form-control checkbox-inline" />
+                        <label asp-for="WeeklyPattern.Thursday"></label>
+                    </div>
+                    <div>
+                        <input asp-for="WeeklyPattern.Friday" class="form-control checkbox-inline" />
+                        <label asp-for="WeeklyPattern.Friday"></label>
+                    </div>
+                    <div>
+                        <input asp-for="WeeklyPattern.Saturday" class="form-control checkbox-inline" />
+                        <label asp-for="WeeklyPattern.Saturday"></label>
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+@Html.Script(@<script type="text/javascript">
+    $(document).ready(function () {
+        $("input[name='PatternType']").change(function () {
+            $(".pattern-section").hide();
+            var sel = "#pattern-section-" + $(this).attr("value").toLowerCase();
+            $(sel).show();
+        });
+        $("input[name='endAfterType']").change(function () {
+            $(".end-after-value-section>input").attr("disabled", "disabled");
+            $(this).parent().children("input").removeAttr("disabled");
+        });
+        $("#all-day-input").change(function () {
+            var isAllDay = $(this).attr("checked") == "checked";
+            if (isAllDay) {
+                $("#duration-input").removeAttr("disabled");
+            }
+            else {
+                $("#duration-input").attr("disabled", "disabled");
+            }
+        });
+        $("input[name='dailyPatternType']").change(function () {
+            $("[name='dailyPatternType']").parent().children("input[name<>'dailyPatternType']").attr("disabled", "disabled");
+            $(this).parent().children("input").removeAttr("disabled");
+        });
+    });
+</script>)

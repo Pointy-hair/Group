@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System.Net.Http;
+using System.Xml.Linq;
 using Traffk.Tableau.REST.Models;
 
 namespace Traffk.Tableau.REST.RestRequests
@@ -41,14 +42,13 @@ namespace Traffk.Tableau.REST.RestRequests
 
             //Create a web request, in including the users logged-in auth information in the request headers
             var urlRequest = Urls.Url_SiteInfo(Login);
-            var webRequest = CreateLoggedInWebRequest(urlRequest);
-            webRequest.Method = "GET";
+            var webRequest = CreateLoggedInRequest(urlRequest, HttpMethod.Get);
 
             //Request the data from server
-            Login.StatusLog.AddStatus("Web request: " + urlRequest, -10);
-            var response = GetWebReponseLogErrors(webRequest, "get site info");
+            //Login.StatusLog.AddStatus("Web request: " + urlRequest, -10);
+            var response = SendHttpRequest(webRequest);
         
-            var xmlDoc = GetWebResponseAsXml(response);
+            var xmlDoc = GetHttpResponseAsXml(response);
 
             //Get all the workbook nodes
             var xDoc = xmlDoc.ToXDocument();

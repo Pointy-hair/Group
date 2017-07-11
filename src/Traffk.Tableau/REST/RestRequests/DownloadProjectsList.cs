@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Xml;
 using System.Xml.Linq;
 using Traffk.Tableau.REST.Models;
@@ -75,12 +76,11 @@ namespace Traffk.Tableau.REST
             int pageSize = Urls.PageSize;
             //Create a web request, in including the users logged-in auth information in the request headers
             var urlQuery = Urls.Url_ProjectsList(Login, pageSize, pageToRequest);
-            var webRequest = CreateLoggedInWebRequest(urlQuery);
-            webRequest.Method = "GET";
+            var webRequest = CreateLoggedInRequest(urlQuery, HttpMethod.Get);
 
-            Login.StatusLog.AddStatus("Web request: " + urlQuery, -10);
-            var response = GetWebReponseLogErrors(webRequest, "get projects list");
-            var xmlDoc = GetWebResponseAsXml(response);
+            //Login.StatusLog.AddStatus("Web request: " + urlQuery, -10);
+            var response = SendHttpRequest(webRequest);
+            var xmlDoc = GetHttpResponseAsXml(response);
 
             //Get all the project nodes
             var xDoc = xmlDoc.ToXDocument();

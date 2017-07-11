@@ -295,19 +295,52 @@ namespace Traffk.Bal.Data
                     }
                     if (DailyPattern.EveryWeekday)
                     {
-                        return @"0 0 12 ? * MON-FRI *";
+                        var startTime = StartTimeUtc.Hour.ToString();
+                        return $"0 {startTime} * * 1-5";
                     }
                     break;
                 case PatternTypes.Weekly:
                     Requires.NonNull(WeeklyPattern, nameof(WeeklyPattern));
                     Requires.Valid(WeeklyPattern, nameof(WeeklyPattern));
-                    if (WeeklyPattern.RecurEveryNWeeksOn > 0)
+
+                    if (WeeklyPattern.RecurEveryNWeeksOn == 1)
                     {
-                        return Cron.DayInterval(Convert.ToInt32((WeeklyPattern.RecurEveryNWeeksOn * 7) + 1));
+                        var dayString = "";
+                        //TODO: Test trailing comma
+                        if (WeeklyPattern.Monday)
+                        {
+                            dayString += "MON,";
+                        }
+                        if (WeeklyPattern.Tuesday)
+                        {
+                            dayString += "TUE,";
+                        }
+                        if (WeeklyPattern.Wednesday)
+                        {
+                            dayString += "WED,";
+                        }
+                        if (WeeklyPattern.Thursday)
+                        {
+                            dayString += "THU,";
+                        }
+                        if (WeeklyPattern.Friday)
+                        {
+                            dayString += "FRI,";
+                        }
+                        if (WeeklyPattern.Saturday)
+                        {
+                            dayString += "SAT,";
+                        }
+                        if (WeeklyPattern.Sunday)
+                        {
+                            dayString += "SUN,";
+                        }
+
+                        return $"0 0 12 ? * {dayString} *";
                     }
                     else
                     {
-                        return "";
+                        throw new NotImplementedException();
                     }
                 case PatternTypes.Monthly:
                     throw new NotImplementedException();

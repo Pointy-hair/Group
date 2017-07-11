@@ -9,6 +9,8 @@
         public int DrugTypeID { get; set; }
         public string ChemicalName { get; set; }
         public OrchestraDosage[] Dosages { get; set; }
+        public int GenericDrugID { get; set; }
+        public string GenericDrugName { get; set; }
     }
 
     public class OrchestraDosage
@@ -19,6 +21,7 @@
         public double CommonUserQuantity { get; set; }
         public double CommonMetricQuantity { get; set; }
         public double CommonDaysOfSupply { get; set; }
+        public string GenericDosageID { get; set; }
         public bool IsCommonDosage { get; set; }
         public OrchestraPackage[] Packages { get; set; }
     }

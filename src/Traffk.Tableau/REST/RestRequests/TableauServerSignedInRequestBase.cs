@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Xml.Linq;
+using RevolutionaryStuff.Core;
 using Traffk.Tableau.REST.Helpers;
 
 namespace Traffk.Tableau.REST.RestRequests
@@ -37,59 +39,25 @@ namespace Traffk.Tableau.REST.RestRequests
         /// <summary>
         /// Creates a web request and appends the user credential tokens necessary
         /// </summary>
-        /// <param name="url"></param>
-        /// <param name="protocol"></param>
-        /// <param name="requestTimeout">Useful for specifying timeouts for operations that can take a long time</param>
-        /// <returns></returns>
-        protected WebRequest CreateLoggedInWebRequest(string url, string protocol = "GET", Nullable<int> requestTimeout = null)
+        protected HttpRequestMessage CreateLoggedInRequest(string url, HttpMethod method)
         {
-            Login.StatusLog.AddStatus("Attempt web request: " + url, -10);
-
-            var webRequest = WebRequest.Create(url);
-            webRequest.Method = protocol;
-
-            //If an explicit timeout was passed in then use it
-            //if (requestTimeout != null)
-            //{
-            //    webRequest.Timeout = requestTimeout.Value;
-            //}
-
-            AppendLoggedInHeadersForRequest(webRequest);
-            return webRequest;
+            //Login.StatusLog.AddStatus("Attempt web request: " + url, -10);
+            var request = new HttpRequestMessage(method, url);
+            AppendLoggedInHeadersForRequest(request);
+            return request;
         }
 
         /// <summary>
         /// Adds header information that authenticates the request to Tableau Online
         /// </summary>
-        /// <param name="webHeaders"></param>
-        private void AppendLoggedInHeadersForRequest(WebRequest request)
+        private void AppendLoggedInHeadersForRequest(HttpRequestMessage request)
         {
-            request.Headers["X-Tableau-Auth"] = Login.LogInAuthToken;
-            Login.StatusLog.AddStatus("Append header X-Tableau-Auth: " + Login.LogInAuthToken, -20);
+            request.Headers.TryAddWithoutValidation("X-Tableau-Auth", Login.LogInAuthToken);
         }
 
         private void AppendLoggedInHeadersForClient(HttpClient client)
         {
             client.DefaultRequestHeaders.Add("X-Tableau-Auth", Login.LogInAuthToken);
-        }
-
-        /// <summary>
-        /// Get the web response; log any error codes that occur and rethrow the exception.
-        /// This allows us to get error log data with detailed information
-        /// </summary>
-        /// <param name="webRequest"></param>
-        /// <returns></returns>
-        protected WebResponse GetWebReponseLogErrors(WebRequest webRequest, string description)
-        {
-            string requestUri = webRequest.RequestUri.ToString();
-            try
-            {
-                return webRequest.GetResponseAsync().Result;
-            }
-            catch (WebException webException)
-            {
-                throw webException;
-            }
         }
 
         protected int GetPageCount(XElement paginationElement, int pageSize)
@@ -135,13 +103,6 @@ namespace Traffk.Tableau.REST.RestRequests
         /// <returns>The path to the downloaded file</returns>
         private string DownloadFile_inner(string urlDownload, string downloadToDirectory, string baseFilename, DownloadPayloadTypeHelper downloadTypeMapper)
         {
-
-            //[2016-05-06] Interestingly 'GetFileNameWithoutExtension' does more than remove a ".xxxx" extension; it will also remove a preceding
-            //            path (e.g. GetFileNameWithoutExtension('foo/bar.xxx') -> "bar'.  This is undesirable because these characters are valid 
-            //            in Tableau Server content names. Since this function is supposed to be called with a 'baseFilename' that DOES NOT have a .xxx
-            //            extension, it is safe to remove this call
-            //baseFilename =  FileIOHelper.GenerateWindowsSafeFilename(System.IO.Path.GetFileNameWithoutExtension(baseFilename));
-
             //Strip off an extension if its there
             baseFilename = FileIOHelper.GenerateWindowsSafeFilename(baseFilename);
 
@@ -177,23 +138,10 @@ namespace Traffk.Tableau.REST.RestRequests
             return webClient;
         }
 
-        protected WebRequest CreateAndSendMimeLoggedInRequest(string url, string protocol, MimeWriterBase mimeToSend, Nullable<int> requestTimeout = null)
+        protected HttpResponseMessage CreateAndSendMimeLoggedInRequest(string url, HttpMethod method, MimeWriterBase mimeToSend, int? requestTimeout = null)
         {
-            var webRequest = this.CreateLoggedInWebRequest(url, protocol, requestTimeout);
-
-            //var uploadChunkAsMime = new OnlineMimeUploadChunk(uploadDataBuffer, numBytes);
-            var uploadMimeChunk = mimeToSend.GenerateMimeEncodedChunk();
-
-            //webRequest. = uploadMimeChunk.Length;
-            webRequest.ContentType = "multipart/mixed; boundary=" + mimeToSend.MimeBoundaryMarker;
-
-            //Write out the request
-            var requestStream = webRequest.GetRequestStreamAsync().Result;
-            requestStream.Write(uploadMimeChunk, 0, uploadMimeChunk.Length);
-
-            return webRequest;
+            var request = this.CreateLoggedInRequest(url, method);
+            return SendHttpRequest(request, mimeToSend);
         }
-
-
     }
 }
