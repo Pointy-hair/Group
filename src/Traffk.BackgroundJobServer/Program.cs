@@ -23,6 +23,7 @@ namespace Traffk.BackgroundJobRunner
             base.OnConfigureServices(services);
 
             services.Configure<ActiveDirectoryApplicationIdentificationSettings>(Configuration.GetSection("ActiveDirectoryApplicationIdentificationOptions"));
+            services.Configure<ActiveDirectoryApplicationIdentificationSettings>(Configuration.GetSection("ActiveDirectoryApplicationIdentificationOptions"));
             services.Configure<TenantManagementJobsRunner.TenantManagementJobsRunnerConfiguration>(Configuration.GetSection("TenantManagementJobsRunnerConfiguration"));
 
             services.AddSingleton<IAsyncGetter<OpenIdConfiguration>>(new OpenIdConfigurationFinder(Configuration["AzureOpenIdConfigurationUrl"]));
@@ -33,9 +34,6 @@ namespace Traffk.BackgroundJobRunner
             services.AddScoped<ITrackingEmailer, TrackingEmailer>();
             services.AddScoped<ITenantJobs, TenantedJobRunner>();
             services.AddScoped<IGlobalJobs, GlobalJobRunner>();
-#if NET462
-            services.AddScoped<IEtlJobs, EtlJobRunner>();
-#endif
             services.AddScoped<IDataSourceSyncJobs, DataSourceSyncRunner>();
             services.AddScoped<ITenantManagementJobs, TenantManagementJobsRunner>();
             services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<ApplicationUser>>();
@@ -43,6 +41,10 @@ namespace Traffk.BackgroundJobRunner
             {
                 options.UseSqlServer(Configuration.GetConnectionString(TraffkTenantShardManagerDbContext.DefaultDatabaseConnectionStringName));
             }, ServiceLifetime.Scoped);
+#if NET462
+            services.Configure<EtlJobRunner.EtlJobRunnerConfig>(Configuration.GetSection(nameof(EtlJobRunner.EtlJobRunnerConfig)));
+            services.AddScoped<IEtlJobs, EtlJobRunner>();
+#endif
         }
 
         //BUGBUG: requires newtonsoft 9.0.1!  to prevent binder problem... yuck!  [Cannot get SerializationBinder because an ISerializationBinder was previously set.]

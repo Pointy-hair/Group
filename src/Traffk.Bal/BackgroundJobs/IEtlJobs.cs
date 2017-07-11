@@ -8,5 +8,6 @@ namespace Traffk.Bal.BackgroundJobs
     {
         Task LoadCmsGovAsync();
         Task LoadInternationalClassificationDiseasesAsync();
+        Task LoadNationalDrugCodeAsync();
     }
 }

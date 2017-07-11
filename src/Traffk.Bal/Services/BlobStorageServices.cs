@@ -49,6 +49,8 @@ namespace Traffk.Bal.Services
         public static class MetaKeyNames
         {
             public const string Urns = "Urns";
+            public const string ETag = "ETag";
+            public const string ContentMD5 = "ContentMD5";
             public const string SourcePath = "SourcePath";
             public const string SourceFullName = "SourceFullName";
             public const string IsPgpEncrypted = "IsPgpEncrypted";

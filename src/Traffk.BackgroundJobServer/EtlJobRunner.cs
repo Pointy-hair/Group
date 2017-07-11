@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Serilog.Events;
 using T = System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 
 namespace Traffk.BackgroundJobServer
 {
@@ -19,13 +20,17 @@ namespace Traffk.BackgroundJobServer
     {
         private static readonly Assembly EtlPackageAssembly = typeof(EtlJobRunner).GetTypeInfo().Assembly;
 
+        private readonly IOptions<EtlJobRunnerConfig> ConfigOptions;
+
         public EtlJobRunner(
+            IOptions<EtlJobRunnerConfig> configOptions,
             TraffkGlobalDbContext globalContext,
             IJobInfoFinder jobInfoFinder,
             ILogger logger)
             : base(globalContext, jobInfoFinder, logger)
-        { }
-
+        {
+            ConfigOptions = configOptions;
+        }
 
         bool IDTSLogging.Enabled => true;
 
@@ -188,8 +193,31 @@ namespace Traffk.BackgroundJobServer
             });
         }
 
+        T.Task IEtlJobs.LoadNationalDrugCodeAsync()
+        {
+            return ExecuteAsync("NationalDrugCode.dtsx", p =>
+            {
+                var c = ConfigOptions.Value?.NationalDrugCode;
+                ConfigureCommonParameters(p);
+                if (c?.DataUrl != null)
+                {
+                    p.Parameters["DataUrl"].Value = c.DataUrl.ToString();
+                }
+            });
+        }
 
         #endregion
+
+
+        public class EtlJobRunnerConfig
+        {
+            public class NationalDrugCodeConfig
+            {
+                public Uri DataUrl { get; set; }
+            }
+
+            public NationalDrugCodeConfig NationalDrugCode { get; set; }
+        }
 
     }
 }

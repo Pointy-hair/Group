@@ -18,6 +18,7 @@ namespace Traffk.Bal.Services
             public const string TraffkPgpPublicKeyUri = "https://traffkkeyvault.vault.azure.net/secrets/TraffkPgpPublicKey/4f3bf633217140a9a5f7c894accbf54e";
             public const string TraffkPgpPrivateKeyUri = "https://traffkkeyvault.vault.azure.net/secrets/TraffkPgpPrivateKey/c63ddaf975524026b68216000683808d";
             public const string TraffkPgpPrivateKeyPasswordUri = "https://traffkkeyvault.vault.azure.net/secrets/TraffkPgpPrivateKeyPassword/c163ad8eac1d45abb9cc6882c2ddb19d";
+            public const string ZipCodesComCredentialsUri = "https://traffkkeyvault.vault.azure.net/secrets/ZipCodesComCredentials/dc3c608040a34ab5907c488898c9e32a";
         }
 
         private readonly IOptions<ActiveDirectoryApplicationIdentificationSettings> AppIdOptions;

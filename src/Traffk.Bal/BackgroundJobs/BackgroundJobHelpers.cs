@@ -8,6 +8,7 @@
         /// </remarks>
         public static class QueueNames
         {
+            public const string DataSyncQueue = "sync";
             public const string SsisQueue = "ssis";
             public const string TableauQueue = "tableau";
         }

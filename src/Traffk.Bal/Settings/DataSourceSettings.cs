@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace Traffk.Bal.Settings
@@ -7,6 +8,9 @@ namespace Traffk.Bal.Settings
     {
         [JsonIgnore]
         public bool IsFtp => this.FTP != null;
+
+        [JsonIgnore]
+        public bool IsWeb => this.Web != null;
 
         public class FtpSettings
         {
@@ -23,6 +27,30 @@ namespace Traffk.Bal.Settings
             public string CredentialsKeyUri { get; set; }
         }
 
+        public class WebSettings
+        {
+            public class WebLoginPageConfig
+            {
+                [JsonProperty("loginPageUrl")]
+                public Uri LoginPage { get; set; }
+
+                [JsonProperty("usernameField")]
+                public string UsernameFieldName { get; set; }
+
+                [JsonProperty("passwordField")]
+                public string PasswordFieldName { get; set; }
+            }
+
+            [JsonProperty("loginPageConfig")]
+            public WebLoginPageConfig LoginPageConfig { get; set; }
+
+            [JsonProperty("downloadUrl")]
+            public IList<Uri> DownloadUrls { get; set; }
+
+            [JsonProperty("credentialsKey")]
+            public string CredentialsKeyUri { get; set; }
+        }
+
 
         public static DataSourceSettings CreateFromJson(string json)
         {
@@ -33,5 +61,8 @@ namespace Traffk.Bal.Settings
 
         [JsonProperty("ftp")]
         public FtpSettings FTP { get; set; }
+
+        [JsonProperty("web")]
+        public WebSettings Web { get; set; }
     }
 }

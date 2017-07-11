@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MimeKit;
-using H = cloudscribe.HtmlAgilityPack;
+using H = HtmlAgilityPack;
 using RevolutionaryStuff.Core;
 using Traffk.Bal.Services;
 using Traffk.Bal.Data;
