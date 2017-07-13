@@ -1,7 +1,11 @@
-﻿namespace Traffk.Bal.BackgroundJobs
+﻿using Hangfire;
+using System.Threading.Tasks;
+
+namespace Traffk.Bal.BackgroundJobs
 {
+    [Queue(BackgroundJobHelpers.QueueNames.DataSyncQueue)]
     public interface IDataSourceSyncJobs
     {
-        void DataSourceFetch(int dataSourceId);
+        Task DataSourceFetchAsync(int dataSourceId);
     }
 }

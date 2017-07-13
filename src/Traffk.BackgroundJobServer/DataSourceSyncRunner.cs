@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using H = HtmlAgilityPack;
+using Microsoft.Extensions.Options;
 using MimeKit.Cryptography;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Bcpg.OpenPgp;
@@ -12,6 +13,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Traffk.Bal.ApplicationParts;
@@ -19,10 +21,12 @@ using Traffk.Bal.BackgroundJobs;
 using Traffk.Bal.Data.Rdb.TraffkGlobal;
 using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
+using Traffk.Bal;
+using System.Net;
 
 namespace Traffk.BackgroundJobServer
 {
-    public class DataSourceSyncRunner : BaseJobRunner, IDataSourceSyncJobs
+    public partial class DataSourceSyncRunner : BaseJobRunner, IDataSourceSyncJobs
     {
         private readonly IOptions<BlobStorageServices.BlobStorageServicesOptions> BlobOptions;
         private readonly IVault Vault;
@@ -97,10 +101,10 @@ namespace Traffk.BackgroundJobServer
         }
 
 
-        void IDataSourceSyncJobs.DataSourceFetch(int dataSourceId)
-            => new Fetcher(this, dataSourceId).Fetch();
+        Task IDataSourceSyncJobs.DataSourceFetchAsync(int dataSourceId)
+            => new Fetcher(this, dataSourceId).FetchAsync();
 
-        private class Fetcher
+        public partial class Fetcher
         {
             private readonly DataSourceSyncRunner Runner;
             private readonly DataSource DS;
@@ -116,12 +120,26 @@ namespace Traffk.BackgroundJobServer
                 BlobRootPath = $"{BlobStorageServices.GetDataSourceFetchItemRoot(null, dataSourceId)}{Runner.StartedAtUtc.ToYYYYMMDD()}/{Runner.StartedAtUtc.ToHHMMSS()}/";
             }
 
+            private ICollection<DataSourceFetchItem> FindEvidenceItems(IEnumerable<string> evidence)
+            {
+                var matches = new HashSet<DataSourceFetchItem>();
+                foreach (var e in evidence)
+                {
+                    var item = FindEvidenceItem(e);
+                    if (item != null)
+                    {
+                        matches.Add(item);
+                    }
+                }
+                return matches;
+            }
+
             private DataSourceFetchItem FindEvidenceItem(string key)
                 => FetchItemByEvidence.FindOrDefault(key);
 
             private void PopulateEvidence(DataSourceFetchItem item)
             {
-                foreach (var e in item.Evidence.WhereNotNull())
+                foreach (var e in EvidenceFactory.CreateEvidence(item))
                 {
                     FetchItemByEvidence[e] = item;
                 }
@@ -139,39 +157,129 @@ namespace Traffk.BackgroundJobServer
                 }
             }
 
-            public void Fetch()
+            public async Task FetchAsync()
             {
-                lock (typeof(DataSourceSyncRunner))
+                var fetch = new DataSourceFetche
                 {
-                    var fetch = new DataSourceFetche
+                    DataSource = DS
+                };
+                Gdb.DataSourceFetches.Add(fetch);
+                if (DS.DataSourceSettings.IsFtp)
+                {
+                    await ProcessFetchAsync(fetch, DS.DataSourceSettings.FTP);
+                }
+                else if (DS.DataSourceSettings.IsWeb)
+                {
+                    await ProcessFetchAsync(fetch, DS.DataSourceSettings.Web);
+                }
+                else
+                {
+                    throw new InvalidOperationException("Unrecognized datasource");
+                }
+                await Gdb.SaveChangesAsync();
+            }
+
+            async Task ProcessFetchAsync(DataSourceFetche fetch, DataSourceSettings.WebSettings settings)
+            {
+                Requires.NonNull(settings, nameof(settings));
+                var cookieContainer = new CookieContainer();
+                var handler = new HttpClientHandler
+                {
+                    CookieContainer = cookieContainer,
+                    UseCookies = true
+                };
+                if (settings.LoginPageConfig != null)
+                {
+                    var cred = await Runner.Vault.GetCredentialsAsync(settings.CredentialsKeyUri);
+                    var client = new HttpClient(handler, false);
+                    using (var st = await client.GetStreamAsync(settings.LoginPageConfig.LoginPage))
                     {
-                        DataSource = DS
-                    };
-                    Gdb.DataSourceFetches.Add(fetch);
-                    if (DS.DataSourceSettings.IsFtp)
-                    {
-                        ProcessFtpFetch(fetch, DS.DataSourceSettings.FTP);
+                        var doc = new H.HtmlDocument();
+                        doc.Load(st);
+                        foreach (var formNode in doc.DocumentNode.SelectNodesOrEmpty("//form"))
+                        {
+                            var d = new Dictionary<string, string>();
+                            string action = formNode.GetAttributeValue("action", settings.LoginPageConfig.LoginPage.ToString());
+                            foreach (var inputNode in formNode.SelectNodesOrEmpty("//input|//textarea|//select"))
+                            {
+                                string val = null;
+                                var fieldName = inputNode.GetAttributeValue("name", null);
+                                if (fieldName == settings.LoginPageConfig.PasswordFieldName)
+                                {
+                                    val = cred.Password;
+                                }
+                                else if (fieldName == settings.LoginPageConfig.UsernameFieldName)
+                                {
+                                    val = cred.Username;
+                                }
+                                else
+                                {
+                                    switch (inputNode.Name)
+                                    {
+                                        case "input":
+                                            var inputType = inputNode.GetAttributeValue("type", "text");
+                                            if (inputType == "submit") continue;
+                                            val = inputNode.GetAttributeValue("value", null);
+                                            break;
+                                        case "textarea":
+                                            val = inputNode.InnerText;
+                                            break;
+                                        case "select":
+                                            break;
+                                    }
+                                }
+                                d[fieldName] = val;
+                            }
+                            if (d.ContainsKey(settings.LoginPageConfig.PasswordFieldName) &&
+                                d.ContainsKey(settings.LoginPageConfig.UsernameFieldName))
+                            {
+                                client = new HttpClient(handler, false);
+                                var postAction = new Uri(settings.LoginPageConfig.LoginPage, action);
+                                var content = new FormUrlEncodedContent(d);
+                                await client.PostAsync(postAction, content);
+                                goto AuthenticationDone;
+                            }
+                        }
+                        throw new Exception($"Form was not there or missing fields [{settings.LoginPageConfig.UsernameFieldName}] or [{settings.LoginPageConfig.PasswordFieldName}]");
                     }
-                    else
+                }
+                AuthenticationDone:
+                Stuff.TaskWaitAllForEach(settings.DownloadUrls, u => FetchTheWebItemAsync(fetch, u, handler));
+            }
+
+            private async Task FetchTheWebItemAsync(DataSourceFetche fetch, Uri u, HttpClientHandler handler)
+            {
+                using (var client = new HttpClient(handler, false))
+                {
+                    var resp = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, u));
+                    var details = new FileDetails(resp);
+                    await FetchTheItemAsync(fetch, details, null, DataSourceFetchItem.DataSourceFetchItemTypes.Original, null, async _ => 
                     {
-                        throw new InvalidOperationException("Unrecognized datasource");
-                    }
-                    Gdb.SaveChanges();
+                        var tfn = Stuff.GetTempFileName(".dat", Runner.TempFolderPath);
+                        using (var st = await client.GetStreamAsync(u))
+                        {
+                            using (var dst = File.Create(tfn))
+                            {
+                                await st.CopyToAsync(dst);
+                            }
+                        }
+                        return tfn;
+                    });
                 }
             }
 
-            void ProcessFtpFetch(DataSourceFetche fetch, DataSourceSettings.FtpSettings ftpSettings)
+            async Task ProcessFetchAsync(DataSourceFetche fetch, DataSourceSettings.FtpSettings settings)
             {
-                Requires.NonNull(ftpSettings, nameof(ftpSettings));
-                var cred = Runner.Vault.GetCredentialsAsync(ftpSettings.CredentialsKeyUri).ExecuteSynchronously();
-                var ci = new ConnectionInfo(ftpSettings.Hostname, ftpSettings.Port, cred.Username, new PasswordAuthenticationMethod(cred.Username, cred.Password));
+                Requires.NonNull(settings, nameof(settings));
+                var cred = await Runner.Vault.GetCredentialsAsync(settings.CredentialsKeyUri);
+                var ci = new ConnectionInfo(settings.Hostname, settings.Port, cred.Username, new PasswordAuthenticationMethod(cred.Username, cred.Password));
                 using (var client = new SftpClient(ci))
                 {
                     client.Connect();
-                    Parallel.ForEach(
-                        ftpSettings.FolderPaths,
-//                        new ParallelOptions { MaxDegreeOfParallelism = 1 },
-                        fp => FetchFtpFolderFiles(client, fetch, fp));
+                    Stuff.TaskWaitAllForEach(
+                        settings.FolderPaths,
+                        fp => FetchFtpFolderFilesAsync(client, fetch, fp)
+                        );
                 }
             }
 
@@ -187,41 +295,7 @@ namespace Traffk.BackgroundJobServer
                 return false;
             }
 
-            private class FileDetails
-            {
-                public readonly string Path;
-                public readonly string FullName;
-                public readonly string Name;
-                public readonly long Length;
-                public readonly DateTime? LastWriteTimeUtc;
-
-                private static string ToUnixPath(string windowsPath)
-                    => windowsPath.Replace('\\', '/');
-
-                private static string ToWindowsPath(string unixPath)
-                    => unixPath.Replace('/', '\\');
-
-                public FileDetails(FileDetails baseDetails, string name=null)
-                {
-                    FullName = ToWindowsPath(baseDetails.FullName);
-                    Name = name ?? System.IO.Path.GetFileName(FullName);
-                    Path = System.IO.Path.GetDirectoryName(FullName);
-
-                    FullName = ToUnixPath(FullName);
-                    Path = ToUnixPath(Path);
-                }
-
-                public FileDetails(SftpFile f)
-                {
-                    FullName = f.FullName;
-                    Name = f.Name;
-                    Path = ToUnixPath(System.IO.Path.GetDirectoryName(ToWindowsPath(FullName)));
-                    Length = f.Length;
-                    LastWriteTimeUtc = f.LastWriteTimeUtc;
-                }
-            }
-
-            private void FetchTheItem(DataSourceFetche fetch, FileDetails details, string folder, DataSourceFetchItem.DataSourceFetchItemTypes dataSourceFetchItemType,  DataSourceFetchItem parentFetchItem, Func<FileDetails, string> fetcher)
+            private async Task FetchTheItemAsync(DataSourceFetche fetch, FileDetails details, string folder, DataSourceFetchItem.DataSourceFetchItemTypes dataSourceFetchItemType,  DataSourceFetchItem parentFetchItem, Func<FileDetails, Task<string>> fetcher)
             {
                 string tfn = null;
                 var item = new DataSourceFetchItem
@@ -229,15 +303,16 @@ namespace Traffk.BackgroundJobServer
                     DataSourceFetch = fetch,
                     DataSourceFetchItemType = dataSourceFetchItemType,
                     ParentDataSourceFetchItem = parentFetchItem,
-                    Size = details.Length,
+                    Size = details.Size,
                     Name = details.Name,
                 };
+                item.DataSourceFetchItemProperties.LastModifiedAtUtc = details.LastModifiedAtUtc;
+                item.DataSourceFetchItemProperties.ContentMD5 = details.ContentMD5;
+                item.DataSourceFetchItemProperties.ETag = details.ETag;
                 try
                 {
-                    Trace.WriteLine($"Checking {details.FullName} size={details.Length} LastWriteTimeUtc={details.LastWriteTimeUtc}");
-                    var sameDataSourceReplicatedDataSourceFetchItem =
-                        FindEvidenceItem(DataSourceFetchItem.CreateEvidenceFromNameSizeModified(details.FullName, details.Length, details.LastWriteTimeUtc)) ??
-                        FindEvidenceItem(DataSourceFetchItem.CreateEvidenceFromNameSizeModified(details.Name, details.Length, details.LastWriteTimeUtc));
+                    Trace.WriteLine($"Checking {details.FullName} size={details.Size} LastWriteTimeUtc={details.LastModifiedAtUtc}");
+                    var sameDataSourceReplicatedDataSourceFetchItem = FindEvidenceItems(details.CreateEvidence()).FirstOrDefault();
                     if (sameDataSourceReplicatedDataSourceFetchItem!=null)
                     {
                         item.DataSourceFetchItemType = DataSourceFetchItem.DataSourceFetchItemTypes.Duplicate;
@@ -247,7 +322,7 @@ namespace Traffk.BackgroundJobServer
                     //                      Logger.LogInformation("Downloading", file.FullName, file.Length, tfn);
                     try
                     {
-                        tfn = fetcher(details);
+                        tfn = await fetcher(details);
                         var fi = new FileInfo(tfn);
                         item.Size = fi.Length;
                     }
@@ -262,7 +337,7 @@ namespace Traffk.BackgroundJobServer
                         {
                             var p = new BlobStorageServices.FileProperties
                             {
-                                LastModifiedAtUtc = details.LastWriteTimeUtc
+                                LastModifiedAtUtc = details.LastModifiedAtUtc
                             };
                             p.Metadata[BlobStorageServices.MetaKeyNames.SourcePath] = details.Path;
                             p.Metadata[BlobStorageServices.MetaKeyNames.SourceFullName] = details.FullName;
@@ -274,34 +349,30 @@ namespace Traffk.BackgroundJobServer
                             Parallel.ForEach(
                                 new[]
                                 {
-                                            Hash.CommonHashAlgorithmNames.Md5,
-                                            Hash.CommonHashAlgorithmNames.Sha1,
-                                            Hash.CommonHashAlgorithmNames.Sha512,
+                                    Hash.CommonHashAlgorithmNames.Md5,
+                                    Hash.CommonHashAlgorithmNames.Sha1,
+                                    Hash.CommonHashAlgorithmNames.Sha512,
                                 },
                                 hashAlgName => urns.Add(Hash.Compute(muxer.OpenRead(), hashAlgName).Urn));
                             if (urns.Count > 0)
                             {
                                 p.Metadata[BlobStorageServices.MetaKeyNames.Urns] = CSV.FormatLine(urns, false);
-                                foreach (var urn in urns)
+                                sameDataSourceReplicatedDataSourceFetchItem = FindEvidenceItems(urns).FirstOrDefault();
+                                if (sameDataSourceReplicatedDataSourceFetchItem!=null)
                                 {
-                                    sameDataSourceReplicatedDataSourceFetchItem =
-                                        FindEvidenceItem(DataSourceFetchItem.CreateEvidenceFromUrn(urn));
-                                    if (sameDataSourceReplicatedDataSourceFetchItem!=null)
-                                    {
-                                        item.DataSourceFetchItemType = DataSourceFetchItem.DataSourceFetchItemTypes.Duplicate;
-                                        item.SameDataSourceReplicatedDataSourceFetchItem = sameDataSourceReplicatedDataSourceFetchItem;
-                                        return;
-                                    }
+                                    item.DataSourceFetchItemType = DataSourceFetchItem.DataSourceFetchItemTypes.Duplicate;
+                                    item.SameDataSourceReplicatedDataSourceFetchItem = sameDataSourceReplicatedDataSourceFetchItem;
+                                    return;
                                 }
                             }
-                            var res = BlobStorageServices.StoreStreamAsync(
+                            var res = await BlobStorageServices.StoreStreamAsync(
                                 Runner.BlobOptions,
                                 BlobStorageServices.ContainerNames.Secure,
                                 $"{BlobRootPath}{details.Path.Substring(1)}/{folder}/{details.Name}",
                                 muxer.OpenRead(),
                                 p,
-                                amt => Trace.WriteLine($"Uploading {amt}/{details.Length}")
-                                ).ExecuteSynchronously();
+                                amt => Trace.WriteLine($"Uploading {amt}/{details.Size}")
+                                );
                             item.DataSourceFetchItemProperties = new DataSourceFetchItemProperties();
                             item.DataSourceFetchItemProperties.Set(p);
                             item.Url = res.Uri.ToString();
@@ -333,7 +404,7 @@ namespace Traffk.BackgroundJobServer
                             {
                                 name = new Regex(@"\.pgp\.", RegexOptions.IgnoreCase).Replace(name, ".");
                             }
-                            FetchTheItem(
+                            await FetchTheItemAsync(
                                 fetch,
                                 new FileDetails(details, name),
                                 "decrypted",
@@ -346,7 +417,7 @@ namespace Traffk.BackgroundJobServer
                                     {
                                         Runner.Decrypt(st, utfp);
                                     }
-                                    return utfp;
+                                    return Task.FromResult(utfp);
                                 }
                                 );
                         }
@@ -355,42 +426,44 @@ namespace Traffk.BackgroundJobServer
                 }
             }
 
-            private void FetchFtpFolderFiles(SftpClient client, DataSourceFetche fetch, string path)
+            private Task FetchFtpFolderFilesAsync(SftpClient client, DataSourceFetche fetch, string path)
             {
-                if (IsAlreadyVisited(path)) return;
+                if (IsAlreadyVisited(path)) return Task.CompletedTask;
                 client.ChangeDirectory(path);
                 var entries = client.ListDirectory(path);
-                Parallel.ForEach(
+                Stuff.TaskWaitAllForEach(
                     entries, 
-//                    new ParallelOptions { MaxDegreeOfParallelism = 1 }, 
-                    delegate (SftpFile file)
+                    async delegate (SftpFile file)
                 {
                     if (IsAlreadyVisited(file.FullName)) return;
                     if (file.IsDirectory)
                     {
-                        FetchFtpFolderFiles(client, fetch, file.FullName);
+                        await FetchFtpFolderFilesAsync(client, fetch, file.FullName);
                     }
                     else if (file.IsRegularFile)
                     {
-                        FetchTheItem(
+                        await FetchTheItemAsync(
                             fetch, 
                             new FileDetails(file),
                             "raw",
                             DataSourceFetchItem.DataSourceFetchItemTypes.Original,
                             null,
-                            fd => 
+                            async fd => 
                             {
                                 var fn = Path.GetTempFileName();
                                 using (var st = File.Create(fn))
                                 {
                                     Trace.WriteLine($"Starting {fd.FullName} to [{fn}]");
-                                    client.DownloadFile(fd.FullName, st, amt => Trace.WriteLine($"Downloading {fd.FullName} to [{fn}] => {amt}/{fd.Length}"));// Logger.LogDebug("Downloading", amt, file.Length));
+                                    await Task.Factory.FromAsync(
+                                        client.BeginDownloadFile(fd.FullName, st, null, null, amt => Trace.WriteLine($"Downloading {fd.FullName} to [{fn}] => {amt}/{fd.Size}")),
+                                        client.EndDownloadFile);
                                     Trace.WriteLine($"Finishing {fd.FullName} to [{fn}]");
                                 }
                                 return fn;
                             });
                     }
                 });
+                return Task.CompletedTask;
             }
         }
     }

@@ -87,6 +87,40 @@ namespace TraffkPortal.Controllers
         }
 
         [AllowAnonymous]
+        [Route("/Jobs/ZipCodes")]
+        public IActionResult ZipCodes()
+        {
+            var ds = new Traffk.Bal.Data.Rdb.TraffkGlobal.DataSource
+            {
+                TenantId = 3,
+                DataSourceSettings = new Traffk.Bal.Settings.DataSourceSettings
+                {
+                    Web = new Traffk.Bal.Settings.DataSourceSettings.WebSettings
+                    {
+                        CredentialsKeyUri = Traffk.Bal.Services.Vault.CommonSecretUris.ZipCodesComCredentialsUri,
+                        LoginPageConfig = new Traffk.Bal.Settings.DataSourceSettings.WebSettings.WebLoginPageConfig
+                        {
+                            LoginPage = new Uri("https://www.zip-codes.com/account_login.asp"),
+                            UsernameFieldName = "loginUsername",
+                            PasswordFieldName = "loginPassword"
+                        },
+                        DownloadUrls = new[] 
+                        {
+                            new Uri("https://www.zip-codes.com/account_database.asp?type=csv&product=25"), //CSV Delux DB
+                            new Uri("https://www.zip-codes.com/account_database.asp?type=csv&product=38"), //CSV Delux DB with Business
+                            new Uri("https://www.zip-codes.com/account_database.asp?type=cs&product=89"), //CSV Zip9
+                        }
+                    }
+                }
+            };
+            GDB.DataSources.Add(ds);
+            GDB.SaveChanges();
+            Backgrounder.Enqueue<IDataSourceSyncJobs>(z => z.DataSourceFetchAsync(ds.DataSourceId));
+//            RJM.Add(Hangfire.Common.Job.FromExpression<IDataSourceSyncJobs>(z => z.DataSourceFetchAsync(ds.DataSourceId)), Cron.Daily());
+            return Ok();
+        }
+
+        [AllowAnonymous]
         [Route("/Jobs/DS")]
         public IActionResult DS()
         {
@@ -106,7 +140,7 @@ namespace TraffkPortal.Controllers
             };
             GDB.DataSources.Add(ds);
             GDB.SaveChanges();
-            Backgrounder.Enqueue<IDataSourceSyncJobs>(z => z.DataSourceFetch(ds.DataSourceId));
+            Backgrounder.Enqueue<IDataSourceSyncJobs>(z => z.DataSourceFetchAsync(ds.DataSourceId));
             return Ok();
         }
 
