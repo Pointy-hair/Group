@@ -63,7 +63,7 @@ namespace Traffk.Orchestra
             return tokenResponse;
         }
 
-        public async Task<DrugOption[]> DrugAlternativeMultipleSearchAsync(
+        public async Task<DrugToReplace[]> DrugAlternativeMultipleSearchAsync(
             IEnumerable<DrugAlternativeSearchQuery> searchQueries)
         {
             var drugFilter = "";
@@ -75,7 +75,7 @@ namespace Traffk.Orchestra
             VerifyToken();
             var url = Options.BaseUrl + apiRoute;
             var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
-            return JsonConvert.DeserializeObject<DrugOption[]>(json);
+            return JsonConvert.DeserializeObject<DrugToReplace[]>(json);
         }
 
         public async Task<HasAlternativesResponse> HasAlternatives(string ndcReference)
@@ -87,7 +87,7 @@ namespace Traffk.Orchestra
             return JsonConvert.DeserializeObject<HasAlternativesResponse>(json);
         }
 
-        public async Task<DrugOption[]> PlanDrugAlternativeMultipleSearchAsync(
+        public async Task<DrugToReplace[]> PlanDrugAlternativeMultipleSearchAsync(
             string planId,
             IEnumerable<DrugAlternativeSearchQuery> searchQueries, 
             IEnumerable<DrugAlternativePharmacyFilterQuery> pharmacyFilterQueries)
@@ -107,11 +107,11 @@ namespace Traffk.Orchestra
             VerifyToken();
             var url = Options.BaseUrl + apiRoute;
             var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
-            var drugOptions = JsonConvert.DeserializeObject<DrugOption[]>(json);
+            var drugOptions = JsonConvert.DeserializeObject<DrugToReplace[]>(json);
             return drugOptions;
         }
 
-        public async Task<DrugAlternativeResponse> PlanDrugAlternativeSingleSearchAsync(
+        public async Task<OrchestraDrugAlternativeResponse> PlanDrugAlternativeSingleSearchAsync(
         string planId,
         DrugAlternativeSearchQuery searchQuery,
         IEnumerable<DrugAlternativePharmacyFilterQuery> pharmacyFilterQueries)
@@ -125,7 +125,7 @@ namespace Traffk.Orchestra
             VerifyToken();
             var url = Options.BaseUrl + apiRoute;
             var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
-            return JsonConvert.DeserializeObject<DrugAlternativeResponse>(json);
+            return JsonConvert.DeserializeObject<OrchestraDrugAlternativeResponse>(json);
         }
         
         public async Task<County> CountySearchAsync(string zip)
@@ -154,7 +154,7 @@ namespace Traffk.Orchestra
             var json = await HttpClientWithHeaders.GetJsonStringAsync(url); ;
 
             //JsonConvert can't serialize directly to DrugResponse
-            var drugArray = JsonConvert.DeserializeObject<Drug[]>(json);
+            var drugArray = JsonConvert.DeserializeObject<OrchestraDrug[]>(json);
             var drugResponse = new DrugResponse { Drugs = drugArray };
             return drugResponse;
         }
@@ -177,14 +177,14 @@ namespace Traffk.Orchestra
             return JsonConvert.DeserializeObject<PharmacyResponse>(json);
         }
 
-        public async Task<DrugOption> DrugAlternativeSingleSearchAsync(
+        public async Task<DrugToReplace> DrugAlternativeSingleSearchAsync(
             DrugAlternativeSearchQuery searchQuery)
         {
             var apiRoute = $"{DrugCompareUrlPortion}/Drugs/{searchQuery.NDC}/Alternatives?DaysOfSupply={searchQuery.DaysOfSupply}&MetricQuantity={searchQuery.MetricQuantity}";
             VerifyToken();
             var url = Options.BaseUrl + apiRoute;
             var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
-            return JsonConvert.DeserializeObject<DrugOption>(json);
+            return JsonConvert.DeserializeObject<DrugToReplace>(json);
         }
 
         //DrugDosageAlternativesAsync - Not documented but returns a result

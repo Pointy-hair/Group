@@ -19,7 +19,7 @@
 
 @section pageActionItems {
     <li><a asp-controller="@ReportingController.Name" asp-action="DownloadReport" asp-route-id="@Model.Id" asp-route-anchorName="@ReportVisualService.CreateAnchorName(Model.Title)" >Download</a></li>
-    <li><a asp-controller="@ReportingController.Name" asp-action="Schedule" asp-route-id="@Model.Id" asp-route-anchorName="@ReportVisualService.CreateAnchorName(Model.Title)">Schedule</a></li>
+    <li><a asp-controller="@ReportingController.Name" asp-action="CreateScheduledReport" asp-route-id="@Model.Id" asp-route-anchorName="@ReportVisualService.CreateAnchorName(Model.Title)">Schedule</a></li>
     <li><a href="#" class="popup-send-report-message_open">Send Message</a></li>
 }
 

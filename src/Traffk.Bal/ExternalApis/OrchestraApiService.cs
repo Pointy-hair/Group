@@ -62,7 +62,26 @@ namespace Traffk.Bal.ExternalApis
             Log(EventType, OrchestraRxApiClient.OrchestraEndpoints.PharmacySearch);
             var pharmacyResponse = ScopedCacher.FindOrCreate<PharmacyResponse>(cacheKey, key => Client.PharmacySearchAsync(zip,radius).Result);
 
+            //cache individual pharmacies
+            foreach (var pharmacy in pharmacyResponse?.Value.PharmacyList)
+            {
+                ScopedCacher.FindOrCreate<OrchestraPharmacy>(pharmacy.PharmacyID, key => pharmacy);
+                ScopedCacher.FindOrCreate<OrchestraPharmacy>(pharmacy.PharmacyNABP, key => pharmacy);
+            }
+
             return pharmacyResponse?.Value;
+        }
+
+        public OrchestraPharmacy Pharmacy(string id)
+        {
+            Log(EventType, OrchestraRxApiClient.OrchestraEndpoints.PharmacySearch);
+            return ScopedCacher.FindOrCreate<OrchestraPharmacy>(id, key => null)?.Value;
+        }
+
+        public OrchestraPharmacy PharmacyNABP(string nabp)
+        {
+            Log(EventType, OrchestraRxApiClient.OrchestraEndpoints.PharmacySearch);
+            return ScopedCacher.FindOrCreate<OrchestraPharmacy>(nabp, key => null)?.Value;
         }
 
         public Data.ApiModels.Rx.DrugResponse DrugSearch(string query)
@@ -107,11 +126,16 @@ namespace Traffk.Bal.ExternalApis
             return new Drug(oDrugDetail?.Value);
         }
 
-        public DrugOption[] DrugAlternativeSearch(IEnumerable<DrugAlternativeSearchQuery> searchQuery)
+        public DrugToReplace[] DrugAlternativeSearch(IEnumerable<DrugAlternativeSearchQuery> searchQuery)
         {
-            var queryCacheKey = RevolutionaryStuff.Core.Caching.Cache.CreateKey(typeof(DrugOption[]).Name, searchQuery);
+            var drugsInSearchQuery = "";
+            foreach (var query in searchQuery)
+            {
+                drugsInSearchQuery += query.NDC;
+            }
+            var queryCacheKey = RevolutionaryStuff.Core.Caching.Cache.CreateKey(typeof(DrugToReplace[]).Name, drugsInSearchQuery);
             Log(EventType, OrchestraRxApiClient.OrchestraEndpoints.DrugAlternatives);
-            var drugOptions = ScopedCacher.FindOrCreate<DrugOption[]>(queryCacheKey,
+            var drugOptions = ScopedCacher.FindOrCreate<DrugToReplace[]>(queryCacheKey,
                 key => Client.DrugAlternativeMultipleSearchAsync(searchQuery).ExecuteSynchronously());
             return drugOptions.Value;
         }

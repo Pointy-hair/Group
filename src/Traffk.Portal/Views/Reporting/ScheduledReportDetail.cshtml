@@ -1,1 +1,81 @@
-﻿
+﻿@model Traffk.Portal.Models.ReportingModels.ScheduledReportViewModel
+@using Traffk.Portal.Controllers
+
+@{
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
+    ViewData.SetTitleAndHeading(@Model.Communication.CommunicationTitle.ToTitleFriendlyString());
+    ViewData.HasBreadcrumbItems(true);
+    ViewData.HasPageActions(true);
+    ViewData.HasPageMenuItems(true);
+    ViewData.IsFormPage(true);
+
+    var pageKey = (ReportingController.PageKeys)ViewData[AspHelpers.ViewDataKeys.PageKey];
+
+}
+@section breadCrumbItems {
+    <li><a asp-controller="@ReportingController.Name" asp-action="Index">Reports</a> <span>></span> </li>
+    <li><a asp-controller="@ReportingController.Name" asp-action="ScheduledReportIndex">Scheduled Reports</a> <span>></span> </li>
+}
+@if (ViewData.HasPageMenuItems() && !ViewData.HasCustomPageMenuItems())
+{
+@section pageNavItems {
+    <li><a asp-controller="@ReportingController.Name" asp-action="ScheduledReportDetail" asp-for-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == ReportingController.PageKeys.ScheduledReportDetails ? "active" : "")">Details</a></li>
+    <li><a asp-controller="@ReportingController.Name" asp-for-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == ReportingController.PageKeys.ScheduledReportHistory ? "active" : "")">History</a></li>
+}
+}
+<form asp-action="" class="inline-form">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-row">
+                <label asp-for="@Model.Communication.CommunicationSettings.ReportName"></label>
+                <input asp-for="@Model.Communication.CommunicationSettings.ReportName" class="form-control" readonly/>
+            </div>
+            <div class="form-row">
+                <label asp-for="@Model.Communication.CommunicationSettings.ReportDescription"></label>
+                <input asp-for="@Model.Communication.CommunicationSettings.ReportDescription" class="form-control" readonly/>
+            </div>
+            <div class="form-row">
+                <label>Frequency</label>
+                @*<label asp-for="@Model.RecurringJob"></label>*@
+            </div>
+            <div class="form-row">
+                <label>Recipients</label>
+                <textarea readonly></textarea>
+            </div>
+            <div class="form-row">
+                <label asp-for="@Model.Communication.CampaignName"></label>
+                <input asp-for="@Model.Communication.CampaignName" class="form-control" />
+            </div>
+            <div class="form-row">
+                <label asp-for="@Model.RecurringJob.LastExecution"></label>
+                @if (@Model.RecurringJob.LastExecution != null)
+                {
+                    <input asp-for="@Model.RecurringJob.LastExecution" class="form-control" readonly/>
+                }
+                else
+                {
+                    <input class="form-control" value="No executions found" readonly />
+                }
+            </div>
+            <div class="form-row">
+                <label asp-for="@Model.RecurringJob.NextExecution"></label>
+                @if (@Model.RecurringJob.NextExecution != null)
+                {
+                    <input asp-for="@Model.RecurringJob.NextExecution" class="form-control" readonly/>
+                }
+                else
+                {
+                    <input class="form-control" value="TBD" readonly />
+                }            
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-xs-12 text-right">
+            <input type="submit" value="Save" class="btn btn-default btn-primary btn-large" />
+        </div>
+    </div>
+</form>

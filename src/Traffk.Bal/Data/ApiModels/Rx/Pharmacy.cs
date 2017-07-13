@@ -11,7 +11,6 @@ namespace Traffk.Bal.Data.ApiModels.Rx
 
         public PharmacyResponse(Orchestra.Models.PharmacyResponse response)
         {
-            Object = "list";
             var pharmacyList = new List<Pharmacy>();
             foreach (var orchestraPharmacy in response.PharmacyList)
             {
@@ -22,22 +21,23 @@ namespace Traffk.Bal.Data.ApiModels.Rx
         }
 
         [JsonProperty("object")]
-        public string Object { get; set; }
+        public string Object { get; set; } = ApiObjectTypes.ObjectNames.List.ToString().ToLower();
         [JsonProperty("data")]
         public Pharmacy[] Data { get; set; }
     }
 
     public class Pharmacy
     {
+        private string IdPrefix = "OP";
+
         public Pharmacy()
         { }
 
         public Pharmacy(Orchestra.Models.OrchestraPharmacy pharmacy)
         {
-            Object = typeof(Pharmacy).Name.ToString();
-            Id = pharmacy.PharmacyID;
+            Id = IdPrefix + pharmacy.PharmacyID;
             Name = pharmacy.Name;
-            Nabp = "";
+            Nabp = pharmacy.PharmacyNABP;
             Address = new ApiAddress(pharmacy);
             Phone = pharmacy.PharmacyPhone;
             ChainId = pharmacy.Chain;
@@ -46,7 +46,7 @@ namespace Traffk.Bal.Data.ApiModels.Rx
         }
         
         [JsonProperty("object")]
-        public string Object { get; set; }
+        public string Object { get; set; } = typeof(Pharmacy).Name.ToLower();
         [JsonProperty("id")]
         public string Id { get; set; }
         [JsonProperty("name")]
@@ -57,9 +57,9 @@ namespace Traffk.Bal.Data.ApiModels.Rx
         public ApiAddress Address { get; set; }
         [JsonProperty("phone")]
         public string Phone { get; set; }
-        [JsonProperty("chain_id")]
+        [JsonProperty("chainId")]
         public string ChainId { get; set; }
-        [JsonProperty("chain_name")]
+        [JsonProperty("chainName")]
         public string ChainName { get; set; }
         [JsonProperty("services")]
         public PharmacyServices Services { get; set; }
@@ -80,9 +80,9 @@ namespace Traffk.Bal.Data.ApiModels.Rx
             Latitude = pharmacy.Latitude;
             Longitude = pharmacy.Longitude;
         }
-        [JsonProperty("line_1")]
+        [JsonProperty("line1")]
         public string Line1 { get; set; }
-        [JsonProperty("line_2")]
+        [JsonProperty("line2")]
         public string Line2 { get; set; }
         [JsonProperty("city")]
         public string City { get; set; }
@@ -112,19 +112,19 @@ namespace Traffk.Bal.Data.ApiModels.Rx
             HasEPrescriptions = pharmacyService.HasEPrescriptions;
             HasHandicapAccess = pharmacyService.HasHandicapAccess;
         }
-        [JsonProperty("has_24hr_service")]
+        [JsonProperty("has24hrService")]
         public bool Has24HrService { get; set; }
-        [JsonProperty("has_compounding")]
+        [JsonProperty("hasCompounding")]
         public bool HasCompounding { get; set; }
-        [JsonProperty("has_delivery")]
+        [JsonProperty("hasDelivery")]
         public bool HasDelivery { get; set; }
-        [JsonProperty("has_driveup")]
+        [JsonProperty("hasDriveup")]
         public bool HasDriveup { get; set; }
-        [JsonProperty("has_durable_equipment")]
+        [JsonProperty("hasDurableEquipment")]
         public bool HasDurableEquipment { get; set; }
-        [JsonProperty("has_e_prescriptions")]
+        [JsonProperty("hasEPrescriptions")]
         public bool HasEPrescriptions { get; set; }
-        [JsonProperty("has_handicapAccess")]
+        [JsonProperty("hasHandicapAccess")]
         public bool HasHandicapAccess { get; set; }
     }
 

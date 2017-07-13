@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Traffk.Bal.BackgroundJobs;
@@ -35,6 +36,12 @@ namespace Traffk.Portal.Controllers
         protected readonly IBackgroundJobClient Backgrounder;
         protected readonly ITraffkRecurringJobManager RecurringJobManager;
         protected readonly BlobStorageServices BlobStorageService;
+
+        public enum PageKeys
+        {
+            ScheduledReportDetails,
+            ScheduledReportHistory
+        }
 
         public static class ActionNames
         {
@@ -187,7 +194,7 @@ namespace Traffk.Portal.Controllers
 
         [HttpGet]
         [Route("/Reporting/Report/Schedule/{id}/{anchorName}")]
-        public IActionResult Schedule(string id, string anchorName)
+        public IActionResult CreateScheduledReport(string id, string anchorName)
         {
             try
             {
@@ -202,7 +209,7 @@ namespace Traffk.Portal.Controllers
                     return RedirectToAction(ActionNames.Index);
                 }
                 var tableauReportViewModel = new TableauReportViewModel(reportVisual);
-                var scheduleReportViewModel = new ScheduleReportViewModel(tableauReportViewModel,
+                var scheduleReportViewModel = new CreateScheduledReportViewModel(tableauReportViewModel,
                     new RecurrenceSettings());
 
                 return View(scheduleReportViewModel);
@@ -217,16 +224,33 @@ namespace Traffk.Portal.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName(ActionNames.ScheduleReportSave)]
-        public IActionResult Schedule(
-            [FromForm]ScheduleReportViewModel scheduleReportViewModel)
+        public IActionResult CreateScheduledReport(
+            [FromForm]CreateScheduledReportViewModel createScheduledReportViewModel)
         {
             try
             {
-                var tableauReportViewModel = scheduleReportViewModel.TableauReportViewModel;
+                var tableauReportViewModel = createScheduledReportViewModel.TableauReportViewModel;
                 var createPdfOptions = new CreatePdfOptions(tableauReportViewModel.WorkbookName, tableauReportViewModel.ViewName, tableauReportViewModel.WorksheetName);
-                var cronString = scheduleReportViewModel.RecurrenceSettings.ConvertToCronString();
-                RecurringJobManager.Add(Hangfire.Common.Job.FromExpression<ITenantJobs>(x => x.ScheduleTableauPdfDownload(createPdfOptions)), cronString);
+                var cronString = createScheduledReportViewModel.RecurrenceSettings.ConvertToCronString();
+                var recurringJobId = RecurringJobManager.Add(Hangfire.Common.Job.FromExpression<ITenantJobs>(x => x.ScheduleTableauPdfDownload(createPdfOptions)), cronString);
 
+                var campaignName = "Scheduled Report: " + tableauReportViewModel.ViewName;
+                
+                var communication = new Communication
+                {
+                    
+                    CampaignName = campaignName.ToTitleFriendlyString(),
+                    CommunicationTitle = tableauReportViewModel.ViewName.ToTitleFriendlyString(),
+                    CommunicationSettings = new CommunicationSettings
+                    {
+                        Recurrence = createScheduledReportViewModel.RecurrenceSettings,
+                        RecurringJobId = recurringJobId,
+                        ReportId = createScheduledReportViewModel.TableauReportViewModel.Id.ToString(),
+                        ReportName = tableauReportViewModel.ViewName
+                    }
+                };
+                Rdb.Communications.Add(communication);
+                Rdb.SaveChanges();
                 return RedirectToAction(ActionNames.ScheduledReports);
             }
             catch (Exception e)
@@ -241,14 +265,37 @@ namespace Traffk.Portal.Controllers
         public IActionResult ScheduledReportIndex()
         {
             var userRecurringJobs = RecurringJobManager.GetUserRecurringJobs();
-            return View(userRecurringJobs);
+            var viewModels = new List<ScheduledReportViewModel>();
+            foreach (var job in userRecurringJobs)
+            {
+                var communication = Rdb.Communications.FirstOrDefault(x => x.CommunicationSettings.RecurringJobId == job.Id);
+                if (communication != null)
+                {
+                    var viewModel = new ScheduledReportViewModel
+                    {
+                        Communication = communication,
+                        RecurringJob = job
+                    };
+                    viewModels.Add(viewModel);
+                }
+            }
+            return View(viewModels);
         }
 
         [Route("/Reporting/ScheduledReports/{id}")]
-        public IActionResult ScheduledReportDetail(string id)
+        public IActionResult ScheduledReportDetail(int id)
         {
-            var recurringJob = RecurringJobManager.GetRecurringJobById(id);
-            return View(recurringJob);
+            var communication = Rdb.Communications.FirstOrDefault(x => x.CommunicationId == id);
+            var recurringJob = RecurringJobManager.GetRecurringJobById(communication.CommunicationSettings.RecurringJobId);
+            var viewModel = new ScheduledReportViewModel
+            {
+                Communication = communication,
+                RecurringJob = recurringJob
+            };
+
+            SetHeroLayoutViewData(communication.CommunicationId, communication.CampaignName, PageKeys.ScheduledReportDetails);
+
+            return View(viewModel);
         }
 
         private void QueueReportDownload(CreatePdfOptions options)

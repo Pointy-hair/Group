@@ -7,6 +7,14 @@ namespace Traffk.Bal.Settings
     {
         [JsonProperty("recurrence")]
         public RecurrenceSettings Recurrence { get; set; }
+        [JsonProperty("reportName")]
+        public string ReportName { get; set; }
+        [JsonProperty("reportDescription")]
+        public string ReportDescription { get; set; }
+        [JsonProperty("reportId")]
+        public string ReportId { get; set; }
+        [JsonProperty("recurringJobId")]
+        public string RecurringJobId { get; set; }
 
         public static CommunicationSettings CreateFromJson(string json)
         {

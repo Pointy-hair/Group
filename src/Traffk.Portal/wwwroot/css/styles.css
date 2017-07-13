@@ -1193,10 +1193,12 @@ ul.navbar-left {
     display: none;
 }
 
+#RecurrenceSettings_DailyPattern_EveryNDays {
+    width: 100px;
+}
 /*
     Screen size specific CSS
 */
-
 @media (max-width: 500px) {
     #primary-subnav-logo, #primary-subnav-logo a {
         width: auto;

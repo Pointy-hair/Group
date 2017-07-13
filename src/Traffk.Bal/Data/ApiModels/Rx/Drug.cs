@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Collections.Generic;
 using System.Linq;
+using Traffk.Orchestra.Models;
 
 namespace Traffk.Bal.Data.ApiModels.Rx
 {
@@ -10,12 +12,10 @@ namespace Traffk.Bal.Data.ApiModels.Rx
     {
         public DrugResponse()
         {
-            Object = "list";
         }
 
         public DrugResponse(Orchestra.Models.DrugResponse orchestraDrugResponse)
         {
-            Object = "list";
             var data = new List<Drug>();
             foreach (var orchestraDrug in orchestraDrugResponse.Drugs)
             {
@@ -26,22 +26,22 @@ namespace Traffk.Bal.Data.ApiModels.Rx
         }
 
         [JsonProperty("object")]
-        public string Object { get; set; }
+        public string Object { get; set; } = ApiObjectTypes.ObjectNames.List.ToString().ToLower();
         [JsonProperty("data")]
         public Drug[] Data { get; set; }
     }
 
     public class Drug
     {
+        private string IdPrefix = "OD";
+
         public Drug()
         {
-            Object = typeof(Drug).Name;
         }
 
-        public Drug(Orchestra.Models.Drug orchestraDrug)
+        public Drug(Orchestra.Models.OrchestraDrug orchestraDrug)
         {
-            Object = typeof(Drug).Name;
-            Id = orchestraDrug.DrugID;
+            Id = IdPrefix + orchestraDrug.DrugID.ToString();
             Name = orchestraDrug.DrugName;
             Type = orchestraDrug.DrugType;
             ChemicalName = orchestraDrug.ChemicalName;
@@ -52,8 +52,7 @@ namespace Traffk.Bal.Data.ApiModels.Rx
 
         public Drug(Orchestra.Models.DrugDetailResponse o)
         {
-            Object = typeof(Drug).Name;
-            Id = o.DrugID;
+            Id = IdPrefix + o.DrugID.ToString();
             Name = o.DrugName;
             Type = o.DrugType;
             ChemicalName = o.ChemicalName;
@@ -63,22 +62,74 @@ namespace Traffk.Bal.Data.ApiModels.Rx
             Dosages = new Dosages(o.Dosages);
         }
 
+        public Drug(Orchestra.Models.Alternative o)
+        {
+            Name = o.DrugName;
+            Type = o.DrugTypeShortDescription;
+            ChemicalName = o.ChemicalName;
+            Ndc = o.ReferenceNDC;
+            var dosageList = new List<Dosage>();
+            var dosage = new Dosage(o);
+            var packageList = new List<Package>();
+            if (o.Package != null)
+            {
+                var package = new Package(o.Package);
+                packageList.Add(package);
+
+                dosage.Packages = packageList.ToArray();
+            }
+            
+            dosageList.Add(dosage);
+
+            this.Dosages = new Dosages { Data = dosageList.ToArray() };
+        }
+
+        public Drug(DrugToReplace o)
+        {
+            Name = o.DrugName;
+            Type = o.DrugTypeShortDescription;
+            ChemicalName = o.ChemicalName;
+            Ndc = o.ReferenceNDC;
+            RouteOfAdministration = o.RouteOfAdministration;
+            DEASchedule = o.DEASchedule.ToString();
+            var dosageList = new List<Dosage>();
+            var dosage = new Dosage(o);
+            var packageList = new List<Package>();
+            if (o.Package != null)
+            {
+                var package = new Package(o.Package);
+                packageList.Add(package);
+
+                dosage.Packages = packageList.ToArray();
+            }
+
+            dosageList.Add(dosage);
+
+            this.Dosages = new Dosages {Data = dosageList.ToArray()};
+        }
+
         [JsonProperty("object")]
-        public string Object { get; set; }
+        public string Object { get; set; } = typeof(Drug).Name.ToLower();
         [JsonProperty("id")]
-        public int Id { get; set; }
+        public string Id { get; set; }
         [JsonProperty("name")]
         public string Name { get; set; }
         [JsonProperty("type")]
         public string Type { get; set; }
-        [JsonProperty("chemical_name")]
+        [JsonProperty("chemicalName")]
         public string ChemicalName { get; set; }
-        [JsonProperty("generic_drug_id")]
+        //[JsonProperty("drugType")]
+        //public string DrugType { get; set; }
+        [JsonProperty("genericDrugId")]
         public object GenericDrugId { get; set; }
-        [JsonProperty("generic_drug_name")]
+        [JsonProperty("genericDrugName")]
         public string GenericDrugName { get; set; }
         [JsonProperty("ndc")]
         public string Ndc { get; set; }
+        [JsonProperty("routeOfAdministration")]
+        public string RouteOfAdministration { get; set; }
+        [JsonProperty("deaSchedule")]
+        public string DEASchedule { get; set; }
         [JsonProperty("dosages")]
         public Dosages Dosages { get; set; }
     }
@@ -87,12 +138,10 @@ namespace Traffk.Bal.Data.ApiModels.Rx
     {
         public Dosages()
         {
-            Object = "list";
         }
 
         public Dosages(Orchestra.Models.OrchestraDosage[] orchestraDosages)
         {
-            Object = "list";
             var tDosages = new List<Dosage>();
             foreach (var dosage in orchestraDosages)
             {
@@ -103,49 +152,122 @@ namespace Traffk.Bal.Data.ApiModels.Rx
         }
 
         [JsonProperty("object")]
-        public string Object { get; set; }
+        public string Object { get; set; } = ApiObjectTypes.ObjectNames.List.ToString().ToLower();
         [JsonProperty("data")]
         public Dosage[] Data { get; set; }
     }
 
     public class Dosage
     {
+        private string IdPrefix = "ODO";
+
         public Dosage()
         {
-            Object = typeof(Dosage).Name;
+
         }
 
         public Dosage(Orchestra.Models.OrchestraDosage orchestraDosage)
         {
-            Object = typeof(Dosage).Name;
-            Id = orchestraDosage.DosageID;
+            Id = IdPrefix + orchestraDosage.DosageID;
             ReferenceNdc = orchestraDosage.ReferenceNDC;
             LabelName = orchestraDosage.LabelName;
             CommonUserQuantity = orchestraDosage.CommonUserQuantity;
             CommonMetricQuantity = orchestraDosage.CommonMetricQuantity;
             CommonDaysOfSupply = orchestraDosage.CommonDaysOfSupply;
             IsCommonDosage = orchestraDosage.IsCommonDosage;
-            //GenericDosageId = ?
+            GenericDosageId = orchestraDosage.GenericDosageID;
+        }
+
+        public Dosage(Orchestra.Models.Alternative o)
+        {
+            Id = IdPrefix + o.DoseID;
+            CommonDaysOfSupply = o.DaysOfSupply;
+            DosageForm = o.DosageForm;
+            DosageComments = o.DoseComments;
+            DosageSignature = o.DoseSignature;
+            HasPackages = o.HasPackages;
+            LabelName = o.LabelName;
+            CommonMetricQuantity = o.MetricQuantity;
+        }
+
+        public Dosage(DrugToReplace o)
+        {
+            Id = IdPrefix + o.DoseID;
+            CommonDaysOfSupply = o.DaysOfSupply;
+            DosageForm = o.DosageForm;
+            DosageComments = o.DoseComments;
+            DosageSignature = o.DoseSignature;
+            HasPackages = o.HasPackages;
+            LabelName = o.LabelName;
+            CommonMetricQuantity = o.MetricQuantity;
         }
 
         [JsonProperty("object")]
-        public string Object { get; set; }
+        public string Object { get; set; } = typeof(Dosage).Name.ToLower();
         [JsonProperty("id")]
         public string Id { get; set; }
-        [JsonProperty("reference_ndc")]
+        [JsonProperty("referenceNdc")]
         public string ReferenceNdc { get; set; }
-        [JsonProperty("label_name")]
+        [JsonProperty("labelName")]
         public string LabelName { get; set; }
-        [JsonProperty("common_user_quantity")]
+        [JsonProperty("commonUserQuantity")]
         public double CommonUserQuantity { get; set; }
-        [JsonProperty("common_metric_quantity")]
+        [JsonProperty("commonMetricQuantity")]
         public double CommonMetricQuantity { get; set; }
-        [JsonProperty("common_days_of_supply")]
+        [JsonProperty("commonDaysOfSupply")]
         public double CommonDaysOfSupply { get; set; }
-        [JsonProperty("is_common_dosage")]
+        [JsonProperty("isCommonDosage")]
         public bool IsCommonDosage { get; set; }
-        [JsonProperty("generic_dosage_id")]
+        [JsonProperty("genericDosageId")]
         public string GenericDosageId { get; set; }
+        [JsonProperty("hasGenericDosage")]
+        public bool HasGenericDosage => !String.IsNullOrEmpty(GenericDosageId);
+        [JsonProperty("dosageForm")]
+        public string DosageForm { get; set; }
+        [JsonProperty("dosageComments")]
+        public string DosageComments { get; set; }
+        [JsonProperty("dosageSignature")]
+        public string DosageSignature { get; set; }
+        [JsonProperty("hasPackages")]
+        public bool HasPackages { get; set; }
+        public Package[] Packages { get; set; }
+
+    }
+
+    public class Package
+    {
+        public Package()
+        {
+            
+        }
+
+        public Package(OrchestraPackage o)
+        {
+            CommonMetricQuantity = o.CommonMetricQuantity;
+            CommonUserQuantity = o.CommonUserQuantity;
+            PackageDescription = o.PackageDescription;
+            IsCommonPackage = o.IsCommonPackage;
+            PackageSize = o.PackageSize;
+            PackageSizeUnitOfMeasure = String.IsNullOrEmpty(o.PackageSizeUnitOfMeasure) ? o.PackageSizeUOM : o.PackageSizeUnitOfMeasure;
+            PackageQuantity = o.PackageQuantity;
+        }
+
+        [JsonProperty("object")]
+        public string Object { get; set; } = typeof(Package).Name.ToLower();
+        [JsonProperty("commonUserQuantity")]
+        public double CommonUserQuantity { get; set; }
+        [JsonProperty("commonMetricQuantity")]
+        public double CommonMetricQuantity { get; set; }
+        [JsonProperty("packageDescription")]
+        public string PackageDescription { get; set; }
+        [JsonProperty("isCommonPackage")]
+        public bool IsCommonPackage { get; set; }
+        [JsonProperty("packageSize")]
+        public double PackageSize { get; set; }
+        [JsonProperty("packageUnitOfMeasure")]
+        public string PackageSizeUnitOfMeasure { get; set; }
+        [JsonProperty("packageQuantity")]
+        public int PackageQuantity { get; set; }
     }
 
 }

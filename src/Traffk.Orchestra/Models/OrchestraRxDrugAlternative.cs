@@ -1,11 +1,11 @@
 ﻿namespace Traffk.Orchestra.Models
 {
-    public class DrugAlternativeResponse
+    public class OrchestraDrugAlternativeResponse
     {
-        public DrugOption[] DrugOptions { get; set; }
+        public DrugToReplace[] DrugOptions { get; set; }
     }
 
-    public class DrugOption
+    public class DrugToReplace
     {
         public string ConditionDescription { get; set; }
         public string ConditionName { get; set; }

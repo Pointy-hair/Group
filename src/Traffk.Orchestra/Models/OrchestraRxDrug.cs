@@ -2,10 +2,10 @@
 {
     public class DrugResponse
     {
-        public Drug[] Drugs { get; set; }
+        public OrchestraDrug[] Drugs { get; set; }
     }
 
-    public class Drug
+    public class OrchestraDrug
     {
         public int DrugID { get; set; }
         public string DrugName { get; set; }
