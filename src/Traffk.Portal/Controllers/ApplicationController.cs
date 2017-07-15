@@ -280,19 +280,19 @@ namespace TraffkPortal.Controllers
         {
             var app = await GetApplicationAsync(applicationId);
             if (app == null) return NotFound();
-            var po = app.AppSettings.PortalOptions ?? new PortalOptions();
+            var po = app.AppSettings.PortalOptions ?? new PortalConfig();
             switch (assetKey)
             {
-                case nameof(PortalOptions.JavascriptLink):
+                case nameof(PortalConfig.JavascriptLink):
                     po.JavascriptLink = null;
                     break;
-                case nameof(PortalOptions.CssLink):
+                case nameof(PortalConfig.CssLink):
                     po.CssLink = null;
                     break;
-                case nameof(PortalOptions.LogoLink):
+                case nameof(PortalConfig.LogoLink):
                     po.LogoLink = null;
                     break;
-                case nameof(PortalOptions.FaviconLink):
+                case nameof(PortalConfig.FaviconLink):
                     po.FaviconLink = null;
                     break;
                 default:
@@ -331,7 +331,7 @@ namespace TraffkPortal.Controllers
 
             if (ModelState.IsValid)
             {
-                var po = app.AppSettings.PortalOptions ?? new PortalOptions();
+                var po = app.AppSettings.PortalOptions ?? new PortalConfig();
                 app.AppSettings.PortalOptions = po;
                 po.RegisterMessage = model.RegisterMessage;
                 po.LoginMessage = model.LoginMessage;

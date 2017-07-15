@@ -1,29 +1,26 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
+﻿using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.ApplicationParts;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Traffk.Bal.Settings
 {
     public class FiscalYearSettings : IValidate
     {
-        private static readonly DataContractJsonSerializer JsonSerializer = new DataContractJsonSerializer(typeof(FiscalYearSettings));
-
         [Required]
         [DisplayName("Calendar Year")]
-        [DataMember(Name = "CalendarYear")]
+        [JsonProperty("CalendarYear")]
         public int CalendarYear { get; set; }
 
         [Required]
         [DisplayName("Calendar Month")]
-        [DataMember(Name = "CalendarMonth")]
+        [JsonProperty("CalendarMonth")]
         public int CalendarMonth { get; set; }
 
         [Required]
         [DisplayName("Fiscal Year")]
-        [DataMember(Name = "FiscalYear")]
+        [JsonProperty("FiscalYear")]
         public int FiscalYear { get; set; }
 
         public FiscalYearSettings()
@@ -37,10 +34,11 @@ namespace Traffk.Bal.Settings
             FiscalYear = other.FiscalYear;
         }
 
+        public static FiscalYearSettings CreateFromJson(string json)
+            => JsonConvert.DeserializeObject<FiscalYearSettings>(json);
+
         public string ToJson()
-        {
-            return JsonSerializer.WriteObjectToString(this);
-        }
+            => JsonConvert.SerializeObject(this);
 
         void IValidate.Validate()
         {

@@ -3,31 +3,24 @@ using RevolutionaryStuff.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 
 namespace Traffk.Bal.Data
 {
-    [DataContract]
     public class ExceptionError
     {
         [JsonProperty("errorType")]
-        [DataMember(Name = "errorType")]
         public string ErrorType { get; set; }
 
         [JsonProperty("errorMessage")]
-        [DataMember(Name = "errorMessage")]
         public string ErrorMessage { get; set; }
 
         [JsonProperty("errorCode")]
-        [DataMember(Name = "errorCode")]
         public object ErrorCode { get; set; }
 
         [JsonProperty("innerErrors")]
-        [DataMember(Name = "innerErrors")]
         public IList<ExceptionError> InnerErrors { get; set; }
 
         [JsonProperty("errorStackTrace")]
-        [DataMember(Name = "errorStackTrace")]
         public string ErrorStackTrace { get; set; }
 
         public ExceptionError()
@@ -54,10 +47,10 @@ namespace Traffk.Bal.Data
             }
         }
 
-        public string ToJson() => JsonConvert.SerializeObject(this);
+        public string ToJson() 
+            => JsonConvert.SerializeObject(this);
 
-        public static ExceptionError CreateExceptionErrorFromJson(string json)
-            => JsonConvert.DeserializeObject<ExceptionError>(json);
-        
+        public static ExceptionError CreateFromJson(string json)
+            => JsonConvert.DeserializeObject<ExceptionError>(json);        
     }
 }

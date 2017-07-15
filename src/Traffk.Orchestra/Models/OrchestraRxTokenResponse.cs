@@ -1,16 +1,16 @@
-﻿using System.Runtime.Serialization;
+﻿using Newtonsoft.Json;
 
 namespace Traffk.Orchestra.Models
 {
     public class OrchestraRxTokenResponse
     {
-        [DataMember(Name = "access_token")]
+        [JsonProperty("access_token")]
         public string access_token { get; set; }
 
-        [DataMember(Name = "expires_in")]
+        [JsonProperty("expires_in")]
         public int expires_in { get; set; }
 
-        [DataMember(Name = "token_type")]
+        [JsonProperty("token_type")]
         public string token_type { get; set; }
     }
 }

@@ -25,6 +25,8 @@ namespace Traffk.Tableau
 
     public class TableauAdminCredentials : TableauUserCredentials, ITableauUserCredentials
     {
+        public const string ConfigSectionName = "TableauAdminCredentials";
+
         public TableauAdminCredentials()
         {
             

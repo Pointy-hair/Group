@@ -1,40 +1,30 @@
-﻿using System;
+﻿using Newtonsoft.Json;
 using System.ComponentModel;
-using RevolutionaryStuff.Core;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
 
 namespace Traffk.Bal.Settings
 {
-    [DataContract]
     public class UserSettings
     {
-        private static readonly DataContractJsonSerializer JsonSerializer = new DataContractJsonSerializer(typeof(UserSettings));
+        [JsonProperty("PortalOptions")]
+        public PortalConfig PortalOptions { get; set; }
 
-        [DataMember(Name = "PortalOptions")]
-        public PortalOptions PortalOptions { get; set; }
-
-        [DataMember(Name = "TableauUserName")]
+        [JsonProperty("TableauUserName")]
         public string TableauUserName { get; set; }
 
-        [DataMember(Name = "TableauPassword")]
+        [JsonProperty("TableauPassword")]
         public string TableauPassword { get; set; }
 
         [DisplayName("API Key")]
-        [DataMember(Name = "ApiKey")]
+        [JsonProperty("ApiKey")]
         public string ApiKey { get; set; }
 
         public UserSettings()
         { }
 
         public static UserSettings CreateFromJson(string json)
-        {
-            return JsonSerializer.ReadObjectFromString<UserSettings>(json);
-        }
+            => JsonConvert.DeserializeObject<UserSettings>(json);
 
         public string ToJson()
-        {
-            return JsonSerializer.WriteObjectToString(this);
-        }
+            => JsonConvert.SerializeObject(this);
     }
 }

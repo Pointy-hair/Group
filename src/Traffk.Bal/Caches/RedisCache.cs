@@ -93,8 +93,9 @@ namespace Traffk.Bal.Caches
 
     public class RedisCachingServicesOptions
     {
+        public const string ConfigSectionName = "RedisCachingServicesOptions";
+
         public string ConnectionString { get; set; }
         public TimeSpan ExpirationTime { get; set; } = TimeSpan.FromMinutes(5);
-
     }
 }

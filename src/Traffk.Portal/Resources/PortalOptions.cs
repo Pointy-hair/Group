@@ -9,40 +9,40 @@ using TraffkPortal.Services;
 
 namespace TraffkPortal.Resources
 {
-    public class PortalResourceServiceBuilder : IOptions<PortalOptions>
+    public class PortalResourceServiceBuilder : IOptions<PortalConfig>
     {
-        private readonly IOptions<PortalOptions> Options;
+        private readonly IOptions<PortalConfig> PortalConfigOptions;
         private readonly CurrentContextServices CurrentContextServices;
 
-        public PortalOptions Value
+        public PortalConfig Value
         {
             get
             {
                 if (Value_p == null)
                 {
                     var builder = new ConfigurationBuilder();
-                    builder.AddObject(Options.Value, nameof(PortalOptions), true);
-                    builder.AddObject(CurrentContextServices.Application.AppSettings.PortalOptions, nameof(PortalOptions), true);
+                    builder.AddObject(PortalConfigOptions.Value, nameof(PortalConfig), true);
+                    builder.AddObject(CurrentContextServices.Application.AppSettings.PortalOptions, nameof(PortalConfig), true);
                     var u = CurrentContextServices.User;
                     if (u != null && u.Settings != null)
                     {
-                        builder.AddObject(u.Settings.PortalOptions, nameof(PortalOptions), true);
+                        builder.AddObject(u.Settings.PortalOptions, nameof(PortalConfig), true);
                     }
                     var root = builder.Build();
 //                    Value_p = root.GetValue<PortalResourceServiceOptions>("");
 //                    Value_p = root.GetValue<PortalOptions>(nameof(PortalOptions));
-                    Value_p = root.Get<PortalOptions>(nameof(PortalOptions));
+                    Value_p = root.Get<PortalConfig>(nameof(PortalConfig));
                 }
                 return Value_p;
             }
         }
 
-        private PortalOptions Value_p;
+        private PortalConfig Value_p;
 
-        public PortalResourceServiceBuilder(CurrentContextServices currentContextServices, IOptions<PortalOptions> options)
+        public PortalResourceServiceBuilder(CurrentContextServices currentContextServices, IOptions<PortalConfig> portalConfigOptions)
         {
             CurrentContextServices = currentContextServices;
-            Options = options;
+            PortalConfigOptions = portalConfigOptions;
         }
     }
 
@@ -51,7 +51,7 @@ namespace TraffkPortal.Resources
         private readonly PortalResourceServiceBuilder OptionsBuilder;
         private readonly CurrentContextServices CurrentContextServices;
 
-        private PortalOptions O
+        private PortalConfig O
         {
             get { return OptionsBuilder.Value; }
         }

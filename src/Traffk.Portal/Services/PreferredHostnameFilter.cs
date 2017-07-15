@@ -10,15 +10,17 @@ namespace TraffkPortal.Services
 {
     public sealed class PreferredHostnameFilter : IAuthorizationFilter
     {
-        public class PreferredHostnameFilterOptions
+        public class Config
         {
+            public const string ConfigSectionName = "PreferredHostnameFilterOptions";
+
             public bool RedirectToPreferredHostname { get; set; } = true;
         }
 
         private readonly TenantFinderService TenantFinder;
-        private readonly IOptions<PreferredHostnameFilterOptions> Options;
+        private readonly IOptions<Config> Options;
 
-        public PreferredHostnameFilter(TenantFinderService tenantFinder, IOptions<PreferredHostnameFilterOptions> options)
+        public PreferredHostnameFilter(TenantFinderService tenantFinder, IOptions<Config> options)
         {
             TenantFinder = tenantFinder;
             Options = options;

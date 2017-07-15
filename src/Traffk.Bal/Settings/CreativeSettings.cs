@@ -9,11 +9,10 @@ namespace Traffk.Bal.Settings
     public class CreativeSettings
     {
         public static CreativeSettings CreateFromJson(string json)
-        {
-            return TraffkHelpers.JsonConvertDeserializeObjectOrFallback<CreativeSettings>(json);
-        }
+            => TraffkHelpers.JsonConvertDeserializeObjectOrFallback<CreativeSettings>(json);
 
-        public string ToJson() => JsonConvert.SerializeObject(this);
+        public string ToJson() 
+            => JsonConvert.SerializeObject(this);
 
         [JsonProperty("attachments")]
         public List<CloudFilePointer> Attachments { get; set; } = new List<CloudFilePointer>();

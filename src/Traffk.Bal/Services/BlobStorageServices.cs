@@ -196,7 +196,7 @@ namespace Traffk.Bal.Services
             };
         }
 
-        public BlobStorageServices(CurrentTenantServices currentTenant, ICurrentUser currentUser, IOptions<BlobStorageServicesOptions> options)
+        public BlobStorageServices(CurrentTenantServices currentTenant, ICurrentUser currentUser, IOptions<Config> options)
         {
             CurrentTenant = currentTenant;
             CurrentUser = currentUser;
@@ -205,10 +205,12 @@ namespace Traffk.Bal.Services
             BlobClient = StorageAccount.CreateCloudBlobClient();
         }
 
-        private readonly IOptions<BlobStorageServicesOptions> Options;
+        private readonly IOptions<Config> Options;
 
-        public class BlobStorageServicesOptions
+        public class Config
         {
+            public const string ConfigSectionName = "BlobStorageServicesOptions";
+
             public string ConnectionString { get; set; }
         }
 
@@ -220,7 +222,7 @@ namespace Traffk.Bal.Services
             public IDictionary<string, string> Metadata { get; set; } = new Dictionary<string, string>();
         }
 
-        public static async Task<CloudFilePointer> StoreStreamAsync(IOptions<BlobStorageServicesOptions> blobOptions, string containerName, string path, Stream st, FileProperties p, Action<long> uploadProgress=null)
+        public static async Task<CloudFilePointer> StoreStreamAsync(IOptions<Config> blobOptions, string containerName, string path, Stream st, FileProperties p, Action<long> uploadProgress=null)
         {
             p = p ?? new FileProperties();
             Requires.ReadableStreamArg(st, nameof(st));

@@ -1,18 +1,13 @@
-﻿using RevolutionaryStuff.Core;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
+﻿using Newtonsoft.Json;
 
 namespace Traffk.Bal.Permissions
 {
-    [DataContract]
     public class PermissionClaimValue
     {
-        private static readonly DataContractJsonSerializer JsonSerializer = new DataContractJsonSerializer(typeof(PermissionClaimValue));
-
-        [DataMember]
+        [JsonProperty("Granted")]
         public bool Granted { get; set; }
 
-        [DataMember]
+        [JsonProperty("Version")]
         public int Version { get; set; } = 1;
 
         public PermissionClaimValue(bool granted = false)
@@ -20,14 +15,10 @@ namespace Traffk.Bal.Permissions
             Granted = true;
         }
 
-        public static PermissionClaimValue CreateFromJson(string json)
-        {
-            return JsonSerializer.ReadObjectFromString<PermissionClaimValue>(json);
-        }
-
         public string ToJson()
-        {
-            return JsonSerializer.WriteObjectToString(this);
-        }
+            => JsonConvert.SerializeObject(this);
+
+        public static PermissionClaimValue CreateFromJson(string json)
+            => JsonConvert.DeserializeObject<PermissionClaimValue>(json);
     }
 }

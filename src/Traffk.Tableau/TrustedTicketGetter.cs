@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using RevolutionaryStuff.Core;
 using Traffk.Tableau.REST.RestRequests;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace Traffk.Tableau
 {
@@ -30,7 +30,6 @@ namespace Traffk.Tableau
             }
         }
 
-        [DataContract]
         public class TrustedTicketResult
         {
             public TrustedTicketResult(string token)
@@ -38,7 +37,7 @@ namespace Traffk.Tableau
                 Token = token;
             }
 
-            [DataMember(Name = "access_token")]
+            [JsonProperty("access_token")]
             public string Token { get; private set; }
         }
 

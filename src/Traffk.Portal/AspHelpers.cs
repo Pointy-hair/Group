@@ -201,14 +201,14 @@ namespace TraffkPortal
             return hh.DisplayNameFor(columnExpression);
         }
 
-        public static IHtmlContent SortableHeaderFor<TModelItem, TResult>(this IHtmlHelper<IEnumerable<TModelItem>> hh, Expression<Func<TModelItem, TResult>> columnExpression, string currentSortColName = null, string currentSortDir = null, string actionName = null)
+        public static IHtmlContent SortableHeaderFor<TModelItem, TResult>(this IHtmlHelper<IEnumerable<TModelItem>> hh, Expression<Func<TModelItem, TResult>> columnExpression, string currentSortColName = null, string currentSortDir = null, string actionName = null, string overrideDisplayName = null)
         {
             currentSortColName = currentSortColName ?? hh.ViewBag.SortCol as string;
             currentSortDir = currentSortDir ?? hh.ViewBag.SortDir as string;
 
             actionName = actionName ?? hh.ViewContext.RouteData.Values["action"] as string;
             var colName = columnExpression.GetFullyQualifiedName();
-            var displayName = hh.FriendlyNameFor(columnExpression);
+            var displayName = overrideDisplayName ?? hh.FriendlyNameFor(columnExpression);
 
             if (colName == currentSortColName)
             {

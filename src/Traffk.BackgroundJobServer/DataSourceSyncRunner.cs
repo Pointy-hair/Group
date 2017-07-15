@@ -28,18 +28,21 @@ namespace Traffk.BackgroundJobServer
 {
     public partial class DataSourceSyncRunner : BaseJobRunner, IDataSourceSyncJobs
     {
-        private readonly IOptions<BlobStorageServices.BlobStorageServicesOptions> BlobOptions;
+        private readonly IOptions<BlobStorageServices.Config> BlobOptions;
         private readonly IVault Vault;
-        
+        private readonly IHttpClientFactory HttpClientFactory;
+
         public DataSourceSyncRunner(
             IJobInfoFinder jobInfoFinder,
+            IHttpClientFactory httpClientFactory,
             JobRunnerProgram jobRunnerProgram, 
             TraffkGlobalDbContext gdb, 
             IVault vault,
-            IOptions<BlobStorageServices.BlobStorageServicesOptions> blobOptions, 
+            IOptions<BlobStorageServices.Config> blobOptions, 
             Serilog.ILogger logger)
             : base(gdb, jobInfoFinder, logger)
         {
+            HttpClientFactory = httpClientFactory;
             BlobOptions = blobOptions;
             Vault = vault;
         }
@@ -191,7 +194,7 @@ namespace Traffk.BackgroundJobServer
                 if (settings.LoginPageConfig != null)
                 {
                     var cred = await Runner.Vault.GetCredentialsAsync(settings.CredentialsKeyUri);
-                    var client = new HttpClient(handler, false);
+                    var client = Runner.HttpClientFactory.Create(handler, false);
                     using (var st = await client.GetStreamAsync(settings.LoginPageConfig.LoginPage))
                     {
                         var doc = new H.HtmlDocument();
@@ -233,7 +236,7 @@ namespace Traffk.BackgroundJobServer
                             if (d.ContainsKey(settings.LoginPageConfig.PasswordFieldName) &&
                                 d.ContainsKey(settings.LoginPageConfig.UsernameFieldName))
                             {
-                                client = new HttpClient(handler, false);
+                                client = Runner.HttpClientFactory.Create(handler, false);
                                 var postAction = new Uri(settings.LoginPageConfig.LoginPage, action);
                                 var content = new FormUrlEncodedContent(d);
                                 await client.PostAsync(postAction, content);
@@ -249,7 +252,7 @@ namespace Traffk.BackgroundJobServer
 
             private async Task FetchTheWebItemAsync(DataSourceFetche fetch, Uri u, HttpClientHandler handler)
             {
-                using (var client = new HttpClient(handler, false))
+                using (var client = Runner.HttpClientFactory.Create(handler, false))
                 {
                     var resp = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, u));
                     var details = new FileDetails(resp);

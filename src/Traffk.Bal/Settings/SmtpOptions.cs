@@ -1,8 +1,8 @@
-﻿using RevolutionaryStuff.Core.ApplicationParts;
-using System.ComponentModel.DataAnnotations;
-using System.Runtime.Serialization;
+﻿using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
+using RevolutionaryStuff.Core.ApplicationParts;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Traffk.Bal.Settings
 {
@@ -10,27 +10,27 @@ namespace Traffk.Bal.Settings
     {
         [Required]
         [DisplayName("SMTP Host")]
-        [DataMember(Name = "SmtpHost")]
+        [JsonProperty("SmtpHost")]
         public string SmtpHost { get; set; }
 
         [Required]
         [DisplayName("SMTP Port")]
-        [DataMember(Name = "SmtpPort")]
+        [JsonProperty("SmtpPort")]
         public int SmtpPort { get; set; }
 
         [Required]
         [DisplayName("SMTP User")]
-        [DataMember(Name = "SmtpUser")]
+        [JsonProperty("SmtpUser")]
         public string SmtpUser { get; set; }
 
         [Required]
         [DisplayName("SMTP Password")]
-        [DataMember(Name = "SmtpPassword")]
+        [JsonProperty("SmtpPassword")]
         [DataType(DataType.Password)]
         public string SmtpPassword { get; set; }
 
         [DisplayName("Local Domain")]
-        [DataMember(Name = "LocalDomain")]
+        [JsonProperty("LocalDomain")]
         public string LocalDomain { get; set; }
 
         public SmtpOptions() { }

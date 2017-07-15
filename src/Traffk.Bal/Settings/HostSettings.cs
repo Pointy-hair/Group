@@ -1,18 +1,16 @@
-﻿using System.Runtime.Serialization;
+﻿using Newtonsoft.Json;
 
 namespace Traffk.Bal.Settings
 {
-    [DataContract]
     public class HostSettings
     {
-        [DataContract]
         public class HostInfo
         {
-            [DataMember(Name = "Hostname")]
+            [JsonProperty("Hostname")]
             public string Hostname { get; set; }
         }
 
-        [DataMember(Name = "HostInfos")]
+        [JsonProperty("HostInfos")]
         public HostInfo[] HostInfos { get; set; }
     }
 }

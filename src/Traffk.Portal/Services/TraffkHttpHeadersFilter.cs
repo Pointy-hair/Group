@@ -11,18 +11,20 @@ namespace TraffkPortal.Services
     {
         public static TimeSpan IdleLogout;
 
-        public class TraffkHttpHeadersFilterOptions
+        public class Config
         {
+            public const string ConfigSectionName = "TraffkHttpHeadersFilterOptions";
+
             public bool IncludeMachineName { get; set; } = true;
             public bool IncludeServerTime { get; set; } = true;
             public bool IncludeEnvironmentInformation { get; set; } = true;
             public string VendorName { get; set; } = "Traffk, LLC";
         }
 
-        private readonly IOptions<TraffkHttpHeadersFilterOptions> Options;
+        private readonly IOptions<Config> Options;
         private readonly IHostingEnvironment Host;
 
-        public TraffkHttpHeadersFilter(IOptions<TraffkHttpHeadersFilterOptions> options, IHostingEnvironment host)
+        public TraffkHttpHeadersFilter(IOptions<Config> options, IHostingEnvironment host)
         {
             Requires.NonNull(options, nameof(options));
             Options = options;

@@ -9,15 +9,17 @@ namespace TraffkPortal.Services.TenantServices
 {
     public class NoTenantMiddleware
     {
-        public class NoTenantMiddlewareOptions
+        public class Config
         {
+            public const string ConfigSectionName = "NoTenantMiddlewareOptions";
+
             public Uri RedirectUrl { get; set; }
         }
 
-        private readonly IOptions<NoTenantMiddlewareOptions> Options;
+        private readonly IOptions<Config> Options;
         private readonly RequestDelegate Next;
 
-        public NoTenantMiddleware(RequestDelegate next, IOptions<NoTenantMiddlewareOptions> options)
+        public NoTenantMiddleware(RequestDelegate next, IOptions<Config> options)
         {
             Options = options;
             Next = next;

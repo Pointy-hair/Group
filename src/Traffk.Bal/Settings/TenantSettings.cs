@@ -1,44 +1,39 @@
-﻿using RevolutionaryStuff.Core;
+﻿using Newtonsoft.Json;
+using RevolutionaryStuff.Core;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
 
 namespace Traffk.Bal.Settings
 {
-    [DataContract]
     public class TenantSettings
     {
-        private static readonly DataContractJsonSerializer JsonSerializer = new DataContractJsonSerializer(typeof(TenantSettings));
-
-        [DataMember(Name = "Deerwalk")]
+        [JsonProperty("Deerwalk")]
         public DeerwalkSettings Deerwalk { get; set; }
 
-        [DataMember(Name = "Smtp")]
+        [JsonProperty("Smtp")]
         public SmtpOptions Smtp { get; set; }
 
-        [DataMember(Name = "EmailSenderName")]
+        [JsonProperty("EmailSenderName")]
         public string EmailSenderName { get; set; }
 
         [DataType(DataType.EmailAddress)]
-        [DataMember(Name = "EmailSenderAddress")]
+        [JsonProperty("EmailSenderAddress")]
         public string EmailSenderAddress { get; set; }
 
-        [DataMember(Name = "ProtectedHealthInformationViewableByEmailAddressHostnames")]
+        [JsonProperty("ProtectedHealthInformationViewableByEmailAddressHostnames")]
         public string[] ProtectedHealthInformationViewableByEmailAddressHostnames { get; set; }
 
-        [DataMember(Name = "RequiresEmailAccountValidation")]
+        [JsonProperty("RequiresEmailAccountValidation")]
         public bool RequiresEmailAccountValidation { get; set; }
 
-        [DataMember(Name = "RequiresTwoFactorAuthentication")]
+        [JsonProperty("RequiresTwoFactorAuthentication")]
         public bool RequiresTwoFactorAuthentication { get; set; }
 
-        [DataMember(Name = "TableauTenantId")]
+        [JsonProperty("TableauTenantId")]
         public string TableauTenantId { get; set; }
 
-        [DataContract]
         public class PasswordOptions
         {
             private static readonly ICollection<string> DefaultProhibitedPasswords;
@@ -94,37 +89,37 @@ namespace Traffk.Bal.Settings
             }
 
             [DisplayName("Requires a Digit")]
-            [DataMember(Name = "RequireDigit")]
+            [JsonProperty("RequireDigit")]
             public bool RequireDigit { get; set; } = true;
 
             [DisplayName("Minimum Length")]
-            [DataMember(Name = "RequiredLength")]
+            [JsonProperty("RequiredLength")]
             public int RequiredLength { get; set; } = 8;
 
             [DisplayName("Requires a Lowercase Character")]
-            [DataMember(Name = "RequireLowercase")]
+            [JsonProperty("RequireLowercase")]
             public bool RequireLowercase { get; set; } = true;
 
             [DisplayName("Requires Special Character")]
-            [DataMember(Name = "RequireNonAlphanumeric")]
+            [JsonProperty("RequireNonAlphanumeric")]
             public bool RequireNonAlphanumeric { get; set; } = true;
 
             [DisplayName("Requires an Uppercase Character")]
-            [DataMember(Name = "RequireUppercase")]
+            [JsonProperty("RequireUppercase")]
             public bool RequireUppercase { get; set; } = true;
 
             [DisplayName("Use the default prohibited password list")]
-            [DataMember(Name = "UseDefaultProhibitedPasswordList")]
+            [JsonProperty("UseDefaultProhibitedPasswordList")]
             public bool UseDefaultProhibitedPasswordList { get; set; } = true;
 
-            [DataMember(Name = "ProhibitedPasswords")]
+            [JsonProperty("ProhibitedPasswords")]
             public string[] ProhibitedPasswords { get; set; }
 
-            [DataMember(Name = "UseDefaultPasswordUnallowedWordList")]
+            [JsonProperty("UseDefaultPasswordUnallowedWordList")]
             [DisplayName("Use Default Password Unallowed Term List")]
             public bool UseDefaultPasswordUnallowedWordList { get; set; } = true;
 
-            [DataMember(Name = "PasswordUnallowedWordList")]
+            [JsonProperty("PasswordUnallowedWordList")]
             public string[] PasswordUnallowedWordList { get; set; }
 
             public bool IsPasswordProhibited(string password)
@@ -154,10 +149,10 @@ namespace Traffk.Bal.Settings
             }
         }
 
-        [DataMember(Name = "Password")]
+        [JsonProperty("Password")]
         public PasswordOptions Password { get; set; }
 
-        [DataMember(Name = "ReusableValues")]
+        [JsonProperty("ReusableValues")]
         public List<ReusableValue> ReusableValues
         {
             get
@@ -172,21 +167,17 @@ namespace Traffk.Bal.Settings
         }
         private List<ReusableValue> ReusableValues_p;
 
-        [DataMember(Name = "FiscalYearSettings")]
+        [JsonProperty("FiscalYearSettings")]
         public FiscalYearSettings FiscalYearSettings { get; set; }
 
         public TenantSettings()
         { }
 
         public static TenantSettings CreateFromJson(string json)
-        {
-            return JsonSerializer.ReadObjectFromString<TenantSettings>(json);
-        }
+            => JsonConvert.DeserializeObject<TenantSettings>(json);
 
         public string ToJson()
-        {
-            return JsonSerializer.WriteObjectToString(this);
-        }
+            => JsonConvert.SerializeObject(this);
 
         internal void EnsureMemberClasses()
         {

@@ -1,51 +1,42 @@
-﻿using RevolutionaryStuff.Core;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
 using Traffk.Bal.Communications;
 
 namespace Traffk.Bal.Settings
 {
-    [DataContract]
     public class ApplicationSettings
     {
-        private static readonly DataContractJsonSerializer JsonSerializer = new DataContractJsonSerializer(typeof(ApplicationSettings));
-
-        [DataMember(Name = "EmailSenderName")]
+        [JsonProperty("EmailSenderName")]
         public string EmailSenderName { get; set; }
 
-        [DataMember(Name = "EmailSenderAddress")]
+        [JsonProperty("EmailSenderAddress")]
         public string EmailSenderAddress { get; set; }
 
-        [DataMember(Name = "Hosts")]
+        [JsonProperty("Hosts")]
         public HostSettings Hosts { get; set; }
 
-        [DataMember(Name = "PortalOptions")]
-        public PortalOptions PortalOptions { get; set; }
+        [JsonProperty("PortalOptions")]
+        public PortalConfig PortalOptions { get; set; }
 
-        [DataMember(Name = "Registration")]
+        [JsonProperty("Registration")]
         public RegistrationSettings Registration { get; set; }
 
-        [DataMember(Name = "ReusableValues")]
+        [JsonProperty("ReusableValues")]
         public IList<ReusableValue> ResourceValues { get; set; }
 
-        [DataMember(Name = "CreativeIdBySystemCommunicationPurpose")]
+        [JsonProperty("CreativeIdBySystemCommunicationPurpose")]
         public IDictionary<SystemCommunicationPurposes, int> CreativeIdBySystemCommunicationPurpose { get; set; } = new Dictionary<SystemCommunicationPurposes, int>();
 
         public static ApplicationSettings CreateFromJson(string json)
-        {
-            return JsonSerializer.ReadObjectFromString<ApplicationSettings>(json);
-        }
+            => JsonConvert.DeserializeObject<ApplicationSettings>(json);
 
         public string ToJson()
-        {
-            return JsonSerializer.WriteObjectToString(this);
-        }
+            => JsonConvert.SerializeObject(this);
 
         internal void EnsureMemberClasses()
         {
             Hosts = Hosts ?? new HostSettings();
-            PortalOptions = PortalOptions ?? new PortalOptions();
+            PortalOptions = PortalOptions ?? new PortalConfig();
             Registration = Registration ?? new RegistrationSettings();
         }
     }

@@ -5,6 +5,7 @@ namespace Traffk.Portal.Permissions
 {
     public class TokenProviderOptions
     {
+        public const string ConfigSectionName = "TokenProviderOptions";
 
         /// <summary>
         ///  The Issuer (iss) claim for generated tokens.

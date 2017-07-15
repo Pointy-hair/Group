@@ -4,7 +4,7 @@ using Traffk.Bal.Settings;
 
 namespace TraffkPortal.Models.ApplicationModels
 {
-    public class PortalOptionsModel : PortalOptions
+    public class PortalOptionsModel : PortalConfig
     {
         [DisplayName("CSS File")]
         public IFormFile CssFile { get; set; }
@@ -20,7 +20,7 @@ namespace TraffkPortal.Models.ApplicationModels
 
         public PortalOptionsModel() { }
 
-        public PortalOptionsModel(PortalOptions po)
+        public PortalOptionsModel(PortalConfig po)
             : base(po)
         { }
     }

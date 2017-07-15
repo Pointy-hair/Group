@@ -66,7 +66,7 @@ namespace TraffkPortal.Controllers
                     return new JsonResult(simpleException);
                 }
             }
-            var exceptionError = ExceptionError.CreateExceptionErrorFromJson(TempData[Name].ToString());
+            var exceptionError = ExceptionError.CreateFromJson(TempData[Name].ToString());
 
             return View(ActionNames.Index, new ErrorModel(ViewData[ErrorKeys.StatusCode]?.ToString() ?? "", exceptionError));
         }
@@ -75,7 +75,7 @@ namespace TraffkPortal.Controllers
         [ActionName(ActionNames.Index)]
         public IActionResult Index(ErrorModel errorModel = null)
         {
-            var exception = ExceptionError.CreateExceptionErrorFromJson(TempData[Name].ToString());
+            var exception = ExceptionError.CreateFromJson(TempData[Name].ToString());
 
             if (errorModel == null)
             {

@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
@@ -22,12 +21,13 @@ namespace TraffkPortal.Services.TenantServices
     {
         public const string HttpContextTenantIdKey = "TenantId";
 
-        public class TenantServiceFinderOptions
+        public class Config
         {
+            public const string ConfigSectionName = "TenantServiceFinderConfig";
             public int? TenantId { get; set; }
             public Dictionary<string, int> TenantIdByHostname { get; } = new Dictionary<string, int>(Comparers.CaseInsensitiveStringComparer);
             public string DefaultTenantFinderHostPattern { get; set; }
-            public TenantServiceFinderOptions()
+            public Config()
             {
 
             }
@@ -44,8 +44,6 @@ namespace TraffkPortal.Services.TenantServices
 
         IEnumerator IEnumerable.GetEnumerator()
             => CollectionHelpers.GetEnumerator(this);
-
-        private static readonly ICache<string, AppHostItem> HostMapCache = CachingServices.Instance.CreateSynchronized<string, AppHostItem>();
 
         public int TenantId
         {
@@ -64,24 +62,24 @@ namespace TraffkPortal.Services.TenantServices
 
         public string DatabaseName { get; private set; }
 
-        public TenantFinderService(IOptions<TenantServiceFinderOptions> options, TraffkTenantShardsDbContext db, IHttpContextAccessor acc)
+        public TenantFinderService(IOptions<Config> configOptions, ICacher cacher, TraffkTenantShardsDbContext db, IHttpContextAccessor acc)
         {
             PreferredHostname = ActualHostname = acc.HttpContext == null ? null : acc.HttpContext.Request.Host.Host;
-            var tso = options.Value;
-            if (tso != null)
+            var config = configOptions.Value;
+            if (config != null)
             {
-                if (tso.TenantId.HasValue)
+                if (config.TenantId.HasValue)
                 {
-                    TenantId_p = tso.TenantId.Value;
+                    TenantId_p = config.TenantId.Value;
                 }
-                else if (tso.TenantIdByHostname != null && acc.HttpContext != null)
+                else if (config.TenantIdByHostname != null && acc.HttpContext != null)
                 {
-                    TenantId_p = tso.TenantIdByHostname.GetValue(PreferredHostname, TenantId_p);
+                    TenantId_p = config.TenantIdByHostname.GetValue(PreferredHostname, TenantId_p);
                 }
             }
             if (TenantId_p == 0)
             {
-                var defaultTenantFinderHostPattern = tso.DefaultTenantFinderHostPattern;
+                var defaultTenantFinderHostPattern = config.DefaultTenantFinderHostPattern;
                 var defaultHostNamePattern = defaultTenantFinderHostPattern.Replace(@"{0}", @"([^\.]*)");
                 var defaultHostNameRegexPattern = new Regex(defaultHostNamePattern, RegexOptions.Compiled);
 
@@ -95,26 +93,23 @@ namespace TraffkPortal.Services.TenantServices
                     var matchedTenant = db.Tenants.SingleOrDefault(x => StringHelpers.IsSameIgnoreCase(x.LoginDomain, loginDomain));
                     if (matchedTenant != null)
                     {
-                        z = HostMapCache.Do(ActualHostname, () =>
-                        {
-                            var app = new AppHostItem
+                        z = cacher.FindOrCreateValWithSimpleKey(
+                            ActualHostname,
+                            () => new AppHostItem
                             {
                                 TenantId = matchedTenant.TenantId,
                                 PreferredHostname = ActualHostname,
                                 HostDatabaseName = matchedTenant.HostDatabaseName
-                            };
-                            return app;
-                        });
+                            });
                     }
                 }
 
                 if (z == null)
                 {
-                    z = HostMapCache.Do(ActualHostname, () =>
-                    {
-                        var res = db.AppFindByHostname(ActualHostname, AppTypes.Portal).ExecuteSynchronously().FirstOrDefault();
-                        return res;
-                    });
+                    z = cacher.FindOrCreateValWithSimpleKey(
+                        ActualHostname,
+                        () => db.AppFindByHostname(ActualHostname, AppTypes.Portal).ExecuteSynchronously().FirstOrDefault()
+                        );
                 }
                 
                 if (z != null)

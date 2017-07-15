@@ -1,30 +1,29 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Runtime.Serialization;
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace Traffk.Bal.Settings
 {
-    [DataContract]
     public class DeerwalkSettings
     {
         [Required]
-        [DataMember(Name = "FtpHost")]
+        [JsonProperty("FtpHost")]
         public string FtpHost { get; set; }
 
         [Required]
-        [DataMember(Name = "FtpPort")]
+        [JsonProperty("FtpPort")]
         public int FtpPort { get; set; }
 
         [Required]
-        [DataMember(Name = "FtpUser")]
+        [JsonProperty("FtpUser")]
         public string FtpUser { get; set; }
 
         [Required]
-        [DataMember(Name = "FtpPassword")]
+        [JsonProperty("FtpPassword")]
         [DataType(DataType.Password)]
         public string FtpPassword { get; set; }
 
         [Required]
-        [DataMember(Name = "FtpFolder")]
+        [JsonProperty("FtpFolder")]
         public string FtpFolder { get; set; }
 
         public DeerwalkSettings() { }

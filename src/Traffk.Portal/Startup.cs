@@ -114,22 +114,19 @@ namespace TraffkPortal
             */
 
             services.AddOptions();
-            services.Configure<TenantFinderService.TenantServiceFinderOptions>(Configuration.GetSection(nameof(TenantFinderService.TenantServiceFinderOptions)));
-            services.Configure<CachingServices.CachingServicesOptions>(Configuration.GetSection(nameof(CachingServices.CachingServicesOptions)));
-            services.Configure<PreferredHostnameFilter.PreferredHostnameFilterOptions>(Configuration.GetSection(nameof(PreferredHostnameFilter.PreferredHostnameFilterOptions)));
-            services.Configure<PortalOptions>(Configuration.GetSection(nameof(PortalOptions)));
-            services.Configure<NoTenantMiddleware.NoTenantMiddlewareOptions>(Configuration.GetSection(nameof(NoTenantMiddleware.NoTenantMiddlewareOptions)));
-            services.Configure<BlobStorageServices.BlobStorageServicesOptions>(Configuration.GetSection(nameof(BlobStorageServices.BlobStorageServicesOptions)));
-            services.Configure<TwilioSmsSenderOptions>(Configuration.GetSection(nameof(TwilioSmsSenderOptions)));
-            services.Configure<TableauSignInOptions>(Configuration.GetSection(nameof(TableauSignInOptions)));
-            services.Configure<TableauAdminCredentials>(Configuration.GetSection(nameof(TableauAdminCredentials)));
+            services.Configure<TenantFinderService.Config>(Configuration.GetSection(TenantFinderService.Config.ConfigSectionName));
+            services.Configure<PreferredHostnameFilter.Config>(Configuration.GetSection(PreferredHostnameFilter.Config.ConfigSectionName));
+            services.Configure<PortalConfig>(Configuration.GetSection(PortalConfig.ConfigSectionName));
+            services.Configure<NoTenantMiddleware.Config>(Configuration.GetSection(NoTenantMiddleware.Config.ConfigSectionName));
+            services.Configure<BlobStorageServices.Config>(Configuration.GetSection(BlobStorageServices.Config.ConfigSectionName));
+            services.Configure<TwilioSmsSenderOptions>(Configuration.GetSection(TwilioSmsSenderOptions.ConfigSectionName));
+            services.Configure<TableauSignInOptions>(Configuration.GetSection(TableauSignInOptions.ConfigSectionName));
+            services.Configure<TableauAdminCredentials>(Configuration.GetSection(TableauAdminCredentials.ConfigSectionName));
             services.Configure<DataProtectionTokenProviderOptions>(Configuration.GetSection(nameof(DataProtectionTokenProviderOptions)));
-            services.Configure<TraffkHttpHeadersFilter.TraffkHttpHeadersFilterOptions>(Configuration.GetSection(nameof(TraffkHttpHeadersFilter.TraffkHttpHeadersFilterOptions)));
-            services.Configure<TokenProviderOptions>(Configuration.GetSection(nameof(TokenProviderOptions)));
-            services.Configure<OrchestraRxOptions>(Configuration.GetSection(nameof(OrchestraRxOptions)));
-            services.Configure<RedisCachingServicesOptions>(Configuration.GetSection(nameof(RedisCachingServicesOptions)));
-
-            services.AddSingleton<CachingServices>();
+            services.Configure<TraffkHttpHeadersFilter.Config>(Configuration.GetSection(TraffkHttpHeadersFilter.Config.ConfigSectionName));
+            services.Configure<TokenProviderOptions>(Configuration.GetSection(TokenProviderOptions.ConfigSectionName));
+            services.Configure<OrchestraRxOptions>(Configuration.GetSection(OrchestraRxOptions.ConfigSectionName));
+            services.Configure<RedisCachingServicesOptions>(Configuration.GetSection(RedisCachingServicesOptions.ConfigSectionName));
 
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
@@ -220,6 +217,9 @@ namespace TraffkPortal
 
             services.AddScoped<TableauTrustedTicketActionFilter>();
 
+            services.Configure<HttpClientFactory.Config>(Configuration.GetSection(HttpClientFactory.Config.ConfigSectionName));
+            services.AddScoped<IHttpClientFactory, HttpClientFactory>();
+
             services.AddScoped<ICacher, TraffkCache>();
 
             services.AddScoped<ILogger>(provider => Logger.ForContext<Startup>());
@@ -271,7 +271,6 @@ namespace TraffkPortal
 
             app.UseSession();
             
-            CachingServices.Initialize(app.ApplicationServices);
             UserEnricher.Initialize(app.ApplicationServices);
 
             ConfigureAuth(app);

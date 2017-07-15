@@ -1,7 +1,7 @@
-﻿using RevolutionaryStuff.Core.ApplicationParts;
+﻿using Newtonsoft.Json;
+using RevolutionaryStuff.Core.ApplicationParts;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.Serialization;
 
 namespace Traffk.Bal.Settings
 {
@@ -10,16 +10,16 @@ namespace Traffk.Bal.Settings
         public static readonly ReusableValue[] None = new ReusableValue[0];
 
         [DisplayName("Resource Type")]
-        [DataMember(Name = "ResourceType")]
+        [JsonProperty("ResourceType")]
         public ReusableValueTypes ResourceType { get; set; }
 
         [Key]
         [MinLength(1)]
         [NotNull]
-        [DataMember(Name = "Key")]
+        [JsonProperty("Key")]
         public string Key { get; set; }
 
-        [DataMember(Name = "Value")]
+        [JsonProperty("Value")]
         public string Value { get; set; }
     }
 }

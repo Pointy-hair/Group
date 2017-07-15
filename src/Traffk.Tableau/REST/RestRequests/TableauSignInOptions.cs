@@ -4,6 +4,8 @@ namespace Traffk.Tableau.REST.RestRequests
 {
     public class TableauSignInOptions
     {
+        public const string ConfigSectionName = "TableauSignInOptions";
+
         private const string SiteUrlPortion = @"/site/";
 
         public TableauSignInOptions()

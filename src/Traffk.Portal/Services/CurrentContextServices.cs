@@ -21,9 +21,6 @@ namespace TraffkPortal.Services
         private readonly UserManager<ApplicationUser> UserManager;
         private readonly ITableauAuthorizationService TableauAuthorizationService;
 
-        private static readonly ICache<string, AzureActiveDirectoryResourceAuthorizationGetter.AuthenticationResult>
-            BearerCache = CachingServices.Instance.CreateSynchronized<string, AzureActiveDirectoryResourceAuthorizationGetter.AuthenticationResult>(CachingServices.FlushPeriods.Medium);
-
         public App Application
         {
             get

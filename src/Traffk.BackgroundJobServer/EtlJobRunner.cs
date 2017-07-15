@@ -1,18 +1,22 @@
 ﻿#if NET462
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.SqlServer.Dts.Runtime;
 using RevolutionaryStuff.Core;
 using Serilog;
+using Serilog.Events;
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
+using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Traffk.Bal.ApplicationParts;
 using Traffk.Bal.BackgroundJobs;
 using Traffk.Bal.Data.Rdb.TraffkGlobal;
-using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using Serilog.Events;
+using Traffk.Bal.Services;
 using T = System.Threading.Tasks;
-using Microsoft.Extensions.Options;
 
 namespace Traffk.BackgroundJobServer
 {
@@ -21,24 +25,27 @@ namespace Traffk.BackgroundJobServer
         private static readonly Assembly EtlPackageAssembly = typeof(EtlJobRunner).GetTypeInfo().Assembly;
 
         private readonly IOptions<EtlJobRunnerConfig> ConfigOptions;
+        private readonly IHttpClientFactory HttpClientFactory;
 
         public EtlJobRunner(
             IOptions<EtlJobRunnerConfig> configOptions,
+            IHttpClientFactory httpClientFactory,
             TraffkGlobalDbContext globalContext,
             IJobInfoFinder jobInfoFinder,
             ILogger logger)
             : base(globalContext, jobInfoFinder, logger)
         {
             ConfigOptions = configOptions;
+            HttpClientFactory = httpClientFactory;
         }
 
         bool IDTSLogging.Enabled => true;
 
-        private bool ExecuteAsyncCalled = false;
+        private bool ExecutePackageAsyncCalled = false;
 
-        public async T.Task ExecuteAsync(string packageName, Action<Package> packageInit=null)
+        private async T.Task ExecutePackageAsync(string packageName, Action<Package> packageInit=null)
         {
-            Requires.SingleCall(ref ExecuteAsyncCalled);
+            Requires.SingleCall(ref ExecutePackageAsyncCalled);
 
             var dtsxPath = Path.Combine(TempFolderPath, packageName);
             try
@@ -162,8 +169,6 @@ namespace Traffk.BackgroundJobServer
 
         #endregion
 
-        #region IEtlJobs
-
         private void SetParameterIfPresent(Package p, string parameterName, object parameterValue)
         {
             if (p.Parameters.Contains(parameterName))
@@ -174,28 +179,82 @@ namespace Traffk.BackgroundJobServer
 
         private void ConfigureCommonParameters(Package p)
         {
-            SetParameterIfPresent(p, "WorkingFolderName", $"{TempFolderPath}work");
+            SetParameterIfPresent(p, "WorkingFolderName", $"{TempFolderPath}work\\");
         }
 
-        T.Task IEtlJobs.LoadCmsGovAsync()
+        private string FetchFolder => $"{TempFolderPath}fetch\\";
+
+        async T.Task IEtlJobs.ExecuteAsync(EtlPackages etlPackage, int dataSourceFetchId)
         {
-            return ExecuteAsync("Cmsgov.dtsx", p =>
+            var fetch = await GlobalContext.DataSourceFetches.Include(z => z.DataSource).Include(z=>z.DataSourceFetchDataSourceFetchItems).SingleAsync(z => z.DataSource.TenantId == this.JobInfo.TenantId && z.DataSourceFetchId == dataSourceFetchId);
+
+            Directory.CreateDirectory(FetchFolder);
+            Stuff.TaskWaitAllForEach(
+                fetch.DataSourceFetchDataSourceFetchItems.Where(z => z.DataSourceFetchItemTypeStringValue == DataSourceFetchItem.DataSourceFetchItemTypes.Original.ToString()),
+                async fi => {
+                    var fn = $"{FetchFolder}{fi.DataSourceFetchItemId}\\{fi.Name}";
+                    using (var client = HttpClientFactory.Create())
+                    {
+                        using (var st = await client.GetStreamAsync(fi.Url))
+                        {
+                            using (var fst = File.Create(fn))
+                            {
+                                await st.CopyToAsync(fst);
+                            }
+                        }
+                        if (MimeType.Application.Zip.DoesExtensionMatch(fn))
+                        {
+                            var unzipFolder = Path.Combine(Path.GetDirectoryName(fn), Path.GetFileNameWithoutExtension(fn));
+                            ZipFile.ExtractToDirectory(fn, unzipFolder);
+                        }
+                    }
+                });
+            switch (etlPackage)
+            {
+                case EtlPackages.CmsGov:
+                    await LoadCmsGovAsync(fetch);
+                    return;
+                case EtlPackages.InternationalClassificationDiseases:
+                    await LoadInternationalClassificationDiseasesAsync(fetch);
+                    break;
+                case EtlPackages.NationalDrugCodes:
+                    await LoadNationalDrugCodeAsync(fetch);
+                    break;
+                case EtlPackages.ZipCodes:
+                    await LoadZipCodesAsync(fetch);
+                    break;
+                default:
+                    throw new UnexpectedSwitchValueException(etlPackage);
+            }
+        }
+
+        private T.Task LoadCmsGovAsync(DataSourceFetche fetch)
+        {           
+            return ExecutePackageAsync("Cmsgov.dtsx", p =>
             {
                 ConfigureCommonParameters(p);
             });
         }
 
-        T.Task IEtlJobs.LoadInternationalClassificationDiseasesAsync()
+        private T.Task LoadZipCodesAsync(DataSourceFetche fetch)
         {
-            return ExecuteAsync("InternationalClassificationDiseases.dtsx", p=> 
+            return ExecutePackageAsync("ZipCodes.dtsx", p =>
             {
                 ConfigureCommonParameters(p);
             });
         }
 
-        T.Task IEtlJobs.LoadNationalDrugCodeAsync()
+        private T.Task LoadInternationalClassificationDiseasesAsync(DataSourceFetche fetch)
         {
-            return ExecuteAsync("NationalDrugCode.dtsx", p =>
+            return ExecutePackageAsync("InternationalClassificationDiseases.dtsx", p=> 
+            {
+                ConfigureCommonParameters(p);
+            });
+        }
+
+        private T.Task LoadNationalDrugCodeAsync(DataSourceFetche fetch)
+        {
+            return ExecutePackageAsync("NationalDrugCode.dtsx", p =>
             {
                 var c = ConfigOptions.Value?.NationalDrugCode;
                 ConfigureCommonParameters(p);
@@ -205,9 +264,6 @@ namespace Traffk.BackgroundJobServer
                 }
             });
         }
-
-        #endregion
-
 
         public class EtlJobRunnerConfig
         {

@@ -54,15 +54,6 @@ namespace TraffkPortal.Controllers
         private readonly ITraffkRecurringJobManager RJM;
 
         [AllowAnonymous]
-        [Route("/Jobs/LoadInternationalClassificationDiseases")]
-        public IActionResult LoadInternationalClassificationDiseases(string msg)
-        {
-            Backgrounder.Enqueue<IEtlJobs>(z => z.LoadInternationalClassificationDiseasesAsync());
-            return Ok();
-        }
-
-
-        [AllowAnonymous]
         [Route("/Jobs/CreateRecurringTrace/{msg}")]
         public IActionResult CreateRecurringTrace(string msg)
         {
@@ -87,8 +78,16 @@ namespace TraffkPortal.Controllers
         }
 
         [AllowAnonymous]
-        [Route("/Jobs/ZipCodes")]
-        public IActionResult ZipCodes()
+        [Route("/Jobs/EtlZip")]
+        public IActionResult EtlZip()
+        {
+            Backgrounder.Enqueue<IEtlJobs>(z => z.ExecuteAsync(EtlPackages.ZipCodes, 256));
+            return Ok();
+        }
+
+        [AllowAnonymous]
+        [Route("/Jobs/DownloadZipCodes")]
+        public IActionResult DownloadZipCodes()
         {
             var ds = new Traffk.Bal.Data.Rdb.TraffkGlobal.DataSource
             {

@@ -31,15 +31,17 @@ namespace Traffk.Bal.ApplicationParts
 
         public ILogger JobRunnerLogger { get; private set; }
 
-        public class HangfireServerOptions
+        public class HangfireServerConfig
         {
+            public const string ConfigSectionName = "HangfireServerOptions";
+
             public string ConnectionStringName { get; set; }
             public BackgroundJobServerOptions BackgroundOptions { get; set; }
         }
 
         protected override Task OnGoAsync()
         {
-            var o = this.ServiceProvider.GetService<IOptions<HangfireServerOptions>>().Value;
+            var o = this.ServiceProvider.GetService<IOptions<HangfireServerConfig>>().Value;
             JobRunnerLogger = this.ServiceProvider.GetService<ILogger>();
 
             GlobalConfiguration.Configuration.UseSqlServerStorage(Configuration.GetConnectionString(o.ConnectionStringName));
@@ -70,8 +72,10 @@ namespace Traffk.Bal.ApplicationParts
             base.OnConfigureServices(services);
 
             services.AddOptions();
-
-            services.Configure<BlobStorageServices.BlobStorageServicesOptions>(Configuration.GetSection(nameof(BlobStorageServices.BlobStorageServicesOptions)));
+            services.Configure<BlobStorageServices.Config>(Configuration.GetSection(BlobStorageServices.Config.ConfigSectionName));
+            services.Configure<HangfireServerConfig>(Configuration.GetSection(HangfireServerConfig.ConfigSectionName));
+            services.Configure<TableauSignInOptions>(Configuration.GetSection(TableauSignInOptions.ConfigSectionName));
+            services.Configure<TableauAdminCredentials>(Configuration.GetSection(TableauAdminCredentials.ConfigSectionName));
 
             services.AddSingleton(this);
             services.AddSingleton<IConfiguration>(Configuration);
@@ -89,11 +93,6 @@ namespace Traffk.Bal.ApplicationParts
                 options.UseSqlServer(Configuration.GetConnectionString(TraffkGlobalDbContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Scoped);
             services.AddScoped<CurrentTenantServices>();
             services.AddScoped<BlobStorageServices>();
-            services.Configure<HangfireServerOptions>(Configuration.GetSection(nameof(HangfireServerOptions)));
-
-
-            services.Configure<TableauSignInOptions>(Configuration.GetSection(nameof(TableauSignInOptions)));
-            services.Configure<TableauAdminCredentials>(Configuration.GetSection(nameof(TableauAdminCredentials)));
 
             services.AddScoped<ITableauTenantFinder, TableauTenantFinder>();
             services.AddScoped<ITableauUserCredentials, MyTableauAdminCredentials>();
@@ -106,6 +105,9 @@ namespace Traffk.Bal.ApplicationParts
             services.AddScoped<ITraffkRecurringJobManager, TenantedBackgroundJobClient>();
             services.AddScoped<IRecurringJobManager, RecurringJobManager>();
             services.Add(new ServiceDescriptor(typeof(ICacher), Cache.DataCacher));
+
+            services.Configure<HttpClientFactory.Config>(Configuration.GetSection(HttpClientFactory.Config.ConfigSectionName));
+            services.AddScoped<IHttpClientFactory, HttpClientFactory>();
 
             var logger = new LoggerConfiguration()
                 .Enrich.WithProperty("ApplicationName", Configuration["RevolutionaryStuffCoreOptions:ApplicationName"])
