@@ -34,7 +34,6 @@ using Traffk.Bal.ReportVisuals;
 using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
 using Traffk.Orchestra;
-using Traffk.Orchestra.Models;
 using Traffk.Portal.Controllers.Api;
 using Traffk.Portal.Permissions;
 using Traffk.Tableau;
@@ -66,9 +65,6 @@ namespace TraffkPortal
 
             if (env.IsDevelopment())
             {
-                // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
-                builder.AddUserSecrets<Startup>();
-
                 // This will push telemetry data through Application Insights pipeline faster, allowing you to view results immediately.
                 builder.AddApplicationInsightsSettings(developerMode: true);
             }
@@ -119,14 +115,14 @@ namespace TraffkPortal
             services.Configure<PortalConfig>(Configuration.GetSection(PortalConfig.ConfigSectionName));
             services.Configure<NoTenantMiddleware.Config>(Configuration.GetSection(NoTenantMiddleware.Config.ConfigSectionName));
             services.Configure<BlobStorageServices.Config>(Configuration.GetSection(BlobStorageServices.Config.ConfigSectionName));
-            services.Configure<TwilioSmsSenderOptions>(Configuration.GetSection(TwilioSmsSenderOptions.ConfigSectionName));
+            services.Configure<TwilioSmsSenderConfig>(Configuration.GetSection(TwilioSmsSenderConfig.ConfigSectionName));
             services.Configure<TableauSignInOptions>(Configuration.GetSection(TableauSignInOptions.ConfigSectionName));
             services.Configure<TableauAdminCredentials>(Configuration.GetSection(TableauAdminCredentials.ConfigSectionName));
             services.Configure<DataProtectionTokenProviderOptions>(Configuration.GetSection(nameof(DataProtectionTokenProviderOptions)));
             services.Configure<TraffkHttpHeadersFilter.Config>(Configuration.GetSection(TraffkHttpHeadersFilter.Config.ConfigSectionName));
-            services.Configure<TokenProviderOptions>(Configuration.GetSection(TokenProviderOptions.ConfigSectionName));
-            services.Configure<OrchestraRxOptions>(Configuration.GetSection(OrchestraRxOptions.ConfigSectionName));
-            services.Configure<RedisCachingServicesOptions>(Configuration.GetSection(RedisCachingServicesOptions.ConfigSectionName));
+            services.Configure<TokenProviderConfig>(Configuration.GetSection(TokenProviderConfig.ConfigSectionName));
+            services.Configure<OrchestraRxConfig>(Configuration.GetSection(OrchestraRxConfig.ConfigSectionName));
+            services.Configure<RedisCache.Config>(Configuration.GetSection(RedisCache.Config.ConfigSectionName));
 
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);

@@ -11,9 +11,9 @@ namespace TraffkPortal.Services.Sms
 {
     public class TwilioSmsSender : ITwilioSmsSender
     {
-        private readonly TwilioSmsSenderOptions Options;
+        private readonly TwilioSmsSenderConfig Options;
 
-        public TwilioSmsSender(IOptions<TwilioSmsSenderOptions> options)
+        public TwilioSmsSender(IOptions<TwilioSmsSenderConfig> options)
         {
             Options = options.Value;
         }

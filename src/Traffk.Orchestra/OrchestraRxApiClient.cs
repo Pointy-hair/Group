@@ -16,7 +16,7 @@ namespace Traffk.Orchestra
         private readonly string AcceptHeader = "application/json; charset=utf-8";
         private string ApiToolsUrlPortion => $"/APITools/{ApiVersion}";
         private string DrugCompareUrlPortion => $"/API/{ApiVersion}";
-        private readonly OrchestraRxOptions Options;
+        private readonly OrchestraRxConfig Config;
         private OrchestraRxTokenResponse Token;
         private HttpClient HttpClientWithHeaders;
 
@@ -29,9 +29,9 @@ namespace Traffk.Orchestra
             public const string DrugAlternatives = @"Drugs/Alternatives";
         }
 
-        public OrchestraRxApiClient(IOptions<OrchestraRxOptions> options)
+        public OrchestraRxApiClient(IOptions<OrchestraRxConfig> configOptions)
         {
-            Options = options.Value;
+            Config = configOptions.Value;
         }
 
         public void SetToken(OrchestraRxTokenResponse token)
@@ -44,7 +44,7 @@ namespace Traffk.Orchestra
         {
             var httpClient = new HttpClient();
 
-            var plainTextBytes = Encoding.UTF8.GetBytes($"{Options.Key}:{Options.Secret}");
+            var plainTextBytes = Encoding.UTF8.GetBytes($"{Config.Key}:{Config.Secret}");
             var base64KeySecret = Convert.ToBase64String(plainTextBytes);
 
             httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Basic {base64KeySecret}");
@@ -56,7 +56,7 @@ namespace Traffk.Orchestra
 
             var content = new FormUrlEncodedContent(tokenRequestFormContent);
 
-            var response = httpClient.PostAsync(Options.AuthUrl, content).Result;
+            var response = httpClient.PostAsync(Config.AuthUrl, content).Result;
             var json = response.Content.ReadAsStringAsync().Result;
             var tokenResponse = JsonConvert.DeserializeObject<OrchestraRxTokenResponse>(json);
 
@@ -73,7 +73,7 @@ namespace Traffk.Orchestra
             }
             var apiRoute = $"{DrugCompareUrlPortion}/Drugs/Alternatives?drugFilters={drugFilter}";
             VerifyToken();
-            var url = Options.BaseUrl + apiRoute;
+            var url = Config.BaseUrl + apiRoute;
             var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
             return JsonConvert.DeserializeObject<DrugToReplace[]>(json);
         }
@@ -82,7 +82,7 @@ namespace Traffk.Orchestra
         {
             var apiRoute = $"{DrugCompareUrlPortion}/Drugs/{ndcReference}";
             VerifyToken();
-            var url = Options.BaseUrl + apiRoute;
+            var url = Config.BaseUrl + apiRoute;
             var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
             return JsonConvert.DeserializeObject<HasAlternativesResponse>(json);
         }
@@ -105,7 +105,7 @@ namespace Traffk.Orchestra
             }
             var apiRoute = $"{DrugCompareUrlPortion}/Plans/{planId}/Drugs/Compare?drugFilters={drugFilter}&pharmacyFilters={pharmacyFilter}";
             VerifyToken();
-            var url = Options.BaseUrl + apiRoute;
+            var url = Config.BaseUrl + apiRoute;
             var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
             var drugOptions = JsonConvert.DeserializeObject<DrugToReplace[]>(json);
             return drugOptions;
@@ -123,7 +123,7 @@ namespace Traffk.Orchestra
             }
             var apiRoute = $"{DrugCompareUrlPortion}/Plans/{planId}/Drugs/{searchQuery.NDC}/Compare?DaysOfSupply={searchQuery.DaysOfSupply}&MetricQuantity={searchQuery.MetricQuantity}&pharmacyFilters={pharmacyFilter}";
             VerifyToken();
-            var url = Options.BaseUrl + apiRoute;
+            var url = Config.BaseUrl + apiRoute;
             var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
             return JsonConvert.DeserializeObject<OrchestraDrugAlternativeResponse>(json);
         }
@@ -132,7 +132,7 @@ namespace Traffk.Orchestra
         {
             var apiRoute = $"{ApiToolsUrlPortion}/Counties/{zip}";
             VerifyToken();
-            var url = Options.BaseUrl + apiRoute;
+            var url = Config.BaseUrl + apiRoute;
             var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
             return JsonConvert.DeserializeObject<County>(json);
         }
@@ -141,7 +141,7 @@ namespace Traffk.Orchestra
         {
             var apiRoute = $"{ApiToolsUrlPortion}/Drugs/{orchestraDrugId}/Dosages/{orchestraDosageId}";
             VerifyToken();
-            var url = Options.BaseUrl + apiRoute;
+            var url = Config.BaseUrl + apiRoute;
             var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
             return JsonConvert.DeserializeObject<OrchestraDosage>(json);
         }
@@ -150,7 +150,7 @@ namespace Traffk.Orchestra
         {
             var apiRoute = $"{ApiToolsUrlPortion}/Drugs/Search?q={query}";
             VerifyToken();
-            var url = Options.BaseUrl + apiRoute;
+            var url = Config.BaseUrl + apiRoute;
             var json = await HttpClientWithHeaders.GetJsonStringAsync(url); ;
 
             //JsonConvert can't serialize directly to DrugResponse
@@ -163,7 +163,7 @@ namespace Traffk.Orchestra
         {
             var apiRoute = $"{ApiToolsUrlPortion}/Drugs/{ndcOrOrchestraId}";
             VerifyToken();
-            var url = Options.BaseUrl + apiRoute;
+            var url = Config.BaseUrl + apiRoute;
             var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
             return JsonConvert.DeserializeObject<DrugDetailResponse>(json);
         }
@@ -172,7 +172,7 @@ namespace Traffk.Orchestra
         {
             var apiRoute = $"{ApiToolsUrlPortion}/Pharmacies/Search?zip={zip}&radius={radius}";
             VerifyToken();
-            var url = Options.BaseUrl + apiRoute;
+            var url = Config.BaseUrl + apiRoute;
             var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
             return JsonConvert.DeserializeObject<PharmacyResponse>(json);
         }
@@ -182,7 +182,7 @@ namespace Traffk.Orchestra
         {
             var apiRoute = $"{DrugCompareUrlPortion}/Drugs/{searchQuery.NDC}/Alternatives?DaysOfSupply={searchQuery.DaysOfSupply}&MetricQuantity={searchQuery.MetricQuantity}";
             VerifyToken();
-            var url = Options.BaseUrl + apiRoute;
+            var url = Config.BaseUrl + apiRoute;
             var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
             return JsonConvert.DeserializeObject<DrugToReplace>(json);
         }
@@ -192,7 +192,7 @@ namespace Traffk.Orchestra
         {
             var apiRoute = $"{ApiToolsUrlPortion}/Drugs/Alternatives?id={orchestraDrugId}";
             VerifyToken();
-            var url = Options.BaseUrl + apiRoute;
+            var url = Config.BaseUrl + apiRoute;
             var json = await HttpClientWithHeaders.GetJsonStringAsync(url);
             return JsonConvert.DeserializeObject<DrugDetailResponse>(json);
         }

@@ -13,12 +13,20 @@ namespace Traffk.Bal.Caches
 
     public class RedisCache : ICacher, IRedisCache
     {
-        private readonly RedisCachingServicesOptions RedisOptions;
+        public class Config
+        {
+            public const string ConfigSectionName = "RedisCachingServicesOptions";
+
+            public string ConnectionString { get; set; }
+            public TimeSpan ExpirationTime { get; set; } = TimeSpan.FromMinutes(5);
+        }
+
+        private readonly Config RedisOptions;
         private readonly Lazy<ConnectionMultiplexer> LazyConnection;
         private readonly IDatabase CacheDatabase;
         private readonly TimeSpan? DefaultExpiration;
 
-        public RedisCache(IOptions<RedisCachingServicesOptions> redisOptions)
+        public RedisCache(IOptions<Config> redisOptions)
         {
             RedisOptions = redisOptions.Value;
             DefaultExpiration = RedisOptions.ExpirationTime;
@@ -89,13 +97,5 @@ namespace Traffk.Bal.Caches
         {
 
         }
-    }
-
-    public class RedisCachingServicesOptions
-    {
-        public const string ConfigSectionName = "RedisCachingServicesOptions";
-
-        public string ConnectionString { get; set; }
-        public TimeSpan ExpirationTime { get; set; } = TimeSpan.FromMinutes(5);
     }
 }

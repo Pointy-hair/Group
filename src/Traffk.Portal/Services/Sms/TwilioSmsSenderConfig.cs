@@ -1,6 +1,6 @@
 ﻿namespace TraffkPortal.Services.Sms
 {
-    public class TwilioSmsSenderOptions
+    public class TwilioSmsSenderConfig
     {
         public const string ConfigSectionName = "TwilioSmsSenderOptions";
 

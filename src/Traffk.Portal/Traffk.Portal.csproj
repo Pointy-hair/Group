@@ -7,7 +7,6 @@
     <AssemblyName>Traffk.Portal</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>Traffk.Portal</PackageId>
-    <UserSecretsId>as  -TraffkPortal-577e2973-1095-4cc2-acd6-1f3fe3f47073</UserSecretsId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='VSTS-CI|AnyCPU'" />
@@ -38,7 +37,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="1.1.2" />
-    <PackageReference Include="Microsoft.Extensions.SecretManager" Version="1.0.0-rc1-final" />
     <PackageReference Include="RevolutionaryStuff.Core" Version="1.0.15" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="1.0.0" />
     <PackageReference Include="WindowsAzure.Storage" Version="8.1.4" />
@@ -62,7 +60,6 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="1.1.2" />

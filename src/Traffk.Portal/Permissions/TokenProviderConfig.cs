@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Traffk.Portal.Permissions
 {
-    public class TokenProviderOptions
+    public class TokenProviderConfig
     {
         public const string ConfigSectionName = "TokenProviderOptions";
 

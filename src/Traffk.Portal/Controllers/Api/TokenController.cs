@@ -29,14 +29,14 @@ namespace Traffk.Portal.Controllers.Api
     [ApiControllerDisplayName("Token")]
     public class TokenController : BaseApiController
     {
-        private readonly TokenProviderOptions Options;
+        private readonly TokenProviderConfig Options;
         private readonly UserManager<ApplicationUser> UserManager;
         private readonly SignInManager<ApplicationUser> SignInManager;
         private readonly IUserClaimsPrincipalFactory<ApplicationUser> UserClaimsPrincipalFactory;
         private readonly SigningCredentials SigningCredentials;
         private readonly ITraffkTenantFinder TraffkTenantFinder;
 
-        public TokenController(IOptions<TokenProviderOptions> options,
+        public TokenController(IOptions<TokenProviderConfig> options,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IUserClaimsPrincipalFactory<ApplicationUser> userClaimsPrincipalFactory,

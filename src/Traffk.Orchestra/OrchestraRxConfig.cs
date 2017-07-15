@@ -1,6 +1,6 @@
-﻿namespace Traffk.Orchestra.Models
+﻿namespace Traffk.Orchestra
 {
-    public class OrchestraRxOptions
+    public class OrchestraRxConfig
     {
         public const string ConfigSectionName = "OrchestraRxOptions";
 
