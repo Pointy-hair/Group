@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using System.Collections.Generic;
+using System.Linq;
 using Traffk.Bal.ExternalApis;
 using Traffk.Bal.Permissions;
 using Traffk.Orchestra.Models;
@@ -30,12 +31,31 @@ namespace Traffk.Portal.Controllers.Api
 
         [HttpGet]
         [Route("pharmacies")]
-        [ApiExplorerSettings(GroupName = "Test")]
         public PharmacyResponse SearchPharmacies(string zip, int radius)
         {
             Log();
 
             return new PharmacyResponse(OrchestraApiService.PharmacySearch(zip, radius));
+        }
+
+        [HttpGet]
+        [Route("pharmacies/nabp/{nabp}")]
+        public Pharmacy PharmacyNABPDetail(string nabp)
+        {
+            Log();
+
+            return new Pharmacy(OrchestraApiService.Pharmacy(nabp));
+        }
+
+        [HttpGet]
+        [Route("pharmacies/{id}")]
+        public Pharmacy PharmacyDetail(string id)
+        {
+            Log();
+
+            id = id.Replace("OP", "");
+
+            return new Pharmacy(OrchestraApiService.Pharmacy(id));
         }
 
         [HttpGet]
@@ -67,7 +87,7 @@ namespace Traffk.Portal.Controllers.Api
 
         [HttpGet]
         [Route("drugs/{ndcReference}/alternative/{metricQuantity}/{daysOfSupply}")]
-        public DrugOption[] DrugAlternative(string ndcReference, double metricQuantity, double daysOfSupply)
+        public DrugAlternativeResponse DrugAlternative(string ndcReference, double metricQuantity, double daysOfSupply)
         {
             Log();
 
@@ -81,17 +101,9 @@ namespace Traffk.Portal.Controllers.Api
                 }
             };
             
-            return OrchestraApiService.DrugAlternativeSearch(queries);
+            var orchestraResponse = OrchestraApiService.DrugAlternativeSearch(queries);
+            return new DrugAlternativeResponse(orchestraResponse.First());
         }
-
-        //[HttpGet]
-        //[Route("Drugs/Alternatives/{drugId}")]
-        //public DrugDetailResponse DrugDosageAlternatives(string drugId)
-        //{
-        //    Log();
-
-        //    return OrchestraApiService.DrugDosageAlternatives(drugId);
-        //}
 
         [HttpGet]
         [Route("plans")]

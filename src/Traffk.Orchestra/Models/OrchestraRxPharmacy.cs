@@ -17,6 +17,7 @@
         public string Zip { get; set; }
         public float Distance { get; set; }
         public string PharmacyPhone { get; set; }
+        public string PharmacyNABP { get; set; }
         public float Latitude { get; set; }
         public float Longitude { get; set; }
         public string Chain { get; set; }

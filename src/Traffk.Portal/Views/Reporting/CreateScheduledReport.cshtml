@@ -1,11 +1,10 @@
 ﻿@using Traffk.Bal.Data
 @using Traffk.Portal.Controllers
-@model Traffk.Portal.Models.ReportingModels.ScheduleReportViewModel
+@model Traffk.Portal.Models.ReportingModels.CreateScheduledReportViewModel
 @{
     Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
     ViewData.SetTitleAndHeading(@Model.TableauReportViewModel.Title, @Model.TableauReportViewModel.Description);
     ViewData.HasBreadcrumbItems(true);
-    ViewData.HasPageMenuItems(true);
     ViewData.IsFormPage(true);
 }
 
@@ -15,18 +14,17 @@
     <li><a asp-controller="@ReportingController.Name" asp-action="Index" asp-fragment="@Model.TableauReportViewModel.FolderName.ToUpperCamelCase()">@Model.TableauReportViewModel.FolderName.ToTitleFriendlyString()</a> <span>></span> </li>
 }
 
-<form asp-action="@ReportingController.ActionNames.ScheduleReportSave" class="inline-form html-editor-form">
+<form asp-action="@ReportingController.ActionNames.ScheduleReportSave" class="inline-form">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <input type="hidden" asp-for="TableauReportViewModel.WorkbookName"/>
     <input type="hidden" asp-for="TableauReportViewModel.ViewName" />
     <input type="hidden" asp-for="TableauReportViewModel.WorksheetName" />
     
-    @await Html.PartialAsync("~/Views/Shared/_BasicRecurrenceSettingsPartial.cshtml", @Model.RecurrenceSettings, z => z.RecurrenceSettings);
-
-    <div class="form-row">
-        <label class="col-sm-1"></label>
-        <div class="col-sm-10">
-            <input type="submit" value="Save" class="btn btn-default btn-primary btn-large" />
+    @await Html.PartialAsync("~/Views/Shared/_BasicRecurrenceSettingsPartial.cshtml", @Model.RecurrenceSettings, z => z.RecurrenceSettings)
+    
+    <div class="row">
+        <div class="col-xs-12 text-right">
+            <input type="submit" value="Create" class="btn btn-default btn-primary btn-large" />
         </div>
     </div>
 </form>

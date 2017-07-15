@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using Traffk.Bal.Data;
 using Traffk.Bal.ReportVisuals;
 
 namespace Traffk.Portal.Models.ReportingModels
@@ -32,24 +31,5 @@ namespace Traffk.Portal.Models.ReportingModels
         public string WorksheetName { get; set; }
         public string Description { get; set; }
         public ReportDetails.RenderingAttributeFlags RenderingAttributes { get; private set; }
-    }
-
-    public class ScheduleReportViewModel
-    {
-        public TableauReportViewModel TableauReportViewModel { get; set; }
-        public RecurrenceSettings RecurrenceSettings { get; set; }
-
-
-        public ScheduleReportViewModel()
-        {
-            //Required for model binding
-        }
-
-        public ScheduleReportViewModel(TableauReportViewModel tableauReportViewModel,
-        RecurrenceSettings recurrenceSettings)
-        {
-            TableauReportViewModel = tableauReportViewModel;
-            RecurrenceSettings = recurrenceSettings;
-        }
     }
 }

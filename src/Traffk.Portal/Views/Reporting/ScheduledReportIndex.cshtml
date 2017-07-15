@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Hangfire.Storage.RecurringJobDto>
+﻿@model IEnumerable<Traffk.Portal.Models.ReportingModels.ScheduledReportViewModel>
+@using NUglify.Helpers
 @using Traffk.Portal.Controllers
 
 @{
@@ -24,55 +25,60 @@
             <tr>
                 <th><input type="checkbox" id="all-items-selector" /></th>
                 <th>
-                    @Html.SortableHeaderFor(model => model.Id)
+                    @Html.SortableHeaderFor(model => model.Communication.CommunicationId)
                 </th>
                 <th>
-                    @Html.SortableHeaderFor(model => model.CreatedAt)
+                    Title
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Job)
+                    Frequency
+                    @*@Html.SortableHeaderFor(model => model.Communication.CommunicationSettings.Recurrence.)*@
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Cron)
+                    Next Run
+                    @*@Html.DisplayNameFor(model => model)*@
                 </th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in Model)
             {
-                <tr jobId="@item.Id">
-                    <td><input type="checkbox" class="item-selector" contextId="@item.Id" /></td>
+                <tr jobId="@item.Communication.CommunicationId">
+                    <td><input type="checkbox" class="item-selector" contextId="@item.Communication.CommunicationId" /></td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Id)
+                        <a asp-action="ScheduledReportDetail" asp-route-id="@item.Communication.CommunicationId">
+                            @Html.DisplayFor(modelItem => item.Communication.CommunicationId)
+                        </a>
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.CreatedAt)
+                        @Html.DisplayFor(modelItem => item.Communication.CommunicationSettings.ReportName)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Job)
+                        @*@Html.DisplayFor(modelItem => item.Communication.CommunicationSettings.Recurrence.ToString())*@
                     </td>
-                    <td class="job-status">
-                        @Html.DisplayFor(modelItem => item.Cron)
+                    <td>
+                        @if (item.RecurringJob.NextExecution != null)
+                        {
+                            @Html.DisplayFor(modelItem => item.RecurringJob.NextExecution.ToString())
+                        }
                     </td>
                     <td class="text-center">
-                        @*@if (item.CanBeCancelled || item.Downloadable)
-                        {
-                            <i class="fa fa-ellipsis-h toggle" aria-hidden="true" data-toggle="row-action-@item.Id"></i>
-                            <ul id="row-action-@item.Id" class="floated-filter list-right">
-                                @if (item.CanBeCancelled)
+                        <i class="fa fa-ellipsis-h toggle" aria-hidden="true" data-toggle="row-action-@item.Communication.CommunicationId"></i>
+                        @*<ul id="row-action-@item.Id" class="floated-filter list-right">
+                            @if (Current.User.Id != item.Id)
+                            {
+                                <li>
+                                    <a onclick="deleteUser('@item.Id')" class="confirm-on-click" confirmMessage="Are you sure you want to delete user: @item.UserName?">Delete</a>
+                                </li>
+                                if (!@item.EmailConfirmed)
                                 {
                                     <li>
-                                        <a asp-action="@JobsController.ActionNames.JobCancel" asp-route-id="@item.Id" onclick="cancelJob(@item.Id)" class="confirm-on-click" confirmHeading="Are you sure?" confirmMessage="Are you sure you want to cancel Job @item.Id?">Cancel Job</a>
+                                        <a onclick="resendInvitation('@item.Id')">Resend Invitation</a>
                                     </li>
                                 }
-                                @if (item.Downloadable)
-                                {
-                                    <li>
-                                        <a href="@item.DownloadLink">Download</a>
-                                    </li>
-                                }
-                            </ul>
-                        }*@
+                            }
+                        </ul>*@
                     </td>
 
                 </tr>

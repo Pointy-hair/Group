@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using Traffk.Bal.Data.ApiModels.Rx;
 using Traffk.Orchestra.Models;
 using Traffk.Portal.Controllers.Api;
 
@@ -63,10 +64,10 @@ namespace Traffk.Portal.Tests.ControllersTests
 
                 var response = testClient.GetAsync("api/v1/Drugs/59746017710/Alternative/30/30").ExecuteSynchronously();
                 var json = response.Content.ReadAsStringAsync().ExecuteSynchronously();
-                var drugAlternativeResponse = JsonConvert.DeserializeObject<DrugOption[]>(json);
+                var drugAlternativeResponse = JsonConvert.DeserializeObject<DrugAlternativeResponse>(json);
 
                 Assert.IsNotNull(drugAlternativeResponse);
-                Assert.AreEqual("Cyclobenzaprine HCl", drugAlternativeResponse[0].ChemicalName);
+                Assert.AreEqual("Cyclobenzaprine HCl", drugAlternativeResponse.Drug.ChemicalName);
             }
         }
     }
