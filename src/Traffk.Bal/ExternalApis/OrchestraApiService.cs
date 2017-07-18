@@ -122,8 +122,11 @@ namespace Traffk.Bal.ExternalApis
             Log(EventType, OrchestraRxApiClient.OrchestraEndpoints.DrugDetail);
             var oDrugDetail = ScopedCacher.FindOrCreate<DrugDetailResponse>((ndc),
                 key => Client.DrugDetailAsync(ndc).ExecuteSynchronously());
-
-            return new Drug(oDrugDetail?.Value);
+            if (oDrugDetail.Value.DrugID > 0)
+            {
+                return new Drug(oDrugDetail?.Value);
+            }
+            return null;
         }
 
         public DrugToReplace[] DrugAlternativeSearch(IEnumerable<DrugAlternativeSearchQuery> searchQuery)

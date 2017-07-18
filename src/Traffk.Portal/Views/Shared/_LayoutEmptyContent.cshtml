@@ -200,6 +200,11 @@
                                             <li><a asp-controller="@ApplicationController.Name" asp-action="Index">Applications</a></li>
                                             <li><a asp-controller="@TenantsController.Name" asp-action="Index">Tenants</a></li>
                                         }
+                                        <li class="divider" role="separator"></li>
+                                        @if (manageTenants)
+                                        {
+                                            <li><a asp-controller="@DataController.Name" asp-action="Index">Data</a></li>
+                                        }
                                     </ul>
                                 </li>
                             }
@@ -282,6 +287,11 @@
                                         {
                                             <li><a asp-controller="@ApplicationController.Name" asp-action="Index">Applications</a></li>
                                             <li><a asp-controller="@TenantsController.Name" asp-action="Index">Tenants</a></li>
+                                        }
+                                        <li class="divider" role="separator"></li>
+                                        @if (manageTenants)
+                                        {
+                                            <li><a asp-controller="@DataController.Name" asp-action="Index">Data</a></li>
                                         }
                                     </ul>
                                 </li>

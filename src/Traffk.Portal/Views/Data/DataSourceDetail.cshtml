@@ -1,0 +1,94 @@
+﻿@model Traffk.Bal.Data.Rdb.TraffkGlobal.DataSource
+@using Traffk.Portal.Controllers
+
+@{
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
+    ViewData.SetTitleAndHeading("Name Placeholder");
+    ViewData.IsFormPage(true);
+    ViewData.HasPageMenuItems(true);
+    ViewData.HasBreadcrumbItems(true);
+
+    var pageKey = (DataController.PageKeys)ViewData[AspHelpers.ViewDataKeys.PageKey];
+    var type = Model.DataSourceSettings.IsFtp ? "FTP" : "Web";
+}
+
+@section breadCrumbItems {
+    <li><a asp-controller="@DataController.Name" asp-action="Index">Data</a> <span>></span> </li>
+    <li><a asp-controller="@DataController.Name" asp-action="Index">Sources</a> <span>></span> </li>
+}
+
+@if (ViewData.HasPageMenuItems() && !ViewData.HasCustomPageMenuItems())
+{
+    @section pageNavItems {
+        <li><a asp-controller="@DataController.Name" asp-action="DataSourceDetail" asp-for-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == DataController.PageKeys.DataSourceDetails ? "active" : "")">Details</a></li>
+        <li><a asp-controller="@DataController.Name" asp-action="DataSourceFetches" asp-for-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == DataController.PageKeys.DataSourceHistory ? "active" : "")">History</a></li>
+    }
+}
+
+<form asp-action="" class="inline-form">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-row">
+                <label asp-for="@Model.DataSourceId"></label>
+                <input asp-for="@Model.DataSourceId" class="form-control" readonly />
+            </div>
+            <div class="form-row">
+                <label>Type</label>
+                <input class="form-control" value="@type" readonly />
+            </div>
+            <div class="form-row">
+                <label>Name</label>
+                <input class="form-control" value="Name Placeholder"/>
+            </div>
+            @if (Model.DataSourceSettings.IsFtp)
+            {
+                <div class="form-row">
+                    <label asp-for="@Model.DataSourceSettings.FTP.Hostname"></label>
+                    <input asp-for="@Model.DataSourceSettings.FTP.Hostname" class="form-control"/>
+                </div>
+                <div class="form-row">
+                    <label asp-for="@Model.DataSourceSettings.FTP.Port"></label>
+                    <input asp-for="@Model.DataSourceSettings.FTP.Port" class="form-control" />
+                </div>
+                <div class="form-row">
+                    <label asp-for="@Model.DataSourceSettings.FTP.CredentialsKeyUri"></label>
+                    <input asp-for="@Model.DataSourceSettings.FTP.CredentialsKeyUri" class="form-control" />
+                </div>
+                <div class="form-row">
+                    <label asp-for="@Model.DataSourceSettings.FTP.FolderPaths"></label>
+                    <textarea asp-for="@Model.DataSourceSettings.FTP.FolderPaths" class="form-control"></textarea>
+                </div>
+            }
+            else
+            {
+                <div class="form-row">
+                    <label asp-for="@Model.DataSourceSettings.Web.DownloadUrls"></label>
+                    @foreach (var url in Model.DataSourceSettings.Web.DownloadUrls)
+                    {
+                        <input class="form-control" value="@url"/>
+                    }
+                </div>
+                <div class="form-row">
+                    <label asp-for="@Model.DataSourceSettings.Web.LoginPageConfig.LoginPage"></label>
+                    <input asp-for="@Model.DataSourceSettings.Web.LoginPageConfig.LoginPage" class="form-control" />
+                </div>
+                <div class="form-row">
+                    <label asp-for="@Model.DataSourceSettings.Web.LoginPageConfig.UsernameFieldName"></label>
+                    <input asp-for="@Model.DataSourceSettings.Web.LoginPageConfig.UsernameFieldName" class="form-control" />
+                </div>
+                <div class="form-row">
+                    <label asp-for="@Model.DataSourceSettings.Web.LoginPageConfig.PasswordFieldName"></label>
+                    <input asp-for="@Model.DataSourceSettings.Web.LoginPageConfig.PasswordFieldName" class="form-control" />
+                </div>
+            }
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-xs-12 text-right">
+            <input type="submit" value="Save" class="btn btn-default btn-primary btn-large" />
+        </div>
+    </div>
+</form>
