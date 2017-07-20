@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using RevolutionaryStuff.Core.Crypto;
 using RevolutionaryStuff.Core.EncoderDecoders;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
+using System.Linq;
 
 namespace Traffk.Bal.Services
 {
@@ -39,6 +40,7 @@ namespace Traffk.Bal.Services
 
     public class BlobStorageServices
     {
+        public const string AzureBlobServiceProtocol = "abs";
         private const string GlobalsLoginDomain = "_GLOBALS";
 
         private readonly CloudStorageAccount StorageAccount;
@@ -90,6 +92,48 @@ namespace Traffk.Bal.Services
                 default:
                     throw new UnexpectedSwitchValueException(root);
             }
+        }
+
+        public static Uri GetReadonlySharedAccessSignatureUrl(IOptions<Config> blobOptions, Uri u, TimeSpan? expiresIn = null)
+            => GetSharedAccessSignatureUrl(blobOptions, u, new SharedAccessBlobPolicy
+            {
+                Permissions = SharedAccessBlobPermissions.Read,
+                SharedAccessExpiryTime = new DateTimeOffset(DateTime.Now.AddMinutes(5)),                 
+            });
+
+        public static Uri GetSharedAccessSignatureUrl(IOptions<Config> blobOptions, Uri u, SharedAccessBlobPolicy policy)
+        {
+            Requires.NonNull(u, nameof(u));
+            Requires.NonNull(policy, nameof(policy));
+
+            if (u.Scheme == AzureBlobServiceProtocol)
+            {
+                u = new Uri(WebHelpers.CommonSchemes.Https + ":" + u.ToString().RightOf(":"));
+            }
+
+            var parts = u.LocalPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            var storageAccount = CloudStorageAccount.Parse(blobOptions.Value.ConnectionString);
+            var client = storageAccount.CreateCloudBlobClient();
+            var container = GetContainer(client, parts[0]);
+            var blobName = parts.Skip(1).Format("/");
+            var blobRef = container.GetBlobReference(blobName);
+
+            var sas = blobRef.GetSharedAccessSignature(policy);
+            return new Uri($"{u}{sas}");
+        }
+
+        public static async Task DownloadAsync(IOptions<Config> blobOptions, Uri u, Stream st)
+        {
+            Requires.NonNull(u, nameof(u));
+            Requires.WriteableStreamArg(st, nameof(st));
+
+            var parts = u.LocalPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            var storageAccount = CloudStorageAccount.Parse(blobOptions.Value.ConnectionString);
+            var client = storageAccount.CreateCloudBlobClient();
+            var container = GetContainer(client, parts[0]);
+            var blobName = parts.Skip(1).Format("/");
+            var blobRef = container.GetBlobReference(blobName);
+            await blobRef.DownloadToStreamAsync(st);
         }
 
         public async Task<ICollection<CloudBlob>> GetFileInfosAsync(bool secure, Roots root, string prefix)
@@ -189,7 +233,7 @@ namespace Traffk.Bal.Services
             return new CloudFilePointer
             {
                 CloudFilePointerType = CloudFilePointerTypes.AzureBlob,
-                Uri = block.Uri,
+                Uri = secure ? new Uri(AzureBlobServiceProtocol + ":"+ block.Uri.ToString().RightOf(":")) : block.Uri,
                 Path = name,
                 ContainerName = container.Name,
                 ContentType = file.ContentType

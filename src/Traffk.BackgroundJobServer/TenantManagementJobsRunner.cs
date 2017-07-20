@@ -28,14 +28,15 @@ namespace Traffk.BackgroundJobServer
     {
         private const string SqlAzureManagementApiResource = "https://management.azure.com/";
         private readonly ServiceClientCredentialFactory CredentialFactory;
-        private readonly IOptions<TenantManagementJobsRunnerConfiguration> ConfigurationOptions;
+        private readonly IOptions<Config> ConfigOptions;
         private readonly DbContextOptions<TraffkTenantModelDbContext> RdbOptions;
         private readonly TraffkTenantShardsDbContext Tdb;
         private readonly TraffkTenantShardManagerDbContext Smdb;
         private readonly IPasswordHasher<ApplicationUser> PasswordHasher;
 
-        public class TenantManagementJobsRunnerConfiguration
+        public class Config
         {
+            public const string ConfigSectionName = "TenantManagementJobsRunnerConfig";
             public string ShardMapName { get; set; }
             public string SubscriptionId { get; set; }
             public string ResourceGroupName { get; set; }
@@ -53,12 +54,12 @@ namespace Traffk.BackgroundJobServer
             TraffkTenantShardManagerDbContext smdb,
             IPasswordHasher<ApplicationUser> passwordHasher,
             ServiceClientCredentialFactory credentialFactory, 
-            IOptions<TenantManagementJobsRunnerConfiguration> configurationOptions,
+            IOptions<Config> configOptions,
             DbContextOptions<TraffkTenantModelDbContext> rdbOptions)
             : base(gdb, jobInfoFinder, logger)
         {
             CredentialFactory = credentialFactory;
-            ConfigurationOptions = configurationOptions;
+            ConfigOptions = configOptions;
             RdbOptions = rdbOptions;
             Smdb = smdb;
             Tdb = tdb;
@@ -70,7 +71,7 @@ namespace Traffk.BackgroundJobServer
 
         private async Task CreateTenantAsync(TenantCreationDetails details)
         {
-            var sqlAzureManagementConfiguration = ConfigurationOptions.Value;
+            var sqlAzureManagementConfiguration = ConfigOptions.Value;
             var cred = await CredentialFactory.GetAsync(SqlAzureManagementApiResource);
             var c = new SqlManagementClient(cred);
             c.SubscriptionId = sqlAzureManagementConfiguration.SubscriptionId;
@@ -138,7 +139,7 @@ namespace Traffk.BackgroundJobServer
                     var content = new StreamContent(st);
                     content.Headers.ContentType = MimeType.Application.Json;
                     var resp = await c.PutAsync(
-                        $"https://management.azure.com/subscriptions/{ConfigurationOptions.Value.SubscriptionId}/resourceGroups/{ConfigurationOptions.Value.ResourceGroupName}/providers/Microsoft.Sql/servers/{sourceServer.Name}/databases/{destinationDatabase}?api-version=2014-04-01",
+                        $"https://management.azure.com/subscriptions/{ConfigOptions.Value.SubscriptionId}/resourceGroups/{ConfigOptions.Value.ResourceGroupName}/providers/Microsoft.Sql/servers/{sourceServer.Name}/databases/{destinationDatabase}?api-version=2014-04-01",
                         content);
                     var ret = resp.Content.ReadAsStringAsync();
                 }
@@ -170,7 +171,7 @@ namespace Traffk.BackgroundJobServer
 
         async Task ITenantManagementJobs.AddTenantToShardManagerAsync(TenantInitializeDetails details)
         {
-            var shardMapName = ConfigurationOptions.Value.ShardMapName;
+            var shardMapName = ConfigOptions.Value.ShardMapName;
             var shardMapId = (await Smdb.ShardMapsGlobal.Where(z => z.Name == shardMapName).FirstAsync()).ShardMapId;
 
             var shardId = Guid.NewGuid();
@@ -207,7 +208,7 @@ namespace Traffk.BackgroundJobServer
                 Version = shardVersion,
                 ShardMapId = shardMapId,
                 Protocol = 0,
-                ServerName = ConfigurationOptions.Value.FullyQualifiedServerName,
+                ServerName = ConfigOptions.Value.FullyQualifiedServerName,
                 Port = 0,
                 DatabaseName = details.DatabaseName,
                 Status = 1

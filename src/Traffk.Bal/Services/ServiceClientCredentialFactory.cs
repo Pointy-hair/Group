@@ -10,10 +10,10 @@ namespace Traffk.Bal.Services
 {
     public class ServiceClientCredentialFactory
     {
-        private readonly IOptions<ActiveDirectoryApplicationIdentificationSettings> AppIdOptions;
+        private readonly IOptions<ActiveDirectoryApplicationIdentificationConfig> AppIdOptions;
         private readonly IAsyncGetter<OpenIdConfiguration> ConfigurationFinder;
 
-        public ServiceClientCredentialFactory(IOptions<ActiveDirectoryApplicationIdentificationSettings> appIdOptions, IAsyncGetter<OpenIdConfiguration> configurationFinder)
+        public ServiceClientCredentialFactory(IOptions<ActiveDirectoryApplicationIdentificationConfig> appIdOptions, IAsyncGetter<OpenIdConfiguration> configurationFinder)
         {
             AppIdOptions = appIdOptions;
             ConfigurationFinder = configurationFinder;

@@ -28,7 +28,7 @@ namespace Traffk.BackgroundJobServer
 {
     public partial class DataSourceSyncRunner : BaseJobRunner, IDataSourceSyncJobs
     {
-        private readonly IOptions<BlobStorageServices.Config> BlobOptions;
+        private readonly IOptions<BlobStorageServices.Config> BlobConfig;
         private readonly IVault Vault;
         private readonly IHttpClientFactory HttpClientFactory;
 
@@ -38,12 +38,12 @@ namespace Traffk.BackgroundJobServer
             JobRunnerProgram jobRunnerProgram, 
             TraffkGlobalDbContext gdb, 
             IVault vault,
-            IOptions<BlobStorageServices.Config> blobOptions, 
+            IOptions<BlobStorageServices.Config> blobConfig, 
             Serilog.ILogger logger)
             : base(gdb, jobInfoFinder, logger)
         {
             HttpClientFactory = httpClientFactory;
-            BlobOptions = blobOptions;
+            BlobConfig = blobConfig;
             Vault = vault;
         }
 
@@ -368,10 +368,14 @@ namespace Traffk.BackgroundJobServer
                                     return;
                                 }
                             }
+                            if (folder != null && !folder.EndsWith("/"))
+                            {
+                                folder = folder + "/";
+                            }
                             var res = await BlobStorageServices.StoreStreamAsync(
-                                Runner.BlobOptions,
+                                Runner.BlobConfig,
                                 BlobStorageServices.ContainerNames.Secure,
-                                $"{BlobRootPath}{details.Path.Substring(1)}/{folder}/{details.Name}",
+                                $"{BlobRootPath}{details.Path.Substring(1)}/{folder}{details.Name}",
                                 muxer.OpenRead(),
                                 p,
                                 amt => Trace.WriteLine($"Uploading {amt}/{details.Size}")

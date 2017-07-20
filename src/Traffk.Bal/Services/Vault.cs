@@ -21,14 +21,16 @@ namespace Traffk.Bal.Services
             public const string ZipCodesComCredentialsUri = "https://traffkkeyvault.vault.azure.net/secrets/ZipCodesComCredentials/dc3c608040a34ab5907c488898c9e32a";
         }
 
-        private readonly IOptions<ActiveDirectoryApplicationIdentificationSettings> AppIdOptions;
+        private readonly IOptions<ActiveDirectoryApplicationIdentificationConfig> AppConfig;
         private readonly ICacher Cacher;
         private readonly TimeSpan CacheTimeout = TimeSpan.FromMinutes(5);
+        private readonly IHttpClientFactory HttpClientFactory;
 
-        public Vault(IOptions<ActiveDirectoryApplicationIdentificationSettings> appIdOptions, ICacher cacher)
+        public Vault(IOptions<ActiveDirectoryApplicationIdentificationConfig> appConfigOptions, ICacher cacher, IHttpClientFactory httpClientFactory)
         {
-            AppIdOptions = appIdOptions;
+            AppConfig = appConfigOptions;
             Cacher = cacher;
+            HttpClientFactory = httpClientFactory;
         }
 
         private Task<string> KeyVaultClientAuthenticationCallbackAsync(string authority, string resource, string scope)
@@ -37,7 +39,7 @@ namespace Traffk.Bal.Services
                 async () =>
                 {
                     var ac = new AuthenticationContext(authority);
-                    var appId = AppIdOptions.Value;
+                    var appId = AppConfig.Value;
                     var cc = new ClientCredential(appId.ApplicationId, appId.ApplicationSecret);
                     var res = await ac.AcquireTokenAsync(resource, cc);
                     return res.AccessToken;
@@ -48,7 +50,7 @@ namespace Traffk.Bal.Services
                 Cache.CreateKey(typeof(Vault), nameof(GetSecretBundleAsync), uri),
                 async () =>
                 {
-                    var kv = new Microsoft.Azure.KeyVault.KeyVaultClient(KeyVaultClientAuthenticationCallbackAsync, new System.Net.Http.HttpClient());
+                    var kv = new Microsoft.Azure.KeyVault.KeyVaultClient(KeyVaultClientAuthenticationCallbackAsync, HttpClientFactory.Create());
                     var u = new Uri(uri);
                     var parts = u.LocalPath.Split('/', '\\');
                     var vaultBaseUrl = u.GetComponents(UriComponents.SchemeAndServer, UriFormat.SafeUnescaped);

@@ -1,7 +1,10 @@
 ﻿using Microsoft.Extensions.Options;
+using RevolutionaryStuff.Core;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Traffk.Bal.Services
 {
@@ -27,7 +30,7 @@ namespace Traffk.Bal.Services
         {
             var config = ConfigOptions.Value;
 
-            var c = new HttpClient(handler, disposeHandler);
+            var c = handler==null ? new HttpClient() : new HttpClient(handler, disposeHandler);
             if (config.HeaderValueByHeaderName != null)
             {
                 foreach (var kvp in config.HeaderValueByHeaderName)
@@ -39,6 +42,7 @@ namespace Traffk.Bal.Services
             {
                 c.DefaultRequestHeaders.UserAgent.Add(ProductInfoHeaderValue.Parse(config.UserAgentString));
             }
+
             return c;
         }
     }

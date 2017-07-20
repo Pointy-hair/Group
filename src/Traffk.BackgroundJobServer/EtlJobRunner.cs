@@ -1,5 +1,4 @@
-﻿#if NET462
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.SqlServer.Dts.Runtime;
 using RevolutionaryStuff.Core;
@@ -26,9 +25,13 @@ namespace Traffk.BackgroundJobServer
 
         private readonly IOptions<EtlJobRunnerConfig> ConfigOptions;
         private readonly IHttpClientFactory HttpClientFactory;
+        private readonly IOptions<BlobStorageServices.Config> BlobConfig;
+        private readonly Bal.Data.Rdb.TraffkTenantModel.TraffkTenantModelDbContext TtmDb;
 
         public EtlJobRunner(
             IOptions<EtlJobRunnerConfig> configOptions,
+            Bal.Data.Rdb.TraffkTenantModel.TraffkTenantModelDbContext ttmDb,
+            IOptions<BlobStorageServices.Config> blobConfig,
             IHttpClientFactory httpClientFactory,
             TraffkGlobalDbContext globalContext,
             IJobInfoFinder jobInfoFinder,
@@ -37,6 +40,8 @@ namespace Traffk.BackgroundJobServer
         {
             ConfigOptions = configOptions;
             HttpClientFactory = httpClientFactory;
+            TtmDb = ttmDb;
+            BlobConfig = blobConfig;
         }
 
         bool IDTSLogging.Enabled => true;
@@ -169,6 +174,18 @@ namespace Traffk.BackgroundJobServer
 
         #endregion
 
+        private void SetDatasourceConnectionStringIfPresent(Package p, string dataSourceId, string connectionString)
+        {
+            foreach (var c in p.Connections)
+            {
+                if (c.ID == dataSourceId)
+                {
+                    c.ConnectionString = connectionString;
+                    return;
+                }
+            }
+        }
+
         private void SetParameterIfPresent(Package p, string parameterName, object parameterValue)
         {
             if (p.Parameters.Contains(parameterName))
@@ -179,7 +196,19 @@ namespace Traffk.BackgroundJobServer
 
         private void ConfigureCommonParameters(Package p)
         {
+            SetDatasourceConnectionStringIfPresent(p, CommonDataSourceIds.TraffkGlobal, GlobalContext.Database.GetDbConnection().ConnectionString);
             SetParameterIfPresent(p, "WorkingFolderName", $"{TempFolderPath}work\\");
+            if (JobInfo.TenantId.HasValue)
+            {
+                SetDatasourceConnectionStringIfPresent(p, CommonDataSourceIds.TraffkTenantModel, TtmDb.Database.GetDbConnection().ConnectionString);
+                SetParameterIfPresent(p, "TenantId", JobInfo.TenantId.Value);
+            }
+        }
+
+        public static class CommonDataSourceIds
+        {
+            public const string TraffkGlobal = "TraffkGlobal";
+            public const string TraffkTenantModel = "TraffkTenantModel";
         }
 
         private string FetchFolder => $"{TempFolderPath}fetch\\";
@@ -189,13 +218,23 @@ namespace Traffk.BackgroundJobServer
             var fetch = await GlobalContext.DataSourceFetches.Include(z => z.DataSource).Include(z=>z.DataSourceFetchDataSourceFetchItems).SingleAsync(z => z.DataSource.TenantId == this.JobInfo.TenantId && z.DataSourceFetchId == dataSourceFetchId);
 
             Directory.CreateDirectory(FetchFolder);
+
+            var fetchItems = fetch.DataSourceFetchDataSourceFetchItems.Where(z => z.DataSourceFetchItemTypeStringValue == DataSourceFetchItem.DataSourceFetchItemTypes.Original.ToString());
+
             Stuff.TaskWaitAllForEach(
-                fetch.DataSourceFetchDataSourceFetchItems.Where(z => z.DataSourceFetchItemTypeStringValue == DataSourceFetchItem.DataSourceFetchItemTypes.Original.ToString()),
+                fetchItems,
                 async fi => {
                     var fn = $"{FetchFolder}{fi.DataSourceFetchItemId}\\{fi.Name}";
+                    Directory.CreateDirectory(Path.GetDirectoryName(fn));
+
+                    var uri = new Uri(fi.Url);
+                    if (uri.Scheme == BlobStorageServices.AzureBlobServiceProtocol)
+                    {
+                        uri = BlobStorageServices.GetReadonlySharedAccessSignatureUrl(BlobConfig, uri);
+                    }
                     using (var client = HttpClientFactory.Create())
                     {
-                        using (var st = await client.GetStreamAsync(fi.Url))
+                        using (var st = await client.GetStreamAsync(uri))
                         {
                             using (var fst = File.Create(fn))
                             {
@@ -277,4 +316,3 @@ namespace Traffk.BackgroundJobServer
 
     }
 }
-#endif

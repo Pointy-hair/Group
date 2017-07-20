@@ -22,9 +22,8 @@ namespace Traffk.BackgroundJobRunner
         {
             base.OnConfigureServices(services);
 
-            services.Configure<ActiveDirectoryApplicationIdentificationSettings>(Configuration.GetSection("ActiveDirectoryApplicationIdentificationOptions"));
-            services.Configure<ActiveDirectoryApplicationIdentificationSettings>(Configuration.GetSection("ActiveDirectoryApplicationIdentificationOptions"));
-            services.Configure<TenantManagementJobsRunner.TenantManagementJobsRunnerConfiguration>(Configuration.GetSection("TenantManagementJobsRunnerConfiguration"));
+            services.Configure<ActiveDirectoryApplicationIdentificationConfig>(Configuration.GetSection(ActiveDirectoryApplicationIdentificationConfig.ConfigSectionName));
+            services.Configure<TenantManagementJobsRunner.Config>(Configuration.GetSection(TenantManagementJobsRunner.Config.ConfigSectionName));
 
             services.AddSingleton<IAsyncGetter<OpenIdConfiguration>>(new OpenIdConfigurationFinder(Configuration["AzureOpenIdConfigurationUrl"]));
             services.AddSingleton(Cache.DataCacher);

@@ -33,13 +33,35 @@ namespace Traffk.Bal.ApplicationParts
 
         public class HangfireServerConfig
         {
-            public const string ConfigSectionName = "HangfireServerOptions";
+            public const string ConfigSectionName = "HangfireServerConfig";
 
             public string ConnectionStringName { get; set; }
             public BackgroundJobServerOptions BackgroundOptions { get; set; }
         }
 
         protected override Task OnGoAsync()
+        {
+            if (int.TryParse(Configuration["HardcodedJobId"], out var jobId))
+            {
+                GoHardcoded(jobId);
+            }
+            else
+            {
+                GoHangfireServer();
+            }
+            return Task.CompletedTask;
+        }
+
+        private void GoHardcoded(int jobId)
+        {
+            var a = new MyActivator(this);
+            using (var scope = (MyActivator.MyScope) a.BeginScope(jobId))
+            {
+                scope.Run();
+            }
+        }
+
+        private void GoHangfireServer()
         {
             var o = this.ServiceProvider.GetService<IOptions<HangfireServerConfig>>().Value;
             JobRunnerLogger = this.ServiceProvider.GetService<ILogger>();
@@ -63,8 +85,6 @@ namespace Traffk.Bal.ApplicationParts
                 }
                 while (!ShutdownRequested.WaitOne(timeout));
             }
-
-            return Task.CompletedTask;
         }
 
         protected override void OnConfigureServices(IServiceCollection services)

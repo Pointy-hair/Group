@@ -18,19 +18,22 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='VSTS-CI|AnyCPU'" />
 
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp1.1'">
-    <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
-    <PackageTargetFallback>$(PackageTargetFallback);dotnet5.6;dnxcore50;portable-net451+win8</PackageTargetFallback>
-  </PropertyGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp1.1'">
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net462'">
-  </ItemGroup>
+  <Choose>
+    <When Condition="'$(TargetFramework)' == 'netcoreapp1.1'">
+      <PropertyGroup>
+        <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
+        <PackageTargetFallback>$(PackageTargetFallback);dotnet5.6;dnxcore50;portable-net451+win8</PackageTargetFallback>
+        <DefineConstants>NETCOREAPP1_1</DefineConstants>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(TargetFramework)' == 'net462'">
+      <PropertyGroup>
+        <DefineConstants>NET462</DefineConstants>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(TargetFramework)' == 'netstandard1.6'">
+    </When>
+  </Choose>
 
   <ItemGroup>
     <None Update="Data\Rdb\SchemaMeta2DbContext.tt">
@@ -114,19 +117,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Hangfire" Version="1.6.12" />
+    <PackageReference Include="Hangfire" Version="1.6.14" />
     <PackageReference Include="HtmlAgilityPack" Version="1.5.1" />
-    <PackageReference Include="Microsoft.Azure.KeyVault" Version="2.2.1-preview" />
-    <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="3.13.9" />
+    <PackageReference Include="Microsoft.Azure.KeyVault" Version="2.3.2" />
+    <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="3.14.1" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
-    <PackageReference Include="RevolutionaryStuff.Core" Version="1.0.15" />
-    <PackageReference Include="Serilog" Version="2.4.0" />
+    <PackageReference Include="RevolutionaryStuff.Core" Version="1.0.16" />
+    <PackageReference Include="Serilog" Version="2.5.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="1.4.0" />
-    <PackageReference Include="Serilog.Sinks.AzureTableStorage" Version="3.0.0" />
+    <PackageReference Include="Serilog.Sinks.AzureTableStorage" Version="4.0.0" />
     <PackageReference Include="Serilog.Sinks.Trace" Version="2.1.0" />
-    <PackageReference Include="StackExchange.Redis" Version="1.2.3" />
-    <PackageReference Include="WindowsAzure.Storage" Version="8.1.4" />
-    <PackageReference Include="MailKit" Version="1.16.1" />
+    <PackageReference Include="StackExchange.Redis" Version="1.2.4" />
+    <PackageReference Include="System.Net.Http" Version="4.3.2" />
+    <PackageReference Include="WindowsAzure.Storage" Version="8.2.0" />
+    <PackageReference Include="MailKit" Version="1.16.2" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="1.1.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="1.1.2" />
