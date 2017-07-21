@@ -1,4 +1,4 @@
-﻿insert into Releases values ('urn:traffk.com/portal', '2017-05-21', 'Tetris', null)
+﻿insert into Releases values ('urn:traffk.com/portal', '2017-05-29', 'Ultima', null)
 
 GO
 
@@ -7,7 +7,7 @@ insert into ReleaseChanges
 select r.ReleaseId, a.ChangeType, a.Title
 from
 (
-	select 'new' ChangeType, 'Increase expiration time for background jobs' Title
+	select 'new' ChangeType, 'Keep data for completed background jobs' Title
 	union all
 	select 'new' ChangeType, 'Update dependencies' Title
 	union all
