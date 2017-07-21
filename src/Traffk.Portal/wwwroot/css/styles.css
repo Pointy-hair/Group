@@ -1196,6 +1196,15 @@ ul.navbar-left {
 #RecurrenceSettings_DailyPattern_EveryNDays {
     width: 100px;
 }
+
+#all-items-selector {
+    display: none;
+}
+
+.item-selector {
+    display: none;
+}
+
 /*
     Screen size specific CSS
 */
