@@ -283,7 +283,6 @@ namespace Traffk.Bal.Data
 
         public string ConvertToCronString()
         {
-            //http://www.cronmaker.com/
             switch (PatternType)
             {
                 case PatternTypes.Daily:
@@ -352,6 +351,76 @@ namespace Traffk.Bal.Data
             }
 
             return "";
+        }
+
+        public string ReadableRecurrencePattern
+        {
+            get
+            {
+                switch (PatternType)
+                {
+                    case PatternTypes.Daily:
+                        if (DailyPattern.EveryNDays > 0)
+                        {
+                            return $"{PatternTypes.Daily}, Every {DailyPattern.EveryNDays}";
+                        }
+                        if (DailyPattern.EveryWeekday)
+                        {
+                            var startTimeHour = StartTimeUtc.Hour.ToString("00");
+                            var startTimeMinute = StartTimeUtc.Minute.ToString("00");
+                            return $"Every Weekday at {startTimeHour}:{startTimeMinute}";
+                        }
+                        break;
+                    case PatternTypes.Weekly:
+                        if (WeeklyPattern.RecurEveryNWeeksOn == 1)
+                        {
+                            var friendlyString = $"{PatternTypes.Weekly} on";
+                            if (WeeklyPattern.Monday)
+                            {
+                                friendlyString += DayOfWeek.Monday + " ";
+                            }
+                            if (WeeklyPattern.Tuesday)
+                            {
+                                friendlyString += DayOfWeek.Tuesday + " ";
+                            }
+                            if (WeeklyPattern.Wednesday)
+                            {
+                                friendlyString += DayOfWeek.Wednesday + " ";
+                            }
+                            if (WeeklyPattern.Thursday)
+                            {
+                                friendlyString += DayOfWeek.Thursday + " ";
+                            }
+                            if (WeeklyPattern.Friday)
+                            {
+                                friendlyString += DayOfWeek.Friday + " ";
+                            }
+                            if (WeeklyPattern.Saturday)
+                            {
+                                friendlyString += DayOfWeek.Saturday + " ";
+                            }
+                            if (WeeklyPattern.Sunday)
+                            {
+                                friendlyString += DayOfWeek.Sunday + " ";
+
+                            }
+
+                            return friendlyString;
+                        }
+                        else
+                        {
+                            throw new NotImplementedException();
+                        }
+                    case PatternTypes.Monthly:
+                        throw new NotImplementedException();
+                    case PatternTypes.Yearly:
+                        throw new NotImplementedException();
+                    default:
+                        throw new UnexpectedSwitchValueException(PatternType);
+                }
+
+                return "Error";
+            }
         }
     }
 }

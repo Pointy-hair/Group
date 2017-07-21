@@ -16,16 +16,16 @@
             <tr>
                 <th><input type="checkbox" id="all-items-selector" /></th>
                 <th>
-                    @Html.SortableHeaderFor(model => model.DataSourceId, "Id")
+                    @Html.SortableHeaderFor(model => model.DataSourceId, null, null, null, "ID")
                 </th>
                 <th>
                     Name @*@Html.SortableHeaderFor(model => model.Name)*@
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.DataSourceSettings.FTP.Hostname)
+                    @Html.SortableHeaderFor(model => model.DataSourceSettings.FTP.Hostname, null, null, null, "Hostname")
                 </th>
                 <th>
-                    Last Fetch Date
+                    @Html.SortableHeaderFor(model => model.DataSourceDataSourceFetches.Last().CreatedAtUtc, null, null, null, "Last Fetch")
                 </th>
                 <th>
                     Type
@@ -55,7 +55,7 @@
                         {
                             foreach (var url in item.DataSourceSettings.Web.DownloadUrls)
                              {
-                                 @Html.DisplayFor(modelItem => url)
+                                 @Html.DisplayFor(modelItem => url)<br/>
                              }
                         }
                     </td>

@@ -25,7 +25,7 @@ namespace TraffkPortal.Models.RoleModels
             var items = new List<SelectListItem>();
             foreach (PermissionNames p in Enum.GetValues(typeof(PermissionNames)))
             {
-                items.Add(new SelectListItem { Text = p.ToString(), Value = p.ToString(), Selected = role.HasPermission(p) });
+                items.Add(new SelectListItem { Text = p.ToString().ToTitleFriendlyString(), Value = p.ToString(), Selected = role.HasPermission(p) });
             }
             items.Sort((a, b) => a.Text.CompareTo(b.Text));
             InitialPermissionList = items;

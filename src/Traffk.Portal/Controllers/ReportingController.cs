@@ -276,6 +276,11 @@ namespace Traffk.Portal.Controllers
                         Communication = communication,
                         RecurringJob = job
                     };
+                    //Throwing errors when trying to create title friendly string in view
+
+                    viewModel.Communication.CommunicationSettings.ReportName = viewModel.Communication
+                        .CommunicationSettings.ReportName.ToTitleFriendlyString();
+
                     viewModels.Add(viewModel);
                 }
             }
@@ -294,6 +299,21 @@ namespace Traffk.Portal.Controllers
             };
 
             SetHeroLayoutViewData(communication.CommunicationId, communication.CampaignName, PageKeys.ScheduledReportDetails);
+
+            return View(viewModel);
+        }
+
+        [Route("/Reporting/ScheduledReports/{id}/History")]
+        public IActionResult ScheduledReportHistory(int id)
+        {
+            var communication = Rdb.Communications.FirstOrDefault(x => x.CommunicationId == id);
+            var pastRuns = Rdb.Job.Where(x => x.RecurringJobId == communication.CommunicationSettings.RecurringJobId);
+            var viewModel = new ScheduledReportHistoryViewModel
+            {
+                Communication = communication,
+                Jobs = pastRuns
+            };
+            SetHeroLayoutViewData(communication.CommunicationId, communication.CampaignName, PageKeys.ScheduledReportHistory);
 
             return View(viewModel);
         }

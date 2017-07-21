@@ -7,13 +7,16 @@ using RevolutionaryStuff.Core.Caching;
 using Serilog;
 using Traffk.Bal.Data.Rdb.TraffkGlobal;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
+using Traffk.Bal.Permissions;
 using TraffkPortal;
 using TraffkPortal.Controllers;
+using TraffkPortal.Permissions;
 using TraffkPortal.Services;
 using DataSource = Traffk.Bal.Data.Rdb.TraffkGlobal.DataSource;
 
 namespace Traffk.Portal.Controllers
 {
+    [PermissionAuthorize(PermissionNames.DataSourceView)]
     public class DataController : BasePageController
     {
         public const string Name = "Data";
@@ -54,6 +57,7 @@ namespace Traffk.Portal.Controllers
         }
 
         [Route("/Data/DataSource/{id}")]
+        [PermissionAuthorize(PermissionNames.DataSourceEdit)]
         public async Task<IActionResult> DataSourceDetail(int id)
         {
             var tenant = await Current.GetTenantAsync();
