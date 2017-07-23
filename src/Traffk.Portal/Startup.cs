@@ -273,6 +273,7 @@ namespace TraffkPortal
 
             //Needs to be after app.UseIdentity()
             app.UseMiddleware<TokenAuthenticationMiddleware>();
+            app.UseCorrelationId();
 
             app.UseMvc(routes =>
             {
