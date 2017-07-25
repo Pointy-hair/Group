@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+using Traffk.Utility;
 
 namespace Traffk.Bal.Services
 {
@@ -21,9 +22,12 @@ namespace Traffk.Bal.Services
         private readonly IOptions<Config> ConfigOptions;
 
         //TODO: Add in support for correlation id
-        public HttpClientFactory(IOptions<Config> configOptions)
+        public HttpClientFactory(IOptions<Config> configOptions, 
+             ICorrelationIdFactory correlationIdFactory)
         {
             ConfigOptions = configOptions;
+            ConfigOptions.Value.HeaderValueByHeaderName.
+                Add(new KeyValuePair<string, string>(correlationIdFactory.Key, correlationIdFactory.Create()));
         }
 
         HttpClient IHttpClientFactory.Create(HttpMessageHandler handler, bool disposeHandler)

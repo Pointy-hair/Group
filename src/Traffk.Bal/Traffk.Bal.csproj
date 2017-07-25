@@ -114,6 +114,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Traffk.Orchestra\Traffk.Orchestra.csproj" />
     <ProjectReference Include="..\Traffk.Tableau\Traffk.Tableau.csproj" />
+    <ProjectReference Include="..\Traffk.Utility\Traffk.Utility.csproj" />
   </ItemGroup>
 
   <ItemGroup>

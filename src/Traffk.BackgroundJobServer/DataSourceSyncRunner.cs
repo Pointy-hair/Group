@@ -23,6 +23,7 @@ using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
 using Traffk.Bal;
 using System.Net;
+using Traffk.Utility;
 
 namespace Traffk.BackgroundJobServer
 {

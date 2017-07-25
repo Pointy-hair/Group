@@ -1,0 +1,12 @@
+##https://onlinehelp.tableau.com/current/server/en-us/trusted_auth_trustIP.htm
+##Open a command prompt as an administrator and navigate to your Tableau Server bin directory (for example, C:\Program Files\Tableau\Tableau Server\10.3\bin)
+
+tabadmin stop
+
+tabadmin set wgserver.trusted_hosts "76.168.196.66, 47.144.134.144, 47.144.157.54, 40.84.227.199, 40.84.230.165, 40.84.224.230, 40.84.228.178, 73.93.202.164, 65.200.13.194, 8.27.118.78, 13.78.150.201,13.78.150.153,13.78.148.178,13.78.150.208"
+
+##IP Addresses: Traffk Office, Darren Home, Darren Home 5G, portal-dev.traffk.com1, portal-dev.traffk.com2, portal-dev.traffk.com3, portal-dev.traffk.com4, Darren Home 2, Darren Cowork, Jason 3/3/17, portal.traffk.com 1, portal.traffk.com 2, portal.traffk.com 3, portal.traffk.com 4
+
+tabadmin config
+
+tabadmin start

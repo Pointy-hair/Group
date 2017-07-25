@@ -1,6 +1,6 @@
 ﻿using System.Net.Http;
 
-namespace Traffk.Bal.Services
+namespace Traffk.Utility
 {
     public interface IHttpClientFactory
     {

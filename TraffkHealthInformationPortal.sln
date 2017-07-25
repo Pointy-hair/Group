@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.15
+VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Traffk.Tableau", "src\Traffk.Tableau\Traffk.Tableau.csproj", "{4C4E1105-8251-42EA-8465-1324C19176D8}"
 EndProject
@@ -24,6 +24,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Traffk.BackgroundJobServer.Tests", "tests\Traffk.BackgroundJobServer.Tests\Traffk.BackgroundJobServer.Tests.csproj", "{F3D583B4-ADEA-41A6-86EE-B6272B1BA38B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Traffk.Orchestra", "src\Traffk.Orchestra\Traffk.Orchestra.csproj", "{D6AA0380-1E21-4F60-8DD0-FEEF306F70B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Traffk.Utility", "src\Traffk.Utility\Traffk.Utility.csproj", "{838C432D-2B28-4388-9FDB-5545381B2523}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -86,6 +88,12 @@ Global
 		{D6AA0380-1E21-4F60-8DD0-FEEF306F70B2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D6AA0380-1E21-4F60-8DD0-FEEF306F70B2}.VSTS-CI|Any CPU.ActiveCfg = VSTS-CI|Any CPU
 		{D6AA0380-1E21-4F60-8DD0-FEEF306F70B2}.VSTS-CI|Any CPU.Build.0 = VSTS-CI|Any CPU
+		{838C432D-2B28-4388-9FDB-5545381B2523}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{838C432D-2B28-4388-9FDB-5545381B2523}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{838C432D-2B28-4388-9FDB-5545381B2523}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{838C432D-2B28-4388-9FDB-5545381B2523}.Release|Any CPU.Build.0 = Release|Any CPU
+		{838C432D-2B28-4388-9FDB-5545381B2523}.VSTS-CI|Any CPU.ActiveCfg = Debug|Any CPU
+		{838C432D-2B28-4388-9FDB-5545381B2523}.VSTS-CI|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -100,5 +108,6 @@ Global
 		{28322F08-EB95-415B-8ECF-4B25DAB12E16} = {2D992A1D-203B-461A-B1C1-312F64C77810}
 		{F3D583B4-ADEA-41A6-86EE-B6272B1BA38B} = {D5AB1A3B-756E-4823-80F8-9A91ECB492AE}
 		{D6AA0380-1E21-4F60-8DD0-FEEF306F70B2} = {2D992A1D-203B-461A-B1C1-312F64C77810}
+		{838C432D-2B28-4388-9FDB-5545381B2523} = {2D992A1D-203B-461A-B1C1-312F64C77810}
 	EndGlobalSection
 EndGlobal
