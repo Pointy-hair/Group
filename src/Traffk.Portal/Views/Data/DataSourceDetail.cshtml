@@ -54,7 +54,7 @@
                 </div>
                 <div class="form-row">
                     <label asp-for="@Model.DataSourceSettings.FTP.CredentialsKeyUri"></label>
-                    <input asp-for="@Model.DataSourceSettings.FTP.CredentialsKeyUri" class="form-control" />
+                    <textarea asp-for="@Model.DataSourceSettings.FTP.CredentialsKeyUri" class="form-control"></textarea>
                 </div>
                 <div class="form-row">
                     <label asp-for="@Model.DataSourceSettings.FTP.FolderPaths"></label>
@@ -67,12 +67,12 @@
                     <label asp-for="@Model.DataSourceSettings.Web.DownloadUrls"></label>
                     @foreach (var url in Model.DataSourceSettings.Web.DownloadUrls)
                     {
-                        <input class="form-control" value="@url"/>
+                        <textarea class="form-control">@url</textarea>
                     }
                 </div>
                 <div class="form-row">
                     <label asp-for="@Model.DataSourceSettings.Web.LoginPageConfig.LoginPage"></label>
-                    <input asp-for="@Model.DataSourceSettings.Web.LoginPageConfig.LoginPage" class="form-control" />
+                    <textarea asp-for="@Model.DataSourceSettings.Web.LoginPageConfig.LoginPage" class="form-control"></textarea>
                 </div>
                 <div class="form-row">
                     <label asp-for="@Model.DataSourceSettings.Web.LoginPageConfig.UsernameFieldName"></label>

@@ -1,5 +1,5 @@
 @using static TraffkPortal.Controllers.CommunicationsController
-@model IEnumerable<CommunicationBlast>
+@model IEnumerable<Traffk.Bal.Data.Rdb.TraffkTenantModel.CommunicationBlast>
 @{
     Layout = "~/Views/Communications/_LayoutCommunication.cshtml";
     ViewData.SetTitleAndHeading("Communications Blasts");
@@ -17,12 +17,12 @@
                 <th>
                     @Html.SortableHeaderFor(model => model.JobId)
                 </th>
-                <th>
+                @*<th>
                     @Html.SortableHeaderFor(model => model.Job.JobStatusStringValue)
                 </th>
                 <th>
                     @Html.SortableHeaderFor(model => model.Job.DontRunBefore)
-                </th>
+                </th>*@
             </tr>
         </thead>
         <tbody>
@@ -42,12 +42,12 @@
                             @Html.DisplayFor(modelItem => item.JobId)
                         </a>
                     </td>
-                    <td>
+                    @*<td>
                         @Html.DisplayFor(modelItem => item.Job.JobStatusStringValue)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Job.DontRunBefore)
-                    </td>
+                    </td>*@
                 </tr>
             }
         </tbody>
