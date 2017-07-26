@@ -7,6 +7,7 @@ using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
 using Traffk.Orchestra.Models;
+using Traffk.Utility;
 
 namespace Traffk.Orchestra
 {
@@ -17,6 +18,8 @@ namespace Traffk.Orchestra
         private string ApiToolsUrlPortion => $"/APITools/{ApiVersion}";
         private string DrugCompareUrlPortion => $"/API/{ApiVersion}";
         private readonly OrchestraRxConfig Config;
+
+        private readonly IHttpClientFactory HttpClientFactory;
         private OrchestraRxTokenResponse Token;
         private HttpClient HttpClientWithHeaders;
 
@@ -29,9 +32,11 @@ namespace Traffk.Orchestra
             public const string DrugAlternatives = @"Drugs/Alternatives";
         }
 
-        public OrchestraRxApiClient(IOptions<OrchestraRxConfig> configOptions)
+        public OrchestraRxApiClient(IOptions<OrchestraRxConfig> configOptions, 
+            IHttpClientFactory httpClientFactory)
         {
             Config = configOptions.Value;
+            HttpClientFactory = httpClientFactory;
         }
 
         public void SetToken(OrchestraRxTokenResponse token)
@@ -42,7 +47,7 @@ namespace Traffk.Orchestra
 
         public OrchestraRxTokenResponse Authenticate()
         {
-            var httpClient = new HttpClient();
+            var httpClient = HttpClientFactory.Create();
 
             var plainTextBytes = Encoding.UTF8.GetBytes($"{Config.Key}:{Config.Secret}");
             var base64KeySecret = Convert.ToBase64String(plainTextBytes);
@@ -208,7 +213,7 @@ namespace Traffk.Orchestra
 
         private HttpClient CreateHttpClientWithHeaders()
         {
-            var httpClient = new HttpClient(new HttpClientHandler
+            var httpClient = HttpClientFactory.Create(new HttpClientHandler
             {
                 ClientCertificateOptions = ClientCertificateOption.Manual,
                 SslProtocols = SslProtocols.Tls12

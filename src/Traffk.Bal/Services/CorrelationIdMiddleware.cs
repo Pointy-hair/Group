@@ -13,9 +13,9 @@ namespace Traffk.Bal.Services
         {
             public const string ConfigSectionName = "CorrelationIdOptions";
 
-            private const string DefaultHeader = "X-Correlation-ID";
+            private const string DefaultCorrelationIdHeaderKey = "X-Correlation-ID";
 
-            public string Header { get; set; } = DefaultHeader;
+            public string CorrelationIdHeaderKey { get; set; } = DefaultCorrelationIdHeaderKey;
             public bool IncludeInResponse { get; set; } = true;
         }
 
@@ -30,16 +30,24 @@ namespace Traffk.Bal.Services
 
         public async Task Invoke(HttpContext context)
         {
-            if (context.Request.Headers.TryGetValue(Options.Value.Header, out StringValues correlationId))
+            if (context.Request.Headers.TryGetValue(Options.Value.CorrelationIdHeaderKey, out StringValues requestCorrelationId))
             {
-                context.TraceIdentifier = correlationId;
+                context.TraceIdentifier = requestCorrelationId;
+                return;
             }
 
             if (Options.Value.IncludeInResponse)
             {
                 context.Response.OnStarting(() =>
                 {
-                    context.Response.Headers.Add(Options.Value.Header, new[] { context.TraceIdentifier });
+                    context.Response.Headers.TryGetValue(Options.Value.CorrelationIdHeaderKey, out StringValues existingCorrelationid);
+
+                    if (existingCorrelationid != context.TraceIdentifier)
+                    {
+                        context.Response.Headers.Remove(Options.Value.CorrelationIdHeaderKey);
+                        context.Response.Headers.Add(Options.Value.CorrelationIdHeaderKey, new[] { context.TraceIdentifier });
+                    }
+                    
                     return Task.CompletedTask;
                 });
             }
@@ -69,7 +77,7 @@ namespace Traffk.Bal.Services
 
             return app.UseCorrelationId(new CorrelationIdMiddleware.Config()
             {
-                Header = header
+                CorrelationIdHeaderKey = header
             });
         }
 

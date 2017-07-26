@@ -216,6 +216,7 @@ namespace TraffkPortal
 
             services.Configure<HttpClientFactory.Config>(Configuration.GetSection(HttpClientFactory.Config.ConfigSectionName));
             services.AddScoped<IHttpClientFactory, HttpClientFactory>();
+            services.AddScoped<ICorrelationIdFactory, CorrelationIdFactory>();
 
             services.AddScoped<ICacher, TraffkCache>();
 
