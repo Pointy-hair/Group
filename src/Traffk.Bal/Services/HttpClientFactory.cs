@@ -28,6 +28,7 @@ namespace Traffk.Bal.Services
             ConfigOptions = configOptions;
 
             var httpContext = httpContextAccessor.HttpContext;
+
             if (httpContext.Request.Headers.TryGetValue(correlationIdFactory.Key, out StringValues requestCorrelationId))
             {
                 //CorrelationId already exists in HttpContext, which supersedes Client
@@ -38,9 +39,14 @@ namespace Traffk.Bal.Services
             {
                 //Create a new correlationId using the factory
                 var correlationId = correlationIdFactory.Create();
+
+                //Clear out existing correlationId
+                ConfigOptions.Value.HeaderValueByHeaderName.Remove(correlationIdFactory.Key);
+
                 //Add it to the HttpClient
                 ConfigOptions.Value.HeaderValueByHeaderName.
                     Add(new KeyValuePair<string, string>(correlationIdFactory.Key, correlationId));
+                
                 //Set the context trace identifier to the correlationId
                 httpContextAccessor.HttpContext.TraceIdentifier = correlationId;
             }
