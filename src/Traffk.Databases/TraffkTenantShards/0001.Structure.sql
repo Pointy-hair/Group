@@ -27,6 +27,18 @@ with
 
 GO
 
+CREATE EXTERNAL DATA SOURCE TraffkDirectoryShardsDataSource
+with
+(
+	type = shard_map_manager,
+	location = 'traffkrdb-prod.database.windows.net',
+	database_name = 'TraffkTenantShardManager',
+	credential = _TraffkTenantShardsUserCred,
+	shard_map_name = 'TraffkDirectoryShardMap'
+)
+
+GO
+
 CREATE EXTERNAL DATA SOURCE TraffkTenantModelDataSource
 with
 (
@@ -74,6 +86,20 @@ begin
 
 end
 
+GO
+
+create PROCEDURE [db].TraffkDirectoryTableImport
+	@schema sysname,
+	@table sysname
+AS
+begin
+
+	declare @smt nvarchar(max)
+	select @smt=T from db.TraffkTenantModelSchemaMeta
+
+	exec db.ExternalTableImport 'TraffkDirectoryShardsDataSource', @schema, @table, @smt, @distribution='ROUND_ROBIN'
+
+end
 
 GO
 

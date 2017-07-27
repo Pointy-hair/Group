@@ -1,0 +1,14 @@
+﻿<?xml version="1.0"?>
+<DTS:ConnectionManager xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:ObjectName="traffkrdb-prod.database.windows.net.ReferenceData._EtlApp"
+  DTS:DTSID="{A75E8FC8-E47A-4705-987A-1BBC05A752D3}"
+  DTS:CreationName="OLEDB">
+  <DTS:ObjectData>
+    <DTS:ConnectionManager
+      DTS:ConnectionString="Data Source=traffkrdb-prod.database.windows.net;User ID=_EtlApp;Initial Catalog=ReferenceData;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;">
+      <DTS:Password
+        DTS:Name="Password"
+        Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAjjayOGI9zkeWHAJj8nEOKAAAAAACAAAAAAAQZgAAAAEAACAAAADQTsHKFGWQ+ChOlzyeQFuVu96hO5OtPSsCzn/PkDhDYAAAAAAOgAAAAAIAACAAAAAMk4ONIcr67vuSXhvC1+NbtZnqjJFfrkRia47Uek9NqqAAAACpEZs7/+Wk212x66LSXpQJL+SsgjfxCtBG4AA8ckDK0UkTuHHy1G/DT+YcHBYXl56J6EHHuQWyevdg8jqeMYv7Gzqi0u+5rhr/Ghji5i04CsdOmuzVuQuNUOBlVRB5rdq5SrNz0/EZTRhrIYfkNk034lNLmdbUswnicq58XbgdmngMnAoFj2M5+7ukovaPU2XYhSeX4OvC9Kz7TFHnixdlQAAAAHmDiurRZTuEthJoygmOYxYcchSVoRT3AnUBlYQrD22YsWGGfjj4WyCVUFyahHtYAq5r+vvdHKTf9+pP9A+VaMk=</DTS:Password>
+    </DTS:ConnectionManager>
+  </DTS:ObjectData>
+</DTS:ConnectionManager>

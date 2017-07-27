@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using Traffk.Bal.Data;
+using RevolutionaryStuff.Core;
 
 namespace Traffk.Bal.Settings
 {

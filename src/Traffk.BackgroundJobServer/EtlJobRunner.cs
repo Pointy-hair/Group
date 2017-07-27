@@ -197,6 +197,7 @@ namespace Traffk.BackgroundJobServer
         private void ConfigureCommonParameters(Package p)
         {
             SetDatasourceConnectionStringIfPresent(p, CommonDataSourceIds.TraffkGlobal, GlobalContext.Database.GetDbConnection().ConnectionString);
+            SetDatasourceConnectionStringIfPresent(p, CommonDataSourceIds.ReferenceData, GlobalContext.Database.GetDbConnection().ConnectionString);
             SetParameterIfPresent(p, "WorkingFolderName", $"{TempFolderPath}work\\");
             if (JobInfo.TenantId.HasValue)
             {
@@ -207,6 +208,7 @@ namespace Traffk.BackgroundJobServer
 
         public static class CommonDataSourceIds
         {
+            public const string ReferenceData = "ReferenceData";
             public const string TraffkGlobal = "TraffkGlobal";
             public const string TraffkTenantModel = "TraffkTenantModel";
         }

@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
-using System;
-using System.IO;
-using System.Threading.Tasks;
-using RevolutionaryStuff.Core;
-using System.Collections.Generic;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Crypto;
 using RevolutionaryStuff.Core.EncoderDecoders;
-using Traffk.Bal.Data.Rdb.TraffkTenantModel;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace Traffk.Bal.Services
 {
@@ -41,7 +41,7 @@ namespace Traffk.Bal.Services
     public class BlobStorageServices
     {
         public const string AzureBlobServiceProtocol = "abs";
-        private const string GlobalsLoginDomain = "_GLOBALS";
+        private const string GlobalsLoginDomain = "TraffkGlobals";
 
         private readonly CloudStorageAccount StorageAccount;
         private readonly CloudBlobClient BlobClient;
@@ -75,6 +75,9 @@ namespace Traffk.Bal.Services
             return $"{tenantLoginDomain ?? GlobalsLoginDomain}/{dataSourceId}/";
         }
 
+        private static bool IsSecure(CloudBlobContainer container)
+            => container.Name == ContainerNames.Secure;
+
         public static CloudBlobContainer GetContainer(CloudBlobClient client, string containerName)
             => client.GetContainerReference(containerName);
 
@@ -101,6 +104,7 @@ namespace Traffk.Bal.Services
                 SharedAccessExpiryTime = new DateTimeOffset(DateTime.Now.AddMinutes(5)),                 
             });
 
+        /// <remarks>https://docs.microsoft.com/en-us/azure/storage/storage-dotnet-shared-access-signature-part-1</remarks>
         public static Uri GetSharedAccessSignatureUrl(IOptions<Config> blobOptions, Uri u, SharedAccessBlobPolicy policy)
         {
             Requires.NonNull(u, nameof(u));
@@ -233,12 +237,15 @@ namespace Traffk.Bal.Services
             return new CloudFilePointer
             {
                 CloudFilePointerType = CloudFilePointerTypes.AzureBlob,
-                Uri = secure ? new Uri(AzureBlobServiceProtocol + ":"+ block.Uri.ToString().RightOf(":")) : block.Uri,
+                Uri = IsSecure(container) ? ConvertToAzureBlobServiceProtocolUri(block.Uri) : block.Uri,
                 Path = name,
                 ContainerName = container.Name,
                 ContentType = file.ContentType
             };
         }
+
+        private static Uri ConvertToAzureBlobServiceProtocolUri(Uri u)
+            => new Uri(AzureBlobServiceProtocol + ":" + u.ToString().RightOf(":"));
 
         public BlobStorageServices(CurrentTenantServices currentTenant, ICurrentUser currentUser, IOptions<Config> options)
         {
@@ -295,12 +302,11 @@ namespace Traffk.Bal.Services
             return new CloudFilePointer
             {
                 CloudFilePointerType = CloudFilePointerTypes.AzureBlob,
-                Uri = block.Uri,
+                Uri = IsSecure(container) ? ConvertToAzureBlobServiceProtocolUri(block.Uri) : block.Uri,
                 Path = path,
                 ContainerName = container.Name,
                 ContentType = p.ContentType
             };
-
         }
     }
 }

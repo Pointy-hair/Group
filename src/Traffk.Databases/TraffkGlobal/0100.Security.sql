@@ -1,4 +1,11 @@
-﻿CREATE USER _TraffkPortalApp
+﻿CREATE USER _TraffkTenantShardsUser
+	FOR LOGIN _TraffkTenantShardsUser
+	WITH DEFAULT_SCHEMA = dbo
+GO
+EXEC sp_addrolemember N'tenant_all_reader', N'_TraffkTenantShardsUser'
+GO
+
+CREATE USER _TraffkPortalApp
 	FOR LOGIN _TraffkPortalApp
 	WITH DEFAULT_SCHEMA = dbo
 GO

@@ -7,6 +7,7 @@ namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
         public enum TenantTypes
         {
             Normal,
+            Globals,
         }
 
         public static class StatusNames

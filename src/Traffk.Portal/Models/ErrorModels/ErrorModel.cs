@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using RevolutionaryStuff.Core;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using Traffk.Bal.Data;
 
 namespace TraffkPortal.Models.ErrorModels
 {

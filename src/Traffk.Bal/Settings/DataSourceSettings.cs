@@ -6,6 +6,9 @@ namespace Traffk.Bal.Settings
 {
     public class DataSourceSettings
     {
+        [JsonProperty("decompressItems")]
+        public bool DecompressItems { get; set; }
+
         [JsonIgnore]
         public bool IsFtp => this.FTP != null;
 

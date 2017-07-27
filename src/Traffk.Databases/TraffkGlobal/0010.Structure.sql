@@ -1,4 +1,36 @@
-﻿CREATE TABLE [dbo].[ReportMetaData](
+﻿--keep in sync with TraffkModel.dbo.Tenants
+
+create table Tenants
+(
+	TenantId int not null primary key,
+	ParentTenantId int null references Tenants(TenantId),
+	CreatedAtUtc datetime not null default (getutcdate()),
+	RowStatus dbo.RowStatus not null default '1',
+	TenantName dbo.Title not null,
+	HostDatabaseName as db_name(),
+	LoginDomain dbo.DeveloperName null,
+	TenantType dbo.developerName not null,
+	TenantSettings dbo.JsonObject null
+)
+
+GO
+
+exec db.TablePropertySet  'Tenants', '1', @propertyName='AddToDbContext'
+exec db.TablePropertySet  'Tenants', '1', @propertyName='GeneratePoco'
+exec db.ColumnPropertySet 'Tenants', 'TenantSettings', 'Bal.Settings.TenantSettings', @propertyName='JsonSettingsClass'
+exec db.ColumnPropertySet 'Tenants', 'CreatedAtUtc', 'Datetime when this entity was created.'
+exec db.ColumnPropertySet 'Tenants', 'RowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='dbo'
+exec db.ColumnPropertySet 'Tenants', 'RowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='dbo'
+exec db.ColumnPropertySet 'Tenants', 'TenantType', 'Tenant.TenantTypes', @propertyName='EnumType'
+
+insert into Tenants 
+(TenantId, TenantName, TenantType)
+values
+(1, 'TraffkGlobals', 'Globals')
+
+GO
+
+CREATE TABLE [dbo].[ReportMetaData](
 	[ReportMetaDataId] [int] IDENTITY(-1,-1) NOT NULL,
 	[ExternalReportKey] [nvarchar](2000) NOT NULL,
 	[ParentReportMetaDataId] [int] NULL,

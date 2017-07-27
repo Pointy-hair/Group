@@ -8,6 +8,8 @@
             Original,
             Decrypted,
             Unpacked,
+            UnpackedRecompressedSingleton,
+            Errored,
         }
     }
 }

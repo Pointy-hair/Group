@@ -8,7 +8,7 @@
 	HostDatabaseName as db_name(),
 	LoginDomain dbo.DeveloperName null,
 	TenantType dbo.developerName not null,
-	TenantSettings dbo.JsonObject
+	TenantSettings dbo.JsonObject null
 )
 
 GO

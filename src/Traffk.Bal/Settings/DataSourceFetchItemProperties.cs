@@ -14,6 +14,9 @@ namespace Traffk.Bal.Settings
             return TraffkHelpers.JsonConvertDeserializeObjectOrFallback<DataSourceFetchItemProperties>(json);
         }
 
+        [JsonProperty("error")]
+        public ExceptionError Error { get; set; }
+
         [JsonProperty("lastModifiedAtUtc")]
         public DateTime? LastModifiedAtUtc { get; set; }
 

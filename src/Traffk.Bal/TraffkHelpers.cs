@@ -15,6 +15,8 @@ namespace Traffk.Bal
 {
     public static class TraffkHelpers
     {
+        public const int TraffkGlobalsTenantId = 1;
+
         public const string TenantIdBackgroundJobParameterName = "tenantId";
 
         public static readonly Assembly ThisAssembly;

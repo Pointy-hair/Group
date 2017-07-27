@@ -69,6 +69,9 @@
     <Folder Include="Master" />
     <Folder Include="TraffkTenantShardManager" />
     <Folder Include="ReferenceData" />
+    <Folder Include="ReferenceData\EtlSampleData" />
+    <Folder Include="ReferenceData\EtlSampleData\ZipCodes" />
+    <Folder Include="ReferenceData\EtlSampleData\ZipCodes\zip-codes-database-deluxe-business-csv" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Foundations\Build\0001.ChangeLog.sql" />
@@ -95,6 +98,13 @@
     <None Include="TraffkGlobal\0100.Security.sql" />
     <None Include="TraffkGlobal\0010.Structure.sql" />
     <None Include="ReferenceData\0003.TaxonomyCrosswalk.pdf" />
+    <None Include="ReferenceData\0005.ZipCodes.sql" />
+    <None Include="ReferenceData\EtlSampleData\ZipCodes\zip-codes-database-deluxe-business-csv\census-2010-zcta.csv" />
+    <None Include="ReferenceData\EtlSampleData\ZipCodes\zip-codes-database-deluxe-business-csv\Most Common Database FAQs.pdf" />
+    <None Include="ReferenceData\EtlSampleData\ZipCodes\zip-codes-database-deluxe-business-csv\zipcodedatabasespecifications-business.pdf" />
+    <None Include="ReferenceData\EtlSampleData\ZipCodes\zip-codes-database-deluxe-business-csv\zip-codes-database-DELUXE-BUSINESS.csv" />
+    <None Include="ReferenceData\EtlSampleData\ZipCodes\zip-codes-database-deluxe-business-csv\zip-codes-database-MULTI-COUNTY.csv" />
+    <None Include="ReferenceData\EtlSampleData\ZipCodes\zip-codes-database-deluxe-business-csv\zip-codes-database-PLACE-FIPS.csv" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Foundations\Build\0003.Asserts.sql" />

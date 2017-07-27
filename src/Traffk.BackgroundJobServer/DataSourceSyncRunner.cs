@@ -23,6 +23,7 @@ using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
 using Traffk.Bal;
 using System.Net;
+using System.IO.Compression;
 
 namespace Traffk.BackgroundJobServer
 {
@@ -138,7 +139,7 @@ namespace Traffk.BackgroundJobServer
             }
 
             private DataSourceFetchItem FindEvidenceItem(string key)
-                => FetchItemByEvidence.FindOrDefault(key);
+                => key==null?null:FetchItemByEvidence.FindOrDefault(key);
 
             private void PopulateEvidence(DataSourceFetchItem item)
             {
@@ -247,18 +248,22 @@ namespace Traffk.BackgroundJobServer
                     }
                 }
                 AuthenticationDone:
-                Stuff.TaskWaitAllForEach(settings.DownloadUrls, u => FetchTheWebItemAsync(fetch, u, handler));
+                await Task.WhenAll(settings.DownloadUrls.ConvertAll(u => FetchTheWebItemAsync(fetch, u, handler)));
             }
 
             private async Task FetchTheWebItemAsync(DataSourceFetche fetch, Uri u, HttpClientHandler handler)
             {
+                FileDetails details;
                 using (var client = Runner.HttpClientFactory.Create(handler, false))
                 {
                     var resp = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, u));
-                    var details = new FileDetails(resp);
-                    await FetchTheItemAsync(fetch, details, null, DataSourceFetchItem.DataSourceFetchItemTypes.Original, null, async _ => 
+                    details = new FileDetails(resp);
+                }
+                await FetchTheItemAsync(fetch, details, DataSourceFetchItem.DataSourceFetchItemTypes.Original, null, async _ => 
+                {
+                    var tfn = Stuff.FindOrigFileName(Path.Combine(Runner.TempFolderPath, details.Name));
+                    using (var client = Runner.HttpClientFactory.Create(handler, false))
                     {
-                        var tfn = Stuff.GetTempFileName(".dat", Runner.TempFolderPath);
                         using (var st = await client.GetStreamAsync(u))
                         {
                             using (var dst = File.Create(tfn))
@@ -266,9 +271,9 @@ namespace Traffk.BackgroundJobServer
                                 await st.CopyToAsync(dst);
                             }
                         }
-                        return tfn;
-                    });
-                }
+                    }
+                    return tfn;
+                });
             }
 
             async Task ProcessFetchAsync(DataSourceFetche fetch, DataSourceSettings.FtpSettings settings)
@@ -298,7 +303,7 @@ namespace Traffk.BackgroundJobServer
                 return false;
             }
 
-            private async Task FetchTheItemAsync(DataSourceFetche fetch, FileDetails details, string folder, DataSourceFetchItem.DataSourceFetchItemTypes dataSourceFetchItemType,  DataSourceFetchItem parentFetchItem, Func<FileDetails, Task<string>> fetcher)
+            private async Task FetchTheItemAsync(DataSourceFetche fetch, FileDetails details, DataSourceFetchItem.DataSourceFetchItemTypes dataSourceFetchItemType,  DataSourceFetchItem parentFetchItem, Func<FileDetails, Task<string>> fetchAsync)
             {
                 string tfn = null;
                 var item = new DataSourceFetchItem
@@ -316,7 +321,7 @@ namespace Traffk.BackgroundJobServer
                 {
                     Trace.WriteLine($"Checking {details.FullName} size={details.Size} LastWriteTimeUtc={details.LastModifiedAtUtc}");
                     var sameDataSourceReplicatedDataSourceFetchItem = FindEvidenceItems(details.CreateEvidence()).FirstOrDefault();
-                    if (sameDataSourceReplicatedDataSourceFetchItem!=null)
+                    if (sameDataSourceReplicatedDataSourceFetchItem != null)
                     {
                         item.DataSourceFetchItemType = DataSourceFetchItem.DataSourceFetchItemTypes.Duplicate;
                         item.SameDataSourceReplicatedDataSourceFetchItem = sameDataSourceReplicatedDataSourceFetchItem;
@@ -325,7 +330,7 @@ namespace Traffk.BackgroundJobServer
                     //                      Logger.LogInformation("Downloading", file.FullName, file.Length, tfn);
                     try
                     {
-                        tfn = await fetcher(details);
+                        tfn = await fetchAsync(details);
                         var fi = new FileInfo(tfn);
                         item.Size = fi.Length;
                     }
@@ -342,7 +347,7 @@ namespace Traffk.BackgroundJobServer
                             {
                                 LastModifiedAtUtc = details.LastModifiedAtUtc
                             };
-                            p.Metadata[BlobStorageServices.MetaKeyNames.SourcePath] = details.Path;
+                            p.Metadata[BlobStorageServices.MetaKeyNames.SourcePath] = details.Folder;
                             p.Metadata[BlobStorageServices.MetaKeyNames.SourceFullName] = details.FullName;
                             if (IsPgpEncrypted(muxer.OpenRead()))
                             {
@@ -356,26 +361,27 @@ namespace Traffk.BackgroundJobServer
                                     Hash.CommonHashAlgorithmNames.Sha1,
                                     Hash.CommonHashAlgorithmNames.Sha512,
                                 },
-                                hashAlgName => urns.Add(Hash.Compute(muxer.OpenRead(), hashAlgName).Urn));
+                                hashAlgName =>
+                                {
+                                    var urn = Hash.Compute(muxer.OpenRead(), hashAlgName).Urn;
+                                    if (urn == null) return; //yes... in some cases this somehow happens...
+                                    urns.Add(urn);
+                                });
                             if (urns.Count > 0)
                             {
                                 p.Metadata[BlobStorageServices.MetaKeyNames.Urns] = CSV.FormatLine(urns, false);
                                 sameDataSourceReplicatedDataSourceFetchItem = FindEvidenceItems(urns).FirstOrDefault();
-                                if (sameDataSourceReplicatedDataSourceFetchItem!=null)
+                                if (sameDataSourceReplicatedDataSourceFetchItem != null)
                                 {
                                     item.DataSourceFetchItemType = DataSourceFetchItem.DataSourceFetchItemTypes.Duplicate;
                                     item.SameDataSourceReplicatedDataSourceFetchItem = sameDataSourceReplicatedDataSourceFetchItem;
                                     return;
                                 }
                             }
-                            if (folder != null && !folder.EndsWith("/"))
-                            {
-                                folder = folder + "/";
-                            }
                             var res = await BlobStorageServices.StoreStreamAsync(
                                 Runner.BlobConfig,
                                 BlobStorageServices.ContainerNames.Secure,
-                                $"{BlobRootPath}{details.Path.Substring(1)}/{folder}{details.Name}",
+                                $"{BlobRootPath}{details.Folder.Substring(1)}{details.Name}",
                                 muxer.OpenRead(),
                                 p,
                                 amt => Trace.WriteLine($"Uploading {amt}/{details.Size}")
@@ -387,6 +393,12 @@ namespace Traffk.BackgroundJobServer
                         }
                     }
                 }
+                catch (Exception ex)
+                {
+                    item.DataSourceFetchItemType = DataSourceFetchItem.DataSourceFetchItemTypes.Errored;
+                    item.DataSourceFetchItemProperties.Error = new ExceptionError(ex);
+                    Trace.WriteLine(ex);
+                }
                 finally
                 {
                     if (item != null)
@@ -396,51 +408,91 @@ namespace Traffk.BackgroundJobServer
                             Gdb.DataSourceFetchItems.Add(item);
                             Gdb.SaveChanges();
                         }
-                        if (IsPgpEncrypted(tfn))
-                        {
-                            var name = details.Name;
-                            if (name.ToLower().EndsWith(".pgp"))
-                            {
-                                name = name.Left(name.Length - 4);
-                            }
-                            else if (name.ToLower().EndsWith(".pgp.asc"))
-                            {
-                                name = name.Left(name.Length - 8);
-                            }
-                            else if (name.ToLower().Contains(".pgp."))
-                            {
-                                name = new Regex(@"\.pgp\.", RegexOptions.IgnoreCase).Replace(name, ".");
-                            }
-                            await FetchTheItemAsync(
-                                fetch,
-                                new FileDetails(details, name),
-                                "decrypted",
-                                DataSourceFetchItem.DataSourceFetchItemTypes.Decrypted,
-                                item,
-                                _ =>
-                                {
-                                    var utfp = Path.GetTempFileName();
-                                    using (var st = File.OpenRead(tfn))
-                                    {
-                                        Runner.Decrypt(st, utfp);
-                                    }
-                                    return Task.FromResult(utfp);
-                                }
-                                );
-                        }
                     }
-                    Stuff.FileTryDelete(tfn);
+                }
+                if (IsPgpEncrypted(tfn))
+                {
+                    var name = details.Name;
+                    if (name.ToLower().EndsWith(".pgp"))
+                    {
+                        name = name.Left(name.Length - 4);
+                    }
+                    else if (name.ToLower().EndsWith(".pgp.asc"))
+                    {
+                        name = name.Left(name.Length - 8);
+                    }
+                    else if (name.ToLower().Contains(".pgp."))
+                    {
+                        name = new Regex(@"\.pgp\.", RegexOptions.IgnoreCase).Replace(name, ".");
+                    }
+                    await FetchTheItemAsync(
+                        fetch,
+                        new FileDetails(details, name),
+                        DataSourceFetchItem.DataSourceFetchItemTypes.Decrypted,
+                        item,
+                        _ =>
+                        {
+                            var utfp = Path.GetTempFileName();
+                            using (var st = File.OpenRead(tfn))
+                            {
+                                Runner.Decrypt(st, utfp);
+                            }
+                            return Task.FromResult(utfp);
+                        }
+                        );
+                }
+                else if (
+                    MimeType.Application.Zip.DoesExtensionMatch(details.Name) && 
+                    DS.DataSourceSettings.DecompressItems && 
+                    dataSourceFetchItemType!= DataSourceFetchItem.DataSourceFetchItemTypes.UnpackedRecompressedSingleton)
+                {
+                    var relUnzipFolder = Path.GetFileNameWithoutExtension(details.Name);
+                    var unzipFolder = Path.Combine(Path.GetDirectoryName(tfn), relUnzipFolder);
+                    using (var st = File.OpenRead(tfn))
+                    {
+                        using (var za = new ZipArchive(st, ZipArchiveMode.Read))
+                        {
+                            if (za.Entries.Count < 2) return;
+                        }
+                    }                        
+                    ZipFile.ExtractToDirectory(tfn, unzipFolder);
+                    await Task.WhenAll(
+                        Directory.GetFiles(unzipFolder, "*.*", SearchOption.AllDirectories).ConvertAll(
+                        unzipped =>
+                        {
+                            string rezipped = unzipped;
+                            bool isRezipped = false;
+                            if (!MimeType.Application.Zip.DoesExtensionMatch(unzipped))
+                            {
+                                rezipped = unzipped + MimeType.Application.Zip.PrimaryFileExtension;
+                                using (var st = File.Create(rezipped))
+                                {
+                                    using (var za = new ZipArchive(st, ZipArchiveMode.Create))
+                                    {
+                                        za.CreateEntryFromFile(unzipped, Path.GetFileName(unzipped));
+                                    }
+                                    isRezipped = true;
+                                }
+                            }
+                            return FetchTheItemAsync(
+                                fetch,
+                                new FileDetails(new FileInfo(rezipped), Path.Combine(details.Folder, relUnzipFolder)),
+                                 isRezipped ? DataSourceFetchItem.DataSourceFetchItemTypes.UnpackedRecompressedSingleton : DataSourceFetchItem.DataSourceFetchItemTypes.Unpacked,
+                                 item,
+                                 _ => Task.FromResult(rezipped)
+                                );
+                        }));
+                    Stuff.Noop();
                 }
             }
 
-            private Task FetchFtpFolderFilesAsync(SftpClient client, DataSourceFetche fetch, string path)
+            private async Task FetchFtpFolderFilesAsync(SftpClient client, DataSourceFetche fetch, string path)
             {
-                if (IsAlreadyVisited(path)) return Task.CompletedTask;
+                if (IsAlreadyVisited(path)) return;
                 client.ChangeDirectory(path);
                 var entries = client.ListDirectory(path);
-                Stuff.TaskWaitAllForEach(
-                    entries, 
-                    async delegate (SftpFile file)
+                await Task.WhenAll(
+                    entries.ConvertAll(async file => 
                 {
                     if (IsAlreadyVisited(file.FullName)) return;
                     if (file.IsDirectory)
@@ -452,7 +504,6 @@ namespace Traffk.BackgroundJobServer
                         await FetchTheItemAsync(
                             fetch, 
                             new FileDetails(file),
-                            "raw",
                             DataSourceFetchItem.DataSourceFetchItemTypes.Original,
                             null,
                             async fd => 
@@ -469,8 +520,7 @@ namespace Traffk.BackgroundJobServer
                                 return fn;
                             });
                     }
-                });
-                return Task.CompletedTask;
+                }));
             }
         }
     }

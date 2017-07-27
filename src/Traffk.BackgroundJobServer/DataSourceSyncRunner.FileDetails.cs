@@ -2,6 +2,7 @@
 using RevolutionaryStuff.Core;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 
 namespace Traffk.BackgroundJobServer
@@ -10,7 +11,19 @@ namespace Traffk.BackgroundJobServer
     {
         public class FileDetails
         {
-            public readonly string Path;
+            private string Folder_p = "/";
+            public string Folder
+            {
+                private set
+                {
+                    Folder_p = ToUnixPath((value ?? ""));
+                    if (!Folder_p.EndsWith("/"))
+                    {
+                        Folder_p += "/";
+                    }
+                }
+                get => Folder_p;
+            }
             public readonly string FullName;
             public readonly string Name;
             public readonly long Size;
@@ -29,17 +42,25 @@ namespace Traffk.BackgroundJobServer
             {
                 FullName = ToWindowsPath(baseDetails.FullName);
                 Name = name ?? System.IO.Path.GetFileName(FullName);
-                Path = System.IO.Path.GetDirectoryName(FullName);
+                Folder = System.IO.Path.GetDirectoryName(FullName);
 
                 FullName = ToUnixPath(FullName);
-                Path = ToUnixPath(Path);
+                Folder = ToUnixPath(Folder);
+            }
+
+            public FileDetails(FileInfo fi, string dir)
+            {
+                FullName = fi.FullName;
+                Name = fi.Name;
+                Folder = dir;
+                Size = fi.Length;
             }
 
             public FileDetails(SftpFile f)
             {
                 FullName = f.FullName;
                 Name = f.Name;
-                Path = ToUnixPath(System.IO.Path.GetDirectoryName(ToWindowsPath(FullName)));
+                Folder = ToUnixPath(System.IO.Path.GetDirectoryName(ToWindowsPath(FullName)));
                 Size = f.Length;
                 LastModifiedAtUtc = f.LastWriteTimeUtc;
             }
@@ -62,8 +83,8 @@ namespace Traffk.BackgroundJobServer
                 {
                     Name = System.IO.Path.GetFileName(f.RequestMessage.RequestUri.LocalPath);
                 }
-                Path = ToUnixPath(System.IO.Path.GetDirectoryName(f.RequestMessage.RequestUri.LocalPath));
-                FullName = Path + "/" + Name;
+                Folder = ToUnixPath(System.IO.Path.GetDirectoryName(f.RequestMessage.RequestUri.LocalPath));
+                FullName = Folder + "/" + Name;
             }
         }
     }
