@@ -1,0 +1,78 @@
+﻿@model IEnumerable<Traffk.Bal.Data.Rdb.TraffkGlobal.DataSourceFetchItem>
+@using Traffk.Portal.Controllers
+
+@{
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
+    ViewData.SetTitleAndHeading(ViewData[AspHelpers.ViewDataKeys.EntityTitle] as string);
+    ViewData.IsListingPage(true);
+    ViewData.HasPageActions(true);
+    ViewData.HasPageMenuItems(true);
+    ViewData.HasBreadcrumbItems(true);
+
+    var pageKey = (DataController.PageKeys)ViewData[AspHelpers.ViewDataKeys.PageKey];
+}
+
+@section breadCrumbItems {
+    <li><a asp-controller="@DataController.Name" asp-action="Index">Data</a> <span>></span> </li>
+    <li><a asp-controller="@DataController.Name" asp-action="Index">Sources</a> <span>></span> </li>
+    <li><a asp-controller="@DataController.Name" asp-action="DataSourceDetail">Name Placeholder</a> <span>></span> </li>
+    <li><a asp-controller="@DataController.Name" asp-action="DataSourceFetches">History</a> <span>></span> </li>
+}
+
+@if (ViewData.HasPageMenuItems() && !ViewData.HasCustomPageMenuItems())
+{
+    @section pageNavItems {
+        <li><a asp-controller="@DataController.Name" asp-action="DataSourceDetail" asp-for-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == DataController.PageKeys.DataSourceDetails ? "active" : "")">Details</a></li>
+        <li><a asp-controller="@DataController.Name" asp-action="DataSourceFetches" asp-for-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == DataController.PageKeys.DataSourceHistory ? "active" : "")">History</a></li>
+    }
+}
+
+
+@section listingTable
+{
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th><input type="checkbox" id="all-items-selector" /></th>
+                <th>
+                    @Html.SortableHeaderFor(model => model.DataSourceFetchItemId, "Id")
+                </th>
+                <th>
+                    Data Source Name
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(model => model.DataSourceFetchItemType)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(model => model.Size)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr datasourceId="@item.DataSourceFetchItemId">
+                    <td><input type="checkbox" class="item-selector" contextId="@item.DataSourceFetchItemId" /></td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DataSourceFetchItemId)
+                    </td>
+                    <td>
+                        Data Source Name Placeholder
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DataSourceFetchItemType)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Size)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

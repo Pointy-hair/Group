@@ -22,6 +22,7 @@ using Traffk.Tableau.REST.RestRequests;
 using ILogger = Serilog.ILogger;
 using System.Collections.Generic;
 using System.Linq;
+using Traffk.Utility;
 
 namespace Traffk.Bal.ApplicationParts
 {

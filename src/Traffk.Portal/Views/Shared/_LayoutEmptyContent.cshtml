@@ -107,6 +107,7 @@
                     var manageUsers = await User.HasPermission(AuthorizationService, PermissionNames.ManageUsers);
                     var manageProtectedHealthInformation = await User.HasPermission(AuthorizationService, PermissionNames.ProtectedHealthInformation);
                     var canAccessPhi = await User.GetCanAccessProtectedHealthInformationAsync(AuthorizationService);
+                    var viewDataSources = await User.HasPermission(AuthorizationService, PermissionNames.DataSourceView);
                     <!--End Set Variables-->
 
                     <li class="dropdown" id="primary-subnav">
@@ -173,7 +174,7 @@
                                     </ul>
                                 </li>
                             }
-                            @if (manageJobs || manageTenants || manageRoles || manageUsers || manageProtectedHealthInformation || canAccessPhi)
+                            @if (manageJobs || manageTenants || manageRoles || manageUsers || manageProtectedHealthInformation || canAccessPhi || viewDataSources)
                             {
                                 <li class="dropdown" role="presentation">
                                     <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle @(mainNavPageKey == AspHelpers.MainNavigationPageKeys.Setup ? "active" : "")" href="#">
@@ -199,6 +200,11 @@
                                         {
                                             <li><a asp-controller="@ApplicationController.Name" asp-action="Index">Applications</a></li>
                                             <li><a asp-controller="@TenantsController.Name" asp-action="Index">Tenants</a></li>
+                                        }
+                                        <li class="divider" role="separator"></li>
+                                        @if (viewDataSources)
+                                        {
+                                            <li><a asp-controller="@DataController.Name" asp-action="Index">Data</a></li>
                                         }
                                     </ul>
                                 </li>
@@ -256,7 +262,7 @@
                                     </ul>
                                 </li>
                             }
-                            @if (manageJobs || manageTenants || manageRoles || manageUsers || manageProtectedHealthInformation || canAccessPhi)
+                            @if (manageJobs || manageTenants || manageRoles || manageUsers || manageProtectedHealthInformation || canAccessPhi || viewDataSources)
                             {
                                 <li class="has-child-menu">
                                     <a aria-expanded="false" aria-haspopup="true" role="button" class="@(mainNavPageKey == AspHelpers.MainNavigationPageKeys.Setup ? "active" : "")" href="#">
@@ -282,6 +288,11 @@
                                         {
                                             <li><a asp-controller="@ApplicationController.Name" asp-action="Index">Applications</a></li>
                                             <li><a asp-controller="@TenantsController.Name" asp-action="Index">Tenants</a></li>
+                                        }
+                                        <li class="divider" role="separator"></li>
+                                        @if (viewDataSources)
+                                        {
+                                            <li><a asp-controller="@DataController.Name" asp-action="Index">Data</a></li>
                                         }
                                     </ul>
                                 </li>

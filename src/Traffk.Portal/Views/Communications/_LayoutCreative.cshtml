@@ -2,10 +2,10 @@
 @{
     Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
     ViewData.HasBreadcrumbItems(true);
-    var pageKey = (CreativePageKeys)ViewData[ViewDataKeys.PageKey];
-    var entityId = (int)ViewData[ViewDataKeys.EntityId];
-    var jobStatus = Parse.ParseEnum<JobStatuses>(ViewData["JobStatus"] as string, JobStatuses.NonYetQueued);
-    var parentEntityId = (int?)ViewData[ViewDataKeys.ParentEntityId];
+    var pageKey = (CommunicationsController.CreativePageKeys)ViewData[AspHelpers.ViewDataKeys.PageKey];
+    var entityId = (int)ViewData[AspHelpers.ViewDataKeys.EntityId];
+    //var jobStatus = Parse.ParseEnum<JobStatuses>(ViewData["JobStatus"] as string, JobStatuses.NonYetQueued);
+    var parentEntityId = (int?)ViewData[AspHelpers.ViewDataKeys.ParentEntityId];
 }
 @section pageActionItems {
     @RenderSection("pageActionItems", false)

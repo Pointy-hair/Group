@@ -1,7 +1,8 @@
-@model IEnumerable<CommunicationHistory>
-@using static TraffkPortal.Controllers.CrmController
+@model IEnumerable<Traffk.Bal.Data.Rdb.TraffkTenantModel.CommunicationHistory>
+@using Traffk.Portal.Controllers
+
 @{
-    Layout = "_LayoutContact.cshtml";
+    Layout = "~/Views/Crm/_LayoutContact.cshtml";
     ViewData.SetTitleAndHeading("Messages");
     ViewData.IsListingPage(true);
     ViewData.HasPageMenuItems(false);

@@ -58,7 +58,10 @@ namespace Traffk.Bal.Data.ApiModels.Rx
             ChemicalName = o.ChemicalName;
             GenericDrugId = o.GenericDrugID;
             GenericDrugName = o.GenericDrugName;
-            Ndc = o.Dosages.FirstOrDefault().ReferenceNDC;
+            if (o.Dosages.Any())
+            {
+                Ndc = o.Dosages.FirstOrDefault().ReferenceNDC;
+            }
             Dosages = new Dosages(o.Dosages);
         }
 
@@ -118,17 +121,19 @@ namespace Traffk.Bal.Data.ApiModels.Rx
         public string Type { get; set; }
         [JsonProperty("chemicalName")]
         public string ChemicalName { get; set; }
-        //[JsonProperty("drugType")]
-        //public string DrugType { get; set; }
         [JsonProperty("genericDrugId")]
+        [JsonIgnore]
         public object GenericDrugId { get; set; }
         [JsonProperty("genericDrugName")]
+        [JsonIgnore]
         public string GenericDrugName { get; set; }
         [JsonProperty("ndc")]
         public string Ndc { get; set; }
         [JsonProperty("routeOfAdministration")]
+        [JsonIgnore]
         public string RouteOfAdministration { get; set; }
         [JsonProperty("deaSchedule")]
+        [JsonIgnore]
         public string DEASchedule { get; set; }
         [JsonProperty("dosages")]
         public Dosages Dosages { get; set; }
@@ -219,14 +224,18 @@ namespace Traffk.Bal.Data.ApiModels.Rx
         [JsonProperty("isCommonDosage")]
         public bool IsCommonDosage { get; set; }
         [JsonProperty("genericDosageId")]
+        [JsonIgnore]
         public string GenericDosageId { get; set; }
         [JsonProperty("hasGenericDosage")]
         public bool HasGenericDosage => !String.IsNullOrEmpty(GenericDosageId);
         [JsonProperty("dosageForm")]
+        [JsonIgnore]
         public string DosageForm { get; set; }
         [JsonProperty("dosageComments")]
+        [JsonIgnore]
         public string DosageComments { get; set; }
         [JsonProperty("dosageSignature")]
+        [JsonIgnore]
         public string DosageSignature { get; set; }
         [JsonProperty("hasPackages")]
         public bool HasPackages { get; set; }

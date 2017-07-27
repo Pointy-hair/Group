@@ -1,5 +1,6 @@
 @model IEnumerable<TraffkPortal.Models.UserModels.UserModel>
 @using static TraffkPortal.Controllers.UsersController
+@using TraffkPortal.Models.UserModels
 @{
     Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
     ViewData.SetTitleAndHeading("Users");
@@ -22,19 +23,19 @@
             <tr>
                 <th><input type="checkbox" id="all-items-selector" /></th>
                 <th>
-                    @Html.SortableHeaderFor(z => z.UserName)
+                    @Html.SortableHeaderFor(z => z.UserName, null, null, null, nameof(UserModel.UserName).ToTitleFriendlyString())
                 </th>
                 <th>
                     @Html.SortableHeaderFor(z => z.CreatedAt)
                 </th>
                 <th>
-                    @Html.SortableHeaderFor(z => z.EmailConfirmed)
+                    @Html.SortableHeaderFor(z => z.EmailConfirmed, null, null, null, nameof(UserModel.EmailConfirmed).ToTitleFriendlyString())
                 </th>
                 <th>
-                    @Html.SortableHeaderFor(z => z.LockoutEnabled)
+                    @Html.SortableHeaderFor(z => z.LockoutEnabled, null, null, null, nameof(UserModel.LockoutEnabled).ToTitleFriendlyString())
                 </th>
                 <th>
-                    @Html.SortableHeaderFor(z => z.TwoFactorEnabled)
+                    @Html.SortableHeaderFor(z => z.TwoFactorEnabled, null, null, null, nameof(UserModel.TwoFactorEnabled).ToTitleFriendlyString())
                 </th>
                 <th>
                     @Html.DisplayNameFor(z => z.AssignedRoleNamesCsv)

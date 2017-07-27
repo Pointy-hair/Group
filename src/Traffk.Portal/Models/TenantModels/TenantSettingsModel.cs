@@ -30,6 +30,7 @@ namespace Traffk.Portal.Models.TenantModels
         [DisplayName("Requires 2 Factor Authentication")]
         public bool RequiresTwoFactorAuthentication { get; set; }
 
+        [DisplayName("Email Hosts Able To View PHI")]
         public string ProtectedHealthInformationViewableByEmailAddressHostnamesString { get; set; }
 
         public string[] ProtectedHealthInformationViewableByEmailAddressHostnames

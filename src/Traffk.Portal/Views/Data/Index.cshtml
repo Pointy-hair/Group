@@ -1,0 +1,97 @@
+﻿@model IEnumerable<Traffk.Bal.Data.Rdb.TraffkGlobal.DataSource>
+@using static Traffk.Portal.Controllers.DataController
+
+@{
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
+    ViewData.SetTitleAndHeading("Data Sources");
+    ViewData.IsListingPage(true);
+    ViewData.HasPageActions(true);
+    ViewData.HasPageMenuItems(true);
+}
+
+@section listingTable
+{
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th><input type="checkbox" id="all-items-selector" /></th>
+                <th>
+                    @Html.SortableHeaderFor(model => model.DataSourceId, null, null, null, "ID")
+                </th>
+                <th>
+                    Name @*@Html.SortableHeaderFor(model => model.Name)*@
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(model => model.DataSourceSettings.FTP.Hostname, null, null, null, "Hostname")
+                </th>
+                <th>
+                    @Html.SortableHeaderFor(model => model.DataSourceDataSourceFetches.Last().CreatedAtUtc, null, null, null, "Last Fetch")
+                </th>
+                <th>
+                    Type
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr datasourceId="@item.DataSourceId">
+                    <td><input type="checkbox" class="item-selector" contextId="@item.DataSourceId" /></td>
+                    <td>
+                        <a asp-action="DataSourceDetail" asp-route-id="@item.DataSourceId">
+                            @Html.DisplayFor(modelItem => item.DataSourceId)
+                        </a>
+                    </td>
+                    <td>
+                        @*@Html.DisplayFor(modelItem => item.Name)*@
+                    </td>
+                    <td>
+                        @if (item.DataSourceSettings.IsFtp)
+                        {
+                            @Html.DisplayFor(modelItem => item.DataSourceSettings.FTP.Hostname)
+                        }
+                        else
+                        {
+                            foreach (var url in item.DataSourceSettings.Web.DownloadUrls)
+                             {
+                                 @Html.DisplayFor(modelItem => url)<br/>
+                             }
+                        }
+                    </td>
+                    <td>
+                        @if (item.DataSourceDataSourceFetches.Any())
+                        {
+                            @Html.DisplayFor(modelItem => item.DataSourceDataSourceFetches.OrderByDescending(x => x.CreatedAtUtc).Last().CreatedAtUtc)
+                        }
+                        else
+                        {
+                            <span>N/A</span>
+                        }
+                    </td>
+                    <td>
+                        @if (item.DataSourceSettings.IsFtp)
+                        {
+                            <span>FTP</span>
+                        }
+                        else
+                        {
+                            <span>Web</span>
+                        }
+                    </td>
+                    <td class="text-center">
+                        <i class="fa fa-ellipsis-h toggle" aria-hidden="true" data-toggle="row-action-@item.DataSourceId"></i>
+                        <ul id="row-action-@item.DataSourceId" class="floated-filter list-right">
+                            <li>
+                                <a asp-action="DataSourceDetail" asp-route-id="@item.DataSourceId">
+                                    Edit
+                                </a>
+                            </li>
+                        </ul>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}

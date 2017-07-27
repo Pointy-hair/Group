@@ -15,7 +15,7 @@
 @section pageActionItems
 {
     <li class="multiselect-action">
-        <a onclick="cancelJobs()" class="confirm-on-click" confirmHeading="Are you sure?" confirmMessage="Are you sure you want to cancel these jobs?">Cancel Jobs</a>
+        @*<a onclick="cancelJobs()" class="confirm-on-click" confirmHeading="Are you sure?" confirmMessage="Are you sure you want to cancel these jobs?">Cancel Jobs</a>*@
     </li>
 }
 @section listingTable
@@ -25,18 +25,16 @@
             <tr>
                 <th><input type="checkbox" id="all-items-selector" /></th>
                 <th>
-                    @Html.SortableHeaderFor(model => model.Communication.CommunicationId)
+                    @Html.SortableHeaderFor(model => model.Communication.CommunicationId, null, null, null, "Scheduled Report ID")
                 </th>
                 <th>
-                    Title
+                    @Html.SortableHeaderFor(model => model.Communication.CommunicationSettings.ReportName, null, null, null, "Report Name")
                 </th>
                 <th>
-                    Frequency
-                    @*@Html.SortableHeaderFor(model => model.Communication.CommunicationSettings.Recurrence.)*@
+                    @Html.SortableHeaderFor(model => model.Communication.CommunicationSettings.Recurrence.ReadableRecurrencePattern, null, null, null, "Frequency")
                 </th>
                 <th>
-                    Next Run
-                    @*@Html.DisplayNameFor(model => model)*@
+                    @Html.SortableHeaderFor(model => model.RecurringJob.NextExecution, null, null, null, "Next Execution")
                 </th>
                 <th></th>
             </tr>
@@ -55,30 +53,19 @@
                         @Html.DisplayFor(modelItem => item.Communication.CommunicationSettings.ReportName)
                     </td>
                     <td>
-                        @*@Html.DisplayFor(modelItem => item.Communication.CommunicationSettings.Recurrence.ToString())*@
+                        @Html.DisplayFor(modelItem => item.Communication.CommunicationSettings.Recurrence.ReadableRecurrencePattern)
                     </td>
                     <td>
-                        @if (item.RecurringJob.NextExecution != null)
+                        @if (DateTime.Parse(item.RecurringJob.NextExecution.ToString()) != DateTime.UtcNow)
                         {
-                            @Html.DisplayFor(modelItem => item.RecurringJob.NextExecution.ToString())
+                            @Html.DisplayFor(modelItem => item.RecurringJob.NextExecution)
                         }
                     </td>
                     <td class="text-center">
                         <i class="fa fa-ellipsis-h toggle" aria-hidden="true" data-toggle="row-action-@item.Communication.CommunicationId"></i>
-                        @*<ul id="row-action-@item.Id" class="floated-filter list-right">
-                            @if (Current.User.Id != item.Id)
-                            {
-                                <li>
-                                    <a onclick="deleteUser('@item.Id')" class="confirm-on-click" confirmMessage="Are you sure you want to delete user: @item.UserName?">Delete</a>
-                                </li>
-                                if (!@item.EmailConfirmed)
-                                {
-                                    <li>
-                                        <a onclick="resendInvitation('@item.Id')">Resend Invitation</a>
-                                    </li>
-                                }
-                            }
-                        </ul>*@
+                        <ul id="row-action-@item.Communication.CommunicationId" class="floated-filter list-right">
+                            <li><a asp-controller="@ReportingController.Name" asp-action="ScheduledReportDetail" asp-for-id=@item.Communication.CommunicationId>Reports</a></li>
+                        </ul>
                     </td>
 
                 </tr>

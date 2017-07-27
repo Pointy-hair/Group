@@ -268,4 +268,14 @@ else
             $("#universal-alert").fadeIn(500).delay(4000).hide(500);
         </script>
     }
+    @if (showListingActions)
+    {
+        <script>
+            var hasMultiSelectActions = document.querySelectorAll('.multiselect-action').length > 0;
+            if (hasMultiSelectActions) {
+                $("#all-items-selector").show();
+                $(".item-selector").show();
+            }
+        </script>
+    }
 }

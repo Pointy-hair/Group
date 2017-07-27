@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
+using RevolutionaryStuff.Core;
+using Traffk.Utility;
 
 namespace Traffk.Bal.Services
 {
@@ -17,10 +21,36 @@ namespace Traffk.Bal.Services
 
         private readonly IOptions<Config> ConfigOptions;
 
-        //TODO: Add in support for correlation id
-        public HttpClientFactory(IOptions<Config> configOptions)
+        public HttpClientFactory(IOptions<Config> configOptions, 
+             ICorrelationIdFactory correlationIdFactory,
+             IHttpContextAccessor httpContextAccessor)
         {
             ConfigOptions = configOptions;
+
+            var httpContext = httpContextAccessor.HttpContext;
+
+            if (httpContext.Request.Headers.TryGetValue(correlationIdFactory.Key, out StringValues requestCorrelationId))
+            {
+                //CorrelationId already exists in HttpContext, which supersedes Client
+                httpContextAccessor.HttpContext.TraceIdentifier = requestCorrelationId;
+            }
+
+            if (StringValues.IsNullOrEmpty(requestCorrelationId))
+            {
+                //Create a new correlationId using the factory
+                var correlationId = correlationIdFactory.Create();
+
+                //Clear out existing correlationId
+                ConfigOptions.Value.HeaderValueByHeaderName.Remove(correlationIdFactory.Key);
+
+                //Add it to the HttpClient
+                ConfigOptions.Value.HeaderValueByHeaderName.
+                    Add(new KeyValuePair<string, string>(correlationIdFactory.Key, correlationId));
+                
+                //Set the context trace identifier to the correlationId
+                httpContextAccessor.HttpContext.TraceIdentifier = correlationId;
+            }
+            
         }
 
         HttpClient IHttpClientFactory.Create(HttpMessageHandler handler, bool disposeHandler)

@@ -39,6 +39,7 @@ using Traffk.Portal.Permissions;
 using Traffk.Tableau;
 using Traffk.Tableau.REST;
 using Traffk.Tableau.REST.RestRequests;
+using Traffk.Utility;
 using TraffkPortal.Permissions;
 using TraffkPortal.Services;
 using TraffkPortal.Services.Logging;
@@ -215,6 +216,7 @@ namespace TraffkPortal
 
             services.Configure<HttpClientFactory.Config>(Configuration.GetSection(HttpClientFactory.Config.ConfigSectionName));
             services.AddScoped<IHttpClientFactory, HttpClientFactory>();
+            services.AddScoped<ICorrelationIdFactory, CorrelationIdFactory>();
 
             services.AddScoped<ICacher, TraffkCache>();
 
@@ -273,6 +275,7 @@ namespace TraffkPortal
 
             //Needs to be after app.UseIdentity()
             app.UseMiddleware<TokenAuthenticationMiddleware>();
+            app.UseCorrelationId();
 
             app.UseMvc(routes =>
             {

@@ -16,12 +16,9 @@
     <li><a asp-controller="@ReportingController.Name" asp-action="Index">Reports</a> <span>></span> </li>
     <li><a asp-controller="@ReportingController.Name" asp-action="ScheduledReportIndex">Scheduled Reports</a> <span>></span> </li>
 }
-@if (ViewData.HasPageMenuItems() && !ViewData.HasCustomPageMenuItems())
-{
 @section pageNavItems {
     <li><a asp-controller="@ReportingController.Name" asp-action="ScheduledReportDetail" asp-for-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == ReportingController.PageKeys.ScheduledReportDetails ? "active" : "")">Details</a></li>
-    <li><a asp-controller="@ReportingController.Name" asp-for-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == ReportingController.PageKeys.ScheduledReportHistory ? "active" : "")">History</a></li>
-}
+    <li><a asp-controller="@ReportingController.Name" asp-action="ScheduledReportHistory" asp-for-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == ReportingController.PageKeys.ScheduledReportHistory ? "active" : "")">History</a></li>
 }
 <form asp-action="" class="inline-form">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -38,7 +35,7 @@
             </div>
             <div class="form-row">
                 <label>Frequency</label>
-                @*<label asp-for="@Model.RecurringJob"></label>*@
+                <input asp-for="@Model.Communication.CommunicationSettings.Recurrence.ReadableRecurrencePattern" class="form-control" readonly />
             </div>
             <div class="form-row">
                 <label>Recipients</label>

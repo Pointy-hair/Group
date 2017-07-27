@@ -14,7 +14,10 @@
             {
                 var choices = ViewBag.CreativeSelectListItemsByCommunicationModel[item.ModelType];
                 <div class="form-row">
-                    <label>@Html.DisplayFor(modelItem => item.Purpose)</label>
+                    @{
+                        var purpose = item.Purpose.ToString().ToTitleFriendlyString();
+                    }
+                    <label>@Html.DisplayFor(modelItem => purpose)</label>
                     <select asp-items="choices" asp-for="@item.CreativeId" name="CreativeIdFor_@item.Purpose" class="form-control"></select>
                 </div>
             }

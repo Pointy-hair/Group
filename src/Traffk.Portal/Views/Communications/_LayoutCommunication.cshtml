@@ -1,4 +1,5 @@
 ﻿@using static TraffkPortal.Controllers.CommunicationsController
+
 @{
     Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
     ViewData.HasPageMenuItems(true);
@@ -10,7 +11,7 @@
     {
         ViewData.SetTitleAndHeading("Create Blast");
     }
-    var jobStatus = Parse.ParseEnum<JobStatuses>(ViewData["JobStatus"] as string, JobStatuses.NonYetQueued);
+    //var jobStatus = Parse.ParseEnum<JobStatuses>(ViewData["JobStatus"] as string, JobStatuses.NonYetQueued);
     var parentEntityId = (int?)ViewData[AspHelpers.ViewDataKeys.ParentEntityId];
 }
 @section pageNavItems {

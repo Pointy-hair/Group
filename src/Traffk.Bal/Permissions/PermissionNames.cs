@@ -13,5 +13,7 @@
         CustomerRelationshipData,
         ProtectedHealthInformation,
         ReleaseLog,
+        DataSourceView,
+        DataSourceEdit
     }
 }

@@ -1,5 +1,5 @@
 ﻿@using Traffk.Bal.Data
-@model IEnumerable<Note>
+@model IEnumerable<Traffk.Bal.Data.Rdb.TraffkTenantModel.Note>
 
 <table class="table table-bordered table-hover table-striped">
     <thead>
@@ -8,10 +8,10 @@
                 @Html.SortableHeaderFor(z => z.CreatedAt)
             </th>
             <th>
-                @Html.SortableHeaderFor(z => z.CreatedByContact)
+                @Html.SortableHeaderFor(z => z.CreatedByContact, null, null, null, "Created By")
             </th>
             <th>
-                @Html.SortableHeaderFor(z => z.Body)
+                @Html.SortableHeaderFor(z => z.Body, null, null, null, "Note")
             </th>
         </tr>
     </thead>
