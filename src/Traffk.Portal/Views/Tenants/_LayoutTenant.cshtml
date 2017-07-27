@@ -40,7 +40,7 @@
         *@
         <li><a asp-action="@ActionNames.PasswordSettings" asp-route-tenantId="@entityId" class="@(pageKey==PageKeys.PasswordSettings? "active" : "")">Password Policy</a></li>
         <li><a asp-action="@ActionNames.ReusableValuesList" asp-route-tenantId="@entityId" class="@(pageKey==PageKeys.ReusableValues? "active" : "")">Reusable Values</a></li>
-        <li><a asp-action="@ActionNames.SmtpSettings" asp-route-tenantId="@entityId" class="@(pageKey==PageKeys.SmtpSettings? "active" : "")">Smtp Settings</a></li>
+        <li><a asp-action="@ActionNames.SmtpSettings" asp-route-tenantId="@entityId" class="@(pageKey==PageKeys.SmtpSettings? "active" : "")">SMTP Settings</a></li>
         <li><a asp-action="@TenantsController.ActionNames.FiscalYearSettings" asp-route-tenantId="@entityId" class="@(pageKey== TenantsController.PageKeys.FiscalYearSettings ? "active" : "")">Fiscal Year Settings</a></li>
 
                     }

@@ -1,13 +1,13 @@
 ﻿@using static TraffkPortal.Controllers.ApplicationController
 @using static TraffkPortal.Controllers.ApplicationController.PageKeys
-
+@using Traffk.Bal.Data.Rdb.TraffkTenantModel
 @{
     Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
     ViewData.HasBreadcrumbItems(true);
     ViewData.HasPageMenuItems(true);
-    var pageKey = (PageKeys)ViewData[ViewDataKeys.PageKey];
-    var entityId = (int)ViewData[ViewDataKeys.EntityId];
-    var entityType = (AppTypes) ViewData[ViewDataKeys.EntityType];
+    var pageKey = (PageKeys)ViewData[AspHelpers.ViewDataKeys.PageKey];
+    var entityId = (int)ViewData[AspHelpers.ViewDataKeys.EntityId];
+    var entityType = (AppTypes) ViewData[AspHelpers.ViewDataKeys.EntityType];
 }
 @section listingTable
 {
