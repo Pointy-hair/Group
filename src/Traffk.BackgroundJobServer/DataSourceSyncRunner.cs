@@ -24,6 +24,7 @@ using Traffk.Bal.Settings;
 using Traffk.Bal;
 using System.Net;
 using System.IO.Compression;
+using Traffk.Utility;
 
 namespace Traffk.BackgroundJobServer
 {
