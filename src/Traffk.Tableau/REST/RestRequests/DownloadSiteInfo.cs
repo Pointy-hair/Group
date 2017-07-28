@@ -1,6 +1,7 @@
 ﻿using System.Net.Http;
 using System.Xml.Linq;
 using Traffk.Tableau.REST.Models;
+using Traffk.Utility;
 
 namespace Traffk.Tableau.REST.RestRequests
 {
@@ -19,15 +20,9 @@ namespace Traffk.Tableau.REST.RestRequests
                 return Site_p;
             }
         }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="onlineUrls"></param>
-        /// <param name="login"></param>
-        /// <param name="user"></param>
-        public DownloadSiteInfo(TableauServerUrls onlineUrls, TableauServerSignIn login)
-            : base(onlineUrls, login)
+        
+        public DownloadSiteInfo(TableauServerUrls onlineUrls, TableauServerSignIn login, IHttpClientFactory httpClientFactory)
+            : base(onlineUrls, login, httpClientFactory)
         {
 
         }

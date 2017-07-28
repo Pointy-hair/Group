@@ -8,6 +8,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using RevolutionaryStuff.Core.Caching;
+using Traffk.Utility;
 
 namespace Traffk.Tableau.REST.RestRequests
 {
@@ -20,6 +21,7 @@ namespace Traffk.Tableau.REST.RestRequests
         private readonly TableauServerUrls TableauUrls;
         private readonly string Username;
         private readonly string Password;
+        private readonly IHttpClientFactory HttpClientFactory;
 
         public readonly TaskStatusLogs StatusLog;
         public string SiteUrlSegment { get; private set; }
@@ -29,30 +31,21 @@ namespace Traffk.Tableau.REST.RestRequests
         public IEnumerable<string> LogInCookies { get; private set; }
         public bool IsSignedIn { get; private set; }
 
-        /// <summary>
-        /// Sign us out
-        /// </summary>
-        /// <param name="serverUrls"></param>
         public void SignOut(TableauServerUrls serverUrls)
         {
             if(!IsSignedIn)
             {
                 StatusLog.AddError("Session not signed in. Sign out aborted");
             }
-            var signOut = new TableauServerSignOut(serverUrls, this);
+
+            var signOut = new TableauServerSignOut(serverUrls, this, HttpClientFactory);
             signOut.ExecuteRequest();
 
             IsSignedIn = false;
         }
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="tableauUrls"></param>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
-        /// <param name="statusLog"></param>
-        public TableauServerSignIn(TableauServerUrls tableauUrls, string username, string password, TaskStatusLogs statusLog = null)
+        public TableauServerSignIn(TableauServerUrls tableauUrls, string username, string password, IHttpClientFactory httpClientFactory, TaskStatusLogs statusLog = null)
+            : base(httpClientFactory)
         {
             if (statusLog == null) { statusLog = new TaskStatusLogs(); }
             this.StatusLog = statusLog;
@@ -61,6 +54,7 @@ namespace Traffk.Tableau.REST.RestRequests
             Username = username;
             Password = password;
             SiteUrlSegment = tableauUrls.SiteUrlSegement;
+            HttpClientFactory = httpClientFactory;
         }
 
         public bool ExecuteRequest()

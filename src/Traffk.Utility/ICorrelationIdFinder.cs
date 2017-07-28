@@ -1,8 +1,8 @@
 ﻿namespace Traffk.Utility
 {
-    public interface ICorrelationIdFactory
+    public interface ICorrelationIdFinder
     {
         string Key { get; set; }
-        string Create();
+        string FindOrCreate();
     }
 }

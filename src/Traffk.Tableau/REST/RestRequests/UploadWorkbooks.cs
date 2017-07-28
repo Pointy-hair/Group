@@ -9,6 +9,7 @@ using System.Xml;
 using System.Xml.Linq;
 using Traffk.Tableau.REST.Helpers;
 using Traffk.Tableau.REST.Models;
+using Traffk.Utility;
 
 namespace Traffk.Tableau.REST.RestRequests
 {
@@ -24,6 +25,8 @@ namespace Traffk.Tableau.REST.RestRequests
 
         private readonly int UploadChunkSizeBytes;  //Max size of upload chunks
         private readonly int UploadChunkDelaySeconds; //Delay afte reach chunk
+        private readonly IHttpClientFactory HttpClientFactory;
+
         /// <summary>
         ///We will use this to find any stored credentials we need to upload 
         /// </summary>
@@ -42,28 +45,15 @@ namespace Traffk.Tableau.REST.RestRequests
         public int UploadSuccesses { get; private set; }
         public int UploadFailures { get; private set; }
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="onlineUrls"></param>
-        /// <param name="login"></param>
-        /// <param name="credentialManager">Set of database credentials to attach to associated content being published</param>
-        /// <param name="localUploadPath">Path to upload from</param>
-        /// <param name="remapWorkbookReferences">TRUE if we want to modify the workbooks to point datasource/other references to the new server</param>
-        /// <param name="localPathTempWorkspace">Path to perform local file work in</param>
-        /// <param name="uploadProjectBehavior">Instructions on whether to map content into projects</param>
-        /// <param name="manualActions">Any manual actions that need to be performed by the user are written here</param>
-        /// <param name="attemptOwnershipAssignment">TRUE: After upload attempt to reassign the ownership of the content based on local metadata we have</param>
-        /// <param name="siteUsers">List of users to perform ownership assignement with</param>
-        /// <param name="uploadChunkDelaySeconds">For testing, a delay we can inject</param>
         public UploadWorkbooks(
             TableauServerUrls onlineUrls, 
             TableauServerSignIn login,
             CredentialManager credentialManager,
             string localUploadPath,
+            IHttpClientFactory httpClientFactory,
             int uploadChunkSizeBytes = TableauServerUrls.UploadFileChunkSize,
             int uploadChunkDelaySeconds = 0)
-            : base(onlineUrls, login)
+            : base(onlineUrls, login, httpClientFactory)
         {
             LocalUploadPath = localUploadPath;
             CredentialManager = credentialManager; 
@@ -76,7 +66,8 @@ namespace Traffk.Tableau.REST.RestRequests
             UploadChunkSizeBytes = uploadChunkSizeBytes;
             UploadChunkDelaySeconds = uploadChunkDelaySeconds;
 
-            ProjectFindCreateHelper = new ProjectFindCreateHelper(Urls, Login);
+            HttpClientFactory = httpClientFactory;
+            ProjectFindCreateHelper = new ProjectFindCreateHelper(Urls, Login, HttpClientFactory);
 
             UploadSuccesses = 0;
             UploadFailures = 0;
@@ -272,7 +263,7 @@ namespace Traffk.Tableau.REST.RestRequests
             string uploadSessionId;
             try
             {
-                var fileUploader = new UploadFile(Urls, Login, localFilePath, UploadChunkSizeBytes, UploadChunkDelaySeconds);
+                var fileUploader = new UploadFile(Urls, Login, localFilePath, HttpClientFactory, UploadChunkSizeBytes, UploadChunkDelaySeconds);
                 uploadSessionId = fileUploader.ExecuteRequest();
             }
             catch (Exception exFileUpload)

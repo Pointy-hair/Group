@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Xml.Linq;
 using Traffk.Tableau.REST.Models;
+using Traffk.Utility;
 
 namespace Traffk.Tableau.REST.RestRequests
 {
@@ -12,8 +13,8 @@ namespace Traffk.Tableau.REST.RestRequests
         private readonly string TableauObjectName = "user";
         private readonly HashSet<SiteUser> Users;
 
-        public DownloadUsersFromSite(TableauServerUrls onlineUrls, TableauServerSignIn login)
-            : base(onlineUrls, login)
+        public DownloadUsersFromSite(TableauServerUrls onlineUrls, TableauServerSignIn login, IHttpClientFactory httpClientFactory)
+            : base(onlineUrls, login, httpClientFactory)
         {
             Users = new HashSet<SiteUser>();
         }

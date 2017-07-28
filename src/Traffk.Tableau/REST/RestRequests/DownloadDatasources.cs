@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Traffk.Tableau.REST.Helpers;
 using Traffk.Tableau.REST.Models;
+using Traffk.Utility;
 
 namespace Traffk.Tableau.REST.RestRequests
 {
@@ -36,16 +37,6 @@ namespace Traffk.Tableau.REST.RestRequests
         /// </summary>
         private readonly KeyedLookup<SiteUser> SiteUserLookup;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="onlineUrls"></param>
-        /// <param name="login"></param>
-        /// <param name="datasources"></param>
-        /// <param name="localSavePath"></param>
-        /// <param name="projectsList"></param>
-        /// <param name="generateInfoFile">TRUE = Generate companion file for each download that contains metadata (e.g. whether "show tabs" is selected, the owner, etc)</param>
-        /// <param name="siteUsersLookup">If not NULL, use to look up the owners name, so we can write it into the InfoFile for the downloaded content</param>
         public DownloadDatasources(
             TableauServerUrls onlineUrls, 
             TableauServerSignIn login, 
@@ -53,8 +44,9 @@ namespace Traffk.Tableau.REST.RestRequests
             string localSavePath,
             IProjectsList projectsList,
             bool generateInfoFile,
-            KeyedLookup<SiteUser> siteUserLookup)
-            : base(onlineUrls, login)
+            KeyedLookup<SiteUser> siteUserLookup, 
+            IHttpClientFactory httpClientFactory)
+            : base(onlineUrls, login, httpClientFactory)
         {
             Datasources = datasources;
             LocalSavePath = localSavePath;

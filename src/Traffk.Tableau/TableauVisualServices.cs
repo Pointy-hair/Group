@@ -13,6 +13,7 @@ using Serilog;
 using Traffk.Tableau.REST;
 using Traffk.Tableau.REST.RestRequests;
 using Traffk.Tableau.VQL;
+using Traffk.Utility;
 
 namespace Traffk.Tableau
 {
@@ -23,14 +24,17 @@ namespace Traffk.Tableau
         private readonly ITrustedTicketGetter TrustedTicketGetter;
         private readonly TableauSignInOptions TableauSignInOptions;
         private readonly ILogger Logger;
+        private readonly IHttpClientFactory HttpClientFactory;
 
         public TableauVisualServices(ITrustedTicketGetter trustedTicketGetter,
             IOptions<TableauSignInOptions> tableauSignInOptions,
-            ILogger logger)
+            ILogger logger,
+            IHttpClientFactory httpClientFactory)
         {
             Requires.NonNull(trustedTicketGetter, nameof(trustedTicketGetter));
             Requires.NonNull(tableauSignInOptions, nameof(tableauSignInOptions));
 
+            HttpClientFactory = httpClientFactory;
             TableauSignInOptions = tableauSignInOptions.Value;
             TrustedTicketGetter = trustedTicketGetter;
             Logger = logger;
@@ -43,7 +47,7 @@ namespace Traffk.Tableau
         async Task<HttpContent> ITableauVisualServices.GetVisualization(string workbook, string view,
             string trustedTicket)
         {
-            using (var httpClient = new HttpClient())
+            using (var httpClient = HttpClientFactory.Create())
             {
                 var uri = new Uri($"{TableauSignInOptions.TrustedUrl}{trustedTicket}/views/{workbook}/{view}");
                 httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept",

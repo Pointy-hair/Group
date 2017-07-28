@@ -1,5 +1,6 @@
 ﻿using System;
 using Traffk.Tableau.REST.RestRequests;
+using Traffk.Utility;
 
 namespace Traffk.Tableau.REST.Helpers
 {
@@ -17,11 +18,12 @@ namespace Traffk.Tableau.REST.Helpers
         /// <param name="login"></param>
         public ProjectFindCreateHelper(
             TableauServerUrls onlineUrls, 
-            TableauServerSignIn login)
-            : base(onlineUrls, login)
+            TableauServerSignIn login, 
+            IHttpClientFactory httpClientFactory)
+            : base(onlineUrls, login, httpClientFactory)
         {
             //Ask server for the list of projects
-            var projectsList = new DownloadProjectsList(Urls, Login);
+            var projectsList = new DownloadProjectsList(Urls, Login, httpClientFactory);
             projectsList.ExecuteRequest();
             ProjectsList = projectsList;
         }

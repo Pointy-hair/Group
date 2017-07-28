@@ -6,6 +6,7 @@ using System.Xml;
 using System.Xml.Linq;
 using Traffk.Tableau.REST.Models;
 using Traffk.Tableau.REST.RestRequests;
+using Traffk.Utility;
 
 namespace Traffk.Tableau.REST
 {
@@ -29,13 +30,8 @@ namespace Traffk.Tableau.REST
         }
 
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="onlineUrls"></param>
-        /// <param name="login"></param>
-        public DownloadProjectsList(TableauServerUrls onlineUrls, TableauServerSignIn login)
-            : base(onlineUrls,login)
+        public DownloadProjectsList(TableauServerUrls onlineUrls, TableauServerSignIn login, IHttpClientFactory httpClientFactory)
+            : base(onlineUrls,login, httpClientFactory)
         {
 
         }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Xml.Linq;
+using Traffk.Utility;
 
 namespace Traffk.Tableau.REST.RestRequests
 {
@@ -25,13 +26,8 @@ namespace Traffk.Tableau.REST.RestRequests
             }
         }
 
-        /// <summary>
-        /// Constructor: Call when we want to query the datasource on behalf of the currently logged in user
-        /// </summary>
-        /// <param name="onlineUrls"></param>
-        /// <param name="login"></param>
-        public DownloadDatasourceConnections(TableauServerUrls onlineUrls, TableauServerSignIn login, string datasourceId)
-            : base(onlineUrls, login)
+        public DownloadDatasourceConnections(TableauServerUrls onlineUrls, TableauServerSignIn login, string datasourceId, IHttpClientFactory httpClientFactory)
+            : base(onlineUrls, login, httpClientFactory)
         {
             DatasourceId = datasourceId;
         }

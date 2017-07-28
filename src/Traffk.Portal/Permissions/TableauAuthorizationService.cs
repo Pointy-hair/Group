@@ -4,6 +4,7 @@ using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Tableau;
 using Traffk.Tableau.REST;
 using Traffk.Tableau.REST.RestRequests;
+using Traffk.Utility;
 
 namespace Traffk.Portal.Permissions
 {
@@ -16,12 +17,13 @@ namespace Traffk.Portal.Permissions
 
         public TableauAuthorizationService(IOptions<TableauSignInOptions> options,
             IOptions<TableauAdminCredentials> adminSignInOptions,
-            TraffkTenantModelDbContext rdb)
+            TraffkTenantModelDbContext rdb,
+            IHttpClientFactory httpClientFactory)
         {
             TableauAdminCredentials = adminSignInOptions.Value;
                 //Instead of creating a new instance here, 
                 //should we have a subclass of TableauRestService called AdminTableauRestService that uses TableauAdminSignInOptions?
-            AdminTableauRestService = new TableauViewerService(options, TableauAdminCredentials);
+            AdminTableauRestService = new TableauViewerService(options, TableauAdminCredentials, httpClientFactory);
             Options = options.Value;
             Rdb = rdb;
         }

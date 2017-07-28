@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core.Caching;
 using Traffk.Tableau.REST.Models;
 using Traffk.Tableau.REST.RestRequests;
+using Traffk.Utility;
 
 namespace Traffk.Tableau.REST
 {
@@ -14,15 +15,19 @@ namespace Traffk.Tableau.REST
         protected readonly TableauServerUrls Urls;
         protected readonly ICacher Cacher;
         protected readonly ITableauUserCredentials TableauUserCredentials;
+        protected readonly IHttpClientFactory HttpClientFactory;
 
         protected TableauBaseService(IOptions<TableauSignInOptions> options,
             ITableauUserCredentials tableauUserCredentials,
+            IHttpClientFactory httpClientFactory,
             ICacher cacher = null)
         {
             TableauUserCredentials = tableauUserCredentials;
             Cacher = cacher ?? Cache.Passthrough;
             Options = options.Value;
             Urls = TableauServerUrls.FromContentUrl(Options.RestApiUrl, 10);
+            HttpClientFactory = httpClientFactory;
+
             Login = SignIn(Urls, TableauUserCredentials.UserName, TableauUserCredentials.Password);
         }
 
@@ -32,7 +37,7 @@ namespace Traffk.Tableau.REST
                 Cache.CreateKey(onlineUrls.CacheKey, userName, password),
                 key =>
                 {
-                    var l = new TableauServerSignIn(onlineUrls, userName, password, statusLog);
+                    var l = new TableauServerSignIn(onlineUrls, userName, password, HttpClientFactory, statusLog);
                     l.ExecuteRequest();
                     return new CacheEntry<TableauServerSignIn>(l, Options.LoginCacheTimeout);
                 }).Value;
@@ -40,14 +45,14 @@ namespace Traffk.Tableau.REST
 
         protected DownloadViewsForSite DownloadViewsForSite()
         {
-            var views = new DownloadViewsForSite(Urls, Login);
+            var views = new DownloadViewsForSite(Urls, Login, HttpClientFactory);
             views.ExecuteRequest();
             return views;
         }
 
         protected ICollection<SiteWorkbook> DownloadWorkbooksList()
         {
-            var workbooksList = new DownloadWorkbooksList(Urls, Login);
+            var workbooksList = new DownloadWorkbooksList(Urls, Login, HttpClientFactory);
             workbooksList.ExecuteRequest();
             return workbooksList.Workbooks;
         }

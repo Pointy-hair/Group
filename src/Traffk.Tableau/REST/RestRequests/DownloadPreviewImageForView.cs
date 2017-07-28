@@ -2,6 +2,7 @@
 using System.Net.Http;
 using RevolutionaryStuff.Core;
 using Traffk.Tableau.REST.Helpers;
+using Traffk.Utility;
 
 namespace Traffk.Tableau.REST.RestRequests
 {
@@ -15,8 +16,8 @@ namespace Traffk.Tableau.REST.RestRequests
         private readonly string xmlNamespace;
         private byte[] _previewImage;
 
-        public DownloadPreviewImageForView(TableauServerUrls onlineUrls, TableauServerSignIn login)
-            : base(login)
+        public DownloadPreviewImageForView(TableauServerUrls onlineUrls, TableauServerSignIn login, IHttpClientFactory httpClientFactory)
+            : base(login, httpClientFactory)
         {
             urls = onlineUrls;
             var nsManager = XmlHelper.CreateTableauXmlNamespaceManager("iwsOnline", "http://tableau.com/api");

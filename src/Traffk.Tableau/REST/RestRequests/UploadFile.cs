@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Xml.Linq;
 using Traffk.Tableau.REST.Helpers;
+using Traffk.Utility;
 
 namespace Traffk.Tableau.REST.RestRequests
 {
@@ -28,9 +29,10 @@ namespace Traffk.Tableau.REST.RestRequests
             TableauServerUrls onlineUrls, 
             TableauServerSignIn login,
             string localUploadPath,
+            IHttpClientFactory httpClientFactory,
             int uploadChunkSize = 8000000,
             int uploadChunkDelay = 0)
-            : base(onlineUrls, login)
+            : base(onlineUrls, login, httpClientFactory)
         {
             LocalUploadPath = localUploadPath;
             UploadChunkSize = uploadChunkSize;

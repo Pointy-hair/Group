@@ -2,14 +2,15 @@
 using System.Text;
 using System.Xml;
 using Traffk.Tableau.REST.Models;
+using Traffk.Utility;
 
 namespace Traffk.Tableau.REST.RestRequests
 {
     public class UpdateDatasourceConnection : TableauServerSignedInRequestBase
     {
         private readonly string TableauOperationDescription = "update datasource";
-        public UpdateDatasourceConnection(TableauServerUrls onlineUrls, TableauServerSignIn login)
-            : base(onlineUrls, login)
+        public UpdateDatasourceConnection(TableauServerUrls onlineUrls, TableauServerSignIn login, IHttpClientFactory httpClientFactory)
+            : base(onlineUrls, login, httpClientFactory)
         {
 
         }

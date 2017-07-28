@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core.Caching;
 using Traffk.Tableau.REST.RestRequests;
+using Traffk.Utility;
 
 namespace Traffk.Tableau.REST
 {
@@ -12,23 +13,20 @@ namespace Traffk.Tableau.REST
     {
         TimeSpan ITableauViewerService.ReportIndexCacheTimeout => Options.ReportIndexCacheTimeout;
         
-        #region Constructors
-
         public TableauViewerService(
             IOptions<TableauSignInOptions> options,
             ITableauUserCredentials tableauUserCredentials,
-            ICacher cacher=null) : base(options, tableauUserCredentials, cacher)
+            IHttpClientFactory httpClientFactory,
+            ICacher cacher=null) : base(options, tableauUserCredentials, httpClientFactory, cacher)
         {
 
         }
-
-        #endregion
 
         DownloadViewsForSite ITableauViewerService.DownloadViewsForSite() => base.DownloadViewsForSite();
 
         byte[] ITableauViewerService.DownloadPreviewImageForView(string workbookId, string viewId)
         {
-            var downloadPreviewImage = new DownloadPreviewImageForView(Urls, Login);
+            var downloadPreviewImage = new DownloadPreviewImageForView(Urls, Login, HttpClientFactory);
             downloadPreviewImage.ExecuteRequest(workbookId, viewId);
             return downloadPreviewImage.PreviewImage;
         }

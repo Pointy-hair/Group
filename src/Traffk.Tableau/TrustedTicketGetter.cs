@@ -6,6 +6,7 @@ using RevolutionaryStuff.Core;
 using Traffk.Tableau.REST.RestRequests;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Traffk.Utility;
 
 namespace Traffk.Tableau
 {
@@ -13,14 +14,17 @@ namespace Traffk.Tableau
     {
         private readonly TableauSignInOptions TableauSignInOptions;
         private readonly ITableauUserCredentials TableauUserCredentials;
+        private readonly IHttpClientFactory HttpClientFactory;
 
         public TrustedTicketGetter(IOptions<TableauSignInOptions> tableauSignInOptions, 
             ITableauUserCredentials tableauUserCredentials,
-            ITableauTenantFinder tableauTenantFinder)
+            ITableauTenantFinder tableauTenantFinder,
+            IHttpClientFactory httpClientFactory)
         {
             Requires.NonNull(tableauSignInOptions, nameof(tableauSignInOptions));
             Requires.NonNull(tableauUserCredentials, nameof(tableauUserCredentials));
-            
+
+            HttpClientFactory = httpClientFactory;
             TableauSignInOptions = tableauSignInOptions.Value;
             TableauUserCredentials = tableauUserCredentials;
             var tenantId = tableauTenantFinder.GetTenantIdAsync().ExecuteSynchronously();
@@ -47,7 +51,7 @@ namespace Traffk.Tableau
         {
             if (Res == null)
             {
-                using (var client = new HttpClient())
+                using (var client = HttpClientFactory.Create())
                 {
                     var uri = new Uri(TableauSignInOptions.TrustedUrl);
 

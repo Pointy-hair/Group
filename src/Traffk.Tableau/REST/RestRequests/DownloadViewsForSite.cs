@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Xml;
 using System.Xml.Linq;
 using Traffk.Tableau.REST.Models;
+using Traffk.Utility;
 
 namespace Traffk.Tableau.REST.RestRequests
 {
@@ -14,8 +15,8 @@ namespace Traffk.Tableau.REST.RestRequests
 
         public IEnumerable<TableauReportVisual> Views;
 
-        public DownloadViewsForSite(TableauServerUrls onlineUrls, TableauServerSignIn login)
-            : base(login)
+        public DownloadViewsForSite(TableauServerUrls onlineUrls, TableauServerSignIn login, IHttpClientFactory httpClientFactory)
+            : base(login, httpClientFactory)
         {
             urls = onlineUrls;
             var nsManager = XmlHelper.CreateTableauXmlNamespaceManager("iwsOnline", "http://tableau.com/api");

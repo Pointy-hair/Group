@@ -5,17 +5,21 @@ using RevolutionaryStuff.Core;
 using Traffk.Tableau.REST.Helpers;
 using Traffk.Tableau.REST.Models;
 using Traffk.Tableau.REST.RestRequests;
+using Traffk.Utility;
 
 namespace Traffk.Tableau.REST
 {
     public class TableauAdminService : TableauBaseService, ITableauAdminService
     {
         private readonly TableauAdminCredentials TableauAdminCredentials;
+        private readonly IHttpClientFactory HttpClientFactory;
 
         public TableauAdminService(IOptions<TableauSignInOptions> options,
-            IOptions<TableauAdminCredentials> adminCredentials) : base(options, adminCredentials.Value)
+            IOptions<TableauAdminCredentials> adminCredentials,
+            IHttpClientFactory httpClientFactory) : base(options, adminCredentials.Value, httpClientFactory)
         {
             TableauAdminCredentials = adminCredentials.Value;
+            HttpClientFactory = httpClientFactory;
         }
 
         SiteInfo ITableauAdminService.CreateTableauTenant(CreateTableauTenantRequest request)
@@ -37,7 +41,7 @@ namespace Traffk.Tableau.REST
             base.Options.UpdateForTenant(request.DestTableauTenantId);
             var destinationSiteSignInOptions = ConfigurationHelpers.CreateOptions(Options);
             var adminCredentialOptions = ConfigurationHelpers.CreateOptions(TableauAdminCredentials);
-            var destinationAdminService = new TableauAdminService(destinationSiteSignInOptions, adminCredentialOptions);
+            var destinationAdminService = new TableauAdminService(destinationSiteSignInOptions, adminCredentialOptions, HttpClientFactory);
             var destinationSiteInfo = destinationAdminService.GetSiteInfo();
             
             var sourceAdminService = this; //not normal convention, but using this to make it clearer to future devs
@@ -69,26 +73,26 @@ namespace Traffk.Tableau.REST
 
         void ITableauAdminService.AddUserToSite(string siteId, string userName)
         {
-            var addUserToSite = new AddUserToSite(Urls, Login);
+            var addUserToSite = new AddUserToSite(Urls, Login, HttpClientFactory);
             addUserToSite.ExecuteRequest(siteId, userName);
         }
 
         void ITableauAdminService.RemoveUserFromSite(SiteUser userToRemove)
         {
-            var removeUserRequest = new RemoveUserFromSite(Urls, Login);
+            var removeUserRequest = new RemoveUserFromSite(Urls, Login, HttpClientFactory);
             removeUserRequest.ExecuteRequest(userToRemove);
         }
 
         protected SiteInfo CreateSite(string tenantName)
         {
-            var addSite = new CreateSite(Urls, Login);
+            var addSite = new CreateSite(Urls, Login, HttpClientFactory);
             var siteInfo = addSite.ExecuteRequest(tenantName);
             return siteInfo;
         }
 
         protected SiteInfo GetSiteInfo()
         {
-            var getSiteInfoRequest = new DownloadSiteInfo(Urls, Login);
+            var getSiteInfoRequest = new DownloadSiteInfo(Urls, Login, HttpClientFactory);
             return getSiteInfoRequest.ExecuteRequest();
         }
 
@@ -96,7 +100,7 @@ namespace Traffk.Tableau.REST
             string localSavePath,
             bool generateInfoFile)
         {
-            var downloadWorkbooksRequest = new DownloadWorkbooks(Urls, Login, workbooksToDownload, localSavePath, generateInfoFile);
+            var downloadWorkbooksRequest = new DownloadWorkbooks(Urls, Login, workbooksToDownload, localSavePath, HttpClientFactory, generateInfoFile);
             var downloadedWorkbooks = downloadWorkbooksRequest.ExecuteRequest();
             return downloadedWorkbooks;
         }
@@ -108,29 +112,29 @@ namespace Traffk.Tableau.REST
             {
                 credentialManager.AddWorkbookCredential(Path.GetFileName(thisFilePath), projectName, datasourceUsername, datasourcePassword, isEmbedded);
             }
-            var uploadWorkbooksRequest = new UploadWorkbooks(Urls, Login, credentialManager, path);
+            var uploadWorkbooksRequest = new UploadWorkbooks(Urls, Login, credentialManager, path, HttpClientFactory);
             uploadWorkbooksRequest.ExecuteRequest();
         }
 
         protected ICollection<SiteDatasource> DownloadDatasourceList()
         {
-            var downloadDataSourceListRequest = new DownloadDatasourcesList(Urls, Login);
+            var downloadDataSourceListRequest = new DownloadDatasourcesList(Urls, Login, HttpClientFactory);
             downloadDataSourceListRequest.ExecuteRequest();
             return downloadDataSourceListRequest.Datasources;
         }
 
         protected ICollection<SiteConnection> DownloadConnectionsForDatasource(string datasourceId)
         {
-            var downloadConnectionRequest = new DownloadDatasourceConnections(Urls, Login, datasourceId);
+            var downloadConnectionRequest = new DownloadDatasourceConnections(Urls, Login, datasourceId, HttpClientFactory);
             downloadConnectionRequest.ExecuteRequest();
             return downloadConnectionRequest.Connections;
         }
 
         protected void DownloadDatasourceFiles(IEnumerable<SiteDatasource> datasources, string savePath)
         {
-            var projectRequest = new DownloadProjectsList(Urls, Login);
+            var projectRequest = new DownloadProjectsList(Urls, Login, HttpClientFactory);
             projectRequest.ExecuteRequest();
-            var downloadDatasources = new DownloadDatasources(Urls, Login, datasources, savePath, projectRequest, false, new KeyedLookup<SiteUser>(new List<SiteUser>()));
+            var downloadDatasources = new DownloadDatasources(Urls, Login, datasources, savePath, projectRequest, false, new KeyedLookup<SiteUser>(new List<SiteUser>()), HttpClientFactory);
             downloadDatasources.ExecuteRequest();
         }
 
@@ -142,7 +146,7 @@ namespace Traffk.Tableau.REST
                 credentialManager.AddDatasourceCredential(Path.GetFileName(thisFilePath), projectName, datasourceUsername, datasourcePassword, isEmbedded);
             }
 
-            var uploadRequest = new UploadDatasources(Urls, Login, credentialManager, path, false, new List<SiteUser>());
+            var uploadRequest = new UploadDatasources(Urls, Login, credentialManager, path, false, new List<SiteUser>(), HttpClientFactory);
             uploadRequest.ExecuteRequest();
             return uploadRequest.UploadeDatasources;
         }

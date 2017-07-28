@@ -1,6 +1,7 @@
 ﻿using System.Net.Http;
 using System.Text;
 using System.Xml;
+using Traffk.Utility;
 
 namespace Traffk.Tableau.REST.RestRequests
 {
@@ -14,8 +15,8 @@ namespace Traffk.Tableau.REST.RestRequests
             Viewer
         }
 
-        public AddUserToSite(TableauServerUrls onlineUrls, TableauServerSignIn login)
-            : base(onlineUrls, login)
+        public AddUserToSite(TableauServerUrls onlineUrls, TableauServerSignIn login, IHttpClientFactory httpClientFactory)
+            : base(onlineUrls, login, httpClientFactory)
         {
 
         }

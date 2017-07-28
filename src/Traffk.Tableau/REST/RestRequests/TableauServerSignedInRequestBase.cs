@@ -1,10 +1,13 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using RevolutionaryStuff.Core;
 using Traffk.Tableau.REST.Helpers;
+using Traffk.Utility;
+using TableauServerRequestBase = Traffk.Tableau.REST.RestRequests.TableauServerRequestBase;
 
 namespace Traffk.Tableau.REST.RestRequests
 {
@@ -19,16 +22,14 @@ namespace Traffk.Tableau.REST.RestRequests
         protected readonly TableauServerUrls Urls;
         protected readonly string XmlNamespace;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="login"></param>
-        protected TableauServerSignedInRequestBase(TableauServerSignIn login)
+        protected TableauServerSignedInRequestBase(TableauServerSignIn login, IHttpClientFactory httpClientFactory)
+            : base(httpClientFactory)
         {
             Login = login;
         }
 
-        protected TableauServerSignedInRequestBase(TableauServerUrls urls, TableauServerSignIn login)
+        protected TableauServerSignedInRequestBase(TableauServerUrls urls, TableauServerSignIn login, IHttpClientFactory httpClientFactory)
+            : base(httpClientFactory)
         {
             Login = login;
             Urls = urls;
@@ -106,22 +107,49 @@ namespace Traffk.Tableau.REST.RestRequests
             //Strip off an extension if its there
             baseFilename = FileIOHelper.GenerateWindowsSafeFilename(baseFilename);
 
-            var webClient = this.CreateLoggedInWebClient();
+            var webClient = CreateLoggedInWebClient();
+
             using (webClient)
             {
                 //Choose a temp file name to download to
                 var starterName = System.IO.Path.Combine(downloadToDirectory, baseFilename + ".tmp");
                 Login.StatusLog.AddStatus("Attempting file download: " + urlDownload, -10);
-                var response = webClient.DownloadFile(urlDownload, starterName); //Download the file
+                
+                using (HttpResponseMessage response = webClient.GetAsync(urlDownload, HttpCompletionOption.ResponseHeadersRead).Result)
+                {
+                    response.EnsureSuccessStatusCode();
 
-                //Look up the correct file extension based on the content type downloaded
-                var contentType = response.Content.Headers.ContentType.ToString();
-                var fileExtension = downloadTypeMapper.GetFileExtension(contentType);
-                var finishName = System.IO.Path.Combine(downloadToDirectory, baseFilename + fileExtension);
+                    using (
+                        Stream contentStream = response.Content.ReadAsStreamAsync().Result,
+                            fileStream = new FileStream(starterName, FileMode.Create, FileAccess.Write, FileShare.None,
+                                8192, true))
+                    {
+                        var buffer = new byte[8192];
+                        var isMoreToRead = true;
 
-                //Rename the downloaded file
-                System.IO.File.Move(starterName, finishName);
-                return finishName;
+                        do
+                        {
+                            var read = contentStream.ReadAsync(buffer, 0, buffer.Length).Result;
+                            if (read == 0)
+                            {
+                                isMoreToRead = false;
+                            }
+                            else
+                            {
+                                fileStream.WriteAsync(buffer, 0, read);
+                            }
+                        } while (isMoreToRead);
+                    }
+
+                    //Look up the correct file extension based on the content type downloaded
+                    var contentType = response.Content.Headers.ContentType.ToString();
+                    var fileExtension = downloadTypeMapper.GetFileExtension(contentType);
+                    var finishName = System.IO.Path.Combine(downloadToDirectory, baseFilename + fileExtension);
+
+                    //Rename the downloaded file
+                    System.IO.File.Move(starterName, finishName);
+                    return finishName;
+                }
             }
         }
 
@@ -129,14 +157,15 @@ namespace Traffk.Tableau.REST.RestRequests
         /// Web client class used for downloads from Tableau Server
         /// </summary>
         /// <returns></returns>
-        protected TableauServerWebClient CreateLoggedInWebClient()
+        protected HttpClient CreateLoggedInWebClient()
         {
-            Login.StatusLog.AddStatus("Web client being created", -10);
+            var loggedInClient = base.HttpClientFactory.Create();
+            loggedInClient.Timeout = TimeSpan.FromMilliseconds(DefaultLongRequestTimeOutMs);
 
-            var webClient = new TableauServerWebClient(); //Create a WebClient object with a large TimeOut value so that larger content can be downloaded
-            AppendLoggedInHeadersForClient(webClient);
-            return webClient;
+            AppendLoggedInHeadersForClient(loggedInClient);
+            return loggedInClient;
         }
+
 
         protected HttpResponseMessage CreateAndSendMimeLoggedInRequest(string url, HttpMethod method, MimeWriterBase mimeToSend, int? requestTimeout = null)
         {

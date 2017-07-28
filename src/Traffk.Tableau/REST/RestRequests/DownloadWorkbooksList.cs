@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Xml.Linq;
 using Traffk.Tableau.REST.Models;
+using Traffk.Utility;
 
 namespace Traffk.Tableau.REST.RestRequests
 {
@@ -12,52 +13,39 @@ namespace Traffk.Tableau.REST.RestRequests
     /// </summary>
     public class DownloadWorkbooksList : TableauServerSignedInRequestBase
     {
-        /// <summary>
-        /// URL manager
-        /// </summary>
         private readonly TableauServerUrls urls;
-        private readonly string userId;
+        private readonly string UserId;
         private readonly string xmlNamespace;
 
 
         /// <summary>
         /// Workbooks we've parsed from server results
         /// </summary>
-        private List<SiteWorkbook> _workbooks;
+        private List<SiteWorkbook> Workbooks_p;
         public ICollection<SiteWorkbook> Workbooks
         {
             get
             {
-                var wb = _workbooks;
+                var wb = Workbooks_p;
                 if (wb == null) return null;
                 return wb.AsReadOnly();
             }
         }
 
-        /// <summary>
-        /// Constructor: Call when we want to query the workbooks on behalf of the currently logged in user
-        /// </summary>
-        /// <param name="urls"></param>
-        /// <param name="login"></param>
-        public DownloadWorkbooksList(TableauServerUrls onlineUrls, TableauServerSignIn login)
-            : base(login)
+        public DownloadWorkbooksList(TableauServerUrls onlineUrls, TableauServerSignIn login, IHttpClientFactory httpClientFactory)
+            : base(login, httpClientFactory)
         {
             urls = onlineUrls;
-            userId = login.UserId;
+            UserId = login.UserId;
             var nsManager = XmlHelper.CreateTableauXmlNamespaceManager("iwsOnline", "http://tableau.com/api");
             xmlNamespace = nsManager.LookupNamespace("iwsOnline");
         }
 
-        /// <summary>
-        /// Constructor: Call when we want to query the Workbooks on behalf of an explicitly specified user
-        /// </summary>
-        /// <param name="onlineUrls"></param>
-        /// <param name="login"></param>
-        /// <param name="user"></param>
-        public DownloadWorkbooksList(TableauServerUrls onlineUrls, TableauServerSignIn login, string user) : base(login)
+        public DownloadWorkbooksList(TableauServerUrls onlineUrls, TableauServerSignIn login, string user, IHttpClientFactory httpClientFactory) 
+            : base(login, httpClientFactory)
         {
             urls = onlineUrls;
-            this.userId = user;
+            this.UserId = user;
         }
 
         /// <summary>
@@ -67,7 +55,7 @@ namespace Traffk.Tableau.REST.RestRequests
         public void ExecuteRequest()
         {
             //Sanity check
-            if(string.IsNullOrWhiteSpace(userId))
+            if(string.IsNullOrWhiteSpace(UserId))
             {
                 Login.StatusLog.AddError("User ID required to query workbooks");            
             }
@@ -80,7 +68,7 @@ namespace Traffk.Tableau.REST.RestRequests
                 ExecuteRequest_ForPage(onlineWorkbooks, thisPage, out numberPages);
             }
 
-            _workbooks = onlineWorkbooks;
+            Workbooks_p = onlineWorkbooks;
         }
 
         /// <summary>

@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Primitives;
-using RevolutionaryStuff.Core;
 using Traffk.Utility;
 
 namespace Traffk.Bal.Services
@@ -21,36 +18,21 @@ namespace Traffk.Bal.Services
 
         private readonly IOptions<Config> ConfigOptions;
 
-        public HttpClientFactory(IOptions<Config> configOptions, 
-             ICorrelationIdFactory correlationIdFactory,
-             IHttpContextAccessor httpContextAccessor)
+        public HttpClientFactory(IOptions<Config> configOptions, ICorrelationIdFinder correlationIdFinder = null)
         {
             ConfigOptions = configOptions;
 
-            var httpContext = httpContextAccessor.HttpContext;
-
-            if (httpContext.Request.Headers.TryGetValue(correlationIdFactory.Key, out StringValues requestCorrelationId))
+            if (correlationIdFinder != null)
             {
-                //CorrelationId already exists in HttpContext, which supersedes Client
-                httpContextAccessor.HttpContext.TraceIdentifier = requestCorrelationId;
-            }
-
-            if (StringValues.IsNullOrEmpty(requestCorrelationId))
-            {
-                //Create a new correlationId using the factory
-                var correlationId = correlationIdFactory.Create();
+                var correlationId = correlationIdFinder.FindOrCreate();
 
                 //Clear out existing correlationId
-                ConfigOptions.Value.HeaderValueByHeaderName.Remove(correlationIdFactory.Key);
+                ConfigOptions.Value.HeaderValueByHeaderName.Remove(correlationIdFinder.Key);
 
                 //Add it to the HttpClient
                 ConfigOptions.Value.HeaderValueByHeaderName.
-                    Add(new KeyValuePair<string, string>(correlationIdFactory.Key, correlationId));
-                
-                //Set the context trace identifier to the correlationId
-                httpContextAccessor.HttpContext.TraceIdentifier = correlationId;
-            }
-            
+                    Add(new KeyValuePair<string, string>(correlationIdFinder.Key, correlationId));
+            }  
         }
 
         HttpClient IHttpClientFactory.Create(HttpMessageHandler handler, bool disposeHandler)

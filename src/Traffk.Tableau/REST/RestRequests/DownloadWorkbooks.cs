@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Traffk.Tableau.REST.Helpers;
 using Traffk.Tableau.REST.Models;
+using Traffk.Utility;
 
 namespace Traffk.Tableau.REST.RestRequests
 {
@@ -19,9 +20,10 @@ namespace Traffk.Tableau.REST.RestRequests
             TableauServerUrls onlineUrls, 
             TableauServerSignIn login,
             IEnumerable<SiteWorkbook> workbooksToDownload, 
-            string localSavePath,
+            string localSavePath, 
+            IHttpClientFactory httpClientFactory,
             bool generateInfoFile = false)
-            : base(onlineUrls, login)
+            : base(onlineUrls, login, httpClientFactory)
         {
             WorkbooksToDownload = workbooksToDownload;
             LocalSavePath = localSavePath;

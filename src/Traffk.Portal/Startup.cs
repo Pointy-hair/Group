@@ -36,6 +36,7 @@ using Traffk.Bal.Settings;
 using Traffk.Orchestra;
 using Traffk.Portal.Controllers.Api;
 using Traffk.Portal.Permissions;
+using Traffk.Portal.Services;
 using Traffk.Tableau;
 using Traffk.Tableau.REST;
 using Traffk.Tableau.REST.RestRequests;
@@ -217,6 +218,7 @@ namespace TraffkPortal
             services.Configure<HttpClientFactory.Config>(Configuration.GetSection(HttpClientFactory.Config.ConfigSectionName));
             services.AddScoped<IHttpClientFactory, HttpClientFactory>();
             services.AddScoped<ICorrelationIdFactory, CorrelationIdFactory>();
+            services.AddScoped<ICorrelationIdFinder, CorrelationIdFinder>();
 
             services.AddScoped<ICacher, TraffkCache>();
 

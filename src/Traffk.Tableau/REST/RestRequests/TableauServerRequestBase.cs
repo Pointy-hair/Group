@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using RevolutionaryStuff.Core;
 using Traffk.Tableau.REST.Helpers;
+using Traffk.Utility;
 
 namespace Traffk.Tableau.REST.RestRequests
 {
@@ -15,6 +16,13 @@ namespace Traffk.Tableau.REST.RestRequests
     /// </summary>
     public abstract class TableauServerRequestBase
     {
+        protected readonly IHttpClientFactory HttpClientFactory;
+        public const int DefaultLongRequestTimeOutMs = 15 * 60 * 1000;  //15 minutes * 60 sec/minute * 1000 ms/sec
+
+        protected TableauServerRequestBase(IHttpClientFactory httpClientFactory)
+        {
+            HttpClientFactory = httpClientFactory;
+        }
 
         /// <summary>
         /// Sends the body text up to the server
@@ -50,7 +58,7 @@ namespace Traffk.Tableau.REST.RestRequests
                 Requires.NonNull(request.RequestUri, nameof(request.RequestUri));
                 Requires.NonNull(request.Method, nameof(request.Method));
 
-                var httpClient = new HttpClient();
+                var httpClient = HttpClientFactory.Create();
                 var response = httpClient.SendAsync(request);
                 return await response;
             }
@@ -67,7 +75,8 @@ namespace Traffk.Tableau.REST.RestRequests
                 Requires.NonNull(request.RequestUri, nameof(request.RequestUri));
                 Requires.NonNull(request.Method, nameof(request.Method));
 
-                var httpClient = new TableauServerWebClient();
+                var httpClient = HttpClientFactory.Create();
+                httpClient.Timeout = TimeSpan.FromMilliseconds(DefaultLongRequestTimeOutMs);
                 var response = httpClient.SendAsync(request);
                 return await response;
             }

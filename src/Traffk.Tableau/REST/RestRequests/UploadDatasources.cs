@@ -9,6 +9,7 @@ using System.Xml;
 using System.Xml.Linq;
 using Traffk.Tableau.REST.Helpers;
 using Traffk.Tableau.REST.Models;
+using Traffk.Utility;
 
 namespace Traffk.Tableau.REST.RestRequests
 {
@@ -19,7 +20,9 @@ namespace Traffk.Tableau.REST.RestRequests
     {
         private readonly string LocalUploadPath;
         private readonly int UploadChunkSizeBytes;  //Max size of upload chunks
-        private readonly int UploadChunkDelaySeconds; //Delay afte reach chunk
+        private readonly int UploadChunkDelaySeconds; //Delay after reach chunk
+        private readonly IHttpClientFactory HttpClientFactory;
+
         /// <summary>
         ///We will use this to find any stored credentials we need to upload 
         /// </summary>
@@ -40,12 +43,6 @@ namespace Traffk.Tableau.REST.RestRequests
         public int UploadSuccesses { get; private set; }
         public int UploadFailures { get; private set; }
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="onlineUrls"></param>
-        /// <param name="login"></param>
-        /// <param name="localUploadPath"></param>
         public UploadDatasources(
             TableauServerUrls onlineUrls, 
             TableauServerSignIn login,
@@ -53,9 +50,10 @@ namespace Traffk.Tableau.REST.RestRequests
             string localUploadPath,
             bool attemptOwnershipAssignment,
             IEnumerable<SiteUser> siteUsers,
-            int uploadChunkSizeBytes = TableauServerUrls.UploadFileChunkSize,
+            IHttpClientFactory httpClientFactory,
+            int uploadChunkSizeBytes = TableauServerUrls.UploadFileChunkSize, 
             int uploadChunkDelaySeconds = 0)
-            : base(onlineUrls, login)
+            : base(onlineUrls, login, httpClientFactory)
         {
             System.Diagnostics.Debug.Assert(uploadChunkSizeBytes > 0, "Chunck size must be positive");
 
@@ -74,6 +72,8 @@ namespace Traffk.Tableau.REST.RestRequests
 
             UploadSuccesses = 0;
             UploadFailures = 0;
+
+            HttpClientFactory = httpClientFactory;
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace Traffk.Tableau.REST.RestRequests
         public void ExecuteRequest()
         {
             //Helper object to track project Ids and create projects as needed
-            var projectListHelper = new ProjectFindCreateHelper(Urls, Login);
+            var projectListHelper = new ProjectFindCreateHelper(Urls, Login, HttpClientFactory);
 
             var statusLog = Login.StatusLog;
 
@@ -219,7 +219,7 @@ namespace Traffk.Tableau.REST.RestRequests
             string uploadSessionId;
             try
             {
-                var fileUploader = new UploadFile(Urls, Login, localFilePath, UploadChunkSizeBytes, UploadChunkDelaySeconds);
+                var fileUploader = new UploadFile(Urls, Login, localFilePath, HttpClientFactory, UploadChunkSizeBytes, UploadChunkDelaySeconds);
                 uploadSessionId = fileUploader.ExecuteRequest();
             }
             catch (Exception exFileUpload)

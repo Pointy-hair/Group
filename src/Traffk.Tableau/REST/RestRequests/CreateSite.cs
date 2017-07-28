@@ -5,6 +5,7 @@ using System.Xml;
 using System.Xml.Linq;
 using RevolutionaryStuff.Core;
 using Traffk.Tableau.REST.Models;
+using Traffk.Utility;
 
 namespace Traffk.Tableau.REST.RestRequests
 {
@@ -18,8 +19,8 @@ namespace Traffk.Tableau.REST.RestRequests
             ContentAndUsers
         }
 
-        public CreateSite(TableauServerUrls onlineUrls, TableauServerSignIn login)
-            : base(onlineUrls, login)
+        public CreateSite(TableauServerUrls onlineUrls, TableauServerSignIn login, IHttpClientFactory httpClientFactory)
+            : base(onlineUrls, login, httpClientFactory)
         {
 
         }
