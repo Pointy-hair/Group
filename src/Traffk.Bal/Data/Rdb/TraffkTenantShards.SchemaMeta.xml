@@ -383,6 +383,8 @@
       <Args>
         <Arg position="1" mode="IN" name="@hostName" sqlType="nvarchar" maxLen="1024" />
         <Arg position="2" mode="IN" name="@appType" sqlType="varchar" maxLen="80" />
+        <Arg position="3" mode="IN" name="@loginDomain" sqlType="varchar" maxLen="80" />
+        <Arg position="4" mode="IN" name="@tenantType" sqlType="varchar" maxLen="80" />
       </Args>
     </Sproc>
     <Sproc schema="dbo" name="TenantFindByTenantId">

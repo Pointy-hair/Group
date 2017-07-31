@@ -54,6 +54,7 @@ create table DataSources
 	RowStatus dbo.RowStatus not null default '1',
 	TenantId int null,
 	CreatedAtUtc datetime not null default (getutcdate()),
+	DataSourceName dbo.DeveloperName null,
 	DataSourceSettings dbo.JsonObject -- 
 )
 

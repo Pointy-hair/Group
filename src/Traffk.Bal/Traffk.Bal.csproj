@@ -55,6 +55,14 @@
     <None Update="Data\Rdb\TraffkTenantShardManager.SchemaMeta.xml">
       <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
     </None>
+    <None Update="Data\Rdb\ReferenceData.SchemaMeta.xml">
+      <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
+    </None>
+    <Compile Update="Data\Rdb\ReferenceData.DbContext.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
+    </Compile>
     <Compile Update="Data\Rdb\TraffkTenantShardManager.DbContext.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -123,7 +131,7 @@
     <PackageReference Include="Microsoft.Azure.KeyVault" Version="2.3.2" />
     <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="3.14.2" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
-    <PackageReference Include="RevolutionaryStuff.Core" Version="1.0.20" />
+    <PackageReference Include="RevolutionaryStuff.Core" Version="1.0.21" />
     <PackageReference Include="Serilog" Version="2.5.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="1.4.0" />
     <PackageReference Include="Serilog.Sinks.AzureTableStorage" Version="4.0.0" />

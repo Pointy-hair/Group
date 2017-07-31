@@ -178,6 +178,7 @@
             <Property name="JsonSettingsClass" value="Bal.Settings.DataSourceSettings" />
           </Properties>
         </Column>
+        <Column name="DataSourceName" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="80" />
       </Columns>
       <Collections>
         <Collection schema="dbo" table="DataSourceFetches" column="DataSourceId" collectionType="actual" />

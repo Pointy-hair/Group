@@ -2,6 +2,7 @@
 using System.Linq;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
+using Traffk.Utility;
 
 namespace Traffk.Bal.Caches
 {
@@ -18,23 +19,18 @@ namespace Traffk.Bal.Caches
 
         CacheEntry<TVal> ICacher.FindOrCreate<TVal>(string key, Func<string, CacheEntry<TVal>> creator, bool forceCreate, TimeSpan? timeout)
         {
-            try
+            var isSerializable = true;
+            var isSerializableAttributes = typeof(TVal).GetCustomAttributes<IsSerializableAttribute>().ToList();
+            if (isSerializableAttributes.Any())
             {
-                var isSerializable = true;
-                var isSerializableAttributes = typeof(TVal).GetCustomAttributes<IsSerializableAttribute>().ToList();
-                if (isSerializableAttributes.Any())
-                {
-                    isSerializable = isSerializableAttributes[0].IsSerializable;
-                }
-
-                if (isSerializable)
-                {
-                    return RedisCache.FindOrCreate<TVal>(key, creator, forceCreate, timeout);
-                }
-
-                return InnerDataCacher.FindOrCreate<TVal>(key, creator, forceCreate, timeout);
+                isSerializable = isSerializableAttributes[0].IsSerializable;
             }
-            catch (Exception e)
+
+            if (isSerializable)
+            {
+                return RedisCache.FindOrCreate<TVal>(key, creator, forceCreate, timeout);
+            }
+            else
             {
                 return InnerDataCacher.FindOrCreate<TVal>(key, creator, forceCreate, timeout);
             }

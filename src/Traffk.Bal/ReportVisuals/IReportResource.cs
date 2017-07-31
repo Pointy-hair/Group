@@ -1,4 +1,4 @@
-﻿using RevolutionaryStuff.Core.Caching;
+﻿using Traffk.Utility;
 
 namespace Traffk.Bal.ReportVisuals
 {

@@ -1,15 +1,22 @@
 ﻿CREATE proc [dbo].[AppFindByHostname]
 	@hostName nvarchar(1024),
-	@appType dbo.developerName=null
+	@appType dbo.developerName=null,
+	@loginDomain dbo.developerName=null,
+	@tenantType dbo.developerName=null
 	as
 begin
 
 	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+	set nocount on
 
 	exec db.PrintNow 
-		'AppFindByHostname hostName=[{s0}] appType={s1}', 
+		'AppFindByHostname hostName=[{s0}] appType={s1} loginDomain={s2} tenantType={s3}', 
 		@s0=@hostName,
-		@s1=@appType
+		@s1=@appType,
+		@s2=@loginDomain,
+		@s3=@tenantType;
+
+	set @loginDomain = coalesce(@loginDomain, ')(*&^%$#@#$%^&*&^%$#@#$%^&*');
 
 	select a.AppId, a.TenantId, t.HostDatabaseName, d.Hostname ActualHostname, JSON_VALUE(a.appsettings, '$.Hosts.HostInfos[0].Hostname') as PreferredHostname, LoginDomain
 	from 
@@ -21,7 +28,14 @@ begin
 		openjson(a.appsettings, N'$.Hosts.HostInfos') with (Hostname nvarchar(1024)) as d
 	where
 		(a.AppType=@appType or @appType is null) and
-		(d.Hostname=@hostName)
+		(
+			t.LoginDomain=@loginDomain or
+			d.Hostname=@hostName
+		) and
+		(t.tenantType=@tenantType or @tenantType is null)
+	order by
+		case when t.LoginDomain=@loginDomain then 0 else 1 end,
+		t.TenantId
 		
 end
 

@@ -1,0 +1,996 @@
+﻿<SchemaMeta>
+  <Tables>
+    <Table schema="CmsGov" name="BerensonEggersTypeOfServices" tableType="BASE TABLE">
+      <Columns>
+        <Column name="BetosId" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="BetosCode" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="5" />
+        <Column name="Category" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" />
+        <Column name="SubCategory" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="200" />
+      </Columns>
+    </Table>
+    <Table schema="CmsGov" name="HealthcareCommonProcedureCodingSystemCodes" tableType="BASE TABLE">
+      <Columns>
+        <Column name="HcpcsId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="RecordIdentificationCode" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="11" />
+        <Column name="HcpcsCode" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="5" />
+        <Column name="SequenceNumber" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="IsPrimary" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" default="((0))" />
+        <Column name="ShortDescription" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="255" />
+        <Column name="LongDescription" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="-1" />
+        <Column name="PricingIndicatorCodeId" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="CmsGov" refTable="PricingIndicatorCodes" />
+        <Column name="MogId" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="CmsGov" refTable="MedicareOutpatientGroupsPaymentGroupCodes" />
+        <Column name="LabCertificationCodeId" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="CmsGov" refTable="LabCertificationCodes" />
+      </Columns>
+    </Table>
+    <Table schema="CmsGov" name="HealthCareProviderTaxonomyCodeCrosswalk" tableType="BASE TABLE">
+      <Columns>
+        <Column name="HealthCareProviderTaxonomyCodeCrosswalkId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="MedicareSpecialtyCodeId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="CmsGov" refTable="MedicareSpecialtyCodes" />
+        <Column name="HealthCareProviderTaxonomyCode" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="10" />
+      </Columns>
+    </Table>
+    <Table schema="CmsGov" name="LabCertificationCodes" tableType="BASE TABLE">
+      <Columns>
+        <Column name="LabCertificationCodeId" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="ParentLabCertificationCodeId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="CmsGov" refTable="LabCertificationCodes" />
+        <Column name="LabCertificationCode" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="3" />
+        <Column name="SpecialtyCertificationCategory" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="100" />
+      </Columns>
+      <Collections>
+        <Collection schema="CmsGov" table="HealthcareCommonProcedureCodingSystemCodes" column="LabCertificationCodeId" collectionType="actual" />
+        <Collection schema="CmsGov" table="LabCertificationCodes" column="ParentLabCertificationCodeId" collectionType="actual" />
+      </Collections>
+    </Table>
+    <Table schema="CmsGov" name="MedicareOutpatientGroupsPaymentGroupCodes" tableType="BASE TABLE">
+      <Columns>
+        <Column name="MogId" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="MogCode" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="3" />
+        <Column name="MogCategory" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
+        <Column name="MogTitle" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="100" />
+      </Columns>
+      <Collections>
+        <Collection schema="CmsGov" table="HealthcareCommonProcedureCodingSystemCodes" column="MogId" collectionType="actual" />
+      </Collections>
+    </Table>
+    <Table schema="CmsGov" name="MedicareSpecialtyCodes" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+        <Property name="Implements" value="IDontCreate" />
+      </Properties>
+      <Columns>
+        <Column name="MedicareSpecialtyCodeId" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="MedicareSpecialtyCode" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="2" />
+        <Column name="MedicareSpecialtySupplierTypeDescription" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
+      </Columns>
+      <Collections>
+        <Collection schema="CmsGov" table="HealthCareProviderTaxonomyCodeCrosswalk" column="MedicareSpecialtyCodeId" collectionType="actual" />
+      </Collections>
+    </Table>
+    <Table schema="CmsGov" name="PricingIndicatorCodes" tableType="BASE TABLE">
+      <Columns>
+        <Column name="PricingIndicatorCodeId" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="PricingIndicatorCode" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="2" />
+        <Column name="Header" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="100" />
+        <Column name="Description" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="255" />
+      </Columns>
+      <Collections>
+        <Collection schema="CmsGov" table="HealthcareCommonProcedureCodingSystemCodes" column="PricingIndicatorCodeId" collectionType="actual" />
+      </Collections>
+    </Table>
+    <Table schema="db" name="ChangeLog" tableType="BASE TABLE">
+      <Columns>
+        <Column name="ChangeLogId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="EventType" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" />
+        <Column name="ObjectName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="256" />
+        <Column name="ObjectType" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="25" />
+        <Column name="SqlCommand" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="-1" />
+        <Column name="EventDate" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" />
+        <Column name="LoginName" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="256" />
+        <Column name="Data" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="xml" maxLen="-1" />
+      </Columns>
+    </Table>
+    <Table schema="db" name="ColumnProperties" tableType="VIEW">
+      <Columns>
+        <Column name="SchemaName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="TableName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="ColumnName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyName" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyValue" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" />
+      </Columns>
+    </Table>
+    <Table schema="db" name="ProcResultsetColumns" tableType="BASE TABLE">
+      <Columns>
+        <Column name="TABLE_SCHEMA" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="TABLE_NAME" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="RESULT_SET" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="ResultType" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" />
+        <Column name="COLUMN_NAME" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="ORDINAL_POSITION" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="IS_NULLABLE" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="3" />
+        <Column name="DATA_TYPE" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" />
+        <Column name="CHARACTER_MAXIMUM_LENGTH" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" />
+        <Column name="ErrorMessage" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="4000" />
+      </Columns>
+    </Table>
+    <Table schema="db" name="SchemaMeta" tableType="VIEW">
+      <Columns>
+        <Column name="HostDatabaseName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" />
+        <Column name="X" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="xml" maxLen="-1" />
+        <Column name="T" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" />
+      </Columns>
+    </Table>
+    <Table schema="db" name="SchemaTables" tableType="VIEW">
+      <Columns>
+        <Column name="ObjectId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="SchemaName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="TableName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="TableType" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="10" />
+      </Columns>
+    </Table>
+    <Table schema="db" name="SprocParameterProperties" tableType="VIEW">
+      <Columns>
+        <Column name="SchemaName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="SprocName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="ParameterName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyName" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyValue" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" />
+      </Columns>
+    </Table>
+    <Table schema="db" name="SprocProperties" tableType="VIEW">
+      <Columns>
+        <Column name="SchemaName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="SprocName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyValue" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" />
+      </Columns>
+    </Table>
+    <Table schema="db" name="TableProperties" tableType="VIEW">
+      <Columns>
+        <Column name="SchemaName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="TableName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyValue" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" />
+      </Columns>
+    </Table>
+    <Table schema="db" name="ViewColumnProperties" tableType="VIEW">
+      <Columns>
+        <Column name="SchemaName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="ViewName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="ColumnName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyName" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyValue" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" />
+      </Columns>
+    </Table>
+    <Table schema="db" name="ViewProperties" tableType="VIEW">
+      <Columns>
+        <Column name="SchemaName" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="ViewName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="PropertyValue" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="sql_variant" maxLen="0" />
+      </Columns>
+    </Table>
+    <Table schema="InternationalClassificationDiseases" name="ICD10" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+      </Properties>
+      <Columns>
+        <Column name="Icd10Id" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="ParentIcd10Id" position="2" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" refSchema="InternationalClassificationDiseases" refTable="ICD10" />
+        <Column name="DiagnosisCode" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="16" />
+        <Column name="DiagnosisDescription" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="255" />
+      </Columns>
+      <Collections>
+        <Collection schema="InternationalClassificationDiseases" table="ICD10" column="ParentIcd10Id" collectionType="actual" />
+      </Collections>
+    </Table>
+    <Table schema="ISO3166" name="Countries" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="ClassName" value="Country" />
+        <Property name="GeneratePoco" value="1" />
+        <Property name="Implements" value="IDontCreate" />
+      </Properties>
+      <Columns>
+        <Column name="CountryId" position="1" isPrimaryKey="1" isIdentity="0" isNullable="0" sqlType="int" />
+        <Column name="CountryName" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="100" />
+        <Column name="Alpha2" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="2" />
+        <Column name="Alpha3" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="3" />
+        <Column name="NumericCode" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="3" />
+      </Columns>
+    </Table>
+    <Table schema="NationalDrugCode" name="Labelers" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+        <Property name="Implements" value="IDontCreate" />
+      </Properties>
+      <Columns>
+        <Column name="LabelerId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="LabelerCode" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="10" />
+        <Column name="LabelerName" position="3" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" />
+      </Columns>
+      <Collections>
+        <Collection schema="NationalDrugCode" table="Products" column="LabelerId" collectionType="actual" />
+      </Collections>
+    </Table>
+    <Table schema="NationalDrugCode" name="Packages" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+        <Property name="Implements" value="IDontCreate" />
+        <Property name="Source" value="http://www.fda.gov/Drugs/InformationOnDrugs/ucm254528.htm" />
+      </Properties>
+      <Columns>
+        <Column name="PackageId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="Productid" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="NationalDrugCode" refTable="Products" />
+        <Column name="ProductNDC" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="16">
+          <Properties>
+            <Property name="MS_Description" value="The labeler code and product code segments of the National Drug Code number, separated by a hyphen. Asterisks are no longer used or included within the product code segment to indicate certain configurations of the NDC." />
+          </Properties>
+        </Column>
+        <Column name="NDCPackageCode" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="16">
+          <Properties>
+            <Property name="MS_Description" value="The labeler code, product code, and package code segments of the National Drug Code number, separated by hyphens. Asterisks are no longer used or included within the product and package code segments to indicate certain configurations of the NDC." />
+          </Properties>
+        </Column>
+        <Column name="PackageDescription" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="-1">
+          <Properties>
+            <Property name="MS_Description" value="A description of the size and type of packaging in sentence form. Multilevel packages will have the descriptions concatenated together.  For example: 4 BOTTLES in 1 CARTON/100 TABLETS in 1 BOTTLE." />
+          </Properties>
+        </Column>
+        <Column name="CmsCode" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="8000" />
+      </Columns>
+    </Table>
+    <Table schema="NationalDrugCode" name="Products" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+        <Property name="Implements" value="IDontCreate" />
+        <Property name="Source" value="http://www.fda.gov/Drugs/InformationOnDrugs/ucm254527.htm" />
+      </Properties>
+      <Columns>
+        <Column name="ProductId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="LabelerId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" refSchema="NationalDrugCode" refTable="Labelers" />
+        <Column name="ProductUid" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50">
+          <Properties>
+            <Property name="MS_Description" value="ProductUID is a concatenation of the NDCproduct code and SPL documentID. It is included to help prevent duplicate rows from appearing when joining the product and package files together.  It has no regulatory value or significance." />
+          </Properties>
+        </Column>
+        <Column name="ProductNDC" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="16">
+          <Properties>
+            <Property name="MS_Description" value="The labeler code and product code segments of the National Drug Code number, separated by a hyphen. Asterisks are no longer used or included within the product code segment to indicate certain configurations of the NDC." />
+          </Properties>
+        </Column>
+        <Column name="ProductTypeName" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="64">
+          <Properties>
+            <Property name="MS_Description" value="Indicates the type of product, such as Human Prescription Drug or Human OTC Drug. This data element corresponds to the &quot;Document Type&quot; of the SPL submission for the listing. The complete list of codes and translations can be found at" />
+          </Properties>
+        </Column>
+        <Column name="ProprietaryName" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1024">
+          <Properties>
+            <Property name="MS_Description" value="Also known as the trade name. It is the name of the product chosen by the labeler." />
+          </Properties>
+        </Column>
+        <Column name="ProprietaryNameSuffix" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255">
+          <Properties>
+            <Property name="MS_Description" value="A suffix to the proprietary name, a value here should be appended to the ProprietaryName field to obtain the complete name of the product. This suffix is often used to distinguish characteristics of a product such as extended release (“XR”) or sleep aid (“PM”). Although many companies follow certain naming conventions for suffices, there is no recognized standard." />
+          </Properties>
+        </Column>
+        <Column name="NonProprietaryName" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="1024">
+          <Properties>
+            <Property name="MS_Description" value="Sometimes called the generic name, this is usually the active ingredient(s) of the product." />
+          </Properties>
+        </Column>
+        <Column name="DosageFormName" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="64">
+          <Properties>
+            <Property name="MS_Description" value="The translation of the DosageForm Code submitted by the firm. The complete list of codes and translations can be found www.fda.gov/edrls under Structured Product Labeling Resources." />
+          </Properties>
+        </Column>
+        <Column name="RouteName" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="255">
+          <Properties>
+            <Property name="MS_Description" value="The translation of the Route Code submitted by the firm, indicating route of administration. The complete list of codes and translations can be found at www.fda.gov/edrls under Structured Product Labeling Resources." />
+          </Properties>
+        </Column>
+        <Column name="StartMarketingDate" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="date">
+          <Properties>
+            <Property name="MS_Description" value="This is the date that the labeler indicates was the start of its marketing of the drug product." />
+          </Properties>
+        </Column>
+        <Column name="EndMarketingDate" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="date">
+          <Properties>
+            <Property name="MS_Description" value="This is the date the product will no longer be available on the market. If a product is no longer being manufactured, in most cases, the FDA recommends firms use the expiration date of the last lot produced as the EndMarketingDate, to reflect the potential for drug product to remain available after manufacturing has ceased. Products that are the subject of ongoing manufacturing will not ordinarily have any EndMarketingDate. Products with a value in the EndMarketingDate will be removed from the NDC Directory when the EndMarketingDate is reached." />
+          </Properties>
+        </Column>
+        <Column name="MarketingCategoryName" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="64">
+          <Properties>
+            <Property name="MS_Description" value="Product types are broken down into several potential Marketing Categories, such as NDA/ANDA/BLA, OTC Monograph, or Unapproved Drug. One and only one Marketing Category may be chosen for a product, not all marketing categories are available to all product types. Currently, only final marketed product categories are included.  The complete list of codes and translations can be found at www.fda.gov/edrls under Structured Product Labeling Resources." />
+          </Properties>
+        </Column>
+        <Column name="ApplicationNumber" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="11">
+          <Properties>
+            <Property name="MS_Description" value="This corresponds to the NDA, ANDA, or BLA number reported by the labeler for products which have the corresponding Marketing Category designated. If the designated Marketing Category is OTC Monograph Final or OTC Monograph Not Final, then the Application number will be the CFR citation corresponding to the appropriate Monograph (e.g. “part 341”). For unapproved drugs, this field will be null." />
+          </Properties>
+        </Column>
+        <Column name="SubstanceName" position="15" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1">
+          <Properties>
+            <Property name="MS_Description" value="This is the active ingredient list. Each ingredient name is the preferred term of the UNII code submitted." />
+          </Properties>
+        </Column>
+        <Column name="StrengthNumber" position="16" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="4000">
+          <Properties>
+            <Property name="MS_Description" value="These are the strength values (to be used with units below) of each active ingredient, listed in the same order as the SubstanceName field above." />
+          </Properties>
+        </Column>
+        <Column name="StrengthUnit" position="17" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="4000">
+          <Properties>
+            <Property name="MS_Description" value="These are the units to be used with the strength values above, listed in the same order as the SubstanceName and SubstanceNumber." />
+          </Properties>
+        </Column>
+        <Column name="PharmClasses" position="18" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1">
+          <Properties>
+            <Property name="MS_Description" value="These are the reported pharmacological class categories corresponding to the SubstanceNames listed above." />
+          </Properties>
+        </Column>
+        <Column name="DEASchedule" position="19" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="4">
+          <Properties>
+            <Property name="MS_Description" value="This is the assigned DEA Schedule number as reported by the labeler. Values are CI, CII, CIII, CIV, and CV." />
+          </Properties>
+        </Column>
+      </Columns>
+      <Collections>
+        <Collection schema="NationalDrugCode" table="Packages" column="Productid" collectionType="actual" />
+      </Collections>
+    </Table>
+    <Table schema="sys" name="database_firewall_rules" tableType="VIEW">
+      <Columns>
+        <Column name="id" position="1" isPrimaryKey="0" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="name" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="128" />
+        <Column name="start_ip_address" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="45" />
+        <Column name="end_ip_address" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="45" />
+        <Column name="create_date" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" />
+        <Column name="modify_date" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" />
+      </Columns>
+    </Table>
+    <Table schema="ZipCodes" name="Zip5" tableType="BASE TABLE">
+      <Columns>
+        <Column name="Zip5Id" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" />
+        <Column name="ZipCode" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="5">
+          <Properties>
+            <Property name="MS_Description" value="00000-99999 Five digit numeric ZIP Code of the area." />
+          </Properties>
+        </Column>
+        <Column name="PrimaryRecord" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="Character ‘P’ denoting if this row is a Primary Record or not. Absence of character denotes a non-primary record." />
+          </Properties>
+        </Column>
+        <Column name="Population" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The population of the ZIP Code based on 2010 Census data." />
+          </Properties>
+        </Column>
+        <Column name="HouseholdsPerZipcode" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The estimated number of households of the ZIP Code based on 2010 Census data." />
+          </Properties>
+        </Column>
+        <Column name="WhitePopulation" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The estimated White/Caucasian Population of the ZIP Code based on 2010 Census data." />
+          </Properties>
+        </Column>
+        <Column name="BlackPopulation" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The estimated Black/African American Population of the ZIP Code based on 2010 Census data." />
+          </Properties>
+        </Column>
+        <Column name="HispanicPopulation" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The estimated Hispanic Population of the ZIP Code based on 2010 Census data." />
+          </Properties>
+        </Column>
+        <Column name="AsianPopulation" position="9" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The estimated Asian Population of the ZIP Code based on 2010 Census data." />
+          </Properties>
+        </Column>
+        <Column name="HawaiianPopulation" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The estimated Hawaiian or Pacific Islander Population of the ZIP Code based on 2010 Census data." />
+          </Properties>
+        </Column>
+        <Column name="IndianPopulation" position="11" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The estimated American Indian and Alaska Native Population of the ZIP Code based on 2010 Census data." />
+          </Properties>
+        </Column>
+        <Column name="OtherPopulation" position="12" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The estimated Population of all other races for the ZIP Code based on 2010 Census data." />
+          </Properties>
+        </Column>
+        <Column name="MalePopulation" position="13" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The estimated Male Population of the ZIP Code based on 2010 Census data." />
+          </Properties>
+        </Column>
+        <Column name="FemalePopulation" position="14" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The estimated Female Population of the ZIP Code based on 2010 Census data." />
+          </Properties>
+        </Column>
+        <Column name="PersonsPerHousehold" position="15" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="decimal">
+          <Properties>
+            <Property name="MS_Description" value="The estimated average number of persons per household of the ZIP Code based on 2010 Census data." />
+          </Properties>
+        </Column>
+        <Column name="AverageHouseValue" position="16" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The median house value of the county." />
+          </Properties>
+        </Column>
+        <Column name="IncomePerHousehold" position="17" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The median household income." />
+          </Properties>
+        </Column>
+        <Column name="MedianAge" position="18" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="decimal">
+          <Properties>
+            <Property name="MS_Description" value="The median age for all people based on 2010 Census data." />
+          </Properties>
+        </Column>
+        <Column name="MedianAgeMale" position="19" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="decimal">
+          <Properties>
+            <Property name="MS_Description" value="The median age for males based on 2010 Census data." />
+          </Properties>
+        </Column>
+        <Column name="MedianAgeFemale" position="20" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="decimal">
+          <Properties>
+            <Property name="MS_Description" value="The median age for females based on 2010 Census data." />
+          </Properties>
+        </Column>
+        <Column name="Latitude" position="21" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="decimal">
+          <Properties>
+            <Property name="MS_Description" value="Geographic coordinate as a point measured in degrees north or south of the equator." />
+          </Properties>
+        </Column>
+        <Column name="Longitude" position="22" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="decimal">
+          <Properties>
+            <Property name="MS_Description" value="Geographic coordinate as a point measured in degrees east or west of the Greenwich Meridian." />
+          </Properties>
+        </Column>
+        <Column name="Elevation" position="23" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The average elevation of the county." />
+          </Properties>
+        </Column>
+        <Column name="State" position="24" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="2">
+          <Properties>
+            <Property name="MS_Description" value="2 letter state name abbreviation." />
+          </Properties>
+        </Column>
+        <Column name="StateFullName" position="25" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="35">
+          <Properties>
+            <Property name="MS_Description" value="The full US State Name." />
+          </Properties>
+        </Column>
+        <Column name="CityType" position="26" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="Indicates the type of locale such as Post Office, Stations, or Branch." />
+          </Properties>
+        </Column>
+        <Column name="CityAliasAbbreviation" position="27" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="13">
+          <Properties>
+            <Property name="MS_Description" value="13 Character abbreviation for the city alias name." />
+          </Properties>
+        </Column>
+        <Column name="AreaCode" position="28" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="55">
+          <Properties>
+            <Property name="MS_Description" value="The telephone area codes available in this ZIP Code." />
+          </Properties>
+        </Column>
+        <Column name="City" position="29" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="35">
+          <Properties>
+            <Property name="MS_Description" value="Name of the city as designated by the USPS." />
+          </Properties>
+        </Column>
+        <Column name="CityAliasName" position="30" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="35">
+          <Properties>
+            <Property name="MS_Description" value="Alias name of the city if it exists." />
+          </Properties>
+        </Column>
+        <Column name="County" position="31" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="45">
+          <Properties>
+            <Property name="MS_Description" value="Name of County or Parish this ZIP Code resides in." />
+          </Properties>
+        </Column>
+        <Column name="CountyFIPS" position="32" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="5">
+          <Properties>
+            <Property name="MS_Description" value="FIPS code for the County this ZIP Code resides in." />
+          </Properties>
+        </Column>
+        <Column name="StateFIPS" position="33" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="2">
+          <Properties>
+            <Property name="MS_Description" value="FIPS code for the State this ZIP Code resides in." />
+          </Properties>
+        </Column>
+        <Column name="TimeZone" position="34" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="2">
+          <Properties>
+            <Property name="MS_Description" value="Hours past Greenwich Time Zone this ZIP Code belongs to." />
+          </Properties>
+        </Column>
+        <Column name="DayLightSaving" position="35" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="Flag indicating whether this ZIP Code observes daylight savings." />
+          </Properties>
+        </Column>
+        <Column name="MSA" position="36" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="35">
+          <Properties>
+            <Property name="MS_Description" value="Metropolitan Statistical Area number assigned by Census." />
+          </Properties>
+        </Column>
+        <Column name="PMSA" position="37" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="4">
+          <Properties>
+            <Property name="MS_Description" value="Primary Metropolitan Statistical Area Number." />
+          </Properties>
+        </Column>
+        <Column name="CSA" position="38" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="3">
+          <Properties>
+            <Property name="MS_Description" value="Core Statistical Area. This area is a group of MSA's combined into a population core area." />
+          </Properties>
+        </Column>
+        <Column name="CBSA" position="39" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="5">
+          <Properties>
+            <Property name="MS_Description" value="Core Based Statistical Area Number." />
+          </Properties>
+        </Column>
+        <Column name="CBSA_DIV" position="40" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="5">
+          <Properties>
+            <Property name="MS_Description" value="Core Based Statistical Area Division." />
+          </Properties>
+        </Column>
+        <Column name="CBSA_Type" position="41" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="5">
+          <Properties>
+            <Property name="MS_Description" value="Core Based Statistical Area Type (Metro or Micro)." />
+          </Properties>
+        </Column>
+        <Column name="CBSA_Name" position="42" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="150">
+          <Properties>
+            <Property name="MS_Description" value="Core Based Statistical Area Name or Title." />
+          </Properties>
+        </Column>
+        <Column name="MSA_Name" position="43" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="150">
+          <Properties>
+            <Property name="MS_Description" value="Primary Metropolitan Statistical Area name or Title." />
+          </Properties>
+        </Column>
+        <Column name="PMSA_Name" position="44" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="150">
+          <Properties>
+            <Property name="MS_Description" value="Primary Metropolitan Statistical Area name or Title." />
+          </Properties>
+        </Column>
+        <Column name="Region" position="45" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="10">
+          <Properties>
+            <Property name="MS_Description" value="A geographic area consisting of several States defined by the U.S. Department of Commerce, Bureau of the Census. The States are grouped into four regions and nine divisions." />
+          </Properties>
+        </Column>
+        <Column name="Division" position="46" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="20">
+          <Properties>
+            <Property name="MS_Description" value="A geographic area consisting of several States defined by the U.S. Department of Commerce, Bureau of the Census. The States are grouped into four regions and nine divisions." />
+          </Properties>
+        </Column>
+        <Column name="MailingName" position="47" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="Yes or No (Y/N) flag indicating whether or not the USPS accepts this City Alias Name for mailing purposes." />
+          </Properties>
+        </Column>
+        <Column name="NumberOfBusinesses" position="48" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The total number of Business Establishments for this ZIP Code. Data taken from Census for 2015 Business Patterns." />
+          </Properties>
+        </Column>
+        <Column name="NumberOfEmployees" position="49" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The total number of employees for this ZIP Code. Data taken from Census for 2015 Business Patterns." />
+          </Properties>
+        </Column>
+        <Column name="BusinessFirstQuarterPayroll" position="50" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The total payroll for the first quarter this ZIP Code in $1000. Data taken from Census for 2015 Business Patterns." />
+          </Properties>
+        </Column>
+        <Column name="BusinessAnnualPayroll" position="51" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The total annual payroll for this ZIP Code in $1000. Data taken from Census for 2015 Business Patterns." />
+          </Properties>
+        </Column>
+        <Column name="BusinessEmpolymentFlag" position="52" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="Due to confidentiality, some areas do not have actual figures for employment information. Employment and payroll data are replaced by zeroes with the Employment Flag denoting employment size class. " />
+          </Properties>
+        </Column>
+        <Column name="GrowthRank" position="53" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The rank in which this county is growing according to the US Census." />
+          </Properties>
+        </Column>
+        <Column name="GrowingCountiesA" position="54" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The estimated number of housing units in this county as of July 1, 2010. Source: Population Division, U.S. Census Bureau." />
+          </Properties>
+        </Column>
+        <Column name="GrowingCountiesB" position="55" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The estimated number of housing units in this county as of July 1, 2011. Source: Population Division, U.S. Census Bureau." />
+          </Properties>
+        </Column>
+        <Column name="GrowthIncreaseNumber" position="56" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The change in housing units from 2003 to 2004, expressed as a number." />
+          </Properties>
+        </Column>
+        <Column name="GrowthIncreasePercentage" position="57" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="decimal">
+          <Properties>
+            <Property name="MS_Description" value="The change in housing units from 2003 to 2004, expressed as a percentage." />
+          </Properties>
+        </Column>
+        <Column name="CBSAPopulation" position="58" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The estimated population for the selected CBSA. " />
+          </Properties>
+        </Column>
+        <Column name="CBSADivisionPopulation" position="59" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The estimated population for the selected CBSA Division." />
+          </Properties>
+        </Column>
+        <Column name="CongressionalDistrict" position="60" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="150">
+          <Properties>
+            <Property name="MS_Description" value="This field shows which Congressional Districts the ZIP Code belongs to. Currently set for 115th Congress." />
+          </Properties>
+        </Column>
+        <Column name="CongressionalLandArea" position="61" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="150">
+          <Properties>
+            <Property name="MS_Description" value="This field provides the approximate land area covered by the Congressional District for which the ZIP Code belongs to." />
+          </Properties>
+        </Column>
+        <Column name="DeliveryResidential" position="62" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The number of active residential delivery mailboxes and centralized units for this ZIP Code. This excludes PO Boxes and all other contract box types. " />
+          </Properties>
+        </Column>
+        <Column name="DeliveryBusiness" position="63" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The number of active business delivery mailboxes and centralized units for this ZIP Code. This excludes PO Boxes and all other contract box types." />
+          </Properties>
+        </Column>
+        <Column name="DeliveryTotal" position="64" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The total number of delivery receptacles for this ZIP Code. This includes curb side mailboxes, centralized units, PO Boxes, NDCBU, and contract boxes." />
+          </Properties>
+        </Column>
+        <Column name="PreferredLastLineKey" position="65" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="10">
+          <Properties>
+            <Property name="MS_Description" value="Links this record with other products ZIP-Codes.com offers." />
+          </Properties>
+        </Column>
+        <Column name="ClassificationCode" position="66" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="The classification type of this ZIP Code." />
+          </Properties>
+        </Column>
+        <Column name="MultiCounty" position="67" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="Flag indicating whether this ZIP Code crosses county lines." />
+          </Properties>
+        </Column>
+        <Column name="CSAName" position="68" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="255">
+          <Properties>
+            <Property name="MS_Description" value="The name of the CSA this ZIP Code is in." />
+          </Properties>
+        </Column>
+        <Column name="CBSA_Div_Name" position="69" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="255">
+          <Properties>
+            <Property name="MS_Description" value="The name of the CBSA Division this ZIP Code is in." />
+          </Properties>
+        </Column>
+        <Column name="CityStateKey" position="70" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="6">
+          <Properties>
+            <Property name="MS_Description" value="Links this record with other products ZIP-Codes.com offers such as the ZIP+4." />
+          </Properties>
+        </Column>
+        <Column name="PopulationEstimate" position="71" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="An up to the month population estimate for this ZIP Code." />
+          </Properties>
+        </Column>
+        <Column name="LandArea" position="72" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="decimal">
+          <Properties>
+            <Property name="MS_Description" value="The land area of this ZIP Code in Square Miles." />
+          </Properties>
+        </Column>
+        <Column name="WaterArea" position="73" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="decimal">
+          <Properties>
+            <Property name="MS_Description" value="The water area of this ZIP Code in Square Miles." />
+          </Properties>
+        </Column>
+        <Column name="CityAliasCode" position="74" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="5">
+          <Properties>
+            <Property name="MS_Description" value="Code indication the type of the city alias name for this record. Record can be Abbreviations, Universities, Government, and more." />
+          </Properties>
+        </Column>
+        <Column name="CityMixedCase" position="75" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="35">
+          <Properties>
+            <Property name="MS_Description" value="The city name in mixed case (i.e. Not in all uppercase letters)." />
+          </Properties>
+        </Column>
+        <Column name="CityAliasMixedCase" position="76" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="35">
+          <Properties>
+            <Property name="MS_Description" value="The city alias name in mixed case (i.e. Not in all uppercase letters)." />
+          </Properties>
+        </Column>
+        <Column name="BoxCount" position="77" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="Total count of PO Box deliveries in this ZIP Code" />
+          </Properties>
+        </Column>
+        <Column name="SFDU" position="78" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="Total count of single family deliveries in this ZIP Code; generally analogous to homes" />
+          </Properties>
+        </Column>
+        <Column name="MFDU" position="79" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="Total count of multifamily deliveries in this ZIP Code; generally analogous to apartments" />
+          </Properties>
+        </Column>
+        <Column name="StateANSI" position="80" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="2">
+          <Properties>
+            <Property name="MS_Description" value="ANSI code for the State this ZIP Code resides in." />
+          </Properties>
+        </Column>
+        <Column name="CountyANSI" position="81" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="3">
+          <Properties>
+            <Property name="MS_Description" value="ANSI code for the County/Parish this ZIP Code resides in." />
+          </Properties>
+        </Column>
+        <Column name="ZIPIntro" position="82" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="15">
+          <Properties>
+            <Property name="MS_Description" value="The date this ZIP Code was introduced into the database." />
+          </Properties>
+        </Column>
+        <Column name="AliasIntroDate" position="83" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="15">
+          <Properties>
+            <Property name="MS_Description" value="The date this City Alias was introduced for this ZIP Code." />
+          </Properties>
+        </Column>
+        <Column name="FacilityCode" position="84" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="The type of locale identified in the city/state name." />
+          </Properties>
+        </Column>
+        <Column name="CityDeliveryIndicator" position="85" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="Specifies whether or not a post office has city-delivery carrier routes." />
+          </Properties>
+        </Column>
+        <Column name="CarrierRouteRateSortation" position="86" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="Identifies where automation Carrier Route rates are available." />
+          </Properties>
+        </Column>
+        <Column name="FinanceNumber" position="87" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="6">
+          <Properties>
+            <Property name="MS_Description" value="A code assigned to Postal Service facilities." />
+          </Properties>
+        </Column>
+        <Column name="UniqueZIPName" position="88" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="1">
+          <Properties>
+            <Property name="MS_Description" value="Field that specifies whether the City State Record contains the organization name for a unique ZIP Code." />
+          </Properties>
+        </Column>
+        <Column name="SSAStateCountyCode" position="89" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="5">
+          <Properties>
+            <Property name="MS_Description" value="The State County Code as set by the Social Security Administration for Medicare and Medicaid." />
+          </Properties>
+        </Column>
+        <Column name="MedicareCBSACode" position="90" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="5">
+          <Properties>
+            <Property name="MS_Description" value="The CBSA Code for this ZIP Code as set by the Centers for Medicare and Medicaid Services." />
+          </Properties>
+        </Column>
+        <Column name="MedicareCBSAName" position="91" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="255">
+          <Properties>
+            <Property name="MS_Description" value="The CBSA Name  for this ZIP Code as set by the Centers for Medicare and Medicaid Services." />
+          </Properties>
+        </Column>
+        <Column name="MedicareCBSAType" position="92" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="5">
+          <Properties>
+            <Property name="MS_Description" value="The CBSA type for this ZIP Code as set by the Centers for Medicare and Medicaid Services. Metro or Micro." />
+          </Properties>
+        </Column>
+        <Column name="MarketRatingAreaID" position="93" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int">
+          <Properties>
+            <Property name="MS_Description" value="The ID of the Insurance Market Rating Area as set by the Centers for Medicare &amp; Medicaid Services." />
+          </Properties>
+        </Column>
+        <Column name="LocationPoint" position="94" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="geography" maxLen="-1" />
+      </Columns>
+    </Table>
+  </Tables>
+  <Sprocs>
+    <Sproc schema="db" name="AssertEquals">
+      <Args>
+        <Arg position="1" mode="IN" name="@expected" sqlType="sql_variant" maxLen="0" />
+        <Arg position="2" mode="IN" name="@actual" sqlType="sql_variant" maxLen="0" />
+        <Arg position="3" mode="IN" name="@msg" sqlType="varchar" maxLen="4000" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="AssertFail">
+      <Args>
+        <Arg position="1" mode="IN" name="@msg" sqlType="varchar" maxLen="4000" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="AssertNotNull">
+      <Args>
+        <Arg position="1" mode="IN" name="@actual" sqlType="int" />
+        <Arg position="2" mode="IN" name="@msg" sqlType="varchar" maxLen="4000" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="AssertNull">
+      <Args>
+        <Arg position="1" mode="IN" name="@actual" sqlType="int" />
+        <Arg position="2" mode="IN" name="@msg" sqlType="varchar" maxLen="4000" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="AssertStringHasContent">
+      <Args>
+        <Arg position="1" mode="IN" name="@test" sqlType="nvarchar" maxLen="-1" />
+        <Arg position="2" mode="IN" name="@msg" sqlType="varchar" maxLen="4000" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="AssertZero">
+      <Args>
+        <Arg position="1" mode="IN" name="@actual" sqlType="int" />
+        <Arg position="2" mode="IN" name="@msg" sqlType="varchar" maxLen="4000" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="AssertZeroOrOne">
+      <Args>
+        <Arg position="1" mode="IN" name="@actual" sqlType="int" />
+        <Arg position="2" mode="IN" name="@msg" sqlType="varchar" maxLen="4000" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="ColumnPropertySet">
+      <Args>
+        <Arg position="1" mode="IN" name="@tableName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@columnName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="3" mode="IN" name="@propertyVal" sqlType="nvarchar" maxLen="3750" />
+        <Arg position="4" mode="IN" name="@tableSchema" sqlType="nvarchar" maxLen="128" />
+        <Arg position="5" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="ExternalTableImport">
+      <Args>
+        <Arg position="1" mode="IN" name="@dataSource" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@schema" sqlType="nvarchar" maxLen="128" />
+        <Arg position="3" mode="IN" name="@table" sqlType="nvarchar" maxLen="128" />
+        <Arg position="4" mode="IN" name="@schemaMetaXml" sqlType="nvarchar" maxLen="-1" />
+        <Arg position="5" mode="IN" name="@type" sqlType="nvarchar" maxLen="128" />
+        <Arg position="6" mode="IN" name="@distribution" sqlType="nvarchar" maxLen="128" />
+        <Arg position="7" mode="IN" name="@srcSchema" sqlType="nvarchar" maxLen="128" />
+        <Arg position="8" mode="IN" name="@srcTable" sqlType="nvarchar" maxLen="128" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="PrintNow">
+      <Args>
+        <Arg position="1" mode="IN" name="@format" sqlType="nvarchar" maxLen="-1" />
+        <Arg position="2" mode="IN" name="@n0" sqlType="int" />
+        <Arg position="3" mode="IN" name="@n1" sqlType="int" />
+        <Arg position="4" mode="IN" name="@n2" sqlType="int" />
+        <Arg position="5" mode="IN" name="@n3" sqlType="int" />
+        <Arg position="6" mode="IN" name="@n4" sqlType="int" />
+        <Arg position="7" mode="IN" name="@n5" sqlType="int" />
+        <Arg position="8" mode="IN" name="@n6" sqlType="int" />
+        <Arg position="9" mode="IN" name="@n7" sqlType="int" />
+        <Arg position="10" mode="IN" name="@s0" sqlType="nvarchar" maxLen="-1" />
+        <Arg position="11" mode="IN" name="@s1" sqlType="nvarchar" maxLen="-1" />
+        <Arg position="12" mode="IN" name="@s2" sqlType="nvarchar" maxLen="-1" />
+        <Arg position="13" mode="IN" name="@s3" sqlType="nvarchar" maxLen="-1" />
+        <Arg position="14" mode="IN" name="@d0" sqlType="datetime" />
+        <Arg position="15" mode="IN" name="@d1" sqlType="datetime" />
+        <Arg position="16" mode="IN" name="@d2" sqlType="datetime" />
+        <Arg position="17" mode="IN" name="@d3" sqlType="datetime" />
+        <Arg position="18" mode="IN" name="@b0" sqlType="bit" />
+        <Arg position="19" mode="IN" name="@b1" sqlType="bit" />
+        <Arg position="20" mode="IN" name="@b2" sqlType="bit" />
+        <Arg position="21" mode="IN" name="@b3" sqlType="bit" />
+        <Arg position="22" mode="IN" name="@m0" sqlType="money" />
+        <Arg position="23" mode="IN" name="@m1" sqlType="money" />
+        <Arg position="24" mode="IN" name="@m2" sqlType="money" />
+        <Arg position="25" mode="IN" name="@m3" sqlType="money" />
+        <Arg position="26" mode="IN" name="@startedAt" sqlType="datetime" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="PrintSql">
+      <Args>
+        <Arg position="1" mode="IN" name="@sql" sqlType="nvarchar" maxLen="-1" />
+        <Arg position="2" mode="IN" name="@debugMode" sqlType="bit" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="ProcResultsetColumnsPopulate" />
+    <Sproc schema="db" name="SprocParameterPropertySet">
+      <Args>
+        <Arg position="1" mode="IN" name="@sprocName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@parameterName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="3" mode="IN" name="@propertyVal" sqlType="nvarchar" maxLen="3750" />
+        <Arg position="4" mode="IN" name="@sprocSchema" sqlType="nvarchar" maxLen="128" />
+        <Arg position="5" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="SprocPropertySet">
+      <Args>
+        <Arg position="1" mode="IN" name="@sprocName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@propertyVal" sqlType="sql_variant" maxLen="0" />
+        <Arg position="3" mode="IN" name="@routineSchema" sqlType="nvarchar" maxLen="128" />
+        <Arg position="4" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="TablePropertySet">
+      <Args>
+        <Arg position="1" mode="IN" name="@tableName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@propertyVal" sqlType="sql_variant" maxLen="0" />
+        <Arg position="3" mode="IN" name="@tableSchema" sqlType="nvarchar" maxLen="128" />
+        <Arg position="4" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="ViewColumnPropertySet">
+      <Args>
+        <Arg position="1" mode="IN" name="@viewName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@columnName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="3" mode="IN" name="@propertyVal" sqlType="nvarchar" maxLen="3750" />
+        <Arg position="4" mode="IN" name="@viewSchema" sqlType="nvarchar" maxLen="128" />
+        <Arg position="5" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="ViewPropertySet">
+      <Args>
+        <Arg position="1" mode="IN" name="@viewName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@propertyVal" sqlType="sql_variant" maxLen="0" />
+        <Arg position="3" mode="IN" name="@viewSchema" sqlType="nvarchar" maxLen="128" />
+        <Arg position="4" mode="IN" name="@propertyName" sqlType="nvarchar" maxLen="128" />
+        <Arg position="5" mode="IN" name="@remove" sqlType="bit" />
+      </Args>
+    </Sproc>
+    <Sproc schema="db" name="WhoIsActive">
+      <Args>
+        <Arg position="1" mode="IN" name="@filter" sqlType="nvarchar" maxLen="128" />
+        <Arg position="2" mode="IN" name="@filter_type" sqlType="varchar" maxLen="10" />
+        <Arg position="3" mode="IN" name="@not_filter" sqlType="nvarchar" maxLen="128" />
+        <Arg position="4" mode="IN" name="@not_filter_type" sqlType="varchar" maxLen="10" />
+        <Arg position="5" mode="IN" name="@show_own_spid" sqlType="bit" />
+        <Arg position="6" mode="IN" name="@show_system_spids" sqlType="bit" />
+        <Arg position="7" mode="IN" name="@show_sleeping_spids" sqlType="tinyint" />
+        <Arg position="8" mode="IN" name="@get_full_inner_text" sqlType="bit" />
+        <Arg position="9" mode="IN" name="@get_plans" sqlType="tinyint" />
+        <Arg position="10" mode="IN" name="@get_outer_command" sqlType="bit" />
+        <Arg position="11" mode="IN" name="@get_transaction_info" sqlType="bit" />
+        <Arg position="12" mode="IN" name="@get_task_info" sqlType="tinyint" />
+        <Arg position="13" mode="IN" name="@get_locks" sqlType="bit" />
+        <Arg position="14" mode="IN" name="@get_avg_time" sqlType="bit" />
+        <Arg position="15" mode="IN" name="@get_additional_info" sqlType="bit" />
+        <Arg position="16" mode="IN" name="@find_block_leaders" sqlType="bit" />
+        <Arg position="17" mode="IN" name="@delta_interval" sqlType="tinyint" />
+        <Arg position="18" mode="IN" name="@output_column_list" sqlType="varchar" maxLen="8000" />
+        <Arg position="19" mode="IN" name="@sort_order" sqlType="varchar" maxLen="500" />
+        <Arg position="20" mode="IN" name="@format_output" sqlType="tinyint" />
+        <Arg position="21" mode="IN" name="@destination_table" sqlType="varchar" maxLen="4000" />
+        <Arg position="22" mode="IN" name="@return_schema" sqlType="bit" />
+        <Arg position="23" mode="INOUT" name="@schema" sqlType="varchar" maxLen="-1" />
+        <Arg position="24" mode="IN" name="@help" sqlType="bit" />
+      </Args>
+    </Sproc>
+  </Sprocs>
+</SchemaMeta>
