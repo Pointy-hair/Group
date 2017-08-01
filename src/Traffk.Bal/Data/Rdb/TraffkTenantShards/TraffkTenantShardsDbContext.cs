@@ -9,7 +9,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace Traffk.Bal.Data.Rdb.TraffkTenantShards
 {
@@ -23,12 +22,13 @@ namespace Traffk.Bal.Data.Rdb.TraffkTenantShards
 
         public DbSet<Tenant> Tenants { get; set; } //dbo.Tenants
 
-        public async Task<ConnectionHelpers.Result<AppHostItem>> AppFindByHostname(string hostName = null, TraffkTenantModel.AppTypes? appType = null)
+        public async Task<ConnectionHelpers.Result<AppHostItem>> AppFindByHostname(string hostName = null, TraffkTenantModel.AppTypes? appType = null, string loginDomain = null)
         {
             var ps = new SqlParameter[]
                 {
                     new SqlParameter("@hostName", hostName==null ? DBNull.Value:(object) hostName){Direction=ParameterDirection.Input},
                     new SqlParameter("@appType", appType==null ? DBNull.Value:(object) appType.ToString()){Direction=ParameterDirection.Input},
+                    new SqlParameter("@loginDomain", loginDomain==null ? DBNull.Value:(object) loginDomain){Direction=ParameterDirection.Input},
                 };
             var conn = Database.GetDbConnection();
             if (conn.State != ConnectionState.Open)

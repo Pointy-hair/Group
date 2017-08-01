@@ -90,7 +90,8 @@ namespace TraffkPortal.Services.TenantServices
                     var m = defaultHostNameRegexPattern.Match(ActualHostname);
                     var loginDomain = m.Success ? m.Groups[1].Value : null;
 
-                    var matchedTenant = db.Tenants.SingleOrDefault(x => StringHelpers.IsSameIgnoreCase(x.LoginDomain, loginDomain));
+                    var matchedTenant = db.AppFindByHostname(null, AppTypes.Portal, loginDomain).ExecuteSynchronously()
+                        .FirstOrDefault();
                     if (matchedTenant != null)
                     {
                         z = cacher.FindOrCreateValWithSimpleKey(
