@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<Traffk.Portal.Models.ReportingModels.ScheduledReportViewModel>
 @using NUglify.Helpers
+@using Traffk.CronExpressionDescriptor
 @using Traffk.Portal.Controllers
 
 @{
@@ -53,7 +54,7 @@
                         @Html.DisplayFor(modelItem => item.Communication.CommunicationSettings.ReportName)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Communication.CommunicationSettings.Recurrence.ReadableRecurrencePattern)
+                        @ExpressionDescriptor.GetDescription(item.RecurringJob.Cron)
                     </td>
                     <td>
                         @if (DateTime.Parse(item.RecurringJob.NextExecution.ToString()) != DateTime.UtcNow)
