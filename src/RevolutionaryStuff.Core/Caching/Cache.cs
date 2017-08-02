@@ -18,11 +18,11 @@ namespace RevolutionaryStuff.Core.Caching
 
         private static int GetLockKeyName(object cacheGuy, object key) => (cacheGuy.GetHashCode() ^ (key ?? "").GetHashCode()) & 0x0FFF;
 
-        public static CacheEntry<TVal> FindOrCreate<TVal>(this ICacher cacher, string key, Func<string, TVal> creator)
+        public static CacheEntry<TVal> FindOrCreate<TVal>(this ICacher cacher, string key, Func<string, TVal> creator, TimeSpan? timeout = null)
         {
             return cacher.FindOrCreate(key, k => {
                 var val = creator(k);
-                return new CacheEntry<TVal>(val);
+                return new CacheEntry<TVal>(val, timeout);
             });
         }
 

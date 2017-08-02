@@ -23,6 +23,7 @@ namespace Traffk.Tableau.REST
         private readonly TableauServerUrls Urls;
         private readonly ICacher Cacher;
         private readonly ITrustedTicketGetter TrustedTicketGetter;
+        TimeSpan ITableauRestService.ReportIndexCacheTimeout => Options.ReportIndexCacheTimeout;
 
         #region Constructors
 
@@ -45,7 +46,7 @@ namespace Traffk.Tableau.REST
                 {
                     var l = new TableauServerSignIn(onlineUrls, userName, password, statusLog);
                     l.ExecuteRequest();
-                    return new CacheEntry<TableauServerSignIn>(l);
+                    return new CacheEntry<TableauServerSignIn>(l, Options.LoginCacheTimeout);
                 }).Value;
         }
 

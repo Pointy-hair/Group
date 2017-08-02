@@ -44,6 +44,7 @@ namespace Traffk.Bal.ReportVisuals
         private bool CanSeePhi;
         private IEnumerable<string> TableauReportIds;
         private ICacher Cacher;
+        private TimeSpan ReportIndexCacheTimeout;
 
         //Do we make these private?
         public string TableauTenantId { get; private set; }
@@ -62,6 +63,7 @@ namespace Traffk.Bal.ReportVisuals
             Cacher = cacher.CreateScope(CurrentUser.UserName, CanSeePhi);
 
             TableauTenantId = TableauTenantFinder.GetTenantIdAsync().Result;
+            ReportIndexCacheTimeout = TableauRestService.ReportIndexCacheTimeout;
         }
 
         IEnumerable<IReportVisual> IReportVisualService.GetReportVisuals(VisualContext visualContext, string reportTagFilter) 

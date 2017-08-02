@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using Traffk.Tableau.REST.Models;
@@ -22,6 +23,7 @@ namespace Traffk.Tableau.REST
         ICollection<SiteWorkbook> DownloadWorkbooks(IEnumerable<SiteWorkbook> workbooksToDownload, string localSavePath,
             bool generateInfoFile);
         void UploadWorkbooks(string localUploadPath, string localPathTempWorkspace);
+        TimeSpan ReportIndexCacheTimeout { get; }
     }
 
     public class VisualId
