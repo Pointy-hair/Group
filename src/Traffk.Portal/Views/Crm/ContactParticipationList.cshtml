@@ -13,22 +13,19 @@
     <thead>
     <tr>
         <th>
-            @Html.SortableHeaderFor(z => z.ParticipationId)
-        </th>
-        @*<th>
-            @Html.SortableHeaderFor(z => z.program_name)
-        </th>*@
-        <th>
-            @Html.SortableHeaderFor(z => z.ProgramCodeL)
+            @Html.SortableHeaderFor(z => z.ParticipationId, null, null, null, "Participation ID")
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.ProgramStatus)
+            @Html.SortableHeaderFor(z => z.ProgramCodeL, null, null, null, "Program Code")
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.ProgramStartDd)
+            @Html.SortableHeaderFor(z => z.ProgramStatus, null, null, null, "Program Status")
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.ProgramEndDd)
+            @Html.SortableHeaderFor(z => z.ProgramStartDd, null, null, null, "Program Start Date")
+        </th>
+        <th>
+            @Html.SortableHeaderFor(z => z.ProgramEndDd, null, null, null, "Program End Date")
         </th>
     </tr>
     </thead>

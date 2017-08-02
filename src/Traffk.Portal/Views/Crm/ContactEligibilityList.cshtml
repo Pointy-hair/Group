@@ -13,19 +13,19 @@
     <thead>
         <tr>
             <th>
-                @Html.SortableHeaderFor(z => z.ContactId)
+                @Html.SortableHeaderFor(z => z.ContactId, null, null, null, "Contact ID")
             </th>
             <th>
-                @Html.SortableHeaderFor(z => z.Contact.AsPerson.FirstName)
+                @Html.SortableHeaderFor(z => z.Contact.AsPerson.FirstName, null, null, null, "First Name")
             </th>
             <th>
-                @Html.SortableHeaderFor(z => z.Contact.AsPerson.LastName)
+                @Html.SortableHeaderFor(z => z.Contact.AsPerson.LastName, null, null, null, "Last Name")
             </th>
             <th>
-                @Html.SortableHeaderFor(z => z.MemberRelationshipL)
+                @Html.SortableHeaderFor(z => z.MemberRelationshipL, null, null, null, "Relationship")
             </th>
             <th>
-                @Html.SortableHeaderFor(z => z.Contact.ContactDetails.PhoneNumbers)
+                @Html.SortableHeaderFor(z => z.Contact.ContactDetails.PhoneNumbers, null, null, null, "Phone Numbers"))
             </th>
         </tr>
     </thead>
