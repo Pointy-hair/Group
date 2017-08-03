@@ -19,7 +19,7 @@ namespace Traffk.Bal.Caches
 
         CacheEntry<TVal> ICacher.FindOrCreate<TVal>(string key, Func<string, CacheEntry<TVal>> creator, bool forceCreate, TimeSpan? timeout)
         {
-            var isSerializable = true;
+            var isSerializable = false;
             var isSerializableAttributes = typeof(TVal).GetCustomAttributes<IsSerializableAttribute>().ToList();
             if (isSerializableAttributes.Any())
             {

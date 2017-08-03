@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using Traffk.Bal.BackgroundJobs;
 using Traffk.Bal.Data;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
@@ -51,7 +52,7 @@ namespace Traffk.Portal.Controllers
             public const string DownloadedReports = "Downloads";
             public const string ScheduledReports = "ScheduledReportIndex";
             public const string ScheduleReportSave = "ScheduleReportSave";
-            public const string ScheduledReportDetail = "ScheduledReportDetail";
+            public const string ScheduledReportDetail = "ScheduledReportDetail";   
         }
 
         public static class ViewNames

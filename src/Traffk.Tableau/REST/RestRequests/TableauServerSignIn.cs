@@ -15,7 +15,7 @@ namespace Traffk.Tableau.REST.RestRequests
     /// <summary>
     /// Manages the signed in session for a Tableau Server site's sign in
     /// </summary>
-    [IsSerializable(false)]
+    [Traffk.Utility.IsSerializable(false)]
     public class TableauServerSignIn : TableauServerRequestBase
     {
         private readonly TableauServerUrls TableauUrls;

@@ -11,6 +11,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Traffk.Bal;
+using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.ReportVisuals;
 using TraffkPortal.Services;
@@ -37,6 +38,11 @@ namespace TraffkPortal.Controllers
         protected ActionResult ErrorResult()
         {
             return RedirectToAction(ErrorController.ActionNames.Index, ErrorController.Name);
+        }
+
+        public static class BaseActionNames
+        {
+            public const string CreateNote = "CreateNote";
         }
 
         private static readonly IDictionary<string, string> NoMappings = new Dictionary<string, string>().AsReadOnly();
@@ -203,9 +209,36 @@ namespace TraffkPortal.Controllers
             */
         }
 
+        public async Task<IActionResult> CreateNote(
+            string parentNoteId,
+            string content,
+            IRdbDataEntity attachmentSite) => await CreateNote(parentNoteId, content, new[]{attachmentSite});
+
+        public async Task<IActionResult> CreateNote(
+            string parentNoteId,
+            string content,
+            IRdbDataEntity[] attachmentSites)
+        {
+            if (attachmentSites.Length < 1) return NotFound();
+            Rdb.AttachNote(Current.User.Contact, null, content, attachmentSites);
+            await Rdb.SaveChangesAsync();
+            return Ok();
+        }
+
         protected void SetToast(string toastMessage)
         {
             TempData[ViewDataKeys.ToastMessage] = toastMessage;
+        }
+
+        protected async Task<Contact> FindContactByIdAsync(int id)
+        {
+            Contact c = null;
+            c = await Rdb.Contacts.FindAsync(id);
+            if (c != null && c.TenantId == this.TenantId)
+            {
+                return c;
+            }
+            return null;
         }
 
         public static string CreateAnchorName(IReportResource reportResource) =>

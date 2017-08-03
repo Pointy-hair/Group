@@ -7181,7 +7181,7 @@ namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
 	}
 
 	[Table("ReportMetaData", Schema = "Joint")]
-	public partial class ReportMetaData : IRdbDataEntity, IValidate, IPreSave, ITraffkTenanted
+	public partial class ReportMetaData : IRdbDataEntity, IValidate, IPreSave, ITraffkTenanted, IPrimaryKey<int>
 	{
         public static readonly ReportMetaData[] None = new ReportMetaData[0];
 
@@ -7310,7 +7310,11 @@ namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
 			Requires.NonNull(ReportDetailsJson, nameof(ReportDetailsJson));
 			PartialValidate();
         }
-	}
+
+	    object IPrimaryKey.Key { get { return ReportMetaDataId; } }
+
+	    int IPrimaryKey<int>.Key { get { return ReportMetaDataId; } }
+    }
 
 	[Table("Labelers", Schema = "NationalDrugCode")]
 	public partial class Labeler : IRdbDataEntity, IValidate, IPreSave, IDontCreate

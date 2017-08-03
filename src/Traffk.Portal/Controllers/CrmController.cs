@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Traffk.Bal;
 using Traffk.Bal.Communications;
+using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.Permissions;
 using Traffk.Bal.ReportVisuals;
@@ -86,7 +87,6 @@ namespace TraffkPortal.Controllers
             public const string ContactNotes = "ContactNotes";
             public const string ContactMessages = "ContactMessages";
             public const string ContactRelationships = "ContactRelationships";
-            public const string CreateNote = "CreateNote";
             public const string SendDirectMessage = "SendDirectMessage";
             public const string Reports = "ReportIndex";
             public const string Report = "Report";
@@ -193,22 +193,6 @@ namespace TraffkPortal.Controllers
             if (contact == null) return NotFound();
             var model = CommunicationModelFactory.CreateSimpleContentModel(subject, body);
             await EmailSender.SendEmailCommunicationAsync(SystemCommunicationPurposes.DirectMessage, model, contact.PrimaryEmail, contact.FullName, contact.ContactId);
-            return Ok();
-        }
-
-        [HttpPost]
-        [PermissionAuthorize(PermissionNames.DirectMessaging)]
-        [ActionName(ActionNames.CreateNote)]
-        [Route("Contacts/{id}/CreateNote")]
-        public async Task<IActionResult> CreateNote(
-            int id,
-            string parentNoteId,
-            string content)
-        {
-            var contact = await FindContactByIdAsync(id);
-            if (contact == null) return NotFound();
-            Rdb.AttachNote(Current.User.Contact, null, content, contact);
-            await Rdb.SaveChangesAsync();
             return Ok();
         }
 
@@ -474,17 +458,6 @@ namespace TraffkPortal.Controllers
         [Route("Contacts/{id}/Pharmacy/{pharmacyItemId}")]
         public Task<IActionResult> ContactPharmacyItemDetail(int id, int pharmacyItemId)
             => ContactHealthItemDetail(id, PageKeys.Pharmacy, ViewNames.Health.Pharmacy, mid => Rdb.Pharmacy.Where(z => z.ContactId == mid && z.PharmacyId == pharmacyItemId));
-        
-        private async Task<Contact> FindContactByIdAsync(int id)
-        {
-            Contact c = null;
-            c = await Rdb.Contacts.FindAsync(id);
-            if (c != null && c.TenantId==this.TenantId)
-            {
-                return c;
-            }
-            return null;
-        }
 
         [Route("Contacts/{id}/Reports")]
         [ActionName(ActionNames.Reports)]

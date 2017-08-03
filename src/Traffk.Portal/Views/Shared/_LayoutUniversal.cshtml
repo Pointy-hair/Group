@@ -177,6 +177,18 @@ else
 }
 @RenderSection("pageDialogs", false)
 @section Scripts {
+    <script>
+        function createNote(objectType, entityId) {
+            var postData = {
+                content: $("#NewNoteContent").val(),
+                parentNoteId: null
+            };
+            $.post(
+                "/Notes/CreateNote/" + objectType + "/" + entityId,
+                postData,
+                showToast("Note created"));
+        }
+    </script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     @RenderSection("scripts", false)
     @if (isListingPage)
