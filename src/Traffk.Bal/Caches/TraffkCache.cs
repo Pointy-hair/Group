@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
@@ -19,19 +20,26 @@ namespace Traffk.Bal.Caches
 
         CacheEntry<TVal> ICacher.FindOrCreate<TVal>(string key, Func<string, CacheEntry<TVal>> creator, bool forceCreate, TimeSpan? timeout)
         {
-            var isSerializable = false;
-            var isSerializableAttributes = typeof(TVal).GetCustomAttributes<IsSerializableAttribute>().ToList();
-            if (isSerializableAttributes.Any())
+            try
             {
-                isSerializable = isSerializableAttributes[0].IsSerializable;
-            }
+                var isSerializable = true;
+                var isSerializableAttributes = typeof(TVal).GetCustomAttributes<IsSerializableAttribute>().ToList();
+                if (isSerializableAttributes.Any())
+                {
+                    isSerializable = isSerializableAttributes[0].IsSerializable;
+                }
 
-            if (isSerializable)
-            {
-                return RedisCache.FindOrCreate<TVal>(key, creator, forceCreate, timeout);
+                if (isSerializable)
+                {
+                    return RedisCache.FindOrCreate<TVal>(key, creator, forceCreate, timeout);
+                }
+
+                return InnerDataCacher.FindOrCreate<TVal>(key, creator, forceCreate, timeout);
             }
-            else
+            catch (Exception e)
             {
+                //Catching this exception because deserialization fails on inaccessible libraries.
+                Trace.WriteLine(e);
                 return InnerDataCacher.FindOrCreate<TVal>(key, creator, forceCreate, timeout);
             }
         }
