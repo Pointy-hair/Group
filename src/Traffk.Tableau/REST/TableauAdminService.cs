@@ -12,7 +12,6 @@ namespace Traffk.Tableau.REST
     public class TableauAdminService : TableauBaseService, ITableauAdminService
     {
         private readonly TableauAdminCredentials TableauAdminCredentials;
-        private readonly IHttpClientFactory HttpClientFactory;
 
         public TableauAdminService(IOptions<TableauSignInOptions> options,
             IOptions<TableauAdminCredentials> adminCredentials,

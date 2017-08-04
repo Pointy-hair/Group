@@ -25,7 +25,6 @@ namespace Traffk.Tableau.REST.RestRequests
 
         private readonly int UploadChunkSizeBytes;  //Max size of upload chunks
         private readonly int UploadChunkDelaySeconds; //Delay afte reach chunk
-        private readonly IHttpClientFactory HttpClientFactory;
 
         /// <summary>
         ///We will use this to find any stored credentials we need to upload 

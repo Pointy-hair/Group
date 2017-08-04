@@ -16,7 +16,7 @@ namespace Traffk.Tableau.REST.RestRequests
     /// </summary>
     public abstract class TableauServerRequestBase
     {
-        protected readonly IHttpClientFactory HttpClientFactory;
+        protected IHttpClientFactory HttpClientFactory;
         public const int DefaultLongRequestTimeOutMs = 15 * 60 * 1000;  //15 minutes * 60 sec/minute * 1000 ms/sec
 
         protected TableauServerRequestBase(IHttpClientFactory httpClientFactory)

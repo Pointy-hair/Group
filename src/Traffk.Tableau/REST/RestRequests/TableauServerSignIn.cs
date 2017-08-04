@@ -21,7 +21,6 @@ namespace Traffk.Tableau.REST.RestRequests
         private readonly TableauServerUrls TableauUrls;
         private readonly string Username;
         private readonly string Password;
-        private readonly IHttpClientFactory HttpClientFactory;
 
         public readonly TaskStatusLogs StatusLog;
         public string SiteUrlSegment { get; private set; }
