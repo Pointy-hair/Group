@@ -71,6 +71,14 @@ namespace TraffkPortal
                 builder.AddApplicationInsightsSettings(developerMode: true);
             }
 
+            var config = builder.Build();
+
+            builder.AddAzureKeyVault(
+                $"https://{config["Vault"]}.vault.azure.net/",
+                config["ClientId"],
+                config["ClientSecret"],
+                new TraffkSecretManager(config["ClientAppName"]));
+
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
 
@@ -129,14 +137,16 @@ namespace TraffkPortal
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
 
+            const string connectionStringKey = "ConnectionStrings";
+
             services.AddDbContext<TraffkTenantShardsDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString(TraffkTenantShardsDbContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Singleton);
+                options.UseSqlServer(Configuration.GetSection(connectionStringKey)[TraffkTenantShardsDbContext.DefaultDatabaseConnectionStringName]), ServiceLifetime.Singleton);
 
             services.AddDbContext<TraffkTenantModelDbContext>((sp,options) =>
-                options.UseSqlServer(Configuration.GetConnectionString(TraffkTenantModelDbContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Scoped);
+                options.UseSqlServer(Configuration.GetSection(connectionStringKey)[TraffkTenantModelDbContext.DefaultDatabaseConnectionStringName]), ServiceLifetime.Scoped);
 
             services.AddDbContext<TraffkGlobalDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString(TraffkGlobalDbContext.DefaultDatabaseConnectionStringName)), ServiceLifetime.Scoped);
+                options.UseSqlServer(Configuration.GetSection(connectionStringKey)[TraffkGlobalDbContext.DefaultDatabaseConnectionStringName]), ServiceLifetime.Scoped);
 
             services.Configure<IdentityOptions>(options => 
             {
