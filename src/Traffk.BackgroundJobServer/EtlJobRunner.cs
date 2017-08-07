@@ -26,7 +26,7 @@ namespace Traffk.BackgroundJobServer
 
         private readonly IOptions<EtlJobRunnerConfig> ConfigOptions;
         private readonly IHttpClientFactory HttpClientFactory;
-        private readonly IOptions<BlobStorageServices.Config> BlobConfig;
+        private readonly IOptions<BlobStorageServices.Config> BlobConfigOptions;
         private readonly Bal.Data.Rdb.TraffkTenantModel.TraffkTenantModelDbContext TtmDb;
 
         public EtlJobRunner(
@@ -42,7 +42,7 @@ namespace Traffk.BackgroundJobServer
             ConfigOptions = configOptions;
             HttpClientFactory = httpClientFactory;
             TtmDb = ttmDb;
-            BlobConfig = blobConfig;
+            BlobConfigOptions = blobConfig;
         }
 
         bool IDTSLogging.Enabled => true;
@@ -233,7 +233,7 @@ namespace Traffk.BackgroundJobServer
                     var uri = new Uri(fi.Url);
                     if (uri.Scheme == BlobStorageServices.AzureBlobServiceProtocol)
                     {
-                        uri = BlobStorageServices.GetReadonlySharedAccessSignatureUrl(BlobConfig, uri);
+                        uri = BlobStorageServices.GetReadonlySharedAccessSignatureUrl(BlobConfigOptions.Value, uri);
                     }
                     using (var client = HttpClientFactory.Create())
                     {

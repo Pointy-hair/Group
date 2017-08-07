@@ -1,7 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp1.1;net462</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net462</TargetFrameworks>
+    <!--
+    <TargetFrameworks>net462</TargetFrameworks>
+    -->
     <AssemblyName>Traffk.Bal</AssemblyName>
     <PackageId>Traffk.Bal</PackageId>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
@@ -19,19 +22,16 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='VSTS-CI|AnyCPU'" />
 
   <Choose>
-    <When Condition="'$(TargetFramework)' == 'netcoreapp1.1'">
+    <When Condition="'$(TargetFramework)' == 'netstandard2.0'">
       <PropertyGroup>
-        <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
-        <PackageTargetFallback>$(PackageTargetFallback);dotnet5.6;dnxcore50;portable-net451+win8</PackageTargetFallback>
-        <DefineConstants>NETCOREAPP1_1</DefineConstants>
+        <RuntimeFrameworkVersion>2.0.0-preview2-006497</RuntimeFrameworkVersion>
+        <DefineConstants>NETCORE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
       </PropertyGroup>
     </When>
     <When Condition="'$(TargetFramework)' == 'net462'">
       <PropertyGroup>
         <DefineConstants>NET462</DefineConstants>
       </PropertyGroup>
-    </When>
-    <When Condition="'$(TargetFramework)' == 'netstandard1.6'">
     </When>
   </Choose>
 
@@ -86,9 +86,28 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="ApplicationParts\JobRunnerProgram.MyActivator.cs">
+      <DependentUpon>JobRunnerProgram.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ApplicationParts\JobRunnerProgram.MyCurrentUser.cs">
+      <DependentUpon>JobRunnerProgram.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ApplicationParts\JobRunnerProgram.MyJobInfoFinder.cs">
+      <DependentUpon>JobRunnerProgram.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ApplicationParts\JobRunnerProgram.MyTraffkTenantFinder.cs">
+      <DependentUpon>JobRunnerProgram.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Data\DataStoreUpgrader\DDB\**" />
     <EmbeddedResource Remove="Data\DataStoreUpgrader\DDB\**" />
     <None Remove="Data\DataStoreUpgrader\DDB\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="ApplicationParts\JobRunnerProgram.MyLogProvider.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -129,14 +148,14 @@
     <PackageReference Include="Hangfire" Version="1.6.14" />
     <PackageReference Include="HtmlAgilityPack" Version="1.5.1" />
     <PackageReference Include="Microsoft.Azure.KeyVault" Version="2.3.2" />
-    <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="3.14.2" />
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
-    <PackageReference Include="RevolutionaryStuff.Core" Version="1.0.21" />
+    <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="3.16.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="RevolutionaryStuff.Core" Version="1.0.22" />
     <PackageReference Include="Serilog" Version="2.5.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="1.4.0" />
     <PackageReference Include="Serilog.Sinks.AzureTableStorage" Version="4.0.0" />
     <PackageReference Include="Serilog.Sinks.Trace" Version="2.1.0" />
-    <PackageReference Include="StackExchange.Redis" Version="1.2.5" />
+    <PackageReference Include="StackExchange.Redis" Version="1.2.6" />
     <PackageReference Include="System.Net.Http" Version="4.3.2" />
     <PackageReference Include="WindowsAzure.Storage" Version="8.2.1" />
     <PackageReference Include="MailKit" Version="1.16.2" />

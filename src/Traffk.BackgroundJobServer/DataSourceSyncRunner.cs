@@ -1,30 +1,28 @@
-﻿using H = HtmlAgilityPack;
-using Microsoft.Extensions.Options;
-using MimeKit.Cryptography;
-using Newtonsoft.Json;
-using Org.BouncyCastle.Bcpg.OpenPgp;
+﻿using Microsoft.Extensions.Options;
 using Renci.SshNet;
-using Renci.SshNet.Sftp;
 using RevolutionaryStuff.Core;
+using RevolutionaryStuff.Core.Caching;
 using RevolutionaryStuff.Core.Crypto;
 using RevolutionaryStuff.Core.Streams;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
+using Traffk.Bal;
 using Traffk.Bal.ApplicationParts;
 using Traffk.Bal.BackgroundJobs;
 using Traffk.Bal.Data.Rdb.TraffkGlobal;
 using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
-using Traffk.Bal;
-using System.Net;
-using System.IO.Compression;
 using Traffk.Utility;
+using H = HtmlAgilityPack;
 
 namespace Traffk.BackgroundJobServer
 {
@@ -33,84 +31,80 @@ namespace Traffk.BackgroundJobServer
         private readonly IOptions<BlobStorageServices.Config> BlobConfig;
         private readonly IVault Vault;
         private readonly IHttpClientFactory HttpClientFactory;
+        private readonly string TenantName;
 
         public DataSourceSyncRunner(
             IJobInfoFinder jobInfoFinder,
             IHttpClientFactory httpClientFactory,
-            JobRunnerProgram jobRunnerProgram, 
-            TraffkGlobalDbContext gdb, 
+            JobRunnerProgram jobRunnerProgram,
+            TraffkGlobalDbContext gdb,
+            Bal.Data.Rdb.TraffkTenantShards.TraffkTenantShardsDbContext tdb,
             IVault vault,
-            IOptions<BlobStorageServices.Config> blobConfig, 
+            IOptions<BlobStorageServices.Config> blobConfig,
             Serilog.ILogger logger)
             : base(gdb, jobInfoFinder, logger)
         {
             HttpClientFactory = httpClientFactory;
             BlobConfig = blobConfig;
             Vault = vault;
+            TenantName = tdb.TenantFindByTenantId(jobInfoFinder.JobInfo.TenantId.Value).Result.First().TenantName;
         }
 
-        private static bool IsPgpEncrypted(string fullPath)
+        private static readonly object DecryptAsyncLocker = new object();
+
+        private async Task DecryptAsync(Stream st, string destinationFile)
         {
-            if (fullPath == null || !File.Exists(fullPath)) return false;
-            using (var st = File.OpenRead(fullPath))
+            var pw = await Vault.GetSecretAsync(Bal.Services.Vault.CommonSecretUris.TraffkPgpPrivateKeyPasswordUri);
+            var sk = await Vault.GetSecretAsync(Bal.Services.Vault.CommonSecretUris.TraffkPgpPrivateKeyUri);
+
+            lock (DecryptAsyncLocker)
             {
-                return IsPgpEncrypted(st);
-            }
-        }
-
-        private static bool IsPgpEncrypted(Stream st)
-        {
-            var sr = new StreamReader(st);
-            var buf = new char[32];
-            var count = sr.ReadBlock(buf, 0, buf.Length);
-            var s = new string(buf, 0, count);
-            return s.StartsWith("-----BEGIN PGP MESSAGE-----");
-        }
-
-        private class MyGnuPGContext : GnuPGContext
-        {
-            private readonly string Password;
-
-            public MyGnuPGContext(string password)
-            {
-                Password = password;
-            }
-
-            protected override string GetPasswordForKey(PgpSecretKey key)
-                => Password;
-        }
-
-        private static readonly object DecryptLock = new object();
-
-        void Decrypt(Stream st, string destinationFile)
-        {
-            var pw = Vault.GetSecretAsync(Bal.Services.Vault.CommonSecretUris.TraffkPgpPrivateKeyPasswordUri).ExecuteSynchronously();
-            lock (DecryptLock)
-            {
-                using (var ctx = new MyGnuPGContext(pw))
+                var ring = Cache.DataCacher.FindOrCreateValWithSimpleKey(sk, () =>
                 {
-                    var sk = Vault.GetSecretAsync(Bal.Services.Vault.CommonSecretUris.TraffkPgpPrivateKeyUri).ExecuteSynchronously();
-                    using (var skst = StreamHelpers.Create(sk))
+                    using (var keyStream = StreamHelpers.Create(sk, System.Text.ASCIIEncoding.ASCII))
                     {
-                        ctx.ImportSecretKeys(skst);
+                        return EasyNetPGP.PgpEncryptorDecryptor.CreatePgpSecretKeyRingBundle(keyStream);
                     }
-                    using (var decryptedStream = ctx.GetDecryptedStream(st))
-                    {
-                        using (var destinationStream = File.Create(destinationFile))
-                        {
-                            decryptedStream.CopyTo(destinationStream);
-                        }
-                    }
+                });
+                EasyNetPGP.PgpEncryptorDecryptor.DecryptFile(
+                    st,
+                    null,
+                    pw,
+                    destinationFile,
+                    ring);
+            }
+        }
+
+        Task IDataSourceSyncJobs.DataSourceFetchAsync(int dataSourceId)
+            => new Fetcher(this, dataSourceId).FetchAsync();
+
+        /// <remarks>https://blog.cdemi.io/async-waiting-inside-c-sharp-locks/</remarks>
+        public sealed class AsyncLocker : BaseDisposable
+        {
+            private readonly SemaphoreSlim GdbSemaphore = new SemaphoreSlim(1, 1);
+            public AsyncLocker()
+            {
+
+            }
+
+            public async Task GoAsync(Func<Task> a)
+            {
+                await GdbSemaphore.WaitAsync();
+                try
+                {
+                    await a();
+                }
+                finally
+                {
+                    GdbSemaphore.Release();
                 }
             }
         }
 
 
-        Task IDataSourceSyncJobs.DataSourceFetchAsync(int dataSourceId)
-            => new Fetcher(this, dataSourceId).FetchAsync();
-
         public partial class Fetcher
         {
+            private readonly AsyncLocker GdbLocker = new AsyncLocker();
             private readonly DataSourceSyncRunner Runner;
             private readonly DataSource DS;
             TraffkGlobalDbContext Gdb => Runner.GlobalContext;
@@ -122,7 +116,7 @@ namespace Traffk.BackgroundJobServer
                 Runner = runner;
                 DS = Gdb.DataSources.Find(dataSourceId);
                 PopulateEvidence(dataSourceId);
-                BlobRootPath = $"{BlobStorageServices.GetDataSourceFetchItemRoot(null, dataSourceId)}{Runner.StartedAtUtc.ToYYYYMMDD()}/{Runner.StartedAtUtc.ToHHMMSS()}/";
+                BlobRootPath = $"{BlobStorageServices.GetDataSourceFetchItemRoot(runner.TenantName, dataSourceId)}{Runner.StartedAtUtc.ToYYYYMMDD()}/{Runner.StartedAtUtc.ToHHMMSS()}/";
             }
 
             private ICollection<DataSourceFetchItem> FindEvidenceItems(IEnumerable<string> evidence)
@@ -144,9 +138,12 @@ namespace Traffk.BackgroundJobServer
 
             private void PopulateEvidence(DataSourceFetchItem item)
             {
-                foreach (var e in EvidenceFactory.CreateEvidence(item))
+                lock (FetchItemByEvidence)
                 {
-                    FetchItemByEvidence[e] = item;
+                    foreach (var e in EvidenceFactory.CreateEvidence(item))
+                    {
+                        FetchItemByEvidence[e] = item;
+                    }
                 }
             }
 
@@ -285,10 +282,7 @@ namespace Traffk.BackgroundJobServer
                 using (var client = new SftpClient(ci))
                 {
                     client.Connect();
-                    Stuff.TaskWaitAllForEach(
-                        settings.FolderPaths,
-                        fp => FetchFtpFolderFilesAsync(client, fetch, fp)
-                        );
+                    await Task.WhenAll(settings.FolderPaths.ConvertAll(fp => FetchFtpFolderFilesAsync(client, fetch, fp)));
                 }
             }
 
@@ -329,19 +323,10 @@ namespace Traffk.BackgroundJobServer
                         return;
                     }
                     //                      Logger.LogInformation("Downloading", file.FullName, file.Length, tfn);
-                    try
-                    {
-                        tfn = await fetchAsync(details);
-                        var fi = new FileInfo(tfn);
-                        item.Size = fi.Length;
-                    }
-                    catch (Exception)
-                    {
-                        item = null;
-                        return;
-                    }
+                    tfn = await fetchAsync(details);
                     using (var st = File.OpenRead(tfn))
                     {
+                        item.Size = st.Length;
                         using (var muxer = new StreamMuxer(st, true))
                         {
                             var p = new BlobStorageServices.FileProperties
@@ -350,10 +335,6 @@ namespace Traffk.BackgroundJobServer
                             };
                             p.Metadata[BlobStorageServices.MetaKeyNames.SourcePath] = details.Folder;
                             p.Metadata[BlobStorageServices.MetaKeyNames.SourceFullName] = details.FullName;
-                            if (IsPgpEncrypted(muxer.OpenRead()))
-                            {
-                                p.Metadata[BlobStorageServices.MetaKeyNames.IsPgpEncrypted] = JsonConvert.SerializeObject(true);
-                            }
                             var urns = new List<string>();
                             Parallel.ForEach(
                                 new[]
@@ -404,14 +385,14 @@ namespace Traffk.BackgroundJobServer
                 {
                     if (item != null)
                     {
-                        lock (Gdb)
-                        {
+                        await GdbLocker.GoAsync(async () => {
                             Gdb.DataSourceFetchItems.Add(item);
-                            Gdb.SaveChanges();
-                        }
+                            await Gdb.SaveChangesAsync();
+                        });
                     }
                 }
-                if (IsPgpEncrypted(tfn))
+                var ext = Path.GetExtension(details.Name).ToLower();
+                if (ext == ".pgp" || details.Name.ToLower().Contains(".pgp."))
                 {
                     var name = details.Name;
                     if (name.ToLower().EndsWith(".pgp"))
@@ -431,14 +412,14 @@ namespace Traffk.BackgroundJobServer
                         new FileDetails(details, name),
                         DataSourceFetchItem.DataSourceFetchItemTypes.Decrypted,
                         item,
-                        _ =>
+                        async _ =>
                         {
                             var utfp = Path.GetTempFileName();
                             using (var st = File.OpenRead(tfn))
                             {
-                                Runner.Decrypt(st, utfp);
+                                await Runner.DecryptAsync(st, utfp);
                             }
-                            return Task.FromResult(utfp);
+                            return utfp;
                         }
                         );
                 }
@@ -457,7 +438,7 @@ namespace Traffk.BackgroundJobServer
                         }
                     }                        
                     ZipFile.ExtractToDirectory(tfn, unzipFolder);
-                    await Task.WhenAll(
+                    await TaskWhenAllOneAtATime(
                         Directory.GetFiles(unzipFolder, "*.*", SearchOption.AllDirectories).ConvertAll(
                         unzipped =>
                         {
@@ -487,21 +468,41 @@ namespace Traffk.BackgroundJobServer
                 }
             }
 
+            private async static Task TaskWhenAllOneAtATime(IEnumerable<Task> tasks)
+            {
+                var exceptions = new List<Exception>();
+                foreach (var task in tasks)
+                {
+                    try
+                    {
+                        await Task.Run(()=>task);
+                    }
+                    catch (Exception ex)
+                    {
+                        exceptions.Add(ex);
+                    }
+                }
+                if (exceptions.Count > 0)
+                {
+                    throw new AggregateException(exceptions);
+                }
+            }
+
             private async Task FetchFtpFolderFilesAsync(SftpClient client, DataSourceFetche fetch, string path)
             {
                 if (IsAlreadyVisited(path)) return;
                 client.ChangeDirectory(path);
                 var entries = client.ListDirectory(path);
-                await Task.WhenAll(
+                await TaskWhenAllOneAtATime(
                     entries.ConvertAll(async file => 
                 {
-                    if (IsAlreadyVisited(file.FullName)) return;
                     if (file.IsDirectory)
                     {
                         await FetchFtpFolderFilesAsync(client, fetch, file.FullName);
                     }
                     else if (file.IsRegularFile)
                     {
+                        if (IsAlreadyVisited(file.FullName)) return;
                         await FetchTheItemAsync(
                             fetch, 
                             new FileDetails(file),
@@ -509,7 +510,7 @@ namespace Traffk.BackgroundJobServer
                             null,
                             async fd => 
                             {
-                                var fn = Path.GetTempFileName();
+                                var fn = Stuff.GetTempFileName(Path.GetExtension(fd.FullName), Runner.TempFolderPath);
                                 using (var st = File.Create(fn))
                                 {
                                     Trace.WriteLine($"Starting {fd.FullName} to [{fn}]");

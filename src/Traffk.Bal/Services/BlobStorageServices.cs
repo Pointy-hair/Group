@@ -41,7 +41,7 @@ namespace Traffk.Bal.Services
     public class BlobStorageServices
     {
         public const string AzureBlobServiceProtocol = "abs";
-        private const string GlobalsLoginDomain = "TraffkGlobals";
+        private const string GlobalsTenantName = "TraffkGlobals";
 
         private readonly CloudStorageAccount StorageAccount;
         private readonly CloudBlobClient BlobClient;
@@ -70,9 +70,9 @@ namespace Traffk.Bal.Services
             User,
         }
 
-        public static string GetDataSourceFetchItemRoot(string tenantLoginDomain, int dataSourceId)
+        public static string GetDataSourceFetchItemRoot(string tenantName, int dataSourceId)
         {
-            return $"{tenantLoginDomain ?? GlobalsLoginDomain}/{dataSourceId}/";
+            return $"{tenantName ?? GlobalsTenantName}/{dataSourceId}/";
         }
 
         private static bool IsSecure(CloudBlobContainer container)
@@ -89,23 +89,23 @@ namespace Traffk.Bal.Services
             switch (root)
             {
                 case Roots.Portal:
-                    return $"{tenant.LoginDomain}/{name}";
+                    return $"{tenant.TenantName}/{name}";
                 case Roots.User:
-                    return $"{tenant.LoginDomain}/user/{CurrentUser.User.NormalizedUserName}/{name}";
+                    return $"{tenant.TenantName}/user/{CurrentUser.User.NormalizedUserName}/{name}";
                 default:
                     throw new UnexpectedSwitchValueException(root);
             }
         }
 
-        public static Uri GetReadonlySharedAccessSignatureUrl(IOptions<Config> blobOptions, Uri u, TimeSpan? expiresIn = null)
-            => GetSharedAccessSignatureUrl(blobOptions, u, new SharedAccessBlobPolicy
+        public static Uri GetReadonlySharedAccessSignatureUrl(Config blobConfig, Uri u, TimeSpan? expiresIn = null)
+            => GetSharedAccessSignatureUrl(blobConfig, u, new SharedAccessBlobPolicy
             {
                 Permissions = SharedAccessBlobPermissions.Read,
                 SharedAccessExpiryTime = new DateTimeOffset(DateTime.Now.AddMinutes(5)),                 
             });
 
         /// <remarks>https://docs.microsoft.com/en-us/azure/storage/storage-dotnet-shared-access-signature-part-1</remarks>
-        public static Uri GetSharedAccessSignatureUrl(IOptions<Config> blobOptions, Uri u, SharedAccessBlobPolicy policy)
+        public static Uri GetSharedAccessSignatureUrl(Config blobConfig, Uri u, SharedAccessBlobPolicy policy)
         {
             Requires.NonNull(u, nameof(u));
             Requires.NonNull(policy, nameof(policy));
@@ -116,7 +116,7 @@ namespace Traffk.Bal.Services
             }
 
             var parts = u.LocalPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            var storageAccount = CloudStorageAccount.Parse(blobOptions.Value.ConnectionString);
+            var storageAccount = CloudStorageAccount.Parse(blobConfig.ConnectionString);
             var client = storageAccount.CreateCloudBlobClient();
             var container = GetContainer(client, parts[0]);
             var blobName = parts.Skip(1).Format("/");
@@ -166,21 +166,21 @@ namespace Traffk.Bal.Services
             return results;
         }
 
-        private const int UploadChunkSize = 1024 * 1024 * 64;
+        private const int UploadChunkSize = 1024 * 1024 * 4;
         /// <remarks>
         /// http://blog.geuer-pollmann.de/blog/2014/07/21/uploading-blobs-to-azure-the-robust-way/
         /// http://wely-lau.net/2012/02/26/uploading-big-files-in-windows-azure-blob-storage-with-putlistblock/
         /// </remarks>
         private static async Task UploadStreamAsync(CloudBlockBlob blob, Stream st, Action<long> uploadProgress = null)
         {
-            bool big = false;
+            bool small = false;
             long uploaded = 0;
             try
             {
-                big = st.Length <= UploadChunkSize;
+                small = st.Length <= UploadChunkSize;
             }
             catch (Exception) { }
-            if (big)
+            if (small)
             {
                 uploaded = st.Length;
                 await blob.UploadFromStreamAsync(st);

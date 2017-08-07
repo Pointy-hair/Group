@@ -1,14 +1,17 @@
 ﻿using Hangfire;
+using Hangfire.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.ApplicationParts;
+using RevolutionaryStuff.Core.Caching;
 using Serilog;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using RevolutionaryStuff.Core.Caching;
 using Traffk.Bal.BackgroundJobs;
 using Traffk.Bal.Data.Rdb.TraffkGlobal;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
@@ -19,18 +22,14 @@ using Traffk.Bal.Services;
 using Traffk.Tableau;
 using Traffk.Tableau.REST;
 using Traffk.Tableau.REST.RestRequests;
-using ILogger = Serilog.ILogger;
-using System.Collections.Generic;
-using System.Linq;
 using Traffk.Utility;
+using ILogger = Serilog.ILogger;
 
 namespace Traffk.Bal.ApplicationParts
 {
     public abstract partial class JobRunnerProgram : CommandLineProgram
     {
         public static new void Main<TProgram>(string[] args) where TProgram : CommandLineProgram => CommandLineProgram.Main<TProgram>(args);
-
-        public ILogger JobRunnerLogger { get; private set; }
 
         public class HangfireServerConfig
         {
@@ -65,7 +64,7 @@ namespace Traffk.Bal.ApplicationParts
         private void GoHangfireServer()
         {
             var o = this.ServiceProvider.GetService<IOptions<HangfireServerConfig>>().Value;
-            JobRunnerLogger = this.ServiceProvider.GetService<ILogger>();
+            var logger = this.ServiceProvider.GetService<ILogger>();
 
             GlobalConfiguration.Configuration.UseSqlServerStorage(Configuration.GetConnectionString(o.ConnectionStringName));
             GlobalConfiguration.Configuration.UseActivator(new MyActivator(this));
@@ -82,7 +81,7 @@ namespace Traffk.Bal.ApplicationParts
                 var timeout = Parse.ParseTimeSpan(Configuration["JobRunner:TimeOut"], TimeSpan.FromSeconds(60));
                 do
                 {
-                    JobRunnerLogger.Information("Job Runner Heartbeat.");
+                    logger.Information("Job Runner Heartbeat.");
                 }
                 while (!ShutdownRequested.WaitOne(timeout));
             }
@@ -130,7 +129,7 @@ namespace Traffk.Bal.ApplicationParts
             services.Configure<HttpClientFactory.Config>(Configuration.GetSection(HttpClientFactory.Config.ConfigSectionName));
             services.AddScoped<IHttpClientFactory, HttpClientFactory>();
 
-            var logger = new LoggerConfiguration()
+            var loggerConfiguration = new LoggerConfiguration()
                 .Enrich.WithProperty("ApplicationName", Configuration["RevolutionaryStuffCoreOptions:ApplicationName"])
                 .Enrich.WithProperty("MachineName", Environment.MachineName)
                 .Enrich.With<EventTimeEnricher>()
@@ -140,8 +139,10 @@ namespace Traffk.Bal.ApplicationParts
                 .WriteTo.AzureTableStorageWithProperties(Configuration["BlobStorageServicesOptions:ConnectionString"],
                     storageTableName: Configuration["Serilog:TableName"],
                     writeInBatches: Parse.ParseBool(Configuration["Serilog:WriteInBatches"], true),
-                    period: Parse.ParseTimeSpan(Configuration["Serilog:LogInterval"], TimeSpan.FromSeconds(2)))
-                .CreateLogger();
+                    period: Parse.ParseTimeSpan(Configuration["Serilog:LogInterval"], TimeSpan.FromSeconds(2)));
+       
+            var logger = loggerConfiguration.CreateLogger();
+            Log.Logger = logger;
 
             services.AddScoped<ILogger>(provider => logger.ForContext<JobRunnerProgram>());
         }

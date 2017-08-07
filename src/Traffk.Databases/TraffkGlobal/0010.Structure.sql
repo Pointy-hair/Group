@@ -137,7 +137,6 @@ BEGIN
 
 	SET NOCOUNT ON;
 
-
 	;with
 	jp(JobId, RecurringJobId) as
 	(
@@ -169,9 +168,10 @@ BEGIN
 		m
 			on j.id=m.jobid
 			outer apply
-		(select try_cast(value as int) TenantId from hangfire.hash where field='TenantId' and [key]=m.RecurringJobId) t
+		(select try_cast(value as int) TenantId from hangfire.hash where field='TenantId' and [key]='recurring-job:'+m.RecurringJobId) t
 			outer apply
-		(select try_cast(value as int) ContactId from hangfire.hash where field='ContactId' and [key]=m.RecurringJobId) c
+		(select try_cast(value as int) ContactId from hangfire.hash where field='ContactId' and [key]='recurring-job:'+m.RecurringJobId) c
+
 
 END
 
@@ -242,5 +242,31 @@ begin
 	exec db.PrintNow 'Deleted {n0} state rows', @@rowcount
 
 end
+
+GO
+
+CREATE TRIGGER [HangFire].[StrongNameKiller]
+   ON  [HangFire].[Hash] 
+   AFTER INSERT
+AS 
+BEGIN
+
+	SET NOCOUNT ON;
+
+	update h
+	set
+		[value] = 
+			replace(
+				replace(h.[value], ', System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e', ''),
+				', mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089','')
+	from 
+		hangfire.[hash] h
+			inner join
+		inserted i
+			on h.id=i.id
+	where
+		h.[field]='Job'
+
+END
 
 GO

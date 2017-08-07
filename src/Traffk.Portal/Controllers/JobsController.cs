@@ -1,16 +1,16 @@
 ﻿using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RevolutionaryStuff.Core;
+using Serilog;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Serilog;
 using Traffk.Bal.BackgroundJobs;
-using TraffkPortal.Services;
-using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.Data.Rdb.TraffkGlobal;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
+using TraffkPortal.Services;
 
 namespace TraffkPortal.Controllers
 {
@@ -41,106 +41,12 @@ namespace TraffkPortal.Controllers
             CurrentContextServices current,
             ILogger logger,
             IBackgroundJobClient backgrounder,
-            ITraffkRecurringJobManager rjm,
             TraffkGlobalDbContext gdb
             )
             : base(AspHelpers.MainNavigationPageKeys.Setup, db, current, logger)
         {
             Backgrounder = backgrounder;
             GDB = gdb;
-            RJM = rjm;
-        }
-
-        private readonly ITraffkRecurringJobManager RJM;
-
-        [AllowAnonymous]
-        [Route("/Jobs/CreateRecurringTrace/{msg}")]
-        public IActionResult CreateRecurringTrace(string msg)
-        {
-//            Backgrounder.en
-            RJM.Add(Hangfire.Common.Job.FromExpression(() => System.Diagnostics.Trace.WriteLine(msg)), Cron.Minutely());
-            return Ok();
-        }
-
-        [AllowAnonymous]
-        [Route("/Jobs/CreateTenant/{tenantName}")]
-        public IActionResult CreateTenant(string tenantName)
-        {
-            if (tenantName == null) return BadRequest();
-            var d = new TenantCreationDetails
-            {
-                AdminPassword = "1adminPassword",
-                AdminUsername = "admin",
-                TenantName = tenantName
-            };
-            Backgrounder.Enqueue<ITenantManagementJobs>(z => z.CreateTenant(d));
-            return Ok();
-        }
-
-        [AllowAnonymous]
-        [Route("/Jobs/EtlZip")]
-        public IActionResult EtlZip()
-        {
-            Backgrounder.Enqueue<IEtlJobs>(z => z.ExecuteAsync(EtlPackages.ZipCodes, 256));
-            return Ok();
-        }
-
-        [AllowAnonymous]
-        [Route("/Jobs/DownloadZipCodes")]
-        public IActionResult DownloadZipCodes()
-        {
-            var ds = new Traffk.Bal.Data.Rdb.TraffkGlobal.DataSource
-            {
-                TenantId = 3,
-                DataSourceSettings = new Traffk.Bal.Settings.DataSourceSettings
-                {
-                    Web = new Traffk.Bal.Settings.DataSourceSettings.WebSettings
-                    {
-                        CredentialsKeyUri = Traffk.Bal.Services.Vault.CommonSecretUris.ZipCodesComCredentialsUri,
-                        LoginPageConfig = new Traffk.Bal.Settings.DataSourceSettings.WebSettings.WebLoginPageConfig
-                        {
-                            LoginPage = new Uri("https://www.zip-codes.com/account_login.asp"),
-                            UsernameFieldName = "loginUsername",
-                            PasswordFieldName = "loginPassword"
-                        },
-                        DownloadUrls = new[] 
-                        {
-                            new Uri("https://www.zip-codes.com/account_database.asp?type=csv&product=25"), //CSV Delux DB
-                            new Uri("https://www.zip-codes.com/account_database.asp?type=csv&product=38"), //CSV Delux DB with Business
-                            new Uri("https://www.zip-codes.com/account_database.asp?type=cs&product=89"), //CSV Zip9
-                        }
-                    }
-                }
-            };
-            GDB.DataSources.Add(ds);
-            GDB.SaveChanges();
-            Backgrounder.Enqueue<IDataSourceSyncJobs>(z => z.DataSourceFetchAsync(ds.DataSourceId));
-//            RJM.Add(Hangfire.Common.Job.FromExpression<IDataSourceSyncJobs>(z => z.DataSourceFetchAsync(ds.DataSourceId)), Cron.Daily());
-            return Ok();
-        }
-
-        [AllowAnonymous]
-        [Route("/Jobs/DS")]
-        public IActionResult DS()
-        {
-            var ds = new Traffk.Bal.Data.Rdb.TraffkGlobal.DataSource
-            {
-                TenantId = 3,
-                DataSourceSettings = new Traffk.Bal.Settings.DataSourceSettings
-                {
-                    FTP = new Traffk.Bal.Settings.DataSourceSettings.FtpSettings
-                    {
-                        CredentialsKeyUri = Traffk.Bal.Services.Vault.CommonSecretUris.TraffkFtpTodayCredentialsUri,
-                        Hostname = "traffk.ftptoday.com",
-                        Port = 22,
-                        FolderPaths = new[] { "/U-HaulWorkday", "/U-HaulCarrum", "/bradm@uhaul.com" }
-                    }
-                }
-            };
-            GDB.DataSources.Add(ds);
-            GDB.SaveChanges();
-            Backgrounder.Enqueue<IDataSourceSyncJobs>(z => z.DataSourceFetchAsync(ds.DataSourceId));
-            return Ok();
         }
 
         [ActionName(ActionNames.Jobs)]

@@ -15,9 +15,9 @@ namespace Traffk.Bal.Services
         public static class CommonSecretUris
         {
             public const string TableauAdminCredentialsUri = "https://traffkkeyvault.vault.azure.net/secrets/TableauAdminCredentials/1080b68139254ad5b212b749f412a030";
-            public const string TraffkFtpTodayCredentialsUri = "https://traffkkeyvault.vault.azure.net/secrets/TraffkFtpTodayCredentials/84955de3da07498cb3a49f112a4c4232";
+            public const string TraffkFtpTodayCredentialsUri = "https://traffkkeyvault.vault.azure.net/secrets/TraffkFtpTodayCredentials/81a39306974543b6bdb484b446970487";
             public const string TraffkPgpPublicKeyUri = "https://traffkkeyvault.vault.azure.net/secrets/TraffkPgpPublicKey/4f3bf633217140a9a5f7c894accbf54e";
-            public const string TraffkPgpPrivateKeyUri = "https://traffkkeyvault.vault.azure.net/secrets/TraffkPgpPrivateKey/c63ddaf975524026b68216000683808d";
+            public const string TraffkPgpPrivateKeyUri = "https://traffkkeyvault.vault.azure.net/secrets/TraffkPgpPrivateKey/36c2886d69fb4e9fa52ecbca80c1a818";
             public const string TraffkPgpPrivateKeyPasswordUri = "https://traffkkeyvault.vault.azure.net/secrets/TraffkPgpPrivateKeyPassword/c163ad8eac1d45abb9cc6882c2ddb19d";
             public const string ZipCodesComCredentialsUri = "https://traffkkeyvault.vault.azure.net/secrets/ZipCodesComCredentials/dc3c608040a34ab5907c488898c9e32a";
         }

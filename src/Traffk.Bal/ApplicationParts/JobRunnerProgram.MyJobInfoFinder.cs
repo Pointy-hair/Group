@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Traffk.Bal.ApplicationParts
+﻿namespace Traffk.Bal.ApplicationParts
 {
     public partial class JobRunnerProgram
     {

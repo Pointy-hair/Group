@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.6;netcoreapp1.1;net462</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net462</TargetFrameworks>
     <AssemblyName>Traffk.Utility</AssemblyName>
     <PackageId>Traffk.Utility</PackageId>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
@@ -12,19 +12,16 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='VSTS-CI|AnyCPU'" />
 
   <Choose>
-    <When Condition="'$(TargetFramework)' == 'netcoreapp1.1'">
+    <When Condition="'$(TargetFramework)' == 'netstandard2.0'">
       <PropertyGroup>
-        <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
-        <PackageTargetFallback>$(PackageTargetFallback);dotnet5.6;dnxcore50;portable-net451+win8</PackageTargetFallback>
-        <DefineConstants>NETCOREAPP1_1</DefineConstants>
+        <RuntimeFrameworkVersion>2.0.0-preview2-006497</RuntimeFrameworkVersion>
+        <DefineConstants>NETCORE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
       </PropertyGroup>
     </When>
     <When Condition="'$(TargetFramework)' == 'net462'">
       <PropertyGroup>
         <DefineConstants>NET462</DefineConstants>
       </PropertyGroup>
-    </When>
-    <When Condition="'$(TargetFramework)' == 'netstandard1.6'">
     </When>
   </Choose>
 

@@ -54,7 +54,12 @@ namespace Traffk.Bal.BackgroundJobs
             var tenantId = Finder.GetTenantIdAsync().ExecuteSynchronously();
             var contactId = CurrentUser?.User?.ContactId;
             var recurringJobId = GetRecurringJobId();
-            RecurringJobManager.AddOrUpdate(recurringJobId, job, cronExpression, new RecurringJobOptions());
+            var q = job.Method.GetCustomAttributes(false).OfType<QueueAttribute>().FirstOrDefault() ?? job.Type.GetCustomAttribute<QueueAttribute>();
+            var options = new RecurringJobOptions
+            {
+                QueueName = q?.Queue,
+            };
+            RecurringJobManager.AddOrUpdate(recurringJobId, job, cronExpression, options);
             GDB.Hash.Add(new HangfireHash { Key = "recurring-job:"+recurringJobId, Field = "TenantId", Value = tenantId.ToString() });
             if (contactId != null)
             {

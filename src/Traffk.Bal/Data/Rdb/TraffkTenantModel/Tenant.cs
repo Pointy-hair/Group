@@ -8,6 +8,7 @@ namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
         {
             Normal,
             Globals,
+            Placeholder,
         }
 
         public static class StatusNames
