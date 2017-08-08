@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.ReportVisuals;
 
 namespace Traffk.Portal.Models.ReportingModels
@@ -31,5 +32,6 @@ namespace Traffk.Portal.Models.ReportingModels
         public string WorksheetName { get; set; }
         public string Description { get; set; }
         public ReportDetails.RenderingAttributeFlags RenderingAttributes { get; private set; }
+        public IQueryable<Note> Notes { get; set; }
     }
 }

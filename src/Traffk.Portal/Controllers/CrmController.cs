@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Traffk.Bal;
@@ -209,8 +210,8 @@ namespace TraffkPortal.Controllers
         {
             return RawContactRecordInfo(id, PageKeys.Notes, nameof(ContactNotes), m =>
             {
-                var notes = Rdb.GetAttachedNotes(m.Contact);
-                m.Notes = ApplyBrowse(notes, sortCol ?? nameof(Note.CreatedAtUtc), sortDir, page, pageSize).ToList();
+                var notes = GetNotes(m.Contact);
+                m.Notes = ApplyBrowse<Note>(notes, sortCol ?? nameof(Note.CreatedAtUtc), sortDir, page, pageSize).ToList();
             });
         }
 

@@ -12,9 +12,9 @@ using TraffkPortal.Services;
 
 namespace Traffk.Portal.Controllers
 {
-    public class NotesController : BasePageController
+    public class AjaxController : BasePageController
     {
-        public NotesController(
+        public AjaxController(
             TraffkTenantModelDbContext db,
             CurrentContextServices current,
             ILogger logger) : base(AspHelpers.MainNavigationPageKeys.NotSpecified, db, current, logger)

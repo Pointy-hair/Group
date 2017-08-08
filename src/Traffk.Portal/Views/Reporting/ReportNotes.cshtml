@@ -1,0 +1,22 @@
+﻿@using Traffk.Bal.ReportVisuals
+@using Traffk.Portal.Controllers
+@model Traffk.Portal.Models.ReportingModels.TableauReportViewModel
+@{
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
+    ViewData.SetTitleAndHeading("Notes");
+    ViewData.IsListingPage(true);
+    ViewData.HasPageMenuItems(false);
+    ViewData.HasBreadcrumbItems(true);
+    var entityId = @Model.Id.ToString();
+
+}
+@section breadCrumbItems {
+    <li><a asp-controller="@ReportingController.Name" asp-action="Index">Reports</a> <span>></span> </li>
+    <li><a asp-controller="@ReportingController.Name" asp-action="Index" asp-fragment="@Model.FolderName.ToUpperCamelCase()">@Model.FolderName.ToTitleFriendlyString()</a> <span>></span> </li>
+    <li><a asp-controller="@ReportingController.Name" asp-action="Report" asp-route-id="@Model.Id" asp-route-anchorName="@ReportVisualService.CreateAnchorName(Model.Title)">@Model.Title.ToTitleFriendlyString()</a> <span>></span> </li>
+}
+
+@section listingTable
+{
+    @await Html.PartialAsync("_NotesPartial", Model.Notes, z => z.Notes)
+}

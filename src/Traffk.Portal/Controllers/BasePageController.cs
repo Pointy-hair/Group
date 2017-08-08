@@ -241,6 +241,12 @@ namespace TraffkPortal.Controllers
             return null;
         }
 
+        protected IQueryable<Note> GetNotes(IRdbDataEntity entityWithAttachedNotes)
+        {
+            var notes = Rdb.GetAttachedNotes(entityWithAttachedNotes);
+            return notes;
+        }
+
         public static string CreateAnchorName(IReportResource reportResource) =>
             ReportVisualService.CreateAnchorName(reportResource);
 

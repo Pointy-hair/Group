@@ -49,10 +49,14 @@ namespace Traffk.Portal.Controllers
             public const string ShowReport = "ShowReport";
             public const string Index = "Index";
             public const string Report = "Report";
-            public const string DownloadedReports = "Downloads";
+            public const string Download = "DownloadReport";
+            public const string DownloadedReports = "ReportDownloads";
+            public const string CreateScheduledReport = "CreateScheduledReport";
             public const string ScheduledReports = "ScheduledReportIndex";
             public const string ScheduleReportSave = "ScheduleReportSave";
-            public const string ScheduledReportDetail = "ScheduledReportDetail";   
+            public const string ScheduledReportDetail = "ScheduledReportDetail";
+            public const string ScheduledReportHistory = "ScheduledReportHistory";
+            public const string ReportNotes = "ReportNotes";
         }
 
         public static class ViewNames
@@ -154,6 +158,7 @@ namespace Traffk.Portal.Controllers
             }).Value;
         }
 
+        [ActionName(ActionNames.Download)]
         [Route("/Reporting/Report/Download/{id}/{anchorName}")]
         public IActionResult DownloadReport(string id, string anchorName)
         {
@@ -178,8 +183,8 @@ namespace Traffk.Portal.Controllers
             return NoContent(); //Placeholder - will redirect to a reportIndex page
         }
 
-        [Route("/Reporting/Report/Downloads")]
         [ActionName(ActionNames.DownloadedReports)]
+        [Route("/Reporting/Report/Downloads")]
         public IActionResult DownloadedReportIndex(string sortCol, string sortDir, int? page, int? pageSize)
         {
             var currentUserContactId = Current.User.ContactId;
@@ -195,6 +200,7 @@ namespace Traffk.Portal.Controllers
 
         [HttpGet]
         [Route("/Reporting/Report/Schedule/{id}/{anchorName}")]
+        [ActionName(ActionNames.CreateScheduledReport)]
         public IActionResult CreateScheduledReport(string id, string anchorName)
         {
             try
@@ -261,8 +267,8 @@ namespace Traffk.Portal.Controllers
             }
         }
 
-        [Route("/Reporting/ScheduledReports")]
         [ActionName(ActionNames.ScheduledReports)]
+        [Route("/Reporting/ScheduledReports")]
         public IActionResult ScheduledReportIndex()
         {
             var userRecurringJobs = RecurringJobManager.GetUserRecurringJobs();
@@ -288,6 +294,7 @@ namespace Traffk.Portal.Controllers
             return View(viewModels);
         }
 
+        [ActionName(ActionNames.ScheduledReportDetail)]
         [Route("/Reporting/ScheduledReports/{id}")]
         public IActionResult ScheduledReportDetail(int id)
         {
@@ -304,6 +311,7 @@ namespace Traffk.Portal.Controllers
             return View(viewModel);
         }
 
+        [ActionName(ActionNames.ScheduledReportHistory)]
         [Route("/Reporting/ScheduledReports/{id}/History")]
         public IActionResult ScheduledReportHistory(int id)
         {
@@ -317,6 +325,33 @@ namespace Traffk.Portal.Controllers
             SetHeroLayoutViewData(communication.CommunicationId, communication.CampaignName, PageKeys.ScheduledReportHistory);
 
             return View(viewModel);
+        }
+
+        [ActionName(ActionNames.ReportNotes)]
+        [Route("/Reporting/Report/{id}/Notes")]
+        public async Task<IActionResult> GetReportNotesAsync(int id, string sortCol, string sortDir, int? page, int? pageSize)
+        {
+            var reportMetadata = await Rdb.ReportMetaData.FindAsync(id);
+            var notes = GetNotes(reportMetadata);
+
+            var reportSearchCriteria = new ReportSearchCriteria
+            {
+                VisualContext = ReportVisualContext,
+                ReportId = id
+            };
+            var reportVisual = ReportVisualService.GetReportVisual(reportSearchCriteria);
+
+            if (reportVisual == null)
+            {
+                return RedirectToAction(ActionNames.Index);
+            }
+
+            var tableauReportViewModel = new TableauReportViewModel(reportVisual)
+            {
+                Notes = notes
+            };
+
+            return View(tableauReportViewModel);
         }
 
         private void QueueReportDownload(CreatePdfOptions options)
