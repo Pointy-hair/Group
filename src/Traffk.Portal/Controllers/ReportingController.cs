@@ -41,7 +41,9 @@ namespace Traffk.Portal.Controllers
         public enum PageKeys
         {
             ScheduledReportDetails,
-            ScheduledReportHistory
+            ScheduledReportHistory,
+            Report,
+            ReportNotes
         }
 
         public static class ActionNames
@@ -112,6 +114,7 @@ namespace Traffk.Portal.Controllers
             Logger.Information("{@EventType} {@ReportId}", EventType.LoggingEventTypes.ViewedReport.ToString(), reportVisual.Id.ToString());
 
             var tableauReportViewModel = new TableauReportViewModel(reportVisual);
+            SetHeroLayoutViewData(reportVisual.Id, reportVisual.Title.ToTitleFriendlyString(), PageKeys.Report);
             return View(tableauReportViewModel);
         }
 
@@ -350,7 +353,7 @@ namespace Traffk.Portal.Controllers
             {
                 Notes = notes
             };
-
+            SetHeroLayoutViewData(reportVisual.Id, reportVisual.Title.ToTitleFriendlyString(), PageKeys.ReportNotes);
             return View(tableauReportViewModel);
         }
 

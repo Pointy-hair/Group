@@ -11,6 +11,8 @@
     ViewData.HasPageMenuItems(true);
     ViewData.IsContentPage(true);
     var entityId = @Model.Id.ToString();
+    var pageKey = (ReportingController.PageKeys)ViewData[AspHelpers.ViewDataKeys.PageKey];
+
 }
 
 
@@ -26,6 +28,10 @@
     <li><a href="#" class="popup-send-report-message_open">Send Message</a></li>
 }
 
+@section pageNavItems {
+    <li><a asp-controller="@ReportingController.Name" asp-action="Report" asp-for-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == ReportingController.PageKeys.Report ? "active" : "")" data-section="personal-edit-form-container">Report</a></li>
+    <li><a asp-controller="@ReportingController.Name" asp-action="ReportNotes" asp-for-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == ReportingController.PageKeys.ReportNotes ? "active" : "")" data-section="personal-edit-form-container">Notes</a></li>
+}
 
 @{     await Html.RenderPartialAsync("~/Views/Shared/_ReportFramePartial.cshtml", Model); }
 

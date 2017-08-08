@@ -253,8 +253,6 @@ namespace TraffkPortal
             loggerFactory.AddSerilog(Logger);
 #endif
             
-            app.UseApplicationInsightsRequestTelemetry();
-
             if (env.IsDevelopment())
             {
                 app.UseExceptionHandler("/E");
@@ -267,8 +265,6 @@ namespace TraffkPortal
             }
 
             app.UseMiddleware<NoTenantMiddleware>();
-
-            app.UseApplicationInsightsExceptionTelemetry();
 
             app.UseStaticFiles();
 
