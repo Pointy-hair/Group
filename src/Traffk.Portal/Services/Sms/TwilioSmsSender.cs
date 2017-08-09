@@ -16,6 +16,7 @@ namespace TraffkPortal.Services.Sms
         public TwilioSmsSender(IOptions<TwilioSmsSenderConfig> options)
         {
             Options = options.Value;
+            Options.RequestUri = Options.RequestUri.Replace(@"{SID}", Options.SID);
         }
 
         public async Task SendSmsAsync(string number, string message)

@@ -81,6 +81,7 @@ namespace Traffk.Portal.Controllers
             ReportVisualService = reportVisualService;
             Backgrounder = backgrounder;
             RecurringJobManager = recurringJobManager;
+            BlobStorageService = blobStorageService;
         }
 
         [Route("/Reporting")]

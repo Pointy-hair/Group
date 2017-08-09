@@ -79,6 +79,15 @@ namespace TraffkPortal
                 config["ClientSecret"],
                 new TraffkSecretManager(config["ClientAppName"]));
 
+            if (env.IsDevelopment())
+            {
+                builder.AddAzureKeyVault(
+                    $"https://{config["Vault"]}.vault.azure.net/",
+                    config["ClientId"],
+                    config["ClientSecret"],
+                    new TraffkSecretManager(config["ClientAppName"] + config["ClientAppNameEnvironment"]));
+            }
+
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
 
@@ -94,7 +103,7 @@ namespace TraffkPortal
                     .MinimumLevel.Verbose()
                     .Enrich.FromLogContext()
                     .WriteTo.Trace()
-                    .WriteTo.AzureTableStorageWithProperties(Configuration["BlobStorageServicesOptions:ConnectionString"], 
+                    .WriteTo.AzureTableStorageWithProperties(Configuration.GetSection("BlobStorageServicesOptions")["ConnectionString"], 
                         storageTableName: Configuration["Serilog:TableName"], 
                         writeInBatches: Parse.ParseBool(Configuration["Serilog:WriteInBatches"], true), 
                         period: Parse.ParseTimeSpan(Configuration["Serilog:LogInterval"], TimeSpan.FromSeconds(2)))
