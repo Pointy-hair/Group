@@ -7,6 +7,8 @@
     <AssemblyName>Traffk.Portal</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>Traffk.Portal</PackageId>
+    <ApplicationInsightsResourceId>/subscriptions/97fb35fb-2163-4ddc-8133-819ff042d260/resourcegroups/TraffkHealthInformationPortal-PROD/providers/microsoft.insights/components/traffkSite-prod</ApplicationInsightsResourceId>
+    <ApplicationInsightsAnnotationResourceId>/subscriptions/97fb35fb-2163-4ddc-8133-819ff042d260/resourcegroups/TraffkHealthInformationPortal-PROD/providers/microsoft.insights/components/traffkSite-prod</ApplicationInsightsAnnotationResourceId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='VSTS-CI|AnyCPU'" />
@@ -86,5 +88,9 @@
     <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="1.0.0" />
     <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="1.0.0" />
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <WCFMetadata Include="Service References" />
   </ItemGroup>
 </Project>

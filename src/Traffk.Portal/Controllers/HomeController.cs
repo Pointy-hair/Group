@@ -48,9 +48,7 @@ namespace TraffkPortal.Controllers
 
         public IActionResult Contact()
         {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
+            return Redirect("https://www.traffk.com");
         }
 
         [PermissionAuthorize(PermissionNames.ReleaseLog)]

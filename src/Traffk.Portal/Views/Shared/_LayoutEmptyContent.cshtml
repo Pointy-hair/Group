@@ -131,7 +131,7 @@
                                 <ul class="dropdown-menu dropdown-submenu" style="width: auto;">
                                     <li><a asp-area="" asp-controller="@HomeController.Name" asp-action="Index">Home</a></li>
                                     <li><a asp-area="" asp-controller="@HomeController.Name" asp-action="About">About</a></li>
-                                    <li><a asp-area="" asp-controller="@HomeController.Name" asp-action="Contact">Contact</a></li>
+                                    <li><a href="https://www.traffk.com" target="_blank">Contact</a></li>
                                     @if (await User.HasPermission(AuthorizationService, PermissionNames.ReleaseLog))
                                     {
                                         <li><a asp-controller="Home" asp-action="Releases">Releases</a></li>
@@ -220,7 +220,7 @@
                                 <ul style="width: auto;">
                                     <li><a asp-area="" asp-controller="@HomeController.Name" asp-action="Index">Home</a></li>
                                     <li><a asp-area="" asp-controller="@HomeController.Name" asp-action="About">About</a></li>
-                                    <li><a asp-area="" asp-controller="@HomeController.Name" asp-action="Contact">Contact</a></li>
+                                    <li><a href="https://www.traffk.com" target="_blank">Contact</a></li>
                                     @if (await User.HasPermission(AuthorizationService, PermissionNames.ReleaseLog))
                                     {
                                         <li><a asp-controller="Home" asp-action="Releases">Releases</a></li>
