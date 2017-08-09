@@ -10,5 +10,5 @@
     <div class="alert alert-info" role="alert" id="Next Scheduled Send">Next occurrence: @Model.NextOccurrence?.StartAtUtc.ToLocalTime()</div>    
 }
 <form asp-action="@CommunicationsController.ActionNames.CommunicationScheduleSave" class="inline-form html-editor-form">
-    @await Html.PartialAsync("_RecurrenceSettingsPartial", Model)
+    @await Html.PartialAsync("_BasicRecurrenceSettingsPartial", Model)
 </form>

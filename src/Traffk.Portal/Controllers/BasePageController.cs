@@ -209,11 +209,13 @@ namespace TraffkPortal.Controllers
             */
         }
 
+        [Route("Base/CreateNote")]
         public async Task<IActionResult> CreateNote(
             string parentNoteId,
             string content,
             IRdbDataEntity attachmentSite) => await CreateNote(parentNoteId, content, new[]{attachmentSite});
 
+        [Route("Base/CreateNotes")]
         public async Task<IActionResult> CreateNote(
             string parentNoteId,
             string content,

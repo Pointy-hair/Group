@@ -51,6 +51,9 @@
                     @Html.DisplayFor(modelItem => item.CreatedAt)
                 </td>
                 <td>
+                    @{
+                        item.CommunicationTitle = item.CommunicationTitle.ToTitleFriendlyString();   
+                    }
                     <a asp-action="@ActionNames.CommunicationDetails" asp-route-id="@item.CommunicationId">
                         @Html.DisplayFor(modelItem => item.CommunicationTitle)
                     </a>
