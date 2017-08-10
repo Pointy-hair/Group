@@ -27,8 +27,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Traffk.Orchestra", "src\Tra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Traffk.Utility", "src\Traffk.Utility\Traffk.Utility.csproj", "{838C432D-2B28-4388-9FDB-5545381B2523}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Traffk.CronExpressionDescriptor", "src\Traffk.CronExpressionDescriptor\Traffk.CronExpressionDescriptor.csproj", "{05E05824-F133-4EF0-A2D5-3D2961B17B13}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -96,12 +94,6 @@ Global
 		{838C432D-2B28-4388-9FDB-5545381B2523}.Release|Any CPU.Build.0 = Release|Any CPU
 		{838C432D-2B28-4388-9FDB-5545381B2523}.VSTS-CI|Any CPU.ActiveCfg = Debug|Any CPU
 		{838C432D-2B28-4388-9FDB-5545381B2523}.VSTS-CI|Any CPU.Build.0 = Debug|Any CPU
-		{05E05824-F133-4EF0-A2D5-3D2961B17B13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{05E05824-F133-4EF0-A2D5-3D2961B17B13}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{05E05824-F133-4EF0-A2D5-3D2961B17B13}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{05E05824-F133-4EF0-A2D5-3D2961B17B13}.Release|Any CPU.Build.0 = Release|Any CPU
-		{05E05824-F133-4EF0-A2D5-3D2961B17B13}.VSTS-CI|Any CPU.ActiveCfg = Debug|Any CPU
-		{05E05824-F133-4EF0-A2D5-3D2961B17B13}.VSTS-CI|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -117,6 +109,5 @@ Global
 		{F3D583B4-ADEA-41A6-86EE-B6272B1BA38B} = {D5AB1A3B-756E-4823-80F8-9A91ECB492AE}
 		{D6AA0380-1E21-4F60-8DD0-FEEF306F70B2} = {2D992A1D-203B-461A-B1C1-312F64C77810}
 		{838C432D-2B28-4388-9FDB-5545381B2523} = {2D992A1D-203B-461A-B1C1-312F64C77810}
-		{05E05824-F133-4EF0-A2D5-3D2961B17B13} = {2D992A1D-203B-461A-B1C1-312F64C77810}
 	EndGlobalSection
 EndGlobal

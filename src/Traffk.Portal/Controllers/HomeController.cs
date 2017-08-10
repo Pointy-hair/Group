@@ -20,6 +20,9 @@ namespace TraffkPortal.Controllers
         public static class ActionNames
         {
             public const string Index = "Index";
+            public const string PrivacyPolicy = "PrivacyPolicy";
+            public const string TermsConditions = "Terms";
+            public const string Releases = "Releases";
         }
 
         public HomeController(
@@ -46,17 +49,36 @@ namespace TraffkPortal.Controllers
             return View();
         }
 
+        [ActionName(ActionNames.Releases)]
         public IActionResult Contact()
         {
             return Redirect("https://www.traffk.com");
         }
 
         [PermissionAuthorize(PermissionNames.ReleaseLog)]
+        [ActionName(ActionNames.Releases)]
+        [Route("Releases")]
         public async Task<IActionResult> Releases(string sortCol, string sortDir, int? startAt)
         {
             var releases = (IQueryable<Release>) Rdb.Releases;
             releases = ApplySort(releases, sortCol ?? nameof(Release.ReleaseDate), sortDir??AspHelpers.SortDirDescending);
             return View(await releases.ToListAsync());
+        }
+
+        [ActionName(ActionNames.PrivacyPolicy)]
+        [AllowAnonymous]
+        [Route("PrivacyPolicy")]
+        public IActionResult PrivacyPolicy()
+        {
+            return View();
+        }
+
+        [ActionName(ActionNames.TermsConditions)]
+        [AllowAnonymous]
+        [Route("Terms")]
+        public IActionResult Terms()
+        {
+            return View();
         }
     }
 }
