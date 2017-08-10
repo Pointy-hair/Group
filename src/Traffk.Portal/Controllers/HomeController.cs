@@ -23,6 +23,8 @@ namespace TraffkPortal.Controllers
             public const string PrivacyPolicy = "PrivacyPolicy";
             public const string TermsConditions = "Terms";
             public const string Releases = "Releases";
+            public const string Contact = "Contact";
+            public const string About = "About";
         }
 
         public HomeController(
@@ -40,6 +42,7 @@ namespace TraffkPortal.Controllers
             return View();
         }
 
+        [ActionName(ActionNames.About)]
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";
@@ -49,7 +52,7 @@ namespace TraffkPortal.Controllers
             return View();
         }
 
-        [ActionName(ActionNames.Releases)]
+        [ActionName(ActionNames.Contact)]
         public IActionResult Contact()
         {
             return Redirect("https://www.traffk.com");
