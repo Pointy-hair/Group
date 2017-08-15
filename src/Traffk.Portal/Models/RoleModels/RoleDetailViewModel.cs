@@ -29,7 +29,7 @@ namespace TraffkPortal.Models.RoleModels
             }
             items.Sort((a, b) => a.Text.CompareTo(b.Text));
             InitialPermissionList = items;
-            SelectedPermissions = items.Where(z=>z.Selected).ConvertAll(z => z.Text).ToList();
+            SelectedPermissions = items.Where(z=>z.Selected).ConvertAll(z => z.Value).ToList();
         }
     }
 }

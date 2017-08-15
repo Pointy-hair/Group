@@ -101,21 +101,9 @@ namespace Traffk.Portal.Controllers
         [ActionName(ActionNames.Report)]
         public IActionResult Report(string id, string anchorName)
         {
-            var reportSearchCriteria = new ReportSearchCriteria
-            {
-                VisualContext = ReportVisualContext,
-                ReportId = Parse.ParseInt32(id)
-            };
-            var reportVisual = ReportVisualService.GetReportVisual(reportSearchCriteria);
-            if (reportVisual == null)
-            {
-                return RedirectToAction(ActionNames.Index);
-            }
+            var tableauReportViewModel = GetReportViewModel(id);
 
-            Logger.Information("{@EventType} {@ReportId}", EventType.LoggingEventTypes.ViewedReport.ToString(), reportVisual.Id.ToString());
-
-            var tableauReportViewModel = new TableauReportViewModel(reportVisual);
-            SetHeroLayoutViewData(reportVisual.Id, reportVisual.Title.ToTitleFriendlyString(), PageKeys.Report);
+            SetHeroLayoutViewData(tableauReportViewModel.Id, tableauReportViewModel.Title.ToTitleFriendlyString(), PageKeys.Report);
             return View(tableauReportViewModel);
         }
 
@@ -166,25 +154,18 @@ namespace Traffk.Portal.Controllers
         [Route("/Reporting/Report/Download/{id}/{anchorName}")]
         public IActionResult DownloadReport(string id, string anchorName)
         {
-            var reportSearchCriteria = new ReportSearchCriteria
-            {
-                VisualContext = ReportVisualContext,
-                ReportId = Parse.ParseInt32(id)
-            };
-            var reportVisual = ReportVisualService.GetReportVisual(reportSearchCriteria);
-            if (reportVisual == null)
+            var tableauReportViewModel = GetReportViewModel(id);
+            if (tableauReportViewModel == null)
             {
                 return RedirectToAction(ActionNames.Index);
             }
 
-            var tableauReportViewModel = new TableauReportViewModel(reportVisual);
-
             var createPdfOptions = new CreatePdfOptions(tableauReportViewModel.WorkbookName, tableauReportViewModel.ViewName, tableauReportViewModel.WorksheetName);
             QueueReportDownload(createPdfOptions);
 
-            Logger.Information("{@EventType} {@ReportId}", EventType.LoggingEventTypes.DownloadedReport.ToString(), reportVisual.Id.ToString());
+            Logger.Information("{@EventType} {@ReportId}", EventType.LoggingEventTypes.DownloadedReport.ToString(), tableauReportViewModel.Id.ToString());
 
-            return NoContent(); //Placeholder - will redirect to a reportIndex page
+            return RedirectToAction(ActionNames.DownloadedReports);
         }
 
         [ActionName(ActionNames.DownloadedReports)]
@@ -209,17 +190,11 @@ namespace Traffk.Portal.Controllers
         {
             try
             {
-                var reportSearchCriteria = new ReportSearchCriteria
-                {
-                    VisualContext = ReportVisualContext,
-                    ReportId = Parse.ParseInt32(id)
-                };
-                var reportVisual = ReportVisualService.GetReportVisual(reportSearchCriteria);
-                if (reportVisual == null)
+                var tableauReportViewModel = GetReportViewModel(id);
+                if (tableauReportViewModel == null)
                 {
                     return RedirectToAction(ActionNames.Index);
                 }
-                var tableauReportViewModel = new TableauReportViewModel(reportVisual);
                 var scheduleReportViewModel = new CreateScheduledReportViewModel(tableauReportViewModel,
                     new RecurrenceSettings());
 
@@ -240,7 +215,7 @@ namespace Traffk.Portal.Controllers
         {
             try
             {
-                var tableauReportViewModel = createScheduledReportViewModel.TableauReportViewModel;
+                var tableauReportViewModel = createScheduledReportViewModel.ReportViewModel;
                 var createPdfOptions = new CreatePdfOptions(tableauReportViewModel.WorkbookName, tableauReportViewModel.ViewName, tableauReportViewModel.WorksheetName);
                 var cronString = createScheduledReportViewModel.RecurrenceSettings.ConvertToCronString();
                 var recurringJobId = RecurringJobManager.Add(Hangfire.Common.Job.FromExpression<ITenantJobs>(x => x.ScheduleTableauPdfDownload(createPdfOptions)), cronString);
@@ -256,7 +231,7 @@ namespace Traffk.Portal.Controllers
                     {
                         Recurrence = createScheduledReportViewModel.RecurrenceSettings,
                         RecurringJobId = recurringJobId,
-                        ReportId = createScheduledReportViewModel.TableauReportViewModel.Id.ToString(),
+                        ReportId = createScheduledReportViewModel.ReportViewModel.Id.ToString(),
                         ReportName = tableauReportViewModel.ViewName
                     }
                 };
@@ -335,26 +310,18 @@ namespace Traffk.Portal.Controllers
         [Route("/Reporting/Report/{id}/Notes")]
         public async Task<IActionResult> GetReportNotesAsync(int id, string sortCol, string sortDir, int? page, int? pageSize)
         {
-            var reportMetadata = await Rdb.ReportMetaData.FindAsync(id);
-            var notes = GetNotes(reportMetadata);
-
-            var reportSearchCriteria = new ReportSearchCriteria
-            {
-                VisualContext = ReportVisualContext,
-                ReportId = id
-            };
-            var reportVisual = ReportVisualService.GetReportVisual(reportSearchCriteria);
-
-            if (reportVisual == null)
+            var tableauReportViewModel = GetReportViewModel(id.ToString());
+            if (tableauReportViewModel == null)
             {
                 return RedirectToAction(ActionNames.Index);
             }
 
-            var tableauReportViewModel = new TableauReportViewModel(reportVisual)
-            {
-                Notes = notes
-            };
-            SetHeroLayoutViewData(reportVisual.Id, reportVisual.Title.ToTitleFriendlyString(), PageKeys.ReportNotes);
+            var reportMetadata = await Rdb.ReportMetaData.FindAsync(id);
+            var notes = GetNotes(reportMetadata);
+
+            tableauReportViewModel.Notes = notes;
+
+            SetHeroLayoutViewData(tableauReportViewModel.Id, tableauReportViewModel.Title.ToTitleFriendlyString(), PageKeys.ReportNotes);
             return View(tableauReportViewModel);
         }
 
@@ -362,6 +329,24 @@ namespace Traffk.Portal.Controllers
         {
             var jobId = Backgrounder.Enqueue<ITenantJobs>(z => z.CreateTableauPdf(options));
             Backgrounder.ContinueWith<ITenantJobs>(jobId, y => y.DownloadTableauPdfContinuationJobAsync());
+        }
+
+        private IReportViewModel GetReportViewModel(string id)
+        {
+            var reportSearchCriteria = new ReportSearchCriteria
+            {
+                VisualContext = ReportVisualContext,
+                ReportId = Parse.ParseInt32(id)
+            };
+            var reportVisual = ReportVisualService.GetReportVisual(reportSearchCriteria);
+            if (reportVisual == null)
+            {
+                return null;
+            }
+
+            var tableauReportViewModel = new TableauReportViewModel(reportVisual);
+
+            return tableauReportViewModel;
         }
     }
 }

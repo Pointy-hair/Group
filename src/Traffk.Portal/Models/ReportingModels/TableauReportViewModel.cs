@@ -4,7 +4,20 @@ using Traffk.Bal.ReportVisuals;
 
 namespace Traffk.Portal.Models.ReportingModels
 {
-    public class TableauReportViewModel
+    public interface IReportViewModel
+    {
+        long Id { get; set; }
+        string Title { get; set; }
+        string FolderName { get; set; }
+        string WorkbookName { get; set; }
+        string ViewName { get; set; }
+        string WorksheetName { get; set; }
+        string Description { get; set; }
+        ReportDetails.RenderingAttributeFlags RenderingAttributes { get; }
+        IQueryable<Note> Notes { get; set; }
+    }
+
+    public class TableauReportViewModel : IReportViewModel
     {
         public TableauReportViewModel()
         { }

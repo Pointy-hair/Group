@@ -33,7 +33,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Traffk.Bal\Traffk.Bal.csproj" />
-    <ProjectReference Include="..\Traffk.CronExpressionDescriptor\Traffk.CronExpressionDescriptor.csproj" />
     <ProjectReference Include="..\Traffk.Orchestra\Traffk.Orchestra.csproj" />
     <ProjectReference Include="..\Traffk.Tableau\Traffk.Tableau.csproj" />
   </ItemGroup>

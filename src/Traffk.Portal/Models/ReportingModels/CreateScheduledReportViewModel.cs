@@ -4,7 +4,7 @@ namespace Traffk.Portal.Models.ReportingModels
 {
     public class CreateScheduledReportViewModel
     {
-        public TableauReportViewModel TableauReportViewModel { get; set; }
+        public IReportViewModel ReportViewModel { get; set; }
         public RecurrenceSettings RecurrenceSettings { get; set; }
 
 
@@ -13,10 +13,10 @@ namespace Traffk.Portal.Models.ReportingModels
             //Required for model binding
         }
 
-        public CreateScheduledReportViewModel(TableauReportViewModel tableauReportViewModel,
+        public CreateScheduledReportViewModel(IReportViewModel reportViewModel,
             RecurrenceSettings recurrenceSettings)
         {
-            TableauReportViewModel = tableauReportViewModel;
+            ReportViewModel = reportViewModel;
             RecurrenceSettings = recurrenceSettings;
         }
     }
