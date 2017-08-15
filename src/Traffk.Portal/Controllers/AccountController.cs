@@ -51,8 +51,6 @@ namespace TraffkPortal.Controllers
             IsSigninPersistent = Startup.IsSigninPersistent;
         }
 
-        //
-        // GET: /Account/Login
         [HttpGet]
         [AllowAnonymous]
         public IActionResult Login(string returnUrl = null)
@@ -68,8 +66,6 @@ namespace TraffkPortal.Controllers
             return View();
         }
 
-        //
-        // POST: /Account/Login
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
