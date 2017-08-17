@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core.Caching;
+using Serilog;
 using Traffk.Tableau.REST.RestRequests;
 using Traffk.Utility;
 
@@ -17,7 +18,8 @@ namespace Traffk.Tableau.REST
             IOptions<TableauSignInOptions> options,
             ITableauUserCredentials tableauUserCredentials,
             IHttpClientFactory httpClientFactory,
-            ICacher cacher=null) : base(options, tableauUserCredentials, httpClientFactory, cacher)
+            ILogger logger,
+            ICacher cacher=null) : base(options, tableauUserCredentials, httpClientFactory, logger, cacher)
         {
 
         }

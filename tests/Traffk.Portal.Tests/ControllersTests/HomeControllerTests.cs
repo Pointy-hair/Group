@@ -13,10 +13,9 @@ namespace Traffk.Portal.Tests.ControllersTests
             {
                 var testString = "NOT NULL";
                 Assert.IsNotNull(testString);
-
-                //object nullObject = null;
-                //Assert.IsNotNull(nullObject);
             }
+
+
         }
     }
 }

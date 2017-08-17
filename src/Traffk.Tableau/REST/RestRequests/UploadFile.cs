@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -59,19 +59,18 @@ namespace Traffk.Tableau.REST.RestRequests
             DateTime uploadStartTime;
             DateTime uploadEndTime;
 
-            var statusLog = Login.StatusLog;
             string fileToUpload = LocalUploadPath;
 
             //Sanity check.
             if(!File.Exists(fileToUpload))
             {
-                statusLog.AddError("Aborting. Could not find file " + LocalUploadPath);
+                Login.Logger.Error("Aborting. Could not find file " + LocalUploadPath);
                 uploadDuration = TimeSpan.FromSeconds(0);
                 return null;
             }
 
             uploadStartTime = DateTime.Now;
-            statusLog.AddStatus("Intiating file upload " + fileToUpload);
+            Login.Logger.Information("Intiating file upload " + fileToUpload);
             var uploadSessionId = RequestUploadSessionId();
 
             UploadFileInChunks(fileToUpload, uploadSessionId);
@@ -120,7 +119,7 @@ namespace Traffk.Tableau.REST.RestRequests
             int uploadChunkDelay = UploadChunkDelay;
             if (uploadChunkDelay > 0)
             {
-                Login.StatusLog.AddStatus("Forced delay " + uploadChunkDelay + " seconds...");
+                Login.Logger.Information("Forced delay " + uploadChunkDelay + " seconds...");
                 System.Threading.Thread.Sleep(TimeSpan.FromSeconds(uploadChunkDelay));
             }
         }
@@ -149,11 +148,11 @@ namespace Traffk.Tableau.REST.RestRequests
 
                 if(verifySessionId != uploadSessionId)
                 {
-                    Login.StatusLog.AddError("Upload sessions do not match! " + uploadSessionId + "/" + verifySessionId);
+                    Login.Logger.Error("Upload sessions do not match! " + uploadSessionId + "/" + verifySessionId);
                 }
 
                 //Log verbose status
-                Login.StatusLog.AddStatus("Upload chunk status " + verifySessionId + " / " + fileSizeMB + " MB", -10);
+                Login.Logger.Information("Upload chunk status " + verifySessionId + " / " + fileSizeMB + " MB");
             }
 
         }

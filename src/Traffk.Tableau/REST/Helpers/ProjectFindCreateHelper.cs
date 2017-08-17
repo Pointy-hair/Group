@@ -61,7 +61,7 @@ namespace Traffk.Tableau.REST.Helpers
             //    }
             //    catch (Exception exCreateProject)
             //    {
-            //        this.StatusLog.AddError("Failed attempting to create project '" + projectName + "', " + exCreateProject.Message);
+            //        
             //    }
             //}
 
@@ -70,8 +70,6 @@ namespace Traffk.Tableau.REST.Helpers
             //{
             //    throw new Exception("Not allowed to use default project");
             //}
-
-            //this.StatusLog.AddStatus("Project name not found '" + projectName + "'. Reverting to default project", -10);
 
 
             //find_default_project:
@@ -86,13 +84,13 @@ namespace Traffk.Tableau.REST.Helpers
             if (defaultProject != null) return defaultProject.Id;
 
             //Default project not found. Choosing any project
-            Login.StatusLog.AddError("Default project not found. Reverting to any project");
+            Login.Logger.Error("Default project not found. Reverting to any project");
             foreach (var thisProj in ProjectsList.Projects)
             {
                 return thisProj.Id;
             }
 
-            Login.StatusLog.AddError("Upload could not find a project ID to use");
+            Login.Logger.Error("Upload could not find a project ID to use");
             throw new Exception("Aborting. Upload Datasources could not find a project ID to use");
         }
 

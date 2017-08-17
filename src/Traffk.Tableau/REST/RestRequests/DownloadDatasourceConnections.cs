@@ -40,7 +40,7 @@ namespace Traffk.Tableau.REST.RestRequests
             var urlQuery = Urls.Url_DatasourceConnectionsList(Login, DatasourceId);
             var httpRequestMessage = CreateLoggedInRequest(urlQuery, HttpMethod.Get);
 
-            //Login.StatusLog.AddStatus("Web request: " + urlQuery, -10);
+            Login.Logger.Information("Web request: " + urlQuery);
             var response = SendHttpRequest(httpRequestMessage);
             var xmlDoc = GetHttpResponseAsXml(response);
 
@@ -59,7 +59,7 @@ namespace Traffk.Tableau.REST.RestRequests
                 }
                 catch
                 {
-                    Login.StatusLog.AddError("Error parsing workbook: " + itemXml.ToXmlNode());
+                    Login.Logger.Error("Error parsing workbook: " + itemXml.ToXmlNode());
                 }
             } //end: foreach
 

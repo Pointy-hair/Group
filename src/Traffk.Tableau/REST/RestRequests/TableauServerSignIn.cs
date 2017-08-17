@@ -8,6 +8,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using RevolutionaryStuff.Core.Caching;
+using Serilog;
 using Traffk.Utility;
 
 namespace Traffk.Tableau.REST.RestRequests
@@ -22,7 +23,7 @@ namespace Traffk.Tableau.REST.RestRequests
         private readonly string Username;
         private readonly string Password;
 
-        public readonly TaskStatusLogs StatusLog;
+        public readonly ILogger Logger;
         public string SiteUrlSegment { get; private set; }
         public string LogInAuthToken { get; private set; }
         public string SiteId { get; private set; }
@@ -34,7 +35,7 @@ namespace Traffk.Tableau.REST.RestRequests
         {
             if(!IsSignedIn)
             {
-                StatusLog.AddError("Session not signed in. Sign out aborted");
+                Logger.Error("Session not signed in. Sign out aborted");
             }
 
             var signOut = new TableauServerSignOut(serverUrls, this, HttpClientFactory);
@@ -43,11 +44,10 @@ namespace Traffk.Tableau.REST.RestRequests
             IsSignedIn = false;
         }
 
-        public TableauServerSignIn(TableauServerUrls tableauUrls, string username, string password, IHttpClientFactory httpClientFactory, TaskStatusLogs statusLog = null)
+        public TableauServerSignIn(TableauServerUrls tableauUrls, string username, string password, IHttpClientFactory httpClientFactory, ILogger logger)
             : base(httpClientFactory)
         {
-            if (statusLog == null) { statusLog = new TaskStatusLogs(); }
-            this.StatusLog = statusLog;
+            Logger = logger;
 
             TableauUrls = tableauUrls;
             Username = username;
@@ -80,10 +80,26 @@ namespace Traffk.Tableau.REST.RestRequests
             var response = SendHttpRequest(request, bodyText);
             var allHeaders = response.Headers;
 
+            if (response.IsSuccessStatusCode == false)
+            {
+                return IsSignedIn = false;
+            }
+
+            if (response.Content.Headers.ContentLength.GetValueOrDefault() < 1)
+            {
+                IEnumerable<string> contentLength;
+                response.Content.Headers.TryGetValues("Content-Length", out contentLength);
+
+                if (int.Parse(contentLength.First()) < 1)
+                {
+                    return IsSignedIn = false;
+                }
+            }
+
             IEnumerable<string> cookies;
             allHeaders.TryGetValues("Set-Cookie", out cookies);
             LogInCookies = cookies; //Keep any cookies
-
+            
             var xmlDoc = GetHttpResponseAsXml(response);
 
             var nsManager = XmlHelper.CreateTableauXmlNamespaceManager("iwsOnline");

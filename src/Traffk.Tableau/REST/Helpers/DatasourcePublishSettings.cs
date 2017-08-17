@@ -10,7 +10,6 @@
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="ownerName"></param>
         public DatasourcePublishSettings(string ownerName)
         {
             this.OwnerName = ownerName;

@@ -62,7 +62,7 @@
                 <td class="text-center">
                     <i class="fa fa-ellipsis-h toggle" aria-hidden="true" data-toggle="row-action-@item.Communication.CommunicationId"></i>
                     <ul id="row-action-@item.Communication.CommunicationId" class="floated-filter list-right">
-                        <li><a asp-controller="@ReportingController.Name" asp-action="ScheduledReportDetail" asp-for-id=@item.Communication.CommunicationId>Reports</a></li>
+                        <li><a asp-controller="@ReportingController.Name" asp-action="ScheduledReportDetail" asp-route-id=@item.Communication.CommunicationId>Details</a></li>
                     </ul>
                 </td>
 

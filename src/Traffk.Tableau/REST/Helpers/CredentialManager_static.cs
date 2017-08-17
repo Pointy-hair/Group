@@ -8,8 +8,6 @@ namespace Traffk.Tableau.REST.Helpers
         /// <summary>
         /// Parse the credential and add it to the credential manager
         /// </summary>
-        /// <param name="credentialManager"></param>
-        /// <param name="credentialNode"></param>
         private static void helper_parseCredentialNode(Traffk.Tableau.REST.Helpers.CredentialManager credentialManager, XmlNode credentialNode)
         {
             var contentType =  XmlHelper.ReadTextAttribute(credentialNode, "contentType", "");

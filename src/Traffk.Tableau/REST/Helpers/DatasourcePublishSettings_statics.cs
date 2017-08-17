@@ -13,8 +13,6 @@ namespace Traffk.Tableau.REST.Helpers
         /// <summary>
         /// TRUE if the file is an internal settings file
         /// </summary>
-        /// <param name="filePath"></param>
-        /// <returns></returns>
         internal static bool IsSettingsFile(string filePath)
         {
             return filePath.EndsWith(DatasourceSettingsSuffix, StringComparison.CurrentCultureIgnoreCase);
@@ -23,9 +21,6 @@ namespace Traffk.Tableau.REST.Helpers
         /// <summary>
         /// Save Datasource metadata in a XML file along-side the workbook file
         /// </summary>
-        /// <param name="wb">Information about the workbook we have downloaded</param>
-        /// <param name="localDatasourcePath">Local path to the twb/twbx of the workbook</param>
-        /// <param name="userLookups">If non-NULL contains the mapping of users/ids so we can look up the owner</param>
         internal static void CreateSettingsFile(SiteDatasource ds, string localDatasourcePath, KeyedLookup<SiteUser> userLookups)
         {
 
@@ -52,8 +47,6 @@ namespace Traffk.Tableau.REST.Helpers
         /// <summary>
         /// Generates the path/filename of the Settings file that corresponds to the datasource path
         /// </summary>
-        /// <param name="datasourcePath"></param>
-        /// <returns></returns>
         private static string PathForSettingsFile(string datasourcePath)
         {
             return WorkbookPublishSettings.PathForSettingsFile(datasourcePath);
@@ -77,9 +70,7 @@ namespace Traffk.Tableau.REST.Helpers
                 return new Traffk.Tableau.REST.Helpers.DatasourcePublishSettings(null);
             }
 
-            //===================================================================
             //We've got a setings file, let's parse it!
-            //===================================================================
             var xmlDoc = new XmlDocument();
             xmlDoc.Load(new FileStream(pathToSettingsFile, FileMode.Open));
 

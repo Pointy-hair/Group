@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -84,11 +84,9 @@ namespace Traffk.Tableau.REST.RestRequests
             //Helper object to track project Ids and create projects as needed
             var projectListHelper = new ProjectFindCreateHelper(Urls, Login, HttpClientFactory);
 
-            var statusLog = Login.StatusLog;
-
-            statusLog.AddStatus("Uploading datasources");
+            Login.Logger.Information("Uploading datasources");
             UploadDirectoryToServer(LocalUploadPath, LocalUploadPath, projectListHelper, true);
-            Login.StatusLog.AddStatus("Datasources upload done.  Success: " + UploadSuccesses.ToString() + ", Failure: " + UploadFailures.ToString());
+            Login.Logger.Information("Datasources upload done.  Success: " + UploadSuccesses.ToString() + ", Failure: " + UploadFailures.ToString());
         }
 
         /// <summary>
@@ -155,7 +153,7 @@ namespace Traffk.Tableau.REST.RestRequests
                     catch (Exception ex)
                     {
                         UploadFailures++;
-                        Login.StatusLog.AddError("Error uploading datasource " + thisFilePath + ". " + ex.Message);
+                        Login.Logger.Error("Error uploading datasource " + thisFilePath + ". " + ex.Message);
                     }
                 }
             })
@@ -188,14 +186,14 @@ namespace Traffk.Tableau.REST.RestRequests
             var fileExtension = Path.GetExtension(localFilePath).ToLower();
             if ((fileExtension == ".tmp") || (fileExtension == ".temp"))
             {
-                Login.StatusLog.AddStatus("Ignoring temp file, " + localFilePath, -10);
+                Login.Logger.Information("Ignoring temp file, " + localFilePath);
                 return false;
             }
 
             //These are the only kinds of data sources we know about...
             if((fileExtension != ".tds") && (fileExtension != ".tdsx"))
             {
-                Login.StatusLog.AddError("File is not a data source: " + localFilePath);
+                Login.Logger.Error("File is not a data source: " + localFilePath);
                 return false;
             }
 
@@ -223,12 +221,12 @@ namespace Traffk.Tableau.REST.RestRequests
             }
             catch (Exception exFileUpload)
             {
-                Login.StatusLog.AddError("Unexpected error attempting to upload file " + localFilePath + ", " + exFileUpload.Message);
+                Login.Logger.Error("Unexpected error attempting to upload file " + localFilePath + ", " + exFileUpload.Message);
                 throw exFileUpload;
             }
 
             SiteDatasource dataSource = null;
-            Login.StatusLog.AddStatus("File chunks upload successful. Next step, make it a published datasource", -10);
+            Login.Logger.Information("File chunks upload successful. Next step, make it a published datasource");
             try
             {
                 string fileName = Path.GetFileNameWithoutExtension(localFilePath);
@@ -240,12 +238,12 @@ namespace Traffk.Tableau.REST.RestRequests
                     projectId, 
                     dbCredentials);
                 UploadeDatasources.Add(dataSource);
-                Login.StatusLog.AddStatus("Upload content details: " + dataSource.ToString(), -10);
-                Login.StatusLog.AddStatus("Success! Uploaded datasource " + Path.GetFileName(localFilePath));
+                Login.Logger.Information("Upload content details: " + dataSource.ToString());
+                Login.Logger.Information("Success! Uploaded datasource " + Path.GetFileName(localFilePath));
             }
             catch (Exception exPublishFinalize)
             {
-                Login.StatusLog.AddError("Unexpected error finalizing publish of file " + localFilePath + ", " + exPublishFinalize.Message);
+                Login.Logger.Error("Unexpected error finalizing publish of file " + localFilePath + ", " + exPublishFinalize.Message);
                 throw exPublishFinalize; ;
 
             }
@@ -259,7 +257,7 @@ namespace Traffk.Tableau.REST.RestRequests
                 }
                 catch (Exception exOwnershipAssignment)
                 {
-                    Login.StatusLog.AddError("Unexpected error reassigning ownership of published datasource " + dataSource.Name + ", " + exOwnershipAssignment.Message);
+                    Login.Logger.Error("Unexpected error reassigning ownership of published datasource " + dataSource.Name + ", " + exOwnershipAssignment.Message);
                     LogManualAction_ReassignOwnership(dataSource.Name);
                     throw exOwnershipAssignment;
                 }
@@ -339,7 +337,7 @@ namespace Traffk.Tableau.REST.RestRequests
             }
             catch (Exception parseXml)
             {
-                Login.StatusLog.AddError("Data source upload, error parsing XML response " + parseXml.Message + "\r\n" + dataSourceXml.ToXmlNode());
+                Login.Logger.Error("Data source upload, error parsing XML response " + parseXml.Message + "\r\n" + dataSourceXml.ToXmlNode());
                 return null;
             }
         }
@@ -376,7 +374,7 @@ namespace Traffk.Tableau.REST.RestRequests
         private bool AttemptOwnerReassignment(SiteDatasource datasource, DatasourcePublishSettings publishSettings, IEnumerable<SiteUser> siteUsers)
         {
             throw new NotImplementedException();
-            //Login.StatusLog.AddStatusHeader("Attempting ownership assignement for Datasource " + datasource.Name + "/" + datasource.Id);
+            //Login.Logger.InformationHeader("Attempting ownership assignement for Datasource " + datasource.Name + "/" + datasource.Id);
 
             ////Something went wrong if we don't have a set of site users to do the look up
             //if (siteUsers == null)
@@ -388,7 +386,7 @@ namespace Traffk.Tableau.REST.RestRequests
             //var desiredOwnerName = publishSettings.OwnerName;
             //if (string.IsNullOrEmpty(desiredOwnerName))
             //{
-            //    Login.StatusLog.AddStatus("Skipping owner assignment. The local file system has no metadata with an owner information for " + datasource.Name);
+            //    Login.Logger.Information("Skipping owner assignment. The local file system has no metadata with an owner information for " + datasource.Name);
             //    LogManualAction_ReassignOwnership(datasource.Name, "none specified", "No client ownership information was specified");
             //    return true; //Since there is no ownership preference stated locally, then ownership we assigned during upload was fine.
             //}
@@ -402,7 +400,7 @@ namespace Traffk.Tableau.REST.RestRequests
 
             //if (desiredServerUser == null)
             //{
-            //    Login.StatusLog.AddError("The local file has a workbook/user mapping: " + datasource.Name + "/" + desiredOwnerName + ", but this user does not exist on the target site");
+            //    Login.Logger.Error("The local file has a workbook/user mapping: " + datasource.Name + "/" + desiredOwnerName + ", but this user does not exist on the target site");
             //    LogManualAction_ReassignOwnership(datasource.Name, desiredOwnerName, "The target site does not contain a user name that matches the owner specified by the local metadata");
             //    return false; //Not a run time error, but we have manual steps to perform
             //}
@@ -410,7 +408,7 @@ namespace Traffk.Tableau.REST.RestRequests
             ////If the server content is already correct, then there is nothing to do
             //if (desiredServerUser.Id == datasource.OwnerId)
             //{
-            //    Login.StatusLog.AddStatus("Workbook " + datasource.Name + "/" + datasource.Id + ", already has correct ownership. No update requried");
+            //    Login.Logger.Information("Workbook " + datasource.Name + "/" + datasource.Id + ", already has correct ownership. No update requried");
             //    return true;
             //}
 
@@ -419,7 +417,7 @@ namespace Traffk.Tableau.REST.RestRequests
             //SiteDatasource updatedDatasource;
             //try
             //{
-            //    Login.StatusLog.AddStatus("Server request to change Datasource ownership, ds: " + datasource.Name + "/" + datasource.Id + ", user:" + desiredServerUser.Name + "/" + desiredServerUser.Id);
+            //    Login.Logger.Information("Server request to change Datasource ownership, ds: " + datasource.Name + "/" + datasource.Id + ", user:" + desiredServerUser.Name + "/" + desiredServerUser.Id);
             //    updatedDatasource = changeOwnership.ExecuteRequest();
             //}
             //catch (Exception exChangeOnwnerhsip)
@@ -430,7 +428,7 @@ namespace Traffk.Tableau.REST.RestRequests
             ////Sanity check the result we got back: Double check to make sure we have the expected owner.
             //if (updatedDatasource.OwnerId != desiredServerUser.Id)
             //{
-            //    Login.StatusLog.AddError("Unexpected server error! Updated workbook Owner Id does not match expected. ds: "
+            //    Login.Logger.Error("Unexpected server error! Updated workbook Owner Id does not match expected. ds: "
             //                            + datasource.Name + "/" + datasource.Id + ", "
             //                            + "expected user: " + desiredServerUser.Id + ", "
             //                            + "actual user: " + updatedDatasource.OwnerId

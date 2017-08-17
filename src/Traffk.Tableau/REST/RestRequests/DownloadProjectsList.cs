@@ -54,7 +54,7 @@ namespace Traffk.Tableau.REST
                 }
                 catch (Exception exPageRequest)
                 {
-                    Login.StatusLog.AddError("Projects error during page request: " + exPageRequest.Message);
+                    Login.Logger.Error("Projects error during page request: " + exPageRequest.Message);
                 }
             }
 
@@ -74,7 +74,7 @@ namespace Traffk.Tableau.REST
             var urlQuery = Urls.Url_ProjectsList(Login, pageSize, pageToRequest);
             var webRequest = CreateLoggedInRequest(urlQuery, HttpMethod.Get);
 
-            //Login.StatusLog.AddStatus("Web request: " + urlQuery, -10);
+            Login.Logger.Information("Web request: " + urlQuery);
             var response = SendHttpRequest(webRequest);
             var xmlDoc = GetHttpResponseAsXml(response);
 
@@ -95,8 +95,7 @@ namespace Traffk.Tableau.REST
                 }
                 catch
                 {
-                    //AppDiagnostics.Assert(false, "Project parse error");
-                    Login.StatusLog.AddError("Error parsing project: " + element.ToString());
+                    Login.Logger.Error("Error parsing project: " + element.ToString());
                 }
             } //end: foreach
 
@@ -116,7 +115,7 @@ namespace Traffk.Tableau.REST
         {
             if(string.IsNullOrWhiteSpace(project.Id))
             {
-                Login.StatusLog.AddError(project.Name + " is missing a project ID. Not returned from server! xml=" + xmlNode.OuterXml);
+                Login.Logger.Error(project.Name + " is missing a project ID. Not returned from server! xml=" + xmlNode.OuterXml);
             }
         }
 

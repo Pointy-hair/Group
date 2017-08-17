@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -78,13 +78,12 @@ namespace Traffk.Tableau.REST.RestRequests
         /// <param name="serverName"></param>
         public void ExecuteRequest()
         {
-            var statusLog = Login.StatusLog;
             int countSuccess = 0;
             int countFailure = 0;
 
-            statusLog.AddStatus("Uploading workbooks");
+            Login.Logger.Information("Uploading workbooks");
             UploadDirectoryToServer(LocalUploadPath, LocalUploadPath, ProjectFindCreateHelper, true, out countSuccess, out countFailure);
-            Login.StatusLog.AddStatus("Workbooks upload done.  Success: " + countSuccess.ToString() + ", Failure: " + countFailure.ToString());
+            Login.Logger.Information("Workbooks upload done.  Success: " + countSuccess.ToString() + ", Failure: " + countFailure.ToString());
         }
 
         /// <summary>
@@ -171,7 +170,7 @@ namespace Traffk.Tableau.REST.RestRequests
                     catch (Exception ex)
                     {
                         UploadFailures++;
-                        Login.StatusLog.AddError("Error uploading workbook " + thisFilePath + ". " + ex.Message);
+                        Login.Logger.Error("Error uploading workbook " + thisFilePath + ". " + ex.Message);
                     }
                 }
             });
@@ -218,14 +217,14 @@ namespace Traffk.Tableau.REST.RestRequests
             var fileExtension = Path.GetExtension(localFilePath).ToLower();
             if ((fileExtension == ".tmp") || (fileExtension == ".temp"))
             {
-                Login.StatusLog.AddStatus("Ignoring temp file, " + localFilePath, -10);
+                Login.Logger.Information("Ignoring temp file, " + localFilePath);
                 return false;
             }        
 
             //These are the only kinds of files we know about...
             if ((fileExtension != ".twb") && (fileExtension != ".twbx"))
             {
-                Login.StatusLog.AddError("File is not a workbook: " + localFilePath);
+                Login.Logger.Error("File is not a workbook: " + localFilePath);
                 return false;
             }
 
@@ -267,12 +266,12 @@ namespace Traffk.Tableau.REST.RestRequests
             }
             catch (Exception exFileUpload)
             {
-                Login.StatusLog.AddError("Unexpected error attempting to upload file " + localFilePath + ", " + exFileUpload.Message);
+                Login.Logger.Error("Unexpected error attempting to upload file " + localFilePath + ", " + exFileUpload.Message);
                 throw exFileUpload;
             }
 
             SiteWorkbook workbook;
-            Login.StatusLog.AddStatus("File chunks upload successful. Next step, make it a published workbook", -10);
+            Login.Logger.Information("File chunks upload successful. Next step, make it a published workbook");
             try
             {
                 string fileName = Path.GetFileNameWithoutExtension(localFilePath);
@@ -284,12 +283,12 @@ namespace Traffk.Tableau.REST.RestRequests
                     projectId, 
                     dbCredentials,
                     publishSettings);
-                Login.StatusLog.AddStatus("Upload content details: " + workbook.ToString(), -10);
-                Login.StatusLog.AddStatus("Success! Uploaded workbook " + Path.GetFileName(localFilePath));
+                Login.Logger.Information("Upload content details: " + workbook.ToString());
+                Login.Logger.Information("Success! Uploaded workbook " + Path.GetFileName(localFilePath));
             }
             catch (Exception exPublishFinalize)
             {
-                Login.StatusLog.AddError("Unexpected error finalizing publish of file " + localFilePath + ", " + exPublishFinalize.Message);
+                Login.Logger.Error("Unexpected error finalizing publish of file " + localFilePath + ", " + exPublishFinalize.Message);
                 throw exPublishFinalize;
             }
 
@@ -302,7 +301,7 @@ namespace Traffk.Tableau.REST.RestRequests
                 //}
                 //catch (Exception exOwnershipAssignment)
                 //{
-                //    Login.StatusLog.AddError("Unexpected error reassigning ownership of published workbook " + workbook.Name + ", " + exOwnershipAssignment.Message);
+                //    Login.Logger.Error("Unexpected error reassigning ownership of published workbook " + workbook.Name + ", " + exOwnershipAssignment.Message);
                 //    LogManualAction_ReassignOwnership(workbook.Name);
                 //    throw exOwnershipAssignment;
                 //}
@@ -388,7 +387,7 @@ namespace Traffk.Tableau.REST.RestRequests
                 }
                 catch(Exception parseXml)
                 {
-                    Login.StatusLog.AddError("Workbook upload, error parsing XML response " + parseXml.Message + "\r\n" + workbookXml.ToXmlNode().InnerXml);
+                    Login.Logger.Error("Workbook upload, error parsing XML response " + parseXml.Message + "\r\n" + workbookXml.ToXmlNode().InnerXml);
                     return null;
                 }
             }

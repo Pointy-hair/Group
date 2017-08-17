@@ -90,10 +90,23 @@ namespace Traffk.Bal.Data
 
         public enum PatternTypes
         {
+            Hourly,
             Daily,
             Weekly,
             Monthly,
             Yearly,
+        }
+
+        public class HourlyPatternSettings : IValidate
+        {
+            [JsonProperty("everyNHours")]
+            [DisplayName("Every")]
+            public uint EveryNHours { get; set; }
+
+            void IValidate.Validate()
+            {
+                if (EveryNHours < 1) throw new ArgumentOutOfRangeException($"{nameof(EveryNHours)} must be 1 or greater");
+            }
         }
 
         public class DailyPatternSettings : IValidate
@@ -222,6 +235,8 @@ namespace Traffk.Bal.Data
         [JsonProperty("patternType")]
         public PatternTypes PatternType { get; set; }
 
+        [JsonProperty("hourlyPattern")]
+        public HourlyPatternSettings HourlyPattern { get; set; }
 
         [JsonProperty("dailyPattern")]
         public DailyPatternSettings DailyPattern { get; set; }
@@ -258,6 +273,7 @@ namespace Traffk.Bal.Data
             StartTimeUtc = new DateTime(now.Year, now.Month, now.Day, now.Hour, 0, 0, DateTimeKind.Utc).AddHours(1);
             DailyPattern = DailyPattern ?? new DailyPatternSettings();
             WeeklyPattern = WeeklyPattern ?? new WeeklyPatternSettings();
+            HourlyPattern = HourlyPattern ?? new HourlyPatternSettings();
         }
 
         public void Validate()
@@ -285,6 +301,10 @@ namespace Traffk.Bal.Data
         {
             switch (PatternType)
             {
+                case PatternTypes.Hourly:
+                    Requires.NonNull(HourlyPattern, nameof(HourlyPattern));
+                    Requires.Valid(HourlyPattern, nameof(HourlyPattern));
+                    return Cron.HourInterval(Convert.ToInt32(HourlyPattern.EveryNHours));
                 case PatternTypes.Daily:
                     Requires.NonNull(DailyPattern, nameof(DailyPattern));
                     Requires.Valid(DailyPattern, nameof(DailyPattern));
@@ -309,34 +329,37 @@ namespace Traffk.Bal.Data
                         //TODO: Test trailing comma
                         if (WeeklyPattern.Monday)
                         {
-                            dayString += "MON,";
+                            dayString += "1,";
                         }
                         if (WeeklyPattern.Tuesday)
                         {
-                            dayString += "TUE,";
+                            dayString += "2,";
                         }
                         if (WeeklyPattern.Wednesday)
                         {
-                            dayString += "WED,";
+                            dayString += "3,";
                         }
                         if (WeeklyPattern.Thursday)
                         {
-                            dayString += "THU,";
+                            dayString += "4,";
                         }
                         if (WeeklyPattern.Friday)
                         {
-                            dayString += "FRI,";
+                            dayString += "5,";
                         }
                         if (WeeklyPattern.Saturday)
                         {
-                            dayString += "SAT,";
+                            dayString += "6,";
                         }
                         if (WeeklyPattern.Sunday)
                         {
-                            dayString += "SUN,";
+                            dayString += "7,";
                         }
 
-                        return $"0 0 12 ? * {dayString} *";
+                        var startTimeHour = StartTimeUtc.Hour.ToString();
+                        var startTimeMinute = StartTimeUtc.Minute.ToString();
+
+                        return $"{startTimeMinute} {startTimeHour} 12 ? * {dayString} *";
                     }
                     else
                     {
