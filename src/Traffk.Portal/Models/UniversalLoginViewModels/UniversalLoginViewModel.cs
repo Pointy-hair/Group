@@ -6,6 +6,6 @@ namespace Traffk.Portal.Models.UniversalLoginViewModels
     {
         [Required]
         [Display(Name = "Company Name")]
-        public string TenantName { get; set; }
+        public string LoginDomain { get; set; }
     }
 }
