@@ -92,7 +92,6 @@ namespace Traffk.Bal.ApplicationParts
                         var parameterTypes = id.ParameterTypes;
                         var parameters = new List<object>();
                         var arguments = id.SerializedArguments;
-#if NET462
                         for (int z = 0; z < arguments.Length; ++z)
                         {
                             var pt = parameterTypes[z];
@@ -113,9 +112,6 @@ namespace Traffk.Bal.ApplicationParts
                         {
                             ((Task)ret).ExecuteSynchronously();
                         }
-#else
-                        throw new NotImplementedException("Cannot 'run' on .NET other than 462 right now.");
-#endif
                     }
                     finally
                     {

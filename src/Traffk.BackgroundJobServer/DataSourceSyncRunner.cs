@@ -113,8 +113,10 @@ namespace Traffk.BackgroundJobServer
 
             public Fetcher(DataSourceSyncRunner runner, int dataSourceId)
             {
+                Requires.NonNull(runner, nameof(runner));
                 Runner = runner;
                 DS = Gdb.DataSources.Find(dataSourceId);
+                Requires.NonNull(DS, nameof(DS));
                 PopulateEvidence(dataSourceId);
                 BlobRootPath = $"{BlobStorageServices.GetDataSourceFetchItemRoot(runner.TenantName, dataSourceId)}{Runner.StartedAtUtc.ToYYYYMMDD()}/{Runner.StartedAtUtc.ToHHMMSS()}/";
             }
@@ -366,7 +368,7 @@ namespace Traffk.BackgroundJobServer
                                 $"{BlobRootPath}{details.Folder.Substring(1)}{details.Name}",
                                 muxer.OpenRead(),
                                 p,
-                                amt => Trace.WriteLine($"Uploading {amt}/{details.Size}")
+                                amt => Trace.WriteLine($"Uploading {amt}/{muxer.Length}")
                                 );
                             item.DataSourceFetchItemProperties = new DataSourceFetchItemProperties();
                             item.DataSourceFetchItemProperties.Set(p);

@@ -47,6 +47,7 @@ using TraffkPortal.Services.Logging;
 using TraffkPortal.Services.Sms;
 using TraffkPortal.Services.TenantServices;
 using ILogger = Serilog.ILogger;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace TraffkPortal
 {
@@ -144,17 +145,20 @@ namespace TraffkPortal
             services.AddDbContext<TraffkTenantShardsDbContext>(options =>
                 options.UseSqlServer(Configuration.GetSection(connectionStringKey)[TraffkTenantShardsDbContext.DefaultDatabaseConnectionStringName]), ServiceLifetime.Singleton);
 
-            services.AddDbContext<TraffkTenantModelDbContext>((sp,options) =>
+            services.AddDbContext<TraffkTenantModelDbContext>((sp, options) =>
                 options.UseSqlServer(Configuration.GetSection(connectionStringKey)[TraffkTenantModelDbContext.DefaultDatabaseConnectionStringName]), ServiceLifetime.Scoped);
 
             services.AddDbContext<TraffkGlobalDbContext>(options =>
                 options.UseSqlServer(Configuration.GetSection(connectionStringKey)[TraffkGlobalDbContext.DefaultDatabaseConnectionStringName]), ServiceLifetime.Scoped);
 
+            //TODO: .NET2 cleanup
+            /*
             services.Configure<IdentityOptions>(options => 
             {
                 options.Cookies.ApplicationCookie.SlidingExpiration = true;
                 options.Cookies.ApplicationCookie.ExpireTimeSpan = TimeSpan.FromSeconds(IdleLogout.TotalSeconds*2); //due to sliding expiration, things can be cut in half...
             });
+            */
 
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<TraffkTenantModelDbContext>()
@@ -326,6 +330,8 @@ namespace TraffkPortal
                 ClockSkew = TimeSpan.Zero
             };
 
+            //TODO: .NET2 cleanup
+            /*
             app.UseJwtBearerAuthentication(new JwtBearerOptions
             {
                 Audience = Configuration.GetSection("TokenProviderOptions:Audience").Value,
@@ -333,7 +339,8 @@ namespace TraffkPortal
                 AutomaticAuthenticate = true,
                 TokenValidationParameters = tokenValidationParameters,
                 SaveToken = true
-            });    
+            });
+            */
         }
     }
 }

@@ -1,16 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!--
-    <TargetFramework>netcoreapp2.0</TargetFramework>
-    <TargetFrameworks>net462</TargetFrameworks>
-    <TargetFrameworks>netstandard2.0;net462</TargetFrameworks>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
-    -->
-
     <TargetFrameworks>netcoreapp2.0;net462</TargetFrameworks>
-
-
     <AssemblyName>Traffk.BackgroundJobServer</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>Traffk.BackgroundJobServer</PackageId>
@@ -25,9 +16,6 @@
   <Choose>
     <When Condition="'$(TargetFramework)' == 'netcoreapp2.0'">
       <PropertyGroup>
-        <!--
-        <RuntimeFrameworkVersion>2.0.0-preview2-006497</RuntimeFrameworkVersion>
-        -->
         <DefineConstants>NETCORE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
       </PropertyGroup>
       <ItemGroup>
@@ -90,21 +78,21 @@
 
   <ItemGroup>
     <PackageReference Include="BouncyCastle1.7" Version="1.7.0" />
-    <PackageReference Include="HangFire" Version="1.6.14" />
+    <PackageReference Include="HangFire" Version="1.6.15" />
     <PackageReference Include="HtmlAgilityPack" Version="1.5.1" />
     <PackageReference Include="Microsoft.Azure.Management.Sql" Version="1.6.0-preview" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="1.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="1.1.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.PlatformAbstractions" Version="1.1.0" />
-    <PackageReference Include="MimeKit" Version="1.16.2" />
+    <PackageReference Include="MimeKit" Version="1.18.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
-    <PackageReference Include="RevolutionaryStuff.Core" Version="1.0.22" />
+    <PackageReference Include="RevolutionaryStuff.Core" Version="1.0.25" />
     <PackageReference Include="Serilog" Version="2.5.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="1.4.0" />
     <PackageReference Include="Serilog.Sinks.AzureTableStorage" Version="4.0.0" />
     <PackageReference Include="Serilog.Sinks.Trace" Version="2.1.0" />
     <PackageReference Include="SSH.NET" Version="2016.1.0-beta1" />
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="4.4.0" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="4.4.1" />
     <PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.2" />
   </ItemGroup>

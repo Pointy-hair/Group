@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Newtonsoft.Json;
 using RevolutionaryStuff.Core.ApplicationParts;
 using System;
@@ -8,12 +7,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 using Serilog;
 using Traffk.Bal.Settings;
+using System.Collections.Generic;
 
 namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
 {
     // Add profile data for application users by adding properties to the ApplicationUser class
     public partial class ApplicationUser : IdentityUser, ITraffkTenanted
     {
+        public List<IdentityUserRole<string>> Roles { get; set; } = new List<IdentityUserRole<string>>();
+
         public override string ToString() => $"{base.ToString()} name=[{this.UserName}], tenantId={this.TenantId}";
 
         [Column("TenantId")]

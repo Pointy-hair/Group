@@ -1,13 +1,20 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Runtime.Serialization;
 using Traffk.Bal.Permissions;
 
 namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
 {
-    public class ApplicationRole : IdentityRole, ITraffkTenanted
+    public partial class ApplicationRole : IdentityRole, ITraffkTenanted
     {
+        [JsonIgnore]
+        [IgnoreDataMember]
+        public List<RoleClaim> Claims { get; set; }
+
         [Column("TenantId")]
         public int TenantId { get; set; }
 

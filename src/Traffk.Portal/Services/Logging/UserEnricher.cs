@@ -26,6 +26,7 @@ namespace TraffkPortal.Services.Logging
 
         public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
+            if (Provider == null) return;
             try
             {
                 using (var p = Provider.CreateScope())

@@ -7,7 +7,7 @@
 }
 
 <form asp-controller="Account" asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="inline-form">
-    @if (Current.Application.ApplicationSettings.Registration.UsersCanSelfRegister)
+    @if (Current.Application.AppSettings.Registration.UsersCanSelfRegister)
     {
         <div asp-validation-summary="All" class="text-danger"></div>
         <div class="row">

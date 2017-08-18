@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
 using System.Threading.Tasks;

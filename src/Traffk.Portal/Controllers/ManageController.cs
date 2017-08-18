@@ -341,7 +341,9 @@ namespace TraffkPortal.Controllers
                 return ErrorResult();
             }
 
-
+            throw new NotImplementedException();
+            //TODO: .NET2 cleanup
+/*
             var userLogins = await UserManager.GetLoginsAsync(user);
             var otherLogins = SignInManager.GetExternalAuthenticationSchemes().Where(auth => userLogins.All(ul => auth.AuthenticationScheme != ul.LoginProvider)).ToList();
             ViewData["ShowRemoveButton"] = user.PasswordHash != null || userLogins.Count > 1;
@@ -350,6 +352,7 @@ namespace TraffkPortal.Controllers
                 CurrentLogins = userLogins,
                 OtherLogins = otherLogins
             });
+*/
         }
 
         //

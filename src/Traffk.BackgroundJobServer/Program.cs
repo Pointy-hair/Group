@@ -93,6 +93,14 @@ namespace Traffk.BackgroundJobRunner
             Ftp(gdb, 11, "/TopconHealthComp", "/bradm@uhaul.com");
         }
 
+        protected override Task OnGoAsync()
+        {
+            FtpDS();
+            return base.OnGoAsync();
+        }
+
+
+#if false
         private async Task GetEm(string folder)
         {
             var urls = new[] {
@@ -294,7 +302,7 @@ namespace Traffk.BackgroundJobRunner
             Backgrounder.Enqueue<IDataSourceSyncJobs>(z => z.DataSourceFetchAsync(ds.DataSourceId));
             //            RJM.Add(Hangfire.Common.Job.FromExpression<IDataSourceSyncJobs>(z => z.DataSourceFetchAsync(ds.DataSourceId)), Cron.Daily());
         }
-
+#endif
 #endif
 
         //BUGBUG: requires newtonsoft 9.0.1!  to prevent binder problem... yuck!  [Cannot get SerializationBinder because an ISerializationBinder was previously set.]

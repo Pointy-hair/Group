@@ -17,6 +17,7 @@ namespace Traffk.Portal.Permissions
             AuthorizationService = authorizationService;
             HttpContextAccessor = httpContextAccessor;
         }
-        bool IPhiAuthorizer.CanSeePhi => HttpContextAccessor.HttpContext.User.GetCanAccessProtectedHealthInformationAsync(AuthorizationService).ExecuteSynchronously();
+        bool IPhiAuthorizer.CanSeePhi => 
+            HttpContextAccessor.HttpContext.User.GetCanAccessProtectedHealthInformationAsync(AuthorizationService).ExecuteSynchronously();
     }
 }

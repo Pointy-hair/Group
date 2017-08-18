@@ -19,6 +19,8 @@ namespace Traffk.Portal.Permissions
 
         public async Task Invoke(HttpContext context, ITraffkTenantFinder traffkTenantFinder)
         {
+            //TODO: .NET2 cleanup
+/*
             var authenticateInfo = await context.Authentication.GetAuthenticateInfoAsync("Bearer");
             var bearerTokenIdentity = authenticateInfo?.Principal;
 
@@ -37,7 +39,7 @@ namespace Traffk.Portal.Permissions
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 return;
             }
-
+*/
             //No bearer token in use, move on
             await Next(context);
         }

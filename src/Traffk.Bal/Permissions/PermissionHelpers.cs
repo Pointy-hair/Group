@@ -1,23 +1,20 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace Traffk.Bal.Permissions
 {
     public static class PermissionHelpers
     {
-        public static IdentityRoleClaim<string> CreateIdentityRoleClaim(PermissionNames permission)
-        {
-            return new IdentityRoleClaim<string>
+        public static RoleClaim CreateIdentityRoleClaim(PermissionNames permission)
+            => new RoleClaim
             {
                 ClaimType = CreateClaimType(permission),
                 ClaimValue = new PermissionClaimValue(true).ToJson()
             };
-        }
 
         public static string CreateClaimType(PermissionNames permissionName)
-        {
-            return $"{TraffkHelpers.TraffkUrn}/claims/{permissionName}";
-        }
+            => $"{TraffkHelpers.TraffkUrn}/claims/{permissionName}";
 
         public static string CreateClaimType(ApiNames apiName)
         {

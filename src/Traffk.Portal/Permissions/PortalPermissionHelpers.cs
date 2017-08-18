@@ -15,35 +15,23 @@ namespace TraffkPortal.Permissions
             public static readonly string ProtectedHealthInformation = CreatePolicyName("ProtectedHealthInformation");
         }
 
-        public static Task<bool> HasPermission(this ClaimsPrincipal principal, IAuthorizationService auth, PermissionNames permission)
-        {
-            return auth.AuthorizeAsync(principal, CreatePolicyName(permission));
-        }
+        public static async Task<bool> HasPermission(this ClaimsPrincipal principal, IAuthorizationService auth, PermissionNames permission)
+            => (await auth.AuthorizeAsync(principal, CreatePolicyName(permission))).Succeeded;
 
-        public static Task<bool> HasPermission(this ClaimsPrincipal principal, IAuthorizationService auth, ApiNames api)
-        {
-            return auth.AuthorizeAsync(principal, CreatePolicyName(api));
-        }
+        public static async Task<bool> HasPermission(this ClaimsPrincipal principal, IAuthorizationService auth, ApiNames api)
+            => (await auth.AuthorizeAsync(principal, CreatePolicyName(api))).Succeeded;
 
-        public static Task<bool> GetCanAccessProtectedHealthInformationAsync(this ClaimsPrincipal principal, IAuthorizationService auth)
-        {
-            return auth.AuthorizeAsync(principal, ExplicitPolicyNames.ProtectedHealthInformation);
-        }
+        public static async Task<bool> GetCanAccessProtectedHealthInformationAsync(this ClaimsPrincipal principal, IAuthorizationService auth)
+            => (await auth.AuthorizeAsync(principal, ExplicitPolicyNames.ProtectedHealthInformation)).Succeeded;
 
         public static string CreatePolicyName(PermissionNames permission)
-        {
-            return $"{nameof(PermissionAuthorizeAttribute)}.{permission}";
-        }
+            => $"{nameof(PermissionAuthorizeAttribute)}.{permission}";
 
         public static string CreatePolicyName(ApiNames api)
-        {
-            return $"{nameof(PermissionAuthorizeAttribute)}.{api}";
-        }
+            => $"{nameof(PermissionAuthorizeAttribute)}.{api}";
 
         public static string CreatePolicyName(string name)
-        {
-            return $"TraffkPolicy.{name}";
-        }
+            => $"TraffkPolicy.{name}";
 
         public static void AddPermissions(this IServiceCollection services)
         {

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 
 namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
 {
