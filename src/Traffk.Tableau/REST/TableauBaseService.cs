@@ -18,6 +18,7 @@ namespace Traffk.Tableau.REST
         protected readonly ICacher Cacher;
         protected readonly ITableauUserCredentials TableauUserCredentials;
         protected IHttpClientFactory HttpClientFactory;
+        protected readonly bool IsSignedIn;
 
         protected TableauBaseService(IOptions<TableauSignInOptions> options,
             ITableauUserCredentials tableauUserCredentials,
@@ -33,11 +34,13 @@ namespace Traffk.Tableau.REST
             HttpClientFactory = httpClientFactory;
 
             Login = SignIn(Urls, TableauUserCredentials.UserName, TableauUserCredentials.Password, logger);
+
+            IsSignedIn = Login.IsSignedIn;
         }
 
         protected TableauServerSignIn SignIn(TableauServerUrls onlineUrls, string userName, string password, ILogger logger)
         {
-            return Cacher.FindOrCreate(
+            var signIn = Cacher.FindOrCreate(
                 Cache.CreateKey(onlineUrls.CacheKey, userName, password),
                 key =>
                 {
@@ -45,6 +48,7 @@ namespace Traffk.Tableau.REST
                     l.ExecuteRequest();
                     return new CacheEntry<TableauServerSignIn>(l, Options.LoginCacheTimeout);
                 }).Value;
+            return signIn;
         }
 
         protected DownloadViewsForSite DownloadViewsForSite()

@@ -39,6 +39,7 @@ namespace Traffk.Bal.ReportVisuals
 
         //Do we make these private?
         public string TableauTenantId { get; private set; }
+        public bool IsOnline { get; }
 
         public ReportVisualService(ITableauViewerService tableauViewerService, 
             TraffkTenantModelDbContext rdb, 
