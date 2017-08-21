@@ -13,7 +13,8 @@ namespace Traffk.Tableau.REST
     public class TableauViewerService : TableauBaseService, ITableauViewerService
     {
         TimeSpan ITableauViewerService.ReportIndexCacheTimeout => Options.ReportIndexCacheTimeout;
-        
+        bool ITableauViewerService.IsOnline => IsSignedIn;
+
         public TableauViewerService(
             IOptions<TableauSignInOptions> options,
             ITableauUserCredentials tableauUserCredentials,

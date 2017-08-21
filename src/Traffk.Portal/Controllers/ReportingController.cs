@@ -37,6 +37,7 @@ namespace Traffk.Portal.Controllers
         protected readonly IBackgroundJobClient Backgrounder;
         protected readonly ITraffkRecurringJobManager RecurringJobManager;
         protected readonly BlobStorageServices BlobStorageService;
+        protected bool IsOnline;
 
         public enum PageKeys
         {
@@ -59,11 +60,13 @@ namespace Traffk.Portal.Controllers
             public const string ScheduledReportDetail = "ScheduledReportDetail";
             public const string ScheduledReportHistory = "ScheduledReportHistory";
             public const string ReportNotes = "ReportNotes";
+            public const string Offline = "Offline";
         }
 
         public static class ViewNames
         {
             public const string DownloadList = "Downloads";
+            public const string Offline = "Offline";
         }
 
         public ReportingController(
@@ -82,12 +85,18 @@ namespace Traffk.Portal.Controllers
             Backgrounder = backgrounder;
             RecurringJobManager = recurringJobManager;
             BlobStorageService = blobStorageService;
+            IsOnline = ReportVisualService.IsOnline;
         }
 
         [Route("/Reporting")]
         [ActionName(ActionNames.Index)]
         public IActionResult Index()
         {
+            if (!IsOnline)
+            {
+                return RedirectToAction(ActionNames.Offline);
+            }
+
             var reportSearchCriteria = new ReportSearchCriteria
             {
                 VisualContext = ReportVisualContext
@@ -101,6 +110,11 @@ namespace Traffk.Portal.Controllers
         [ActionName(ActionNames.Report)]
         public IActionResult Report(string id, string anchorName)
         {
+            if (!IsOnline)
+            {
+                return RedirectToAction(ActionNames.Offline);
+            }
+
             var tableauReportViewModel = GetReportViewModel(id);
 
             SetHeroLayoutViewData(tableauReportViewModel.Id, tableauReportViewModel.Title.ToTitleFriendlyString(), PageKeys.Report);
@@ -109,9 +123,23 @@ namespace Traffk.Portal.Controllers
 
         private static readonly DateTime StartedAtUtc = DateTime.UtcNow;
 
+        [Route("/Reporting/Offline")]
+        [ActionName(ActionNames.Offline)]
+        public IActionResult Offline()
+        {
+            return View(ViewNames.Offline);
+        }
+
+
+
         [Route("/Reporting/PreviewImage/{workbookId}/{viewId}")]
         public IActionResult PreviewImage(string workbookId, string viewId)
         {
+            if (!IsOnline)
+            {
+                return null;
+            }
+
             var etag = $"\"{TenantId}.{workbookId}.{viewId}\"";
             var stringValues = this.Request.Headers.FindOrDefault(WebHelpers.HeaderStrings.IfNoneMatch);
             if (stringValues.Count == 1 && stringValues[0] == etag)

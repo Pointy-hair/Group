@@ -24,6 +24,7 @@ namespace Traffk.Bal.ReportVisuals
         TreeNode<IReportResource> GetReportFolderTreeRoot(ReportSearchCriteria reportSearchCriteria);
         IReportVisual GetReportVisual(ReportSearchCriteria reportSearchCriteria);
         byte[] DownloadPreviewImageForTableauVisual(string workbookId, string viewId);
+        bool IsOnline { get; set; }
     }
 
     public class ReportVisualService : IReportVisualService
@@ -39,7 +40,7 @@ namespace Traffk.Bal.ReportVisuals
 
         //Do we make these private?
         public string TableauTenantId { get; private set; }
-        public bool IsOnline { get; }
+        bool IReportVisualService.IsOnline { get; set; }
 
         public ReportVisualService(ITableauViewerService tableauViewerService, 
             TraffkTenantModelDbContext rdb, 
@@ -59,6 +60,8 @@ namespace Traffk.Bal.ReportVisuals
             TableauTenantId = TableauTenantFinder.GetTenantIdAsync().Result;
 
             ReportIndexCacheTimeout = TableauViewerService.ReportIndexCacheTimeout;
+
+            ((IReportVisualService) this).IsOnline = TableauViewerService.IsOnline;
         }
 
         IReportVisual IReportVisualService.GetReportVisual(ReportSearchCriteria reportSearchCriteria)
@@ -96,7 +99,7 @@ namespace Traffk.Bal.ReportVisuals
             return TableauViewerService.DownloadPreviewImageForView(workbookId, viewId);
         }
 
-        //Private methods
+        #region Private Methods
         private IEnumerable<IReportVisual> GetReportVisuals(ReportSearchCriteria searchCriteria)
         {
             var tableauReports = GetTableauReportVisuals();
@@ -120,7 +123,7 @@ namespace Traffk.Bal.ReportVisuals
         {
             var root = new TreeNode<IReportResource>(new ReportVisualFolder("Root"));
             var reportVisuals = (ICollection<IReportVisual>)(GetReportVisuals(reportSearchCriteria) as ICollection<IReportVisual> ??
-                                GetReportVisuals(reportSearchCriteria).ToList());
+                                                             GetReportVisuals(reportSearchCriteria).ToList());
 
             if (reportVisuals.Any())
             {
@@ -195,7 +198,7 @@ namespace Traffk.Bal.ReportVisuals
 
             var visual = new ReportVisual();
 
-            ((IReportVisual) visual).CanExport = reportMetaData.ReportDetails.CanExport;
+            ((IReportVisual)visual).CanExport = reportMetaData.ReportDetails.CanExport;
             ((IReportVisual)visual).ContainsPhi = reportMetaData.ReportDetails.ContainsPhi;
             ((IReportVisual)visual).Description = reportMetaData.ReportDetails.Description ?? "No description available";
             ((IReportVisual)visual).ExternalReportKey = tableauReportVisual.Id;
@@ -208,11 +211,11 @@ namespace Traffk.Bal.ReportVisuals
             ((IReportVisual)visual).Parameters = parameters;
             ((IReportVisual)visual).ParentId = reportMetaData.ParentReportMetaDataId;
             ((IReportVisual)visual).PreviewImageUrl = reportMetaData.ReportDetails.PreviewImageUrl ??
-                                  $"/Reporting/PreviewImage/{tableauReportVisual.WorkbookId}/{tableauReportVisual.Id}";
+                                                      $"/Reporting/PreviewImage/{tableauReportVisual.WorkbookId}/{tableauReportVisual.Id}";
             ((IReportVisual)visual).Shared = reportMetaData.ReportDetails.Shared;
             ((IReportVisual)visual).Tags = reportMetaData.ReportDetails.Tags;
             ((IReportVisual)visual).Title = reportMetaData.ReportDetails.Title ?? tableauReportVisual.ViewName;
-            ((IReportVisual)visual).VisualContext = reportMetaData.ReportDetails.VisualContext;      
+            ((IReportVisual)visual).VisualContext = reportMetaData.ReportDetails.VisualContext;
             ((IReportVisual)visual).RenderingAttributes = reportMetaData.ReportDetails.RenderingAttributes;
 
             return visual;
@@ -263,7 +266,7 @@ namespace Traffk.Bal.ReportVisuals
         {
             var relevantReportMetaDatas =
                 Rdb.ReportMetaData.Where(
-                        x =>
+                    x =>
                         (!x.ReportDetails.ContainsPhi || this.CanSeePhi)
                         &&
                         TableauReportIds.Contains(x.ExternalReportKey)
@@ -273,9 +276,9 @@ namespace Traffk.Bal.ReportVisuals
                         (reportSearchCriteria.TagFilter == null || x.ReportDetails.Tags.Contains(reportSearchCriteria.TagFilter))
                         &&
                         ((x.ParentReportMetaDataId == null //Traffk supplied metadata
-                        || ((long)x.OwnerContactId == CurrentUser.ContactId) //User's metadata
-                        || (x.OwnerContactId != CurrentUser.ContactId && x.ReportDetails.Shared))) //Shared metadata
-                    );
+                          || ((long)x.OwnerContactId == CurrentUser.ContactId) //User's metadata
+                          || (x.OwnerContactId != CurrentUser.ContactId && x.ReportDetails.Shared))) //Shared metadata
+                );
 
             return relevantReportMetaDatas;
         }
@@ -284,10 +287,13 @@ namespace Traffk.Bal.ReportVisuals
         {
             return Rdb.ReportMetaData.Where(x => x.ExternalReportKey == externalReportKey);
         }
+        #endregion
 
+        #region Static Methods
         public static string CreateAnchorName(IReportResource resource) => CreateAnchorName(resource.Title);
         public static string CreateAnchorName(IReportVisual visual) => CreateAnchorName(visual.Title);
         public static string CreateAnchorName(string name) => name.Trim()?.ToLower()?.RemoveSpecialCharacters() ?? "";
+        #endregion
 
     }
 }

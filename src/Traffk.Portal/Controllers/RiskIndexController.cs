@@ -7,6 +7,7 @@ using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.Permissions;
 using Traffk.Bal.ReportVisuals;
 using Traffk.Bal.Settings;
+using Traffk.Portal.Controllers;
 using Traffk.Portal.Models.ReportingModels;
 using Traffk.Tableau;
 using TraffkPortal.Permissions;
@@ -21,6 +22,7 @@ namespace TraffkPortal.Controllers
         public IReportVisualService ReportVisualService { get; }
         public const string Name = "RiskIndex";
         public const VisualContext ReportVisualContext = VisualContext.Tenant;
+        protected bool IsOnline;
 
         public static class ActionNames
         {
@@ -38,12 +40,18 @@ namespace TraffkPortal.Controllers
             : base(AspHelpers.MainNavigationPageKeys.RiskIndex, db, current, logger, cacher)
         {
             ReportVisualService = reportVisualService;
+            IsOnline = ReportVisualService.IsOnline;
         }
 
         [Route("/RiskIndex")]
         [ActionName(ActionNames.Index)]
         public IActionResult Index()
         {
+            if (!IsOnline)
+            {
+                return RedirectToAction(ReportingController.ActionNames.Offline, ReportingController.Name);
+            }
+
             var reportSearchCriteria = new ReportSearchCriteria
             {
                 VisualContext = ReportVisualContext,
@@ -58,6 +66,11 @@ namespace TraffkPortal.Controllers
         [ActionName(ActionNames.Report)]
         public IActionResult Report(string id, string anchorName)
         {
+            if (!IsOnline)
+            {
+                return RedirectToAction(ReportingController.ActionNames.Offline, ReportingController.Name);
+            }
+
             var reportSearchCriteria = new ReportSearchCriteria
             {
                 VisualContext = ReportVisualContext,
