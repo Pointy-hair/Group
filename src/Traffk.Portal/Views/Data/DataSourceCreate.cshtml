@@ -3,13 +3,12 @@
 
 @{
     Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
-    ViewData.SetTitleAndHeading("Name Placeholder");
+    ViewData.SetTitleAndHeading("Create Datasource");
     ViewData.IsFormPage(true);
     ViewData.HasPageMenuItems(true);
     ViewData.HasBreadcrumbItems(true);
 
     var pageKey = (DataController.PageKeys)ViewData[AspHelpers.ViewDataKeys.PageKey];
-    var type = Model.DataSourceSettings.IsFtp ? "FTP" : "Web";
 }
 
 @section breadCrumbItems {
@@ -17,36 +16,26 @@
     <li><a asp-controller="@DataController.Name" asp-action="Index">Sources</a> <span>></span> </li>
 }
 
-@if (ViewData.HasPageMenuItems() && !ViewData.HasCustomPageMenuItems())
-{
-    @section pageNavItems {
-        <li><a asp-controller="@DataController.Name" asp-action="DataSourceDetail" asp-for-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == DataController.PageKeys.DataSourceDetails ? "active" : "")">Details</a></li>
-        <li><a asp-controller="@DataController.Name" asp-action="DataSourceFetches" asp-for-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == DataController.PageKeys.DataSourceHistory ? "active" : "")">History</a></li>
-    }
-}
-
-<form asp-action="" class="inline-form">
+<form asp-action="DataSourceCreate" class="inline-form">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
     <div class="row">
         <div class="col-sm-12">
             <div class="form-row">
-                <label asp-for="@Model.DataSourceId"></label>
-                <input asp-for="@Model.DataSourceId" class="form-control" readonly />
-            </div>
-            <div class="form-row">
                 <label>Type</label>
-                <input class="form-control" value="@type" readonly />
+                <input type="radio" class="radio-inline" id="DataSourceTypeFTP" name="DataSourceType" value="FTP" @(Model.DataSourceSettings.IsFtp ? "checked='checked'" : "") />
+                <span>FTP</span>
+                <input type="radio" class="radio-inline" id="DataSourceTypeWeb" name="DataSourceType" value="Web" @(Model.DataSourceSettings.IsWeb ? "checked='checked'" : "") />
+                <span>Web</span>        
             </div>
             <div class="form-row">
                 <label asp-for="@Model.DataSourceName"></label>
                 <input asp-for="@Model.DataSourceName" class="form-control" />
             </div>
-            @if (Model.DataSourceSettings.IsFtp)
-            {
+            <div class="inline-form type-section" id="type-section-ftp" style="@(Model.DataSourceSettings.IsFtp ? "" : "display:none")">
                 <div class="form-row">
                     <label asp-for="@Model.DataSourceSettings.FTP.Hostname"></label>
-                    <input asp-for="@Model.DataSourceSettings.FTP.Hostname" class="form-control"/>
+                    <input asp-for="@Model.DataSourceSettings.FTP.Hostname" class="form-control" />
                 </div>
                 <div class="form-row">
                     <label asp-for="@Model.DataSourceSettings.FTP.Port"></label>
@@ -60,15 +49,12 @@
                     <label asp-for="@Model.DataSourceSettings.FTP.FolderPaths"></label>
                     <textarea asp-for="@Model.DataSourceSettings.FTP.FolderPaths" class="form-control"></textarea>
                 </div>
-            }
-            else
-            {
+            </div>
+
+            <div class="inline-form type-section" id="type-section-web" style="@(Model.DataSourceSettings.IsWeb ? "" : "display:none")">
                 <div class="form-row">
                     <label asp-for="@Model.DataSourceSettings.Web.DownloadUrls"></label>
-                    @foreach (var url in Model.DataSourceSettings.Web.DownloadUrls)
-                    {
-                        <textarea class="form-control">@url</textarea>
-                    }
+                    <textarea asp-for="@Model.DataSourceSettings.Web.DownloadUrls" class="form-control"></textarea>
                 </div>
                 <div class="form-row">
                     <label asp-for="@Model.DataSourceSettings.Web.LoginPageConfig.LoginPage"></label>
@@ -82,13 +68,23 @@
                     <label asp-for="@Model.DataSourceSettings.Web.LoginPageConfig.PasswordFieldName"></label>
                     <input asp-for="@Model.DataSourceSettings.Web.LoginPageConfig.PasswordFieldName" class="form-control" />
                 </div>
-            }
+            </div>
         </div>
-
-    </div>
-    <div class="row">
-        <div class="col-xs-12 text-right">
-            <input type="submit" value="Save" class="btn btn-default btn-primary btn-large" />
+        <div class="row">
+            <div class="col-xs-12 text-right">
+                <input type="submit" value="Save" class="btn btn-default btn-primary btn-large" />
+            </div>
         </div>
     </div>
 </form>
+
+@Html.Script(@<script type="text/javascript">
+    $(document).ready(function () {
+        $("input[name='DataSourceType']").change(function () {
+            $(".type-section").hide();
+            var chosenPattern = $(this).attr("value").toLowerCase();
+            var sel = "#type-section-" + chosenPattern;
+            $(sel).show();
+        });
+    });
+    </script>)
