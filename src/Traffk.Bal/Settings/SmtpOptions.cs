@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.ApplicationParts;
 using System.ComponentModel;
@@ -50,6 +51,12 @@ namespace Traffk.Bal.Settings
             Requires.PortNumber(SmtpPort, nameof(SmtpPort));
             Requires.Text(SmtpUser, nameof(SmtpUser));
             Requires.Text(SmtpPassword, nameof(SmtpPassword));
+        }
+
+        public bool IsUsable()
+        {
+            return !String.IsNullOrEmpty(SmtpHost) && !String.IsNullOrEmpty(SmtpUser) &&
+                    !String.IsNullOrEmpty(SmtpPassword);
         }
     }
 }

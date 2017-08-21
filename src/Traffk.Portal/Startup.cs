@@ -142,6 +142,7 @@ namespace TraffkPortal
             services.Configure<TokenProviderConfig>(Configuration.GetSection(TokenProviderConfig.ConfigSectionName));
             services.Configure<OrchestraRxConfig>(Configuration.GetSection(OrchestraRxConfig.ConfigSectionName));
             services.Configure<RedisCache.Config>(Configuration.GetSection(RedisCache.Config.ConfigSectionName));
+            services.Configure<ActiveDirectoryApplicationIdentificationConfig>(Configuration.GetSection(ActiveDirectoryApplicationIdentificationConfig.ConfigSectionName));
 
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
@@ -196,6 +197,8 @@ namespace TraffkPortal
 
 
             // Add application services.
+            
+            services.AddScoped<IVault, Vault>();
             services.AddScoped<IOptions<SmtpOptions>, SmtpSettingsAdaptor>();
             services.AddScoped<IEmailer, RawEmailer>();
             services.AddScoped<ITrackingEmailer, TrackingEmailer>();
