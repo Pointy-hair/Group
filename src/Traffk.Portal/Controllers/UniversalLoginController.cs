@@ -24,7 +24,15 @@ namespace Traffk.Portal.Controllers
             DB = db;
         }
 
+        public static string Name = "UniversalLogin";
+
+        public static class ActionNames
+        {
+            public const string UniversalLogin = "Index";
+        }
+
         [HttpGet]
+        [ActionName(ActionNames.UniversalLogin)]
         public IActionResult Index()
         {
             return View();

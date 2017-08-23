@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.ApplicationInsights.AspNetCore.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +11,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Traffk.Bal.Communications;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
+using Traffk.Portal.Controllers;
 using TraffkPortal.Models.AccountViewModels;
 using TraffkPortal.Services;
 using TraffkPortal.Services.Sms;
@@ -55,6 +57,12 @@ namespace TraffkPortal.Controllers
         [AllowAnonymous]
         public IActionResult Login(string returnUrl = null)
         {
+            //If running locally, go direct to login page
+            if (HttpContext.Request.GetUri().Host == "portal.traffk.com")
+            {
+                return RedirectToAction(UniversalLoginController.ActionNames.UniversalLogin, UniversalLoginController.Name);
+            }
+
             //We don't want any loops
             if (!(
                 returnUrl.Contains(nameof(InactivityLogOff), true) ||

@@ -1,21 +1,13 @@
 ﻿@model Traffk.Portal.Models.UniversalLoginViewModels.UniversalLoginViewModel
 @using static TraffkPortal.Controllers.AccountController
 @{
-    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
     ViewData.SetTitle("Log In");
 }
 
 <div class="row">
     <div class="col-sm-12 text-center">
         <h1>Log In</h1>
-        @if (R.LoginMessage.Value != null)
-        {
-            <p class="subheading">@R.LoginMessage</p>
-        }
-        else
-        {
-            <p class="subheading">Enter your company name to access the Traffk Health Information Portal</p>
-        }
+        <p class="subheading">Enter your company name to access the Traffk Health Information Portal</p>
     </div>
 </div>
 
@@ -44,3 +36,8 @@
         </div>
     </div>
 </section>
+
+@Html.Script(@<script type="text/javascript">
+                  document.title = '@ViewBag.Title - Traffk Portal';
+              </script>
+              )

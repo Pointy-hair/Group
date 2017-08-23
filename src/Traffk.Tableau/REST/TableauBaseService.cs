@@ -18,7 +18,7 @@ namespace Traffk.Tableau.REST
         protected readonly ICacher Cacher;
         protected readonly ITableauUserCredentials TableauUserCredentials;
         protected IHttpClientFactory HttpClientFactory;
-        protected readonly bool IsSignedIn;
+        protected bool IsSignedIn;
 
         protected TableauBaseService(IOptions<TableauSignInOptions> options,
             ITableauUserCredentials tableauUserCredentials,

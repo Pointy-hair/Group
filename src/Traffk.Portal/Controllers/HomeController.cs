@@ -53,6 +53,7 @@ namespace TraffkPortal.Controllers
         }
 
         [ActionName(ActionNames.Contact)]
+        [AllowAnonymous]
         public IActionResult Contact()
         {
             return Redirect("https://www.traffk.com");
