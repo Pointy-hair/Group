@@ -10,9 +10,7 @@ namespace Traffk.Bal.Settings
     public class DataSourceFetchItemProperties
     {
         public static DataSourceFetchItemProperties CreateFromJson(string json)
-        {
-            return TraffkHelpers.JsonConvertDeserializeObjectOrFallback<DataSourceFetchItemProperties>(json);
-        }
+            => TraffkHelpers.JsonConvertDeserializeObjectOrFallback<DataSourceFetchItemProperties>(json);
 
         [JsonProperty("error")]
         public ExceptionError Error { get; set; }
@@ -20,7 +18,8 @@ namespace Traffk.Bal.Settings
         [JsonProperty("lastModifiedAtUtc")]
         public DateTime? LastModifiedAtUtc { get; set; }
 
-        public string ToJson() => JsonConvert.SerializeObject(this);
+        public string ToJson() 
+            => JsonConvert.SerializeObject(this);
 
         [JsonProperty("metadata")]
         public IDictionary<string, string> Metadata { get; set; } = new Dictionary<string, string>();

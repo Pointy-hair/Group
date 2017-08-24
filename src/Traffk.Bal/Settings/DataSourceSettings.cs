@@ -56,11 +56,10 @@ namespace Traffk.Bal.Settings
 
 
         public static DataSourceSettings CreateFromJson(string json)
-        {
-            return TraffkHelpers.JsonConvertDeserializeObjectOrFallback<DataSourceSettings>(json);
-        }
+            => TraffkHelpers.JsonConvertDeserializeObjectOrFallback<DataSourceSettings>(json);
 
-        public string ToJson() => JsonConvert.SerializeObject(this);
+        public string ToJson() 
+            => JsonConvert.SerializeObject(this);
 
         [JsonProperty("ftp")]
         public FtpSettings FTP { get; set; }

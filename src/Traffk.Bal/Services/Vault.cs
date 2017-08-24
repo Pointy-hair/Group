@@ -73,11 +73,10 @@ namespace Traffk.Bal.Services
         public class Credentials : ICredentials
         {
             public static Credentials CreateFromJson(string json)
-            {
-                return TraffkHelpers.JsonConvertDeserializeObjectOrFallback<Credentials>(json);
-            }
+                => TraffkHelpers.JsonConvertDeserializeObjectOrFallback<Credentials>(json);
 
-            public string ToJson() => JsonConvert.SerializeObject(this);
+            public string ToJson() 
+                => JsonConvert.SerializeObject(this);
 
             [JsonProperty("username")]
             public string Username { get; set; }

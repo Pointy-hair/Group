@@ -35,7 +35,7 @@ namespace Traffk.Bal.Settings
         }
 
         public static FiscalYearSettings CreateFromJson(string json)
-            => JsonConvert.DeserializeObject<FiscalYearSettings>(json);
+            => TraffkHelpers.JsonConvertDeserializeObjectOrFallback<FiscalYearSettings>(json);
 
         public string ToJson()
             => JsonConvert.SerializeObject(this);

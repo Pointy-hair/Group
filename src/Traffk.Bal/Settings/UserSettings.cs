@@ -22,7 +22,7 @@ namespace Traffk.Bal.Settings
         { }
 
         public static UserSettings CreateFromJson(string json)
-            => JsonConvert.DeserializeObject<UserSettings>(json);
+            => TraffkHelpers.JsonConvertDeserializeObjectOrFallback<UserSettings>(json);
 
         public string ToJson()
             => JsonConvert.SerializeObject(this);

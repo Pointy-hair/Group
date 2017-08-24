@@ -17,10 +17,9 @@ namespace Traffk.Bal.Settings
         public string RecurringJobId { get; set; }
 
         public static CommunicationSettings CreateFromJson(string json)
-        {
-            return TraffkHelpers.JsonConvertDeserializeObjectOrFallback<CommunicationSettings>(json);
-        }
+            => TraffkHelpers.JsonConvertDeserializeObjectOrFallback<CommunicationSettings>(json);
 
-        public string ToJson() => JsonConvert.SerializeObject(this);
+        public string ToJson() 
+            => JsonConvert.SerializeObject(this);
     }
 }

@@ -5,11 +5,10 @@ namespace Traffk.Bal.Services
     public class OpenIdConfiguration
     {
         public static OpenIdConfiguration CreateFromJson(string json)
-        {
-            return TraffkHelpers.JsonConvertDeserializeObjectOrFallback<OpenIdConfiguration>(json);
-        }
+            => TraffkHelpers.JsonConvertDeserializeObjectOrFallback<OpenIdConfiguration>(json);
 
-        public string ToJson() => JsonConvert.SerializeObject(this);
+        public string ToJson() 
+            => JsonConvert.SerializeObject(this);
 
         [JsonProperty("authorization_endpoint")]
         public string authorization_endpoint { get; set; }

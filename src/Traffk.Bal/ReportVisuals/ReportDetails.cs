@@ -34,10 +34,9 @@ namespace Traffk.Bal.ReportVisuals
         }
 
         public static ReportDetails CreateFromJson(string json)
-        {
-            return TraffkHelpers.JsonConvertDeserializeObjectOrFallback<ReportDetails>(json);
-        }
+            => TraffkHelpers.JsonConvertDeserializeObjectOrFallback<ReportDetails>(json);
 
-        public string ToJson() => JsonConvert.SerializeObject(this);
+        public string ToJson() 
+            => JsonConvert.SerializeObject(this);
     }
 }

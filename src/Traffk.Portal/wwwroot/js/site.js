@@ -53,67 +53,6 @@ function requiresText(obj, objName) {
     }
 }
 
-function loadPowerBiReport(iframeId, embedUrl) {
-    $("#" + iframeId).parent().children().hide();
-    loadPowerBiResource(iframeId, embedUrl, "loadReport");
-    $("#" + iframeId).parent().children().show();
-}
-
-function loadPowerBiTile(iframeId, embedUrl) {
-    $("#" + iframeId).parent().children().hide();
-    loadPowerBiResource(iframeId, embedUrl, "loadTile");
-    $("#" + iframeId).show();
-}
-
-function loadPowerBiResource(iframeId, embedUrl, embedAction) {
-    var powerBiBearer = getCookie("powerBiBearer");
-    debugAlert("loadPowerBiResource iframeId=[" + iframeId + "] embedAction=[" + embedAction + "] embedUrl=[" + embedUrl + "] powerBiBearer=[" + powerBiBearer + "]");
-    requiresText(powerBiBearer, "powerBiBearer");
-    requiresText(iframeId, "iframeId");
-    requiresText(embedUrl, "embedUrl");
-    requiresText(embedAction, "embedAction");
-    var iframe = document.getElementById(iframeId);
-    var par = $(iframe.parentElement);
-    iframe.width = par.innerWidth();
-    iframe.height = par.innerHeight();
-    debugAlert(iframe + " w:" + iframe.width + "h:" + iframe.height)
-    iframe.onload = function ()
-    {
-        var messageStructure = {
-            action: embedAction,
-            accessToken: powerBiBearer,
-            height: iframe.height,
-            width: iframe.width
-        };
-        message = JSON.stringify(messageStructure);
-        debugAlert("loadPowerBiResource.onload: "+message);
-        iframe.contentWindow.postMessage(message, "*");
-    }
-    iframe.src = embedUrl;
-};
-
-function loadPowerBiResourceUsingLibrary(divId, reportId, type) {
-    var powerBiBearer = getCookie("powerBiBearer");
-    switch(type) {
-        case "PowerBiReport":
-            type = 'report';
-            break;
-        case "PowerBiTile":
-            type = 'tile';
-            break;
-        default:
-            type = 'report';
-    } 
-    var embedConfiguration = {
-        type: type,
-        id: reportId,
-        accessToken: powerBiBearer,
-        embedUrl: 'https://app.powerbi.com/reportEmbed'
-    };
-    var $reportContainer = $('#' + divId);
-    return powerbi.embed($reportContainer.get(0), embedConfiguration);
-};
-
 function trackUserInteraction(report) {
     report.on('dataSelected', function (event) {
         console.log(event);

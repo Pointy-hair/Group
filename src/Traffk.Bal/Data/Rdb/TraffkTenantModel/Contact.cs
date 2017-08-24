@@ -62,7 +62,8 @@ namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
 
         public class ContactDetails_
         {
-            public static ContactDetails_ CreateFromJson(string json) => TraffkHelpers.JsonConvertDeserializeObjectOrFallback<ContactDetails_>(json);
+            public static ContactDetails_ CreateFromJson(string json) 
+                => TraffkHelpers.JsonConvertDeserializeObjectOrFallback<ContactDetails_>(json);
 
             public string ToJson() => JsonConvert.SerializeObject(this);
 

@@ -174,7 +174,7 @@ namespace Traffk.Bal.Settings
         { }
 
         public static TenantSettings CreateFromJson(string json)
-            => JsonConvert.DeserializeObject<TenantSettings>(json);
+            => TraffkHelpers.JsonConvertDeserializeObjectOrFallback<TenantSettings>(json);
 
         public string ToJson()
             => JsonConvert.SerializeObject(this);

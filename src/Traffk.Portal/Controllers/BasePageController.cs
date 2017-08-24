@@ -191,22 +191,6 @@ namespace TraffkPortal.Controllers
             ViewData[ViewDataKeys.ToastMessage] = TempData[ViewDataKeys.ToastMessage];
 
             return base.OnActionExecutionAsync(context, next);
-            /*
-            var setTenant = Task.Run(() =>
-            {
-                var t = DB.Tenants.FirstOrDefault(z => z.TenantId == TenantFinder.TenantId);
-                if (t == null)
-                {
-                    this.ViewData["TenantName"] = TenantFinder.TenantId.ToString();
-                }
-                else
-                {
-                    this.ViewData["TenantName"] = $"{t.TenantName}({t.TenantId})";
-                }
-            });
-
-            return setTenant.ContinueWith(_ => base.OnActionExecutionAsync(context, next));
-            */
         }
 
         public async Task<IActionResult> CreateNote(
@@ -226,9 +210,7 @@ namespace TraffkPortal.Controllers
         }
 
         protected void SetToast(string toastMessage)
-        {
-            TempData[ViewDataKeys.ToastMessage] = toastMessage;
-        }
+            => TempData[ViewDataKeys.ToastMessage] = toastMessage;
 
         protected async Task<Contact> FindContactByIdAsync(int id)
         {

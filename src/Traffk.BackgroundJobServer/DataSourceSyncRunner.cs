@@ -4,6 +4,7 @@ using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using RevolutionaryStuff.Core.Crypto;
 using RevolutionaryStuff.Core.Streams;
+using RevolutionaryStuff.Core.Threading;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,7 +14,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using Traffk.Bal;
 using Traffk.Bal.ApplicationParts;
@@ -77,30 +77,6 @@ namespace Traffk.BackgroundJobServer
 
         Task IDataSourceSyncJobs.DataSourceFetchAsync(int dataSourceId)
             => new Fetcher(this, dataSourceId).FetchAsync();
-
-        /// <remarks>https://blog.cdemi.io/async-waiting-inside-c-sharp-locks/</remarks>
-        public sealed class AsyncLocker : BaseDisposable
-        {
-            private readonly SemaphoreSlim GdbSemaphore = new SemaphoreSlim(1, 1);
-            public AsyncLocker()
-            {
-
-            }
-
-            public async Task GoAsync(Func<Task> a)
-            {
-                await GdbSemaphore.WaitAsync();
-                try
-                {
-                    await a();
-                }
-                finally
-                {
-                    GdbSemaphore.Release();
-                }
-            }
-        }
-
 
         public partial class Fetcher
         {

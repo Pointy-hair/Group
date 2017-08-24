@@ -1,4 +1,5 @@
-﻿namespace TraffkPortal
+﻿#if false
+namespace TraffkPortal
 {
     public enum UIAlertTypes
     {
@@ -19,3 +20,4 @@
         }
     }
 }
+#endif

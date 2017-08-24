@@ -19,6 +19,6 @@ namespace Traffk.Bal.Permissions
             => JsonConvert.SerializeObject(this);
 
         public static PermissionClaimValue CreateFromJson(string json)
-            => JsonConvert.DeserializeObject<PermissionClaimValue>(json);
+            => TraffkHelpers.JsonConvertDeserializeObjectOrFallback<PermissionClaimValue>(json);
     }
 }

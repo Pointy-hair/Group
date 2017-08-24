@@ -28,7 +28,7 @@ namespace Traffk.Bal.Settings
         public IDictionary<SystemCommunicationPurposes, int> CreativeIdBySystemCommunicationPurpose { get; set; } = new Dictionary<SystemCommunicationPurposes, int>();
 
         public static ApplicationSettings CreateFromJson(string json)
-            => JsonConvert.DeserializeObject<ApplicationSettings>(json);
+            => TraffkHelpers.JsonConvertDeserializeObjectOrFallback<ApplicationSettings>(json);
 
         public string ToJson()
             => JsonConvert.SerializeObject(this);

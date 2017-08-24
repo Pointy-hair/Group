@@ -12,6 +12,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='VSTS-CI|AnyCPU'" />
 
   <ItemGroup>
+    <Compile Remove="UIAlert.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Properties\PublishProfiles\traffkSite-dev - FTP.pubxml" />
     <None Remove="Properties\PublishProfiles\traffkSite-dev - Web Deploy.pubxml" />
     <None Remove="Properties\PublishProfiles\traffkSite-prod - FTP.pubxml" />

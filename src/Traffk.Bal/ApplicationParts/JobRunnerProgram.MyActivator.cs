@@ -152,7 +152,7 @@ namespace Traffk.Bal.ApplicationParts
                     public string ArgumentsJson { get; set; }
 
                     public static InvocationData CreateFromJson(string json)
-                        => JsonConvert.DeserializeObject<InvocationData>(json);
+                        => TraffkHelpers.JsonConvertDeserializeObjectOrFallback<InvocationData>(json);
                 }
             }
         }

@@ -297,7 +297,7 @@ namespace Traffk.BackgroundJobServer
         public class CopyDatabaseRequest
         {
             public static CopyDatabaseRequest CreateFromJson(string json)
-                => JsonConvert.DeserializeObject<CopyDatabaseRequest>(json);
+                => TraffkHelpers.JsonConvertDeserializeObjectOrFallback<CopyDatabaseRequest>(json);
 
             public string ToJson() 
                 => JsonConvert.SerializeObject(this);

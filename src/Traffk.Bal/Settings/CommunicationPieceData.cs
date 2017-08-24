@@ -6,11 +6,10 @@ namespace Traffk.Bal.Settings
     public class CommunicationPieceData
     {
         public static CommunicationPieceData CreateFromJson(string json)
-        {
-            return TraffkHelpers.JsonConvertDeserializeObjectOrFallback<CommunicationPieceData>(json);
-        }
+            => TraffkHelpers.JsonConvertDeserializeObjectOrFallback<CommunicationPieceData>(json);
 
-        public string ToJson() => JsonConvert.SerializeObject(this);
+        public string ToJson() 
+            => JsonConvert.SerializeObject(this);
 
         [JsonProperty("deliveryError")]
         public ExceptionError DeliveryError { get; set; }

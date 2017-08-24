@@ -16,10 +16,9 @@ namespace Traffk.Bal.BackgroundJobs
         }
 
         public static HangfireJobDetails CreateFromJson(string json)
-        {
-            return TraffkHelpers.JsonConvertDeserializeObjectOrFallback<HangfireJobDetails>(json);
-        }
+            => TraffkHelpers.JsonConvertDeserializeObjectOrFallback<HangfireJobDetails>(json);
 
-        public string ToJson() => JsonConvert.SerializeObject(this);
+        public string ToJson() 
+            => JsonConvert.SerializeObject(this);
     }
 }
