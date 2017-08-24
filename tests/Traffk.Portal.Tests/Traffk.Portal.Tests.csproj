@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <VersionPrefix>1.1.0</VersionPrefix>
-    <TargetFrameworks>netcoreapp1.1</TargetFrameworks>
+    <VersionPrefix>2.0.0</VersionPrefix>
+    <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
     <AssemblyName>Traffk.Portal.Tests</AssemblyName>
     <PackageId>Traffk.Portal.Tests</PackageId>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
@@ -13,8 +13,8 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='VSTS-CI|AnyCPU'" />
 
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp1.1'">
-    <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0'">
+    <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
     <PackageTargetFallback>$(PackageTargetFallback);dotnet5.6;dnxcore50;portable-net451+win8</PackageTargetFallback>
   </PropertyGroup>
   
