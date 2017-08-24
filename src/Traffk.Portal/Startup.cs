@@ -143,6 +143,7 @@ namespace TraffkPortal
             services.Configure<OrchestraRxConfig>(Configuration.GetSection(OrchestraRxConfig.ConfigSectionName));
             services.Configure<RedisCache.Config>(Configuration.GetSection(RedisCache.Config.ConfigSectionName));
             services.Configure<ActiveDirectoryApplicationIdentificationConfig>(Configuration.GetSection(ActiveDirectoryApplicationIdentificationConfig.ConfigSectionName));
+            services.Configure<OrchestraApiService.Config>(Configuration.GetSection(OrchestraApiService.Config.ConfigSectionName));
 
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
@@ -160,6 +161,7 @@ namespace TraffkPortal
 
             services.Configure<IdentityOptions>(options => 
             {
+                //options.Cookies.ApplicationCookie.LoginPath = new PathString("/UniversalLogin");
                 options.Cookies.ApplicationCookie.SlidingExpiration = true;
                 options.Cookies.ApplicationCookie.ExpireTimeSpan = TimeSpan.FromSeconds(IdleLogout.TotalSeconds*2); //due to sliding expiration, things can be cut in half...
             });

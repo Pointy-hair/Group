@@ -1,6 +1,6 @@
 ﻿@model Traffk.Portal.Models.UniversalLoginViewModels.UniversalLoginViewModel
-@using static TraffkPortal.Controllers.AccountController
 @{
+    Layout = "~/Views/Shared/_LayoutNoTenant.cshtml";
     ViewData.SetTitle("Log In");
 }
 
@@ -36,8 +36,3 @@
         </div>
     </div>
 </section>
-
-@Html.Script(@<script type="text/javascript">
-                  document.title = '@ViewBag.Title - Traffk Portal';
-              </script>
-              )

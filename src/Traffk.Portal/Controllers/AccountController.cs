@@ -57,12 +57,6 @@ namespace TraffkPortal.Controllers
         [AllowAnonymous]
         public IActionResult Login(string returnUrl = null)
         {
-            //If running locally, go direct to login page
-            if (HttpContext.Request.GetUri().Host == "portal.traffk.com")
-            {
-                return RedirectToAction(UniversalLoginController.ActionNames.UniversalLogin, UniversalLoginController.Name);
-            }
-
             //We don't want any loops
             if (!(
                 returnUrl.Contains(nameof(InactivityLogOff), true) ||

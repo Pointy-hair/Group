@@ -40,6 +40,19 @@ namespace Traffk.Bal.ApplicationParts
             public BackgroundJobServerOptions BackgroundOptions { get; set; }
         }
 
+        protected override void OnBuildConfiguration(IConfigurationBuilder builder)
+        {
+            var config = builder.Build();
+
+            builder.AddAzureKeyVault(
+                $"https://{config["Vault"]}.vault.azure.net/",
+                config["ClientId"],
+                config["ClientSecret"],
+                new TraffkSecretManager(config["ClientAppName"]));
+
+            builder.Build();
+        }
+
         protected override Task OnGoAsync()
         {
             if (int.TryParse(Configuration["HardcodedJobId"], out var jobId))
