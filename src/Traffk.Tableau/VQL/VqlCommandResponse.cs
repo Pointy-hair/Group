@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using RSD = RevolutionaryStuff.Core.Data;
+using RSD = System.Data;
 using System;
 using System.Collections.Generic;
 
@@ -704,9 +704,9 @@ namespace Traffk.Tableau.VQL
         public DataDictionary dataDictionary { get; set; }
         public UnderlyingDataTableColumn[] underlyingDataTableColumns { get; set; }
 
-        public RSD.IDataTable ToDataTable()
+        public RSD.DataTable ToDataTable()
         {
-            var dt = new RSD.SimpleDataTable
+            var dt = new RSD.DataTable
             {
                 TableName = this.tableName
             };
@@ -790,9 +790,9 @@ namespace Traffk.Tableau.VQL
         public int[] formatValIdxs { get; set; }
         public int[] aliasIndices { get; set; }
 
-        public RSD.IDataColumn ToDataColumn()
+        public RSD.DataColumn ToDataColumn()
         {
-            return new RSD.SimpleDataColumn
+            return new RSD.DataColumn
             {
                 ColumnName = FieldCaption,
                 DataType = UnderlyingDataTable.TableauDataTypeToClrType(DataType)

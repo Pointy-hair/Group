@@ -38,7 +38,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.AzureKeyVault" Version="2.0.0" />
-    <PackageReference Include="RevolutionaryStuff.Core" Version="1.0.25" />
+    <PackageReference Include="RevolutionaryStuff.Core" Version="1.0.26" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="1.0.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.2" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.0" />
