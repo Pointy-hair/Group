@@ -110,6 +110,8 @@
     <None Include="ReferenceData\EtlSampleData\ZipCodes\_databases_zip4\ZIP4-DC-DELUXE.csv" />
     <None Include="ReferenceData\EtlSampleData\ZipCodes\_databases_zip4\zip-4-deluxe-MSSQL.sql" />
     <None Include="ReferenceData\EtlSampleData\ZipCodes\_databases_zip4\zip-4-deluxe-MYSQL.sql" />
+    <None Include="ReferenceData\0001.Structure.sql" />
+    <None Include="ReferenceData\0100.Relationships.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Foundations\Build\0003.Asserts.sql" />
