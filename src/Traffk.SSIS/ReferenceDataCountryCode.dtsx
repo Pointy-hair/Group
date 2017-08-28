@@ -1,0 +1,528 @@
+﻿<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="8/14/2017 3:33:30 AM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="ENDUSERVM1"
+  DTS:CreatorName="CORP\tong"
+  DTS:DTSID="{6EB7BCDE-8672-4101-96B7-881D79E26D8E}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="14.0.0800.90"
+  DTS:LocaleID="1033"
+  DTS:ObjectName="ReferenceDataCountryCode"
+  DTS:PackageType="5"
+  DTS:VersionBuild="4"
+  DTS:VersionGUID="{6E8E9BF2-E9AC-40DE-A060-5FC4AC5E118B}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[referencedata]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{90688171-606a-45c0-8529-76b3975636d3}"
+      DTS:ObjectName="referencedata">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectionString="Data Source=traffkrdb-prod.database.windows.net;User ID=tong;Initial Catalog=ReferenceData;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;">
+          <DTS:Password
+            DTS:Name="Password"
+            Sensitive="1"
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAC1HgGr6LHEajZ21LNL5UjAAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAADc6or/nyITj/E7gftjsFX0AAAAAASAAACgAAAAEAAAAA5pTwWEf3BxSMgq01q4iV84AAAA/dgnamWv5OmB+AY214ogWhIHxtc6be9V0MkdA/5fnIq06yx+1KFO/9f+mbWWBfZWzLye6zMltbYUAAAA79JEONtN0cYg4WKTGTeC2zTHO54</DTS:Password>
+        </DTS:ConnectionManager>
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[tong]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{EBE35920-2101-443D-97BB-20495DAF7A2B}"
+      DTS:ObjectName="tong">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectionString="Data Source=traffkrdb-prod.database.windows.net;User ID=tong;Initial Catalog=PersonalTong;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;">
+          <DTS:Password
+            DTS:Name="Password"
+            Sensitive="1"
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAC1HgGr6LHEajZ21LNL5UjAAAAAAIAAAARABUAFMAAAADZgAAwAAAABAAAADNibA/HgwnOkIBjzW0Y8tXAAAAAASAAACgAAAAEAAAAPyq3+Q976zAQ8ttiaU+Fz04AAAAesNbhnLsszaJz5nyAedNLsOLVZ54O320fXxIRiBdL7MPnxBsVe7bsvZJN12lB6XnkUtOePMnxgUUAAAAHlO7tabx/1fTLdXU5fMhNi2TH1U</DTS:Password>
+        </DTS:ConnectionManager>
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:Variables />
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\Country Code"
+      DTS:CreationName="Microsoft.Pipeline"
+      DTS:Description="Data Flow Task"
+      DTS:DTSID="{87691E3D-E5DD-41F5-BF51-F14878299A1B}"
+      DTS:ExecutableType="Microsoft.Pipeline"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Country Code"
+      DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <pipeline
+          version="1">
+          <components>
+            <component
+              refId="Package\Country Code\ref iso 3166 Countries"
+              componentClassID="Microsoft.OLEDBSource"
+              contactInfo="OLE DB Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;7"
+              description="OLE DB Source"
+              name="ref iso 3166 Countries"
+              usesDispositions="true"
+              version="7">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[ISO3166].[Countries]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                <property
+                  dataType="System.String"
+                  description="The variable that contains the SQL command to be executed."
+                  name="SqlCommandVariable"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">0</property>
+                <property
+                  dataType="System.String"
+                  description="The mappings between the parameters in the SQL command and variables."
+                  name="ParameterMapping"></property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\Country Code\ref iso 3166 Countries.Connections[OleDbConnection]"
+                  connectionManagerID="Package.ConnectionManagers[referencedata]"
+                  connectionManagerRefId="Package.ConnectionManagers[referencedata]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <outputs>
+                <output
+                  refId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Output]"
+                  name="OLE DB Source Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Output].Columns[CountryId]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Output].ExternalColumns[CountryId]"
+                      lineageId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Output].Columns[CountryId]"
+                      name="CountryId"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Output].Columns[CountryName]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Output].ExternalColumns[CountryName]"
+                      length="100"
+                      lineageId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Output].Columns[CountryName]"
+                      name="CountryName"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Output].Columns[Alpha2]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Output].ExternalColumns[Alpha2]"
+                      length="2"
+                      lineageId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Output].Columns[Alpha2]"
+                      name="Alpha2"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Output].Columns[Alpha3]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Output].ExternalColumns[Alpha3]"
+                      length="3"
+                      lineageId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Output].Columns[Alpha3]"
+                      name="Alpha3"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Output].Columns[NumericCode]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Output].ExternalColumns[NumericCode]"
+                      length="3"
+                      lineageId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Output].Columns[NumericCode]"
+                      name="NumericCode"
+                      truncationRowDisposition="FailComponent" />
+                  </outputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Output].ExternalColumns[CountryId]"
+                      dataType="i4"
+                      name="CountryId" />
+                    <externalMetadataColumn
+                      refId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Output].ExternalColumns[CountryName]"
+                      dataType="wstr"
+                      length="100"
+                      name="CountryName" />
+                    <externalMetadataColumn
+                      refId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Output].ExternalColumns[Alpha2]"
+                      codePage="1252"
+                      dataType="str"
+                      length="2"
+                      name="Alpha2" />
+                    <externalMetadataColumn
+                      refId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Output].ExternalColumns[Alpha3]"
+                      codePage="1252"
+                      dataType="str"
+                      length="3"
+                      name="Alpha3" />
+                    <externalMetadataColumn
+                      refId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Output].ExternalColumns[NumericCode]"
+                      codePage="1252"
+                      dataType="str"
+                      length="3"
+                      name="NumericCode" />
+                  </externalMetadataColumns>
+                </output>
+                <output
+                  refId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Error Output]"
+                  isErrorOut="true"
+                  name="OLE DB Source Error Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Error Output].Columns[CountryId]"
+                      dataType="i4"
+                      lineageId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Error Output].Columns[CountryId]"
+                      name="CountryId" />
+                    <outputColumn
+                      refId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Error Output].Columns[CountryName]"
+                      dataType="wstr"
+                      length="100"
+                      lineageId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Error Output].Columns[CountryName]"
+                      name="CountryName" />
+                    <outputColumn
+                      refId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Error Output].Columns[Alpha2]"
+                      codePage="1252"
+                      dataType="str"
+                      length="2"
+                      lineageId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Error Output].Columns[Alpha2]"
+                      name="Alpha2" />
+                    <outputColumn
+                      refId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Error Output].Columns[Alpha3]"
+                      codePage="1252"
+                      dataType="str"
+                      length="3"
+                      lineageId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Error Output].Columns[Alpha3]"
+                      name="Alpha3" />
+                    <outputColumn
+                      refId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Error Output].Columns[NumericCode]"
+                      codePage="1252"
+                      dataType="str"
+                      length="3"
+                      lineageId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Error Output].Columns[NumericCode]"
+                      name="NumericCode" />
+                    <outputColumn
+                      refId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\Country Code\tong iso 3166 Countries"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="OLE DB Destination"
+              name="tong iso 3166 Countries"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[ISO3166].[Countries]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">false</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">2147483647</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\Country Code\tong iso 3166 Countries.Connections[OleDbConnection]"
+                  connectionManagerID="Package.ConnectionManagers[tong]"
+                  connectionManagerRefId="Package.ConnectionManagers[tong]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\Country Code\tong iso 3166 Countries.Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Country Code\tong iso 3166 Countries.Inputs[OLE DB Destination Input].Columns[CountryId]"
+                      cachedDataType="i4"
+                      cachedName="CountryId"
+                      externalMetadataColumnId="Package\Country Code\tong iso 3166 Countries.Inputs[OLE DB Destination Input].ExternalColumns[CountryId]"
+                      lineageId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Output].Columns[CountryId]" />
+                    <inputColumn
+                      refId="Package\Country Code\tong iso 3166 Countries.Inputs[OLE DB Destination Input].Columns[CountryName]"
+                      cachedDataType="wstr"
+                      cachedLength="100"
+                      cachedName="CountryName"
+                      externalMetadataColumnId="Package\Country Code\tong iso 3166 Countries.Inputs[OLE DB Destination Input].ExternalColumns[CountryName]"
+                      lineageId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Output].Columns[CountryName]" />
+                    <inputColumn
+                      refId="Package\Country Code\tong iso 3166 Countries.Inputs[OLE DB Destination Input].Columns[Alpha2]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="2"
+                      cachedName="Alpha2"
+                      externalMetadataColumnId="Package\Country Code\tong iso 3166 Countries.Inputs[OLE DB Destination Input].ExternalColumns[Alpha2]"
+                      lineageId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Output].Columns[Alpha2]" />
+                    <inputColumn
+                      refId="Package\Country Code\tong iso 3166 Countries.Inputs[OLE DB Destination Input].Columns[Alpha3]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="3"
+                      cachedName="Alpha3"
+                      externalMetadataColumnId="Package\Country Code\tong iso 3166 Countries.Inputs[OLE DB Destination Input].ExternalColumns[Alpha3]"
+                      lineageId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Output].Columns[Alpha3]" />
+                    <inputColumn
+                      refId="Package\Country Code\tong iso 3166 Countries.Inputs[OLE DB Destination Input].Columns[NumericCode]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="3"
+                      cachedName="NumericCode"
+                      externalMetadataColumnId="Package\Country Code\tong iso 3166 Countries.Inputs[OLE DB Destination Input].ExternalColumns[NumericCode]"
+                      lineageId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Output].Columns[NumericCode]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\Country Code\tong iso 3166 Countries.Inputs[OLE DB Destination Input].ExternalColumns[CountryId]"
+                      dataType="i4"
+                      name="CountryId" />
+                    <externalMetadataColumn
+                      refId="Package\Country Code\tong iso 3166 Countries.Inputs[OLE DB Destination Input].ExternalColumns[CountryName]"
+                      dataType="wstr"
+                      length="100"
+                      name="CountryName" />
+                    <externalMetadataColumn
+                      refId="Package\Country Code\tong iso 3166 Countries.Inputs[OLE DB Destination Input].ExternalColumns[Alpha2]"
+                      codePage="1252"
+                      dataType="str"
+                      length="2"
+                      name="Alpha2" />
+                    <externalMetadataColumn
+                      refId="Package\Country Code\tong iso 3166 Countries.Inputs[OLE DB Destination Input].ExternalColumns[Alpha3]"
+                      codePage="1252"
+                      dataType="str"
+                      length="3"
+                      name="Alpha3" />
+                    <externalMetadataColumn
+                      refId="Package\Country Code\tong iso 3166 Countries.Inputs[OLE DB Destination Input].ExternalColumns[NumericCode]"
+                      codePage="1252"
+                      dataType="str"
+                      length="3"
+                      name="NumericCode" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\Country Code\tong iso 3166 Countries.Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\Country Code\tong iso 3166 Countries.Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Country Code\tong iso 3166 Countries.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Country Code\tong iso 3166 Countries.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Country Code\tong iso 3166 Countries.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Country Code\tong iso 3166 Countries.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+          </components>
+          <paths>
+            <path
+              refId="Package\Country Code.Paths[OLE DB Source Output]"
+              endId="Package\Country Code\tong iso 3166 Countries.Inputs[OLE DB Destination Input]"
+              name="OLE DB Source Output"
+              startId="Package\Country Code\ref iso 3166 Countries.Outputs[OLE DB Source Output]" />
+          </paths>
+        </pipeline>
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="8">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph">
+        <NodeLayout
+          Size="142.4,41.6"
+          Id="Package\Country Code"
+          TopLeft="84.0000014305115,52.0000007292804" />
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+  <TaskHost
+    design-time-name="Package\Country Code">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="190.4,41.6"
+          Id="Package\Country Code\tong iso 3166 Countries"
+          TopLeft="114.857144813148,161.505884618" />
+        <NodeLayout
+          Size="181.6,41.6"
+          Id="Package\Country Code\ref iso 3166 Countries"
+          TopLeft="118.285716300108,39.1529417255758" />
+        <EdgeLayout
+          Id="Package\Country Code.Paths[OLE DB Source Output]"
+          TopLeft="209.571430556628,80.7529417255758">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,80.7529428924244"
+              Start="0,0"
+              End="0,73.2529428924244">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,73.2529428924244" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Country Code\ref iso 3166 Countries">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\Country Code\tong iso 3166 Countries">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>
