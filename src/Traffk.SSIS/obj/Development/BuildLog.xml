@@ -2,43 +2,43 @@
 <BuildLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <ProjectInfo>
     <Name>Traffk.SSIS</Name>
-    <LastWriteTime>2017-08-27T20:35:00.8670853Z</LastWriteTime>
+    <LastWriteTime>2017-08-27T23:32:05.4855597Z</LastWriteTime>
     <LastKnownProtectionLevel>EncryptSensitiveWithUserKey</LastKnownProtectionLevel>
   </ProjectInfo>
   <LastBuildInfos>
     <ProjectBuildItemInfo>
-      <Name>NationalDrugCode.dtsx</Name>
-      <LastWriteTime>2017-07-30T22:48:39.9026962Z</LastWriteTime>
+      <Name>ReferenceDataCmsGov.dtsx</Name>
+      <LastWriteTime>2017-08-27T22:13:09.9986369Z</LastWriteTime>
       <LastKnownProtectionLevel>EncryptSensitiveWithUserKey</LastKnownProtectionLevel>
     </ProjectBuildItemInfo>
     <ProjectBuildItemInfo>
-      <Name>InternationalClassificationDiseases.dtsx</Name>
-      <LastWriteTime>2017-07-30T22:48:39.8826692Z</LastWriteTime>
+      <Name>TenantModelDW.dtsx</Name>
+      <LastWriteTime>2017-08-27T22:13:09.8983796Z</LastWriteTime>
       <LastKnownProtectionLevel>EncryptSensitiveWithUserKey</LastKnownProtectionLevel>
     </ProjectBuildItemInfo>
     <ProjectBuildItemInfo>
-      <Name>CmsGov.dtsx</Name>
-      <LastWriteTime>2017-07-30T22:48:39.6490604Z</LastWriteTime>
+      <Name>ReferenceDataInternationalClassificationDiseases.dtsx</Name>
+      <LastWriteTime>2017-08-27T22:13:40.859909Z</LastWriteTime>
       <LastKnownProtectionLevel>EncryptSensitiveWithUserKey</LastKnownProtectionLevel>
     </ProjectBuildItemInfo>
     <ProjectBuildItemInfo>
-      <Name>Zip9.dtsx</Name>
-      <LastWriteTime>2017-07-30T22:48:39.9962604Z</LastWriteTime>
+      <Name>ReferenceDataNationalDrugCode.dtsx</Name>
+      <LastWriteTime>2017-08-27T22:13:56.8042248Z</LastWriteTime>
       <LastKnownProtectionLevel>EncryptSensitiveWithUserKey</LastKnownProtectionLevel>
     </ProjectBuildItemInfo>
     <ProjectBuildItemInfo>
-      <Name>Zip5.dtsx</Name>
-      <LastWriteTime>2017-07-30T22:48:39.9482166Z</LastWriteTime>
+      <Name>ReferenceDataZip5.dtsx</Name>
+      <LastWriteTime>2017-08-27T22:14:10.495102Z</LastWriteTime>
       <LastKnownProtectionLevel>EncryptSensitiveWithUserKey</LastKnownProtectionLevel>
     </ProjectBuildItemInfo>
     <ProjectBuildItemInfo>
-      <Name>DW.dtsx</Name>
-      <LastWriteTime>2017-08-26T21:06:40.9155464Z</LastWriteTime>
+      <Name>ReferenceDataZip9.dtsx</Name>
+      <LastWriteTime>2017-08-27T22:14:30.9871716Z</LastWriteTime>
       <LastKnownProtectionLevel>EncryptSensitiveWithUserKey</LastKnownProtectionLevel>
     </ProjectBuildItemInfo>
     <ProjectBuildItemInfo>
-      <Name>Deerwalk.dtsx</Name>
-      <LastWriteTime>2017-08-27T20:34:57.5747483Z</LastWriteTime>
+      <Name>TenantModelDeerwalk.dtsx</Name>
+      <LastWriteTime>2017-08-28T01:43:40.9644302Z</LastWriteTime>
       <LastKnownProtectionLevel>EncryptSensitiveWithUserKey</LastKnownProtectionLevel>
     </ProjectBuildItemInfo>
   </LastBuildInfos>
