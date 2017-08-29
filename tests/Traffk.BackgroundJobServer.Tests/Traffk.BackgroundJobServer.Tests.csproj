@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <VersionPrefix>2.0.0</VersionPrefix>
-    <TargetFrameworks>net462</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.0;net462</TargetFrameworks>
     <AssemblyName>Traffk.BackgroundJobServer.Tests</AssemblyName>
     <PackageId>Traffk.BackgroundJobServer.Tests</PackageId>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
@@ -13,19 +13,26 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='VSTS-CI|AnyCPU'" />
 
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp1.1'">
-    <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
-    <PackageTargetFallback>$(PackageTargetFallback);dotnet5.6;dnxcore50;portable-net451+win8</PackageTargetFallback>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net462'">
-  </PropertyGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0'">
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-  </ItemGroup>
+  <Choose>
+    <When Condition="'$(TargetFramework)' == 'netcoreapp2.0'">
+      <PropertyGroup>
+        <DefineConstants>NETCORE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
+      </PropertyGroup>
+      <ItemGroup>
+        <Compile Remove="EtlJobRunner.cs" />
+      </ItemGroup>
+    </When>
+    <When Condition="'$(TargetFramework)' == 'net462'">
+      <PropertyGroup>
+        <DefineConstants>NET462</DefineConstants>
+      </PropertyGroup>
+      <ItemGroup>
+        <Reference Include="Microsoft.SqlServer.ManagedDTS">
+          <HintPath>assemblies\Microsoft.SqlServer.ManagedDTS.dll</HintPath>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net462'">
     <Reference Include="Microsoft.SqlServer.ManagedDTS">
