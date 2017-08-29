@@ -16,13 +16,13 @@ namespace Traffk.Bal.Caches
         public class Config
         {
             public const string ConfigSectionName = "RedisCachingServicesOptions";
-
             public string ConnectionString { get; set; }
             public TimeSpan ExpirationTime { get; set; } = TimeSpan.FromMinutes(5);
         }
 
-        private readonly Config RedisOptions;
-        private readonly Lazy<ConnectionMultiplexer> LazyConnection;
+        ConnectionMultiplexer IRedisCache.Connection => Connection;
+
+        private static Config RedisOptions;
         private readonly IDatabase CacheDatabase;
         private readonly TimeSpan? DefaultExpiration;
 
@@ -30,15 +30,13 @@ namespace Traffk.Bal.Caches
         {
             RedisOptions = redisOptions.Value;
             DefaultExpiration = RedisOptions.ExpirationTime;
-            LazyConnection = new Lazy<ConnectionMultiplexer>(() =>
-            {
-                string cacheConnection = RedisOptions.ConnectionString;
-                return ConnectionMultiplexer.Connect(cacheConnection);
-            });
             CacheDatabase = Connection.GetDatabase();
         }
 
-        public ConnectionMultiplexer Connection
+        private static readonly Lazy<ConnectionMultiplexer> LazyConnection
+            = new Lazy<ConnectionMultiplexer>(() => ConnectionMultiplexer.Connect(RedisOptions.ConnectionString));
+
+        public static ConnectionMultiplexer Connection
         {
             get
             {
@@ -85,6 +83,8 @@ namespace Traffk.Bal.Caches
             }
             return new CacheEntry<TVal>(objectInCache);
         }
+
+        
     }
 
     public interface ISynchronizedRedisCache : ICacher

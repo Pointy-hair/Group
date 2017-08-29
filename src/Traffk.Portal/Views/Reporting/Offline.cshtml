@@ -1,0 +1,14 @@
+﻿@using Traffk.Portal.Controllers
+@{
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
+    ViewData.SetTitleAndHeading("Reports Offline");
+    ViewData.HasBreadcrumbItems(true);
+    ViewData.IsContentPage(true);
+    //var pageKey = (ReportingController.PageKeys)ViewData[AspHelpers.ViewDataKeys.PageKey];
+}
+
+@section breadCrumbItems {
+    <li><a asp-controller="@ReportingController.Name" asp-action="Index">Reports</a> <span>></span> </li>
+}
+
+@{     await Html.RenderPartialAsync("~/Views/Reporting/_Offline.cshtml"); }

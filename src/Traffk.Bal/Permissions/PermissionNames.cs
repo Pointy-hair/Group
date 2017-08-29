@@ -14,6 +14,7 @@
         ProtectedHealthInformation,
         ReleaseLog,
         DataSourceView,
-        DataSourceEdit
+        DataSourceEdit,
+        DataSourceCreate
     }
 }

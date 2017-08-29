@@ -3,7 +3,7 @@
 @model Traffk.Portal.Models.ReportingModels.CreateScheduledReportViewModel
 @{
     Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
-    ViewData.SetTitleAndHeading(@Model.TableauReportViewModel.Title, @Model.TableauReportViewModel.Description);
+    ViewData.SetTitleAndHeading(@Model.ReportViewModel.Title, @Model.ReportViewModel.Description);
     ViewData.HasBreadcrumbItems(true);
     ViewData.IsFormPage(true);
 }
@@ -11,14 +11,14 @@
 
 @section breadCrumbItems {
     <li><a asp-controller="@ReportingController.Name" asp-action="Index">Reports</a> <span>></span> </li>
-    <li><a asp-controller="@ReportingController.Name" asp-action="Index" asp-fragment="@Model.TableauReportViewModel.FolderName.ToUpperCamelCase()">@Model.TableauReportViewModel.FolderName.ToTitleFriendlyString()</a> <span>></span> </li>
+    <li><a asp-controller="@ReportingController.Name" asp-action="Index" asp-fragment="@Model.ReportViewModel.FolderName.ToUpperCamelCase()">@Model.ReportViewModel.FolderName.ToTitleFriendlyString()</a> <span>></span> </li>
 }
 
 <form asp-action="@ReportingController.ActionNames.ScheduleReportSave" class="inline-form">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <input type="hidden" asp-for="TableauReportViewModel.WorkbookName"/>
-    <input type="hidden" asp-for="TableauReportViewModel.ViewName" />
-    <input type="hidden" asp-for="TableauReportViewModel.WorksheetName" />
+    <input type="hidden" asp-for="ReportViewModel.WorkbookName"/>
+    <input type="hidden" asp-for="ReportViewModel.ViewName" />
+    <input type="hidden" asp-for="ReportViewModel.WorksheetName" />
     
     @await Html.PartialAsync("~/Views/Shared/_BasicRecurrenceSettingsPartial.cshtml", @Model.RecurrenceSettings, z => z.RecurrenceSettings)
     

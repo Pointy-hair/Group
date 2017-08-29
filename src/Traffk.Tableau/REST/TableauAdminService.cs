@@ -2,6 +2,7 @@
 using System.IO;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
+using Serilog;
 using Traffk.Tableau.REST.Helpers;
 using Traffk.Tableau.REST.Models;
 using Traffk.Tableau.REST.RestRequests;
@@ -15,7 +16,8 @@ namespace Traffk.Tableau.REST
 
         public TableauAdminService(IOptions<TableauSignInOptions> options,
             IOptions<TableauAdminCredentials> adminCredentials,
-            IHttpClientFactory httpClientFactory) : base(options, adminCredentials.Value, httpClientFactory)
+            IHttpClientFactory httpClientFactory,
+            ILogger logger) : base(options, adminCredentials.Value, httpClientFactory, logger)
         {
             TableauAdminCredentials = adminCredentials.Value;
             HttpClientFactory = httpClientFactory;
@@ -40,7 +42,7 @@ namespace Traffk.Tableau.REST
             base.Options.UpdateForTenant(request.DestTableauTenantId);
             var destinationSiteSignInOptions = ConfigurationHelpers.CreateOptions(Options);
             var adminCredentialOptions = ConfigurationHelpers.CreateOptions(TableauAdminCredentials);
-            var destinationAdminService = new TableauAdminService(destinationSiteSignInOptions, adminCredentialOptions, HttpClientFactory);
+            var destinationAdminService = new TableauAdminService(destinationSiteSignInOptions, adminCredentialOptions, HttpClientFactory, Logger);
             var destinationSiteInfo = destinationAdminService.GetSiteInfo();
             
             var sourceAdminService = this; //not normal convention, but using this to make it clearer to future devs

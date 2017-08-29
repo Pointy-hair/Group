@@ -50,7 +50,7 @@ namespace Traffk.Tableau.REST.RestRequests
                 }
                 catch(Exception exPageRequest)
                 {
-                    Login.StatusLog.AddError("Datasources error during page request: " + exPageRequest.Message);
+                    Login.Logger.Error("Datasources error during page request: " + exPageRequest.Message);
                 }
             }
             Datasources_p = onlineDatasources;
@@ -69,7 +69,7 @@ namespace Traffk.Tableau.REST.RestRequests
             var urlQuery = Urls.Url_DatasourcesList(Login, pageSize, pageToRequest);
             var request = CreateLoggedInRequest(urlQuery, HttpMethod.Get);
 
-            //Login.StatusLog.AddStatus("Web request: " + urlQuery, -10);
+            Login.Logger.Information("Web request: " + urlQuery);
             var response = SendHttpRequest(request);
             var xmlDoc = GetHttpResponseAsXml(response);
 
@@ -88,7 +88,7 @@ namespace Traffk.Tableau.REST.RestRequests
                 }
                 catch
                 {
-                    Login.StatusLog.AddError("Error parsing datasource: " + itemXml.ToXmlNode());
+                    Login.Logger.Error("Error parsing datasource: " + itemXml.ToXmlNode());
                 }
             } //end: foreach
 

@@ -1,4 +1,4 @@
-﻿using System.Net.Http;
+using System.Net.Http;
 using System.Xml.Linq;
 using Traffk.Tableau.REST.Models;
 using Traffk.Utility;
@@ -33,14 +33,14 @@ namespace Traffk.Tableau.REST.RestRequests
         /// <param name="serverName"></param>
         public SiteInfo ExecuteRequest()
         {
-            var statusLog = Login.StatusLog;
+            var logger = Login.Logger;
 
             //Create a web request, in including the users logged-in auth information in the request headers
             var urlRequest = Urls.Url_SiteInfo(Login);
             var webRequest = CreateLoggedInRequest(urlRequest, HttpMethod.Get);
 
             //Request the data from server
-            //Login.StatusLog.AddStatus("Web request: " + urlRequest, -10);
+            Login.Logger.Information("Web request: " + urlRequest);
             var response = SendHttpRequest(webRequest);
         
             var xmlDoc = GetHttpResponseAsXml(response);
@@ -58,18 +58,18 @@ namespace Traffk.Tableau.REST.RestRequests
                     var site = new SiteInfo(contentXml.ToXmlNode());
                     Site_p = site;
 
-                    statusLog.AddStatus("Site info: " + site.Name + "/" + site.Id + "/" + site.State);
+                    Login.Logger.Information("Site info: " + site.Name + "/" + site.Id + "/" + site.State);
                 }
                 catch
                 {
-                    statusLog.AddError("Error parsing site: " + contentXml.ToXmlNode());
+                    Login.Logger.Error("Error parsing site: " + contentXml.ToXmlNode());
                 }
             }
 
             //Sanity check
             if(numberSites > 1)
             {
-                statusLog.AddError("Error - how did we get more than 1 site? " + numberSites.ToString() + " sites");
+                Login.Logger.Error("Error - how did we get more than 1 site? " + numberSites.ToString() + " sites");
             }
 
             return Site;

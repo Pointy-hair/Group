@@ -80,6 +80,15 @@ namespace TraffkPortal
                 config["ClientSecret"],
                 new TraffkSecretManager(config["ClientAppName"]));
 
+            if (env.IsDevelopment())
+            {
+                builder.AddAzureKeyVault(
+                    $"https://{config["Vault"]}.vault.azure.net/",
+                    config["ClientId"],
+                    config["ClientSecret"],
+                    new TraffkSecretManager(config["ClientAppName"] + config["ClientAppNameEnvironment"]));
+            }
+
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
 
@@ -95,10 +104,11 @@ namespace TraffkPortal
                     .MinimumLevel.Verbose()
                     .Enrich.FromLogContext()
                     .WriteTo.Trace()
-                    .WriteTo.AzureTableStorageWithProperties(Configuration["BlobStorageServicesOptions:ConnectionString"],
-                        storageTableName: Configuration["Serilog:TableName"],
-                        writeInBatches: Parse.ParseBool(Configuration["Serilog:WriteInBatches"], true),
-                        period: Parse.ParseTimeSpan(Configuration["Serilog:LogInterval"], TimeSpan.FromSeconds(2)));
+                    .WriteTo.AzureTableStorageWithProperties(Configuration.GetSection("BlobStorageServicesOptions")["ConnectionString"], 
+                        storageTableName: Configuration["Serilog:TableName"], 
+                        writeInBatches: Parse.ParseBool(Configuration["Serilog:WriteInBatches"], true), 
+                        period: Parse.ParseTimeSpan(Configuration["Serilog:LogInterval"], TimeSpan.FromSeconds(2)))
+                    .CreateLogger();
 
             Logger = loggerConfiguration.CreateLogger();
             Log.Logger = Logger;
@@ -136,6 +146,8 @@ namespace TraffkPortal
             services.Configure<TokenProviderConfig>(Configuration.GetSection(TokenProviderConfig.ConfigSectionName));
             services.Configure<OrchestraRxConfig>(Configuration.GetSection(OrchestraRxConfig.ConfigSectionName));
             services.Configure<RedisCache.Config>(Configuration.GetSection(RedisCache.Config.ConfigSectionName));
+            services.Configure<ActiveDirectoryApplicationIdentificationConfig>(Configuration.GetSection(ActiveDirectoryApplicationIdentificationConfig.ConfigSectionName));
+            services.Configure<OrchestraApiService.Config>(Configuration.GetSection(OrchestraApiService.Config.ConfigSectionName));
 
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
@@ -155,6 +167,7 @@ namespace TraffkPortal
             /*
             services.Configure<IdentityOptions>(options => 
             {
+                //options.Cookies.ApplicationCookie.LoginPath = new PathString("/UniversalLogin");
                 options.Cookies.ApplicationCookie.SlidingExpiration = true;
                 options.Cookies.ApplicationCookie.ExpireTimeSpan = TimeSpan.FromSeconds(IdleLogout.TotalSeconds*2); //due to sliding expiration, things can be cut in half...
             });
@@ -169,7 +182,7 @@ namespace TraffkPortal
 +		[49]	Lifetime = Scoped, ServiceType = {Microsoft.AspNetCore.Identity.IPasswordValidator`1[TraffkPortal.Models.ApplicationUser]}, ImplementationType = {Microsoft.AspNetCore.Identity.PasswordValidator`1[TraffkPortal.Models.ApplicationUser]}	Microsoft.Extensions.DependencyInjection.ServiceDescriptor             
              */
 
-            services.Substitute<TraffkUserManager>();
+            //services.Substitute<TraffkUserManager>();
             services.Substitute<TraffkUserStore>();
             services.Substitute<TraffkPasswordValidator>();
 
@@ -193,6 +206,8 @@ namespace TraffkPortal
 
 
             // Add application services.
+            
+            services.AddScoped<IVault, Vault>();
             services.AddScoped<IOptions<SmtpOptions>, SmtpSettingsAdaptor>();
             services.AddScoped<IEmailer, RawEmailer>();
             services.AddScoped<ITrackingEmailer, TrackingEmailer>();
@@ -211,6 +226,7 @@ namespace TraffkPortal
             services.AddScoped<Resources.PortalResourceService>();
             services.AddScoped<BlobStorageServices>();
             services.AddScoped<ConfigStringFormatter>();
+            services.AddScoped<ITableauStatusService, TableauStatusService>();
             services.AddScoped<ITableauVisualServices, TableauVisualServices>();
             services.AddScoped<ITrustedTicketGetter, TrustedTicketGetter>();
             services.AddScoped<ITableauViewerService, TableauViewerService>();
@@ -259,8 +275,6 @@ namespace TraffkPortal
             loggerFactory.AddSerilog(Logger);
 #endif
             
-            app.UseApplicationInsightsRequestTelemetry();
-
             if (env.IsDevelopment())
             {
                 app.UseExceptionHandler("/E");
@@ -273,8 +287,6 @@ namespace TraffkPortal
             }
 
             app.UseMiddleware<NoTenantMiddleware>();
-
-            app.UseApplicationInsightsExceptionTelemetry();
 
             app.UseStaticFiles();
 

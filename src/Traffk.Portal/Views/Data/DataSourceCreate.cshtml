@@ -1,0 +1,90 @@
+﻿@model Traffk.Bal.Data.Rdb.TraffkGlobal.DataSource
+@using Traffk.Portal.Controllers
+
+@{
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
+    ViewData.SetTitleAndHeading("Create Datasource");
+    ViewData.IsFormPage(true);
+    ViewData.HasPageMenuItems(true);
+    ViewData.HasBreadcrumbItems(true);
+
+    var pageKey = (DataController.PageKeys)ViewData[AspHelpers.ViewDataKeys.PageKey];
+}
+
+@section breadCrumbItems {
+    <li><a asp-controller="@DataController.Name" asp-action="Index">Data</a> <span>></span> </li>
+    <li><a asp-controller="@DataController.Name" asp-action="Index">Sources</a> <span>></span> </li>
+}
+
+<form asp-action="DataSourceCreate" class="inline-form">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-row">
+                <label>Type</label>
+                <input type="radio" class="radio-inline" id="DataSourceTypeFTP" name="DataSourceType" value="FTP" @(Model.DataSourceSettings.IsFtp ? "checked='checked'" : "") />
+                <span>FTP</span>
+                <input type="radio" class="radio-inline" id="DataSourceTypeWeb" name="DataSourceType" value="Web" @(Model.DataSourceSettings.IsWeb ? "checked='checked'" : "") />
+                <span>Web</span>        
+            </div>
+            <div class="form-row">
+                <label asp-for="@Model.DataSourceName"></label>
+                <input asp-for="@Model.DataSourceName" class="form-control" />
+            </div>
+            <div class="inline-form type-section" id="type-section-ftp" style="@(Model.DataSourceSettings.IsFtp ? "" : "display:none")">
+                <div class="form-row">
+                    <label asp-for="@Model.DataSourceSettings.FTP.Hostname"></label>
+                    <input asp-for="@Model.DataSourceSettings.FTP.Hostname" class="form-control" />
+                </div>
+                <div class="form-row">
+                    <label asp-for="@Model.DataSourceSettings.FTP.Port"></label>
+                    <input asp-for="@Model.DataSourceSettings.FTP.Port" class="form-control" />
+                </div>
+                <div class="form-row">
+                    <label asp-for="@Model.DataSourceSettings.FTP.CredentialsKeyUri"></label>
+                    <textarea asp-for="@Model.DataSourceSettings.FTP.CredentialsKeyUri" class="form-control"></textarea>
+                </div>
+                <div class="form-row">
+                    <label asp-for="@Model.DataSourceSettings.FTP.FolderPaths"></label>
+                    <textarea asp-for="@Model.DataSourceSettings.FTP.FolderPaths" class="form-control"></textarea>
+                </div>
+            </div>
+
+            <div class="inline-form type-section" id="type-section-web" style="@(Model.DataSourceSettings.IsWeb ? "" : "display:none")">
+                <div class="form-row">
+                    <label asp-for="@Model.DataSourceSettings.Web.DownloadUrls"></label>
+                    <textarea asp-for="@Model.DataSourceSettings.Web.DownloadUrls" class="form-control"></textarea>
+                </div>
+                <div class="form-row">
+                    <label asp-for="@Model.DataSourceSettings.Web.LoginPageConfig.LoginPage"></label>
+                    <textarea asp-for="@Model.DataSourceSettings.Web.LoginPageConfig.LoginPage" class="form-control"></textarea>
+                </div>
+                <div class="form-row">
+                    <label asp-for="@Model.DataSourceSettings.Web.LoginPageConfig.UsernameFieldName"></label>
+                    <input asp-for="@Model.DataSourceSettings.Web.LoginPageConfig.UsernameFieldName" class="form-control" />
+                </div>
+                <div class="form-row">
+                    <label asp-for="@Model.DataSourceSettings.Web.LoginPageConfig.PasswordFieldName"></label>
+                    <input asp-for="@Model.DataSourceSettings.Web.LoginPageConfig.PasswordFieldName" class="form-control" />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 text-right">
+                <input type="submit" value="Save" class="btn btn-default btn-primary btn-large" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@Html.Script(@<script type="text/javascript">
+    $(document).ready(function () {
+        $("input[name='DataSourceType']").change(function () {
+            $(".type-section").hide();
+            var chosenPattern = $(this).attr("value").toLowerCase();
+            var sel = "#type-section-" + chosenPattern;
+            $(sel).show();
+        });
+    });
+    </script>)

@@ -37,11 +37,14 @@ namespace Traffk.Portal.Controllers
         protected readonly IBackgroundJobClient Backgrounder;
         protected readonly ITraffkRecurringJobManager RecurringJobManager;
         protected readonly BlobStorageServices BlobStorageService;
+        protected bool IsOnline;
 
         public enum PageKeys
         {
             ScheduledReportDetails,
-            ScheduledReportHistory
+            ScheduledReportHistory,
+            Report,
+            ReportNotes
         }
 
         public static class ActionNames
@@ -49,15 +52,21 @@ namespace Traffk.Portal.Controllers
             public const string ShowReport = "ShowReport";
             public const string Index = "Index";
             public const string Report = "Report";
-            public const string DownloadedReports = "Downloads";
+            public const string Download = "DownloadReport";
+            public const string DownloadedReports = "ReportDownloads";
+            public const string CreateScheduledReport = "CreateScheduledReport";
             public const string ScheduledReports = "ScheduledReportIndex";
             public const string ScheduleReportSave = "ScheduleReportSave";
-            public const string ScheduledReportDetail = "ScheduledReportDetail";   
+            public const string ScheduledReportDetail = "ScheduledReportDetail";
+            public const string ScheduledReportHistory = "ScheduledReportHistory";
+            public const string ReportNotes = "ReportNotes";
+            public const string Offline = "Offline";
         }
 
         public static class ViewNames
         {
             public const string DownloadList = "Downloads";
+            public const string Offline = "Offline";
         }
 
         public ReportingController(
@@ -75,12 +84,19 @@ namespace Traffk.Portal.Controllers
             ReportVisualService = reportVisualService;
             Backgrounder = backgrounder;
             RecurringJobManager = recurringJobManager;
+            BlobStorageService = blobStorageService;
+            IsOnline = ReportVisualService.IsOnline;
         }
 
         [Route("/Reporting")]
         [ActionName(ActionNames.Index)]
         public IActionResult Index()
         {
+            if (!IsOnline)
+            {
+                return RedirectToAction(ActionNames.Offline);
+            }
+
             var reportSearchCriteria = new ReportSearchCriteria
             {
                 VisualContext = ReportVisualContext
@@ -94,28 +110,36 @@ namespace Traffk.Portal.Controllers
         [ActionName(ActionNames.Report)]
         public IActionResult Report(string id, string anchorName)
         {
-            var reportSearchCriteria = new ReportSearchCriteria
+            if (!IsOnline)
             {
-                VisualContext = ReportVisualContext,
-                ReportId = Parse.ParseInt32(id)
-            };
-            var reportVisual = ReportVisualService.GetReportVisual(reportSearchCriteria);
-            if (reportVisual == null)
-            {
-                return RedirectToAction(ActionNames.Index);
+                return RedirectToAction(ActionNames.Offline);
             }
 
-            Logger.Information("{@EventType} {@ReportId}", EventType.LoggingEventTypes.ViewedReport.ToString(), reportVisual.Id.ToString());
+            var tableauReportViewModel = GetReportViewModel(id);
 
-            var tableauReportViewModel = new TableauReportViewModel(reportVisual);
+            SetHeroLayoutViewData(tableauReportViewModel.Id, tableauReportViewModel.Title.ToTitleFriendlyString(), PageKeys.Report);
             return View(tableauReportViewModel);
         }
 
         private static readonly DateTime StartedAtUtc = DateTime.UtcNow;
 
+        [Route("/Reporting/Offline")]
+        [ActionName(ActionNames.Offline)]
+        public IActionResult Offline()
+        {
+            return View(ViewNames.Offline);
+        }
+
+
+
         [Route("/Reporting/PreviewImage/{workbookId}/{viewId}")]
         public IActionResult PreviewImage(string workbookId, string viewId)
         {
+            if (!IsOnline)
+            {
+                return null;
+            }
+
             var etag = $"\"{TenantId}.{workbookId}.{viewId}\"";
             var stringValues = this.Request.Headers.FindOrDefault(WebHelpers.HeaderStrings.IfNoneMatch);
             if (stringValues.Count == 1 && stringValues[0] == etag)
@@ -154,32 +178,26 @@ namespace Traffk.Portal.Controllers
             }).Value;
         }
 
+        [ActionName(ActionNames.Download)]
         [Route("/Reporting/Report/Download/{id}/{anchorName}")]
         public IActionResult DownloadReport(string id, string anchorName)
         {
-            var reportSearchCriteria = new ReportSearchCriteria
-            {
-                VisualContext = ReportVisualContext,
-                ReportId = Parse.ParseInt32(id)
-            };
-            var reportVisual = ReportVisualService.GetReportVisual(reportSearchCriteria);
-            if (reportVisual == null)
+            var tableauReportViewModel = GetReportViewModel(id);
+            if (tableauReportViewModel == null)
             {
                 return RedirectToAction(ActionNames.Index);
             }
 
-            var tableauReportViewModel = new TableauReportViewModel(reportVisual);
-
             var createPdfOptions = new CreatePdfOptions(tableauReportViewModel.WorkbookName, tableauReportViewModel.ViewName, tableauReportViewModel.WorksheetName);
             QueueReportDownload(createPdfOptions);
 
-            Logger.Information("{@EventType} {@ReportId}", EventType.LoggingEventTypes.DownloadedReport.ToString(), reportVisual.Id.ToString());
+            Logger.Information("{@EventType} {@ReportId}", EventType.LoggingEventTypes.DownloadedReport.ToString(), tableauReportViewModel.Id.ToString());
 
-            return NoContent(); //Placeholder - will redirect to a reportIndex page
+            return RedirectToAction(ActionNames.DownloadedReports);
         }
 
-        [Route("/Reporting/Report/Downloads")]
         [ActionName(ActionNames.DownloadedReports)]
+        [Route("/Reporting/Report/Downloads")]
         public IActionResult DownloadedReportIndex(string sortCol, string sortDir, int? page, int? pageSize)
         {
             var currentUserContactId = Current.User.ContactId;
@@ -195,21 +213,16 @@ namespace Traffk.Portal.Controllers
 
         [HttpGet]
         [Route("/Reporting/Report/Schedule/{id}/{anchorName}")]
+        [ActionName(ActionNames.CreateScheduledReport)]
         public IActionResult CreateScheduledReport(string id, string anchorName)
         {
             try
             {
-                var reportSearchCriteria = new ReportSearchCriteria
-                {
-                    VisualContext = ReportVisualContext,
-                    ReportId = Parse.ParseInt32(id)
-                };
-                var reportVisual = ReportVisualService.GetReportVisual(reportSearchCriteria);
-                if (reportVisual == null)
+                var tableauReportViewModel = GetReportViewModel(id);
+                if (tableauReportViewModel == null)
                 {
                     return RedirectToAction(ActionNames.Index);
                 }
-                var tableauReportViewModel = new TableauReportViewModel(reportVisual);
                 var scheduleReportViewModel = new CreateScheduledReportViewModel(tableauReportViewModel,
                     new RecurrenceSettings());
 
@@ -230,7 +243,7 @@ namespace Traffk.Portal.Controllers
         {
             try
             {
-                var tableauReportViewModel = createScheduledReportViewModel.TableauReportViewModel;
+                var tableauReportViewModel = createScheduledReportViewModel.ReportViewModel;
                 var createPdfOptions = new CreatePdfOptions(tableauReportViewModel.WorkbookName, tableauReportViewModel.ViewName, tableauReportViewModel.WorksheetName);
                 var cronString = createScheduledReportViewModel.RecurrenceSettings.ConvertToCronString();
                 var recurringJobId = RecurringJobManager.Add(Hangfire.Common.Job.FromExpression<ITenantJobs>(x => x.ScheduleTableauPdfDownload(createPdfOptions)), cronString);
@@ -246,7 +259,7 @@ namespace Traffk.Portal.Controllers
                     {
                         Recurrence = createScheduledReportViewModel.RecurrenceSettings,
                         RecurringJobId = recurringJobId,
-                        ReportId = createScheduledReportViewModel.TableauReportViewModel.Id.ToString(),
+                        ReportId = createScheduledReportViewModel.ReportViewModel.Id.ToString(),
                         ReportName = tableauReportViewModel.ViewName
                     }
                 };
@@ -261,8 +274,8 @@ namespace Traffk.Portal.Controllers
             }
         }
 
-        [Route("/Reporting/ScheduledReports")]
         [ActionName(ActionNames.ScheduledReports)]
+        [Route("/Reporting/ScheduledReports")]
         public IActionResult ScheduledReportIndex()
         {
             var userRecurringJobs = RecurringJobManager.GetUserRecurringJobs();
@@ -288,6 +301,7 @@ namespace Traffk.Portal.Controllers
             return View(viewModels);
         }
 
+        [ActionName(ActionNames.ScheduledReportDetail)]
         [Route("/Reporting/ScheduledReports/{id}")]
         public IActionResult ScheduledReportDetail(int id)
         {
@@ -304,6 +318,7 @@ namespace Traffk.Portal.Controllers
             return View(viewModel);
         }
 
+        [ActionName(ActionNames.ScheduledReportHistory)]
         [Route("/Reporting/ScheduledReports/{id}/History")]
         public IActionResult ScheduledReportHistory(int id)
         {
@@ -319,10 +334,47 @@ namespace Traffk.Portal.Controllers
             return View(viewModel);
         }
 
+        [ActionName(ActionNames.ReportNotes)]
+        [Route("/Reporting/Report/{id}/Notes")]
+        public async Task<IActionResult> GetReportNotesAsync(int id, string sortCol, string sortDir, int? page, int? pageSize)
+        {
+            var tableauReportViewModel = GetReportViewModel(id.ToString());
+            if (tableauReportViewModel == null)
+            {
+                return RedirectToAction(ActionNames.Index);
+            }
+
+            var reportMetadata = await Rdb.ReportMetaData.FindAsync(id);
+            var notes = GetNotes(reportMetadata);
+
+            tableauReportViewModel.Notes = notes;
+
+            SetHeroLayoutViewData(tableauReportViewModel.Id, tableauReportViewModel.Title.ToTitleFriendlyString(), PageKeys.ReportNotes);
+            return View(tableauReportViewModel);
+        }
+
         private void QueueReportDownload(CreatePdfOptions options)
         {
             var jobId = Backgrounder.Enqueue<ITenantJobs>(z => z.CreateTableauPdf(options));
             Backgrounder.ContinueWith<ITenantJobs>(jobId, y => y.DownloadTableauPdfContinuationJobAsync());
+        }
+
+        private IReportViewModel GetReportViewModel(string id)
+        {
+            var reportSearchCriteria = new ReportSearchCriteria
+            {
+                VisualContext = ReportVisualContext,
+                ReportId = Parse.ParseInt32(id)
+            };
+            var reportVisual = ReportVisualService.GetReportVisual(reportSearchCriteria);
+            if (reportVisual == null)
+            {
+                return null;
+            }
+
+            var tableauReportViewModel = new TableauReportViewModel(reportVisual);
+
+            return tableauReportViewModel;
         }
     }
 }

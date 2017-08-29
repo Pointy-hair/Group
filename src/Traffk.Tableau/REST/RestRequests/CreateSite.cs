@@ -43,7 +43,7 @@ namespace Traffk.Tableau.REST.RestRequests
             var urlQuery = Urls.UrlCreateSite();
             var request = CreateLoggedInRequest(urlQuery, HttpMethod.Post);
 
-            //Login.StatusLog.AddStatus("Web request: " + urlQuery, -10);
+            Login.Logger.Information("Web request: " + urlQuery);
             var response = SendHttpRequest(request, xmlText);
 
             var xmlDoc = GetHttpResponseAsXml(response);

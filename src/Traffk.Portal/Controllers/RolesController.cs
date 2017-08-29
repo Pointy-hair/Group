@@ -4,8 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using RevolutionaryStuff.Core;
 using Serilog;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.Permissions;
 using TraffkPortal.Models.RoleModels;
@@ -20,6 +22,12 @@ namespace TraffkPortal.Controllers
     public class RolesController : BasePageController
     {
         public const string Name = "Roles";
+
+        private static readonly List<string> ApiClaimTypes = new List<string>
+        {
+            PermissionHelpers.CreateClaimType(ApiNames.Base),
+            PermissionHelpers.CreateClaimType(ApiNames.Rx)
+        };
 
         public static class ActionNames
         {
@@ -86,7 +94,6 @@ namespace TraffkPortal.Controllers
             return View(new RoleDetailViewModel(applicationRole));
         }
 
-        // POST: Roles/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -110,11 +117,28 @@ namespace TraffkPortal.Controllers
                     applicationRole.Name = m.RoleName;
                     applicationRole.NormalizedName = m.RoleName.ToLower();
                     applicationRole.ConcurrencyStamp = Guid.NewGuid().ToString();
-                    applicationRole.Claims.Clear();
+                    
+                    var selectedRoleClaims = new List<IdentityRoleClaim<string>>();
+
                     foreach (var p in m.SelectedPermissions.ConvertAll(s => Parse.ParseEnum<PermissionNames>(s)))
                     {
-                        applicationRole.Claims.Add(PermissionHelpers.CreateIdentityRoleClaim(p));
+                        selectedRoleClaims.Add(PermissionHelpers.CreateIdentityRoleClaim(p));
                     }
+                    
+                    foreach (var p in selectedRoleClaims)
+                    {
+                        if (applicationRole.Claims.All(x => x.ClaimType != p.ClaimType))
+                        {
+                            applicationRole.Claims.Add(p);
+                        }
+                    }
+                
+                    var rolesClaimsToRemove =
+                        applicationRole.Claims.Where(x => !selectedRoleClaims.Any(p2 => p2.ClaimType == x.ClaimType) 
+                        && !ApiClaimTypes.Any(p3 => p3 == x.ClaimType)).ToList();
+
+                    applicationRole.Claims.Remove(rolesClaimsToRemove);
+
                     Rdb.Update(applicationRole);
                     await Rdb.SaveChangesAsync();
                     SetToast(AspHelpers.ToastMessages.Saved);

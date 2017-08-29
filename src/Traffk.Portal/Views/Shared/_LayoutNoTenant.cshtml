@@ -1,0 +1,153 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Traffk Portal</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:900" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/628ef57095.js"></script>
+
+    <environment names="Development,Staging,Production">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/css/styles.css" />
+    </environment>
+    <environment names="zStaging,zProduction">
+        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+    </environment>
+    @{
+        var primaryColor = "#a707b2";
+        var secondaryColor = "#8ec641";
+    }
+    <style>
+        /*Set primary color for theming below*/
+        .navbar, .popup-close-btn, .btn-primary, .step-indicator li.complete span.step, .step-indicator li.active span.step {
+            background-color: @primaryColor !important;
+            border: none !important;
+        }
+
+        .primary-color,
+        .primary-color a,
+        #primary-subnav .dropdown-menu li.active a,
+        #personal-page-nav li a.active,
+        #personal-page-nav li a .fa-chevron-down,
+        #personal-page-nav li a .fa-chevron-up,
+        #primary-subnav .dropdown-menu li.dropdown a.dropdown-toggle.active,
+        #primary-subnav .dropdown-menu li a.active {
+            color: @primaryColor !important;
+        }
+
+        .form-text:focus, .form-dropdown:focus, .btn-bordered, .form-control:focus {
+            border-color: @primaryColor !important;
+        }
+
+        a, a:hover {
+          color: @primaryColor;
+        }
+
+        /*Set secondary color*/
+
+        input.form-text:focus ~ label, input.form-text:valid ~ label {
+          color: @secondaryColor;
+        }
+
+        .bar:before, .bar:after {
+            background: @secondaryColor;
+        }
+    </style>
+
+    @Html.Raw(JavaScriptSnippet.FullScript)
+</head>
+
+<body onload="setUI();">
+    <div id="wrapper">
+
+        <!--Navbar-->
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            @{
+                var mainNavPageKey = ViewData[AspHelpers.ViewDataKeys.MainNavPageKey] is AspHelpers.MainNavigationPageKeys ? (AspHelpers.MainNavigationPageKeys)ViewData[AspHelpers.ViewDataKeys.MainNavPageKey] : AspHelpers.MainNavigationPageKeys.NotSpecified;
+            }
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <ul class="nav navbar-left top-nav">
+                </ul>
+                <div class="nav navbar-left top-nav" id="primary-subnav-logo">
+                    <a class="BAUHS93" asp-controller="Home" asp-action="Index">Traffk</a>
+                </div>
+            </div>
+        </nav>
+
+        <!--Body Content-->
+        <div id="page-wrapper">
+            <div class="container body-content @(ViewData["BodyContainerClass"] as string)">
+                <div class="row">
+                    <div class="col-sm-12">
+                        @RenderSection("pageAlerts", false)
+                    </div>
+                </div>
+                @RenderBody()
+
+                <footer>
+                    <!-- footer -->
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div id="footer">
+                                <ul id="footer-menu" class="text-center">
+                                    <li><a asp-controller="Home" asp-action="PrivacyPolicy">Privacy Policy</a></li>
+                                    <li><a asp-controller="Home" asp-action="Terms">Terms and Conditions</a></li>
+                                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact Us</a></li>
+                                    <li><a href="http://www.traffk.com/">Traffk Website</a></li>
+                                </ul>
+                                <p class="copyright text-center">
+                                    &copy; @DateTime.Now.Year Traffk - Eagles
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /end footer -->
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <a href="#" id="back-to-top" title="Back to top"><i class="fa fa-arrow-up" aria-hidden="true"></i></a>
+
+    <!--Scripts-->
+    <environment names="Development,Staging,Production">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/lib/store-js/json.js"></script>
+        <script src="~/lib/store-js/store.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        <script src="~/js/jquery.popupoverlay.js"></script>
+    </environment>
+    <environment names="zStaging,zProduction">
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery">
+        </script>
+        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/bootstrap.min.js"
+                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
+        </script>
+        <script src="~/lib/store-js/store+json2.min.js"></script>
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+        <script src="~/js/jquery.popupoverlay.js"></script>
+    </environment>
+    <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+    <script>tinymce.init({ selector: '.htmleditor', plugins: "code" });</script>
+    @RenderSection("scripts", required: false)
+    @Html.RenderPartialViewScripts();
+</body>
+
+</html>

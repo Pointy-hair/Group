@@ -221,7 +221,7 @@ namespace Traffk.Tableau.Tests.REST
                 var httpClientOptions = ConfigurationHelpers.CreateOptions(HttpClientOptions);
                 var httpClientFactory = new HttpClientFactory(httpClientOptions);
                 var testAdminService =
-                    new TableauAdminService(newSiteOptions, tableauAdminCredentials, httpClientFactory) as ITableauAdminService;
+                    new TableauAdminService(newSiteOptions, tableauAdminCredentials, httpClientFactory, Logger) as ITableauAdminService;
 
                 var dbUserName = "Darren";
                 var dbPassword = "1keylimecakeballs2MAGICBARS3currentjellycookies4";
@@ -259,7 +259,7 @@ namespace Traffk.Tableau.Tests.REST
                 var httpClientFactory = new HttpClientFactory(httpClientOptions);
 
                 var testAdminService =
-                    new TableauAdminService(newSiteOptions, tableauAdminCredentials, httpClientFactory) as ITableauAdminService;
+                    new TableauAdminService(newSiteOptions, tableauAdminCredentials, httpClientFactory, Logger) as ITableauAdminService;
 
                 var dbUserName = "Darren";
                 var dbPassword = "1keylimecakeballs2MAGICBARS3currentjellycookies4";
@@ -294,12 +294,12 @@ namespace Traffk.Tableau.Tests.REST
                 var httpClientOptions = ConfigurationHelpers.CreateOptions(HttpClientOptions);
                 var httpClientFactory = new HttpClientFactory(httpClientOptions);
 
-                var testService = new TableauViewerService(Options, TableauUserCredentials, httpClientFactory);
+                var testService = new TableauViewerService(Options, TableauUserCredentials, httpClientFactory, Logger);
                 Assert.IsNotNull(testService);
 
                 var tableauAdminCredentials = ConfigurationHelpers.CreateOptions(TableauAdminCredentials);
 
-                var testAdminService = new TableauAdminService(Options, tableauAdminCredentials, httpClientFactory);
+                var testAdminService = new TableauAdminService(Options, tableauAdminCredentials, httpClientFactory, Logger);
                 Assert.IsNotNull(testAdminService);
             }
         }
@@ -326,7 +326,7 @@ namespace Traffk.Tableau.Tests.REST
                 var httpClientOptions = ConfigurationHelpers.CreateOptions(HttpClientOptions);
                 var httpClientFactory = new HttpClientFactory(httpClientOptions);
 
-                var testService = new TableauViewerService(Options, TableauUserCredentials, httpClientFactory) as ITableauViewerService;
+                var testService = new TableauViewerService(Options, TableauUserCredentials, httpClientFactory, Logger) as ITableauViewerService;
                 var views = testService.DownloadViewsForSite();
                 Assert.IsNotNull(views);
                 Assert.IsTrue(views.Views.Any());
@@ -342,7 +342,7 @@ namespace Traffk.Tableau.Tests.REST
                 var httpClientOptions = ConfigurationHelpers.CreateOptions(HttpClientOptions);
                 var httpClientFactory = new HttpClientFactory(httpClientOptions);
 
-                var testService = new TableauViewerService(Options, TableauUserCredentials, httpClientFactory) as ITableauViewerService;
+                var testService = new TableauViewerService(Options, TableauUserCredentials, httpClientFactory, Logger) as ITableauViewerService;
                 var testImageBytes = testService.DownloadPreviewImageForView("6d8f31d9-aceb-40be-867d-1c980215b246", "c8922aac-c202-446b-8ed2-ff4dde96eaba");
 
                 Assert.IsNotNull(testImageBytes);

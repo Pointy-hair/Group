@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Xml;
@@ -44,7 +44,7 @@ namespace Traffk.Tableau.REST.RestRequests
             var urlQuery = urls.UrlDownloadViewsForSite(Login, pageSize, pageToRequest);
             var webRequest = CreateLoggedInRequest(urlQuery, HttpMethod.Get);
 
-            //Login.StatusLog.AddStatus("Web request: " + urlQuery, -10);
+            Login.Logger.Information("Web request: " + urlQuery);
             var response = SendHttpRequest(webRequest);
             var xmlDoc = GetHttpResponseAsXml(response);
 
@@ -79,7 +79,7 @@ namespace Traffk.Tableau.REST.RestRequests
             }
             catch
             {
-                Login.StatusLog.AddError("Error parsing project: " + element.ToString());
+                Login.Logger.Error("Error parsing project: " + element.ToString());
             }
 
             return null;
@@ -89,7 +89,7 @@ namespace Traffk.Tableau.REST.RestRequests
         {
             if (string.IsNullOrWhiteSpace(view.Id))
             {
-                Login.StatusLog.AddError(view.Name + " is missing a view ID. Not returned from server! xml=" + xmlNode.OuterXml);
+                Login.Logger.Error(view.Name + " is missing a view ID. Not returned from server! xml=" + xmlNode.OuterXml);
             }
         }
     }

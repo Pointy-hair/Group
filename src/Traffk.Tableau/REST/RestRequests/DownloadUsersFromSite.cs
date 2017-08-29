@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Xml.Linq;
@@ -39,7 +39,7 @@ namespace Traffk.Tableau.REST.RestRequests
             var urlQuery = Urls.Url_UsersList(Login, pageSize, pageToRequest);
             var request = CreateLoggedInRequest(urlQuery, HttpMethod.Get);
 
-            //Login.StatusLog.AddStatus("Web request: " + urlQuery, -10);
+            Login.Logger.Information("Web request: " + urlQuery);
             var response = SendHttpRequest(request);
             var xmlDoc = GetHttpResponseAsXml(response);
 

@@ -13,6 +13,8 @@
     <div class="col-sm-12">
         <div class="form-row">
             <label>Recurrence Pattern</label>
+            <input type="radio" class="radio-inline" id="PatternTypeHourly" name="PatternType" value="Hourly" @(Model.PatternType == RecurrenceSettings.PatternTypes.Hourly ? "checked='checked'" : "")/>
+            <span>Hourly</span>
             <input type="radio" class="radio-inline" id="PatternTypeDaily" name="PatternType" value="Daily" @(Model.PatternType == RecurrenceSettings.PatternTypes.Daily ? "checked='checked'" : "")/>
             <span>Daily</span>
             <input type="radio" class="radio-inline" id="PatternTypeWeekly" name="PatternType" value="Weekly" @(Model.PatternType == RecurrenceSettings.PatternTypes.Weekly ? "checked='checked'" : "")/>
@@ -20,6 +22,14 @@
         </div>
         <div class="form-row">
             <label>Recurrence Detail</label>
+            <div class="inline-form pattern-section" id="pattern-section-hourly" style="@(Model.PatternType == RecurrenceSettings.PatternTypes.Hourly ? "" : "display:none")">
+                <div>
+                    @Html.RadioButtonFor(m => m.HourlyPattern.EveryNHours, "false", new {name = "hourlyPatternType"})
+                    <span>Every </span>
+                    <input asp-for="HourlyPattern.EveryNHours" class="form-control inline-block" type="number"/> Hours
+                    <span asp-validation-for="HourlyPattern.EveryNHours" class="text-danger"/>
+                </div>
+            </div>
             <div class="inline-form pattern-section" id="pattern-section-daily" style="@(Model.PatternType == RecurrenceSettings.PatternTypes.Daily ? "" : "display:none")">
                 <div>
                     @Html.RadioButtonFor(m => m.DailyPattern.EveryWeekday, "false", new {name = "dailyPatternType"})
@@ -65,7 +75,7 @@
             </div>
         </div>
 
-        <div class="form-row">
+        <div class="form-row" id="start-time" style="display:none">
             <label>Start Time</label>
             <input asp-for="StartTimeUtc" class="form-control" type="time"/>
             <span asp-validation-for="StartTimeUtc" class="text-danger"/>
@@ -78,8 +88,13 @@
     $(document).ready(function () {
         $("input[name='PatternType']").change(function () {
             $(".pattern-section").hide();
-            var sel = "#pattern-section-" + $(this).attr("value").toLowerCase();
+            var chosenPattern = $(this).attr("value").toLowerCase();
+            var sel = "#pattern-section-" + chosenPattern;
             $(sel).show();
+
+            if (chosenPattern !== 'hourly') {
+                $("#start-time").show();
+            }
         });
         $("input[name='endAfterType']").change(function () {
             $(".end-after-value-section>input").attr("disabled", "disabled");

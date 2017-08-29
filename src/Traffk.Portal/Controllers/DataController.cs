@@ -29,6 +29,12 @@ namespace Traffk.Portal.Controllers
             DataSourceHistory
         }
 
+        public static class ViewNames
+        {
+            public const string DataSourceDetail = "DataSourceDetail";
+            public const string DataSourceCreate = "DataSourceCreate";
+        }
+
         public DataController(TraffkTenantModelDbContext db,
             CurrentContextServices current,
             ILogger logger,
@@ -54,6 +60,31 @@ namespace Traffk.Portal.Controllers
                 page, pageSize,
                 new Dictionary<string, string> { { nameof(DataSource.CreatedAt), nameof(DataSource.CreatedAtUtc) } });
             return View(sources);
+        }
+
+        [HttpGet]
+        [Route("/Data/DataSource/Create")]
+        [PermissionAuthorize(PermissionNames.DataSourceCreate)]
+        public IActionResult DataSourceCreate()
+        {
+            SetHeroLayoutViewData(null, null, PageKeys.DataSourceDetails);
+
+            return View(new DataSource()); 
+        }
+
+        [HttpPost]
+        [Route("/Data/DataSource/Create")]
+        [PermissionAuthorize(PermissionNames.DataSourceCreate)]
+        public async Task<IActionResult> DataSourceCreate(DataSource dataSource)
+        {
+            var tenant = await Current.GetTenantAsync();
+            dataSource.TenantId = tenant.TenantId;
+            GDB.DataSources.Add(dataSource);
+            await GDB.SaveChangesAsync();
+
+            SetToast(AspHelpers.ToastMessages.Saved);
+
+            return RedirectToAction("Index");
         }
 
         [Route("/Data/DataSource/{id}")]

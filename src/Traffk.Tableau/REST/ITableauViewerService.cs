@@ -12,6 +12,7 @@ namespace Traffk.Tableau.REST
         TimeSpan ReportIndexCacheTimeout { get; }
         DownloadViewsForSite DownloadViewsForSite();
         byte[] DownloadPreviewImageForView(string workbookId, string viewId);
+        bool IsOnline { get; }
     }
 
     public class VisualId

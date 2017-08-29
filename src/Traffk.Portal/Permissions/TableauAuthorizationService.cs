@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using System;
+using Serilog;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Tableau;
 using Traffk.Tableau.REST;
@@ -18,12 +19,11 @@ namespace Traffk.Portal.Permissions
         public TableauAuthorizationService(IOptions<TableauSignInOptions> options,
             IOptions<TableauAdminCredentials> adminSignInOptions,
             TraffkTenantModelDbContext rdb,
-            IHttpClientFactory httpClientFactory)
+            IHttpClientFactory httpClientFactory,
+            ILogger logger)
         {
             TableauAdminCredentials = adminSignInOptions.Value;
-                //Instead of creating a new instance here, 
-                //should we have a subclass of TableauRestService called AdminTableauRestService that uses TableauAdminSignInOptions?
-            AdminTableauRestService = new TableauViewerService(options, TableauAdminCredentials, httpClientFactory);
+            AdminTableauRestService = new TableauViewerService(options, TableauAdminCredentials, httpClientFactory, logger);
             Options = options.Value;
             Rdb = rdb;
         }

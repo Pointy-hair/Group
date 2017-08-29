@@ -13,6 +13,7 @@ using Traffk.Orchestra.Models;
 using Drug = Traffk.Bal.Data.ApiModels.Rx.Drug;
 using DrugResponse = Traffk.Orchestra.Models.DrugResponse;
 using PharmacyResponse = Traffk.Orchestra.Models.PharmacyResponse;
+using Microsoft.Extensions.Options;
 
 namespace Traffk.Bal.ExternalApis
 {
@@ -21,11 +22,20 @@ namespace Traffk.Bal.ExternalApis
         private readonly OrchestraRxApiClient Client;
         private readonly ICacher ScopedCacher;
         private readonly EventType.LoggingEventTypes EventType = Settings.EventType.LoggingEventTypes.ExternalApiCall;
+        private readonly IOptions<Config> Options;
+
+        public class Config
+        {
+            public const string ConfigSectionName = "OrchestraApiServiceOptions";
+
+            public string TestZipCode { get; set; }
+            public int TestRadius { get; set; }
+        }
 
         public OrchestraApiService(ICacher cache, 
             OrchestraRxApiClient client, 
             ITraffkTenantFinder tenantFinder,
-            ILogger logger) : base(logger)
+            ILogger logger, IOptions<Config> options) : base(logger)
         {
             var tenantId = tenantFinder.GetTenantIdAsync().Result;
             ScopedCacher = cache.CreateScope(tenantId);
@@ -34,6 +44,8 @@ namespace Traffk.Bal.ExternalApis
             var tokenResponse = this.FindOrCreateTokenResponseWithExpiration();
 
             Client.SetToken(tokenResponse);
+
+            Options = options;
         }
 
         private OrchestraRxTokenResponse FindOrCreateTokenResponseWithExpiration()
@@ -53,6 +65,11 @@ namespace Traffk.Bal.ExternalApis
                 var tokenResponse = tokenResponseCacheEntry.Value;
                 return tokenResponse;
             }
+        }
+
+        public PharmacyResponse PharmacyTestSearch()
+        {
+            return PharmacySearch(Options.Value.TestZipCode, Options.Value.TestRadius);
         }
 
         public PharmacyResponse PharmacySearch(string zip, int radius)

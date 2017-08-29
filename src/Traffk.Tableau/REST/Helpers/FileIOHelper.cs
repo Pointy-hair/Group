@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Traffk.Tableau.REST.Models;
+using ILogger = Serilog.ILogger;
 
 /// <summary>
 /// Helper for file io
@@ -12,7 +13,6 @@ static class FileIOHelper
     /// <summary>
     /// Ensures the specified path exists 
     /// </summary>
-    /// <param name="localPath"></param>
     public static void CreatePathIfNeeded(string localPath)
     {
         if (Directory.Exists(localPath)) return;
@@ -48,8 +48,6 @@ static class FileIOHelper
     /// <summary>
     /// Take any text in an munge it into name that is valid on windows
     /// </summary>
-    /// <param name="fileNameIn"></param>
-    /// <returns></returns>
     public static string GenerateWindowsSafeFilename(string fileNameIn)
     {
         string fileNameOut = fileNameIn;
@@ -68,8 +66,6 @@ static class FileIOHelper
     /// <summary>
     /// Reverses 'GenerateWindowsSafeFilename_Reverse'
     /// </summary>
-    /// <param name="fileNameIn"></param>
-    /// <returns></returns>
     public static string Undo_GenerateWindowsSafeFilename(string fileNameIn)
     {
         string fileNameOut = fileNameIn;
@@ -89,8 +85,6 @@ static class FileIOHelper
     /// <summary>
     /// Creates a high-probabilty-unique path based on the current date-time
     /// </summary>
-    /// <param name="basePath"></param>
-    /// <returns></returns>
     public static string PathDateTimeSubdirectory(string basePath, bool createDirectory, string newDirectoryPrefix = "", Nullable<DateTime> when = null)
     {
         //Subdirectory name
@@ -124,8 +118,6 @@ static class FileIOHelper
     /// <summary>
     /// Gives us a high probability unqique file name
     /// </summary>
-    /// <param name="baseName"></param>
-    /// <returns></returns>
     public static string FilenameWithDateTimeUnique(string baseName, Nullable<DateTime> when = null)
     {
         string rootName = Path.GetFileNameWithoutExtension(baseName);
@@ -152,11 +144,7 @@ static class FileIOHelper
     /// <summary>
     /// If we have Project Mapping information, generate a project based path for the download
     /// </summary>
-    /// <param name="basePath"></param>
-    /// <param name="projectList"></param>
-    /// <param name="projectId"></param>
-    /// <returns></returns>
-    public static string EnsureProjectBasedPath(string basePath, IProjectsList projectList, IHasProjectId project, TaskStatusLogs statusLog)
+    public static string EnsureProjectBasedPath(string basePath, IProjectsList projectList, IHasProjectId project, ILogger logger)
     {
         //If we have no project list to do lookups in then just return the base path
         if (projectList == null) return basePath;
@@ -165,7 +153,7 @@ static class FileIOHelper
         var projWithId = projectList.FindProjectWithId(project.ProjectId);
         if (projWithId == null)
         {
-            statusLog.AddError("Project not found with id " + project.ProjectId);
+            logger.Error("Project not found with id " + project.ProjectId);
             return basePath;
         }
 

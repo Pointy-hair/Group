@@ -30,7 +30,7 @@ namespace Traffk.Tableau.REST.RestRequests
             var urlQuery = urls.UrlDownloadPreviewImageForView(Login, workbookId, viewId);
             var request = CreateLoggedInRequest(urlQuery, HttpMethod.Get);
 
-            //Login.StatusLog.AddStatus("Web request: " + urlQuery, -10);
+            Login.Logger.Information("Web request: " + urlQuery);
             var response = SendHttpRequest(request);
             var responseStream = response.GetResponseStreamAsync().ExecuteSynchronously();
 

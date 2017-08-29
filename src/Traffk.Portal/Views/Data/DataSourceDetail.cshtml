@@ -39,8 +39,8 @@
                 <input class="form-control" value="@type" readonly />
             </div>
             <div class="form-row">
-                <label>Name</label>
-                <input class="form-control" value="Name Placeholder"/>
+                <label asp-for="@Model.DataSourceName"></label>
+                <input asp-for="@Model.DataSourceName" class="form-control" />
             </div>
             @if (Model.DataSourceSettings.IsFtp)
             {

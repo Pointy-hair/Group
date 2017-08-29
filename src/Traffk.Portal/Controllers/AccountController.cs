@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.ApplicationInsights.AspNetCore.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +11,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Traffk.Bal.Communications;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
+using Traffk.Portal.Controllers;
 using TraffkPortal.Models.AccountViewModels;
 using TraffkPortal.Services;
 using TraffkPortal.Services.Sms;
@@ -51,8 +53,6 @@ namespace TraffkPortal.Controllers
             IsSigninPersistent = Startup.IsSigninPersistent;
         }
 
-        //
-        // GET: /Account/Login
         [HttpGet]
         [AllowAnonymous]
         public IActionResult Login(string returnUrl = null)
@@ -68,8 +68,6 @@ namespace TraffkPortal.Controllers
             return View();
         }
 
-        //
-        // POST: /Account/Login
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]

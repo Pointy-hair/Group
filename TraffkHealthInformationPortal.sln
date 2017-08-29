@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.0
+VisualStudioVersion = 15.0.26730.8
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Traffk.Tableau", "src\Traffk.Tableau\Traffk.Tableau.csproj", "{4C4E1105-8251-42EA-8465-1324C19176D8}"
 EndProject
@@ -26,8 +26,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Traffk.Orchestra", "src\Traffk.Orchestra\Traffk.Orchestra.csproj", "{D6AA0380-1E21-4F60-8DD0-FEEF306F70B2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Traffk.Utility", "src\Traffk.Utility\Traffk.Utility.csproj", "{838C432D-2B28-4388-9FDB-5545381B2523}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Traffk.CronExpressionDescriptor", "src\Traffk.CronExpressionDescriptor\Traffk.CronExpressionDescriptor.csproj", "{05E05824-F133-4EF0-A2D5-3D2961B17B13}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hangfire.Core.NetStandard", "src\Hangfire\src\Hangfire.Core\Hangfire.Core.NetStandard.csproj", "{2A528F3A-5120-430A-B881-E265FA09ABB5}"
 EndProject
@@ -104,12 +102,6 @@ Global
 		{838C432D-2B28-4388-9FDB-5545381B2523}.Release|Any CPU.Build.0 = Release|Any CPU
 		{838C432D-2B28-4388-9FDB-5545381B2523}.VSTS-CI|Any CPU.ActiveCfg = Debug|Any CPU
 		{838C432D-2B28-4388-9FDB-5545381B2523}.VSTS-CI|Any CPU.Build.0 = Debug|Any CPU
-		{05E05824-F133-4EF0-A2D5-3D2961B17B13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{05E05824-F133-4EF0-A2D5-3D2961B17B13}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{05E05824-F133-4EF0-A2D5-3D2961B17B13}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{05E05824-F133-4EF0-A2D5-3D2961B17B13}.Release|Any CPU.Build.0 = Release|Any CPU
-		{05E05824-F133-4EF0-A2D5-3D2961B17B13}.VSTS-CI|Any CPU.ActiveCfg = Debug|Any CPU
-		{05E05824-F133-4EF0-A2D5-3D2961B17B13}.VSTS-CI|Any CPU.Build.0 = Debug|Any CPU
 		{2A528F3A-5120-430A-B881-E265FA09ABB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2A528F3A-5120-430A-B881-E265FA09ABB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A528F3A-5120-430A-B881-E265FA09ABB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -149,7 +141,6 @@ Global
 		{F3D583B4-ADEA-41A6-86EE-B6272B1BA38B} = {D5AB1A3B-756E-4823-80F8-9A91ECB492AE}
 		{D6AA0380-1E21-4F60-8DD0-FEEF306F70B2} = {2D992A1D-203B-461A-B1C1-312F64C77810}
 		{838C432D-2B28-4388-9FDB-5545381B2523} = {2D992A1D-203B-461A-B1C1-312F64C77810}
-		{05E05824-F133-4EF0-A2D5-3D2961B17B13} = {2D992A1D-203B-461A-B1C1-312F64C77810}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AC046055-EC6E-4EB7-BE2B-CD924A8B0B8E}

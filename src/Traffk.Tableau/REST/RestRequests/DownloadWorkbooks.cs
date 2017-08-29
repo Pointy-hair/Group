@@ -36,12 +36,11 @@ namespace Traffk.Tableau.REST.RestRequests
         /// <param name="serverName"></param>
         public ICollection<SiteWorkbook> ExecuteRequest()
         {
-            var statusLog = Login.StatusLog;
             var downloadedContent = new List<SiteWorkbook>();
 
             if (WorkbooksToDownload == null)
             {
-                statusLog.AddError("NULL workbooks. Aborting download.");
+                Login.Logger.Error("NULL workbooks. Aborting download.");
                 return null;
             }
 
@@ -52,7 +51,7 @@ namespace Traffk.Tableau.REST.RestRequests
             {
                 //Local path save the workbook
                 string urlDownload = Urls.Url_WorkbookDownload(Login, contentInfo);
-                statusLog.AddStatus("Starting Workbook download " + contentInfo.Name + " " + contentInfo.ToString());
+                Login.Logger.Information("Starting Workbook download " + contentInfo.Name + " " + contentInfo.ToString());
                 try
                 {
                     ////Generate the directory name we want to download into
@@ -64,7 +63,7 @@ namespace Traffk.Tableau.REST.RestRequests
 
                     var fileDownloaded = this.DownloadFile(urlDownload, LocalSavePath, contentInfo.Name, typeMapper);
                     var fileDownloadedNoPath = System.IO.Path.GetFileName(fileDownloaded);
-                    statusLog.AddStatus("Finished Workbook download " + fileDownloadedNoPath);
+                    Login.Logger.Information("Finished Workbook download " + fileDownloadedNoPath);
 
                     //Add to the list of our downloaded workbooks, and save metadata
                     if (!string.IsNullOrWhiteSpace(fileDownloaded))
@@ -80,12 +79,12 @@ namespace Traffk.Tableau.REST.RestRequests
                     else
                     {
                         //We should never hit this code; just being defensive
-                        statusLog.AddError("Download error, no local file path for downloaded content");
+                        Login.Logger.Information("Download error, no local file path for downloaded content");
                     }
                 }
                 catch (Exception ex)
                 {
-                    statusLog.AddError("Error during Workbook download " + contentInfo.Name + "\r\n  " + urlDownload +
+                    Login.Logger.Information("Error during Workbook download " + contentInfo.Name + "\r\n  " + urlDownload +
                                        "\r\n  " + ex.ToString());
                 }
             } //foreach

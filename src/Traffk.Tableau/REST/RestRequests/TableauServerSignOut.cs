@@ -1,4 +1,4 @@
-﻿using System.Net.Http;
+using System.Net.Http;
 using Traffk.Utility;
 
 namespace Traffk.Tableau.REST.RestRequests
@@ -25,7 +25,7 @@ namespace Traffk.Tableau.REST.RestRequests
             var webRequest = CreateLoggedInRequest(urlRequest, HttpMethod.Post);
 
             //Request the data from server
-            //Login.StatusLog.AddStatus("Web request: " + urlRequest, -10);
+            //Login.Logger.Information("Web request: " + urlRequest);
             var response = SendHttpRequest(webRequest);
         }
     }

@@ -62,7 +62,6 @@ namespace Traffk.Tableau.REST.RestRequests
         /// <param name="serverName"></param>
         public List<SiteDatasource> ExecuteRequest()
         {
-            var statusLog = Login.StatusLog;
             var downloadedContent = new List<SiteDatasource>();
 
             //Depending on the HTTP download file type we want different file extensions
@@ -71,7 +70,7 @@ namespace Traffk.Tableau.REST.RestRequests
             var datasources = Datasources;
             if (datasources == null)
             {
-                statusLog.AddError("NULL datasources. Aborting download.");
+                Login.Logger.Error("NULL datasources. Aborting download.");
                 return null;
             }
 
@@ -80,7 +79,7 @@ namespace Traffk.Tableau.REST.RestRequests
             {
                 //Local path save the workbook
                 string urlDownload = Urls.Url_DatasourceDownload(Login, dsInfo);
-                statusLog.AddStatus("Starting Datasource download " + dsInfo.Name);
+                Login.Logger.Information("Starting Datasource download " + dsInfo.Name);
                 try
                 {
                     //Generate the directory name we want to download into
@@ -88,11 +87,11 @@ namespace Traffk.Tableau.REST.RestRequests
                         LocalSavePath,
                         DownloadToProjectDirectories,
                         dsInfo,
-                        statusLog);
+                        Login.Logger);
 
                     var fileDownloaded = this.DownloadFile(urlDownload, pathToSaveTo, dsInfo.Name, typeMapper);
                     var fileDownloadedNoPath = System.IO.Path.GetFileName(fileDownloaded);
-                    statusLog.AddStatus("Finished Datasource download " + fileDownloadedNoPath);
+                    Login.Logger.Information("Finished Datasource download " + fileDownloadedNoPath);
 
                     //Add to the list of our downloaded data sources
                     if(!string.IsNullOrEmpty(fileDownloaded))
@@ -108,15 +107,14 @@ namespace Traffk.Tableau.REST.RestRequests
                     else
                     {
                         //We should never hit this code; just being defensive
-                        statusLog.AddError("Download error, no local file path for downloaded content");
+                        Login.Logger.Error("Download error, no local file path for downloaded content");
                     }
                 }
                 catch(Exception ex)
                 {
-                    statusLog.AddError("Error during Datasource download " + dsInfo.Name + "\r\n  " + urlDownload + "\r\n  " + ex.ToString());
+                    Login.Logger.Error("Error during Datasource download " + dsInfo.Name + "\r\n  " + urlDownload + "\r\n  " + ex.ToString());
                 }
-            } //foreach
-
+            }
 
             //Return the set of successfully downloaded content
             return downloadedContent;

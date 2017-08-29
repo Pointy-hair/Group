@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -42,7 +42,7 @@ namespace Traffk.Tableau.REST.RestRequests
         /// </summary>
         protected HttpRequestMessage CreateLoggedInRequest(string url, HttpMethod method)
         {
-            //Login.StatusLog.AddStatus("Attempt web request: " + url, -10);
+            //Login.Logger.Information("Attempt web request: " + url);
             var request = new HttpRequestMessage(method, url);
             AppendLoggedInHeadersForRequest(request);
             return request;
@@ -86,12 +86,12 @@ namespace Traffk.Tableau.REST.RestRequests
             }
             catch (Exception exDownload)
             {
-                Login.StatusLog.AddError("Download failed after " + (DateTime.Now - startDownload).TotalSeconds.ToString("#.#") + " seconds. " + urlDownload);
+                Login.Logger.Error("Download failed after " + (DateTime.Now - startDownload).TotalSeconds.ToString("#.#") + " seconds. " + urlDownload);
                 throw exDownload;
             }
 
             var finishDownload = DateTime.Now;
-            Login.StatusLog.AddStatus("Download success duration " + (finishDownload - startDownload).TotalSeconds.ToString("#.#") + " seconds. " + urlDownload, -10);
+            Login.Logger.Information("Download success duration " + (finishDownload - startDownload).TotalSeconds.ToString("#.#") + " seconds. " + urlDownload);
             return outputPath;
         }
 
@@ -113,7 +113,7 @@ namespace Traffk.Tableau.REST.RestRequests
             {
                 //Choose a temp file name to download to
                 var starterName = System.IO.Path.Combine(downloadToDirectory, baseFilename + ".tmp");
-                Login.StatusLog.AddStatus("Attempting file download: " + urlDownload, -10);
+                Login.Logger.Information("Attempting file download: " + urlDownload);
                 
                 using (HttpResponseMessage response = webClient.GetAsync(urlDownload, HttpCompletionOption.ResponseHeadersRead).Result)
                 {

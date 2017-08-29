@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Traffk.Bal;
@@ -12,6 +13,7 @@ using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.Permissions;
 using Traffk.Bal.ReportVisuals;
 using Traffk.Bal.Settings;
+using Traffk.Portal.Controllers;
 using Traffk.Portal.Models.ReportingModels;
 using Traffk.Tableau;
 using TraffkPortal.Models;
@@ -29,6 +31,8 @@ namespace TraffkPortal.Controllers
     {
         public const string Name = "Crm";
         public const VisualContext ReportVisualContext = VisualContext.ContactPerson;
+
+        protected bool IsReportingOnline;
 
         public IReportVisualService ReportVisualService { get; }
 
@@ -141,6 +145,8 @@ namespace TraffkPortal.Controllers
         {
             ReportVisualService = reportVisualService;
             EmailSender = emailSender;
+
+            IsReportingOnline = ReportVisualService.IsOnline;
         }
 
         [Route("Contacts")]
@@ -209,8 +215,8 @@ namespace TraffkPortal.Controllers
         {
             return RawContactRecordInfo(id, PageKeys.Notes, nameof(ContactNotes), m =>
             {
-                var notes = Rdb.GetAttachedNotes(m.Contact);
-                m.Notes = ApplyBrowse(notes, sortCol ?? nameof(Note.CreatedAtUtc), sortDir, page, pageSize).ToList();
+                var notes = GetNotes(m.Contact);
+                m.Notes = ApplyBrowse<Note>(notes, sortCol ?? nameof(Note.CreatedAtUtc), sortDir, page, pageSize).ToList();
             });
         }
 
@@ -463,6 +469,11 @@ namespace TraffkPortal.Controllers
         [ActionName(ActionNames.Reports)]
         public async Task<IActionResult> ReportIndex(int id)
         {
+            if (!IsReportingOnline)
+            {
+                return RedirectToAction(ReportingController.ActionNames.Offline, ReportingController.Name);
+            }
+
             var contact = await FindContactByIdAsync(id);
             if (contact == null) return NotFound();
             SetHeroLayoutViewData(contact, PageKeys.Reports);
@@ -480,6 +491,11 @@ namespace TraffkPortal.Controllers
         [ActionName(ActionNames.Report)]
         public async Task<IActionResult> Report(int contactId, string id, string anchorName)
         {
+            if (!IsReportingOnline)
+            {
+                return RedirectToAction(ReportingController.ActionNames.Offline, ReportingController.Name);
+            }
+
             var contact = await FindContactByIdAsync(contactId);
             SetHeroLayoutViewData(contact, PageKeys.Messages);
 

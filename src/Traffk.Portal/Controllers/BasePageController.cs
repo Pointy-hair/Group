@@ -193,11 +193,13 @@ namespace TraffkPortal.Controllers
             return base.OnActionExecutionAsync(context, next);
         }
 
+        [Route("Base/CreateNote")]
         public async Task<IActionResult> CreateNote(
             string parentNoteId,
             string content,
             IRdbDataEntity attachmentSite) => await CreateNote(parentNoteId, content, new[]{attachmentSite});
 
+        [Route("Base/CreateNotes")]
         public async Task<IActionResult> CreateNote(
             string parentNoteId,
             string content,
@@ -221,6 +223,12 @@ namespace TraffkPortal.Controllers
                 return c;
             }
             return null;
+        }
+
+        protected IQueryable<Note> GetNotes(IRdbDataEntity entityWithAttachedNotes)
+        {
+            var notes = Rdb.GetAttachedNotes(entityWithAttachedNotes);
+            return notes;
         }
 
         public static string CreateAnchorName(IReportResource reportResource) =>

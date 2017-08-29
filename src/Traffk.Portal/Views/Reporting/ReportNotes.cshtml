@@ -1,0 +1,27 @@
+﻿@using Traffk.Bal.ReportVisuals
+@using Traffk.Portal.Controllers
+@model Traffk.Portal.Models.ReportingModels.IReportViewModel
+@{
+    Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
+    ViewData.SetTitleAndHeading("Notes");
+    ViewData.IsListingPage(true);
+    ViewData.HasBreadcrumbItems(true);
+    ViewData.HasPageActions(true);
+    ViewData.HasPageMenuItems(true);
+    var entityId = @Model.Id.ToString();
+    var pageKey = (ReportingController.PageKeys)ViewData[AspHelpers.ViewDataKeys.PageKey];
+
+}
+@section breadCrumbItems {
+    <li><a asp-controller="@ReportingController.Name" asp-action="Index">Reports</a> <span>></span> </li>
+    <li><a asp-controller="@ReportingController.Name" asp-action="Index" asp-fragment="@Model.FolderName.ToUpperCamelCase()">@Model.FolderName.ToTitleFriendlyString()</a> <span>></span> </li>
+    <li><a asp-controller="@ReportingController.Name" asp-action="Report" asp-route-id="@Model.Id" asp-route-anchorName="@ReportVisualService.CreateAnchorName(Model.Title)">@Model.Title.ToTitleFriendlyString()</a> <span>></span> </li>
+}
+@section pageNavItems {
+    <li><a asp-controller="@ReportingController.Name" asp-action="Report" asp-route-id="@Model.Id" asp-route-anchorName="@ReportVisualService.CreateAnchorName(Model.Title)" class="@(pageKey == ReportingController.PageKeys.Report ? "active" : "")" data-section="personal-edit-form-container">Report</a></li>
+    <li><a asp-controller="@ReportingController.Name" asp-action="ReportNotes" asp-for-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == ReportingController.PageKeys.ReportNotes ? "active" : "")" data-section="personal-edit-form-container">Notes</a></li>
+}
+@section listingTable
+{
+    @await Html.PartialAsync("_NotesPartial", Model.Notes, z => z.Notes)
+}
