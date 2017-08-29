@@ -14,13 +14,10 @@ namespace Traffk.Portal.Controllers
     [Route("UniversalLogin")]
     public class UniversalLoginController : Controller
     {
-        private readonly TenantFinderService.Config TenantConfig;
         private TraffkTenantShardsDbContext DB;
 
-        public UniversalLoginController(IOptions<TenantFinderService.Config> tenantConfig,
-            TraffkTenantShardsDbContext db)
+        public UniversalLoginController(TraffkTenantShardsDbContext db)
         {
-            TenantConfig = tenantConfig.Value;
             DB = db;
         }
 

@@ -181,7 +181,7 @@ namespace TraffkPortal
 +		[49]	Lifetime = Scoped, ServiceType = {Microsoft.AspNetCore.Identity.IPasswordValidator`1[TraffkPortal.Models.ApplicationUser]}, ImplementationType = {Microsoft.AspNetCore.Identity.PasswordValidator`1[TraffkPortal.Models.ApplicationUser]}	Microsoft.Extensions.DependencyInjection.ServiceDescriptor             
              */
 
-            //services.Substitute<TraffkUserManager>();
+            services.Substitute<TraffkUserManager>();
             services.Substitute<TraffkUserStore>();
             services.Substitute<TraffkPasswordValidator>();
 
