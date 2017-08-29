@@ -107,8 +107,7 @@ namespace TraffkPortal
                     .WriteTo.AzureTableStorageWithProperties(Configuration.GetSection("BlobStorageServicesOptions")["ConnectionString"], 
                         storageTableName: Configuration["Serilog:TableName"], 
                         writeInBatches: Parse.ParseBool(Configuration["Serilog:WriteInBatches"], true), 
-                        period: Parse.ParseTimeSpan(Configuration["Serilog:LogInterval"], TimeSpan.FromSeconds(2)))
-                    .CreateLogger();
+                        period: Parse.ParseTimeSpan(Configuration["Serilog:LogInterval"], TimeSpan.FromSeconds(2)));
 
             Logger = loggerConfiguration.CreateLogger();
             Log.Logger = Logger;
