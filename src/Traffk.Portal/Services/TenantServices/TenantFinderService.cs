@@ -24,8 +24,7 @@ namespace TraffkPortal.Services.TenantServices
         public class Config
         {
             public const string ConfigSectionName = "TenantServiceFinderConfig";
-            public int? TenantId { get; set; }
-            public Dictionary<string, int> TenantIdByHostname { get; } = new Dictionary<string, int>(Comparers.CaseInsensitiveStringComparer);
+            public string Hostname { get; set; }
             public string DefaultTenantFinderHostPattern { get; set; }
             public Config()
             {
@@ -64,62 +63,49 @@ namespace TraffkPortal.Services.TenantServices
 
         public TenantFinderService(IOptions<Config> configOptions, ICacher cacher, TraffkTenantShardsDbContext db, IHttpContextAccessor acc)
         {
-            PreferredHostname = ActualHostname = acc.HttpContext == null ? null : acc.HttpContext.Request.Host.Host;
             var config = configOptions.Value;
-            if (config != null)
+            PreferredHostname = ActualHostname = StringHelpers.Coalesce(config?.Hostname, acc.HttpContext?.Request?.Host.Host);
+            var defaultTenantFinderHostPattern = config.DefaultTenantFinderHostPattern;
+            var defaultHostNamePattern = defaultTenantFinderHostPattern.Replace(@"{0}", @"([^\.]*)");
+            var defaultHostNameRegexPattern = new Regex(defaultHostNamePattern, RegexOptions.Compiled);
+
+            AppHostItem z = null;
+
+            if (defaultHostNameRegexPattern.IsMatch(ActualHostname))
             {
-                if (config.TenantId.HasValue)
-                {
-                    TenantId_p = config.TenantId.Value;
-                }
-                else if (config.TenantIdByHostname != null && acc.HttpContext != null)
-                {
-                    TenantId_p = config.TenantIdByHostname.GetValue(PreferredHostname, TenantId_p);
-                }
-            }
-            if (TenantId_p == 0)
-            {
-                var defaultTenantFinderHostPattern = config.DefaultTenantFinderHostPattern;
-                var defaultHostNamePattern = defaultTenantFinderHostPattern.Replace(@"{0}", @"([^\.]*)");
-                var defaultHostNameRegexPattern = new Regex(defaultHostNamePattern, RegexOptions.Compiled);
+                var m = defaultHostNameRegexPattern.Match(ActualHostname);
+                var loginDomain = m.Success ? m.Groups[1].Value : null;
 
-                AppHostItem z = null;
-
-                if (defaultHostNameRegexPattern.IsMatch(ActualHostname))
-                {
-                    var m = defaultHostNameRegexPattern.Match(ActualHostname);
-                    var loginDomain = m.Success ? m.Groups[1].Value : null;
-
-                    var matchedTenant = db.AppFindByHostname(null, AppTypes.Portal, loginDomain).ExecuteSynchronously()
-                        .FirstOrDefault();
-                    if (matchedTenant != null)
+                z = cacher.FindOrCreateValWithSimpleKey(
+                    Cache.CreateKey("LoginDomain", loginDomain),
+                    () =>
                     {
-                        z = cacher.FindOrCreateValWithSimpleKey(
-                            ActualHostname,
-                            () => new AppHostItem
-                            {
-                                TenantId = matchedTenant.TenantId,
-                                PreferredHostname = ActualHostname,
-                                HostDatabaseName = matchedTenant.HostDatabaseName
-                            });
-                    }
-                }
-
-                if (z == null)
-                {
-                    z = cacher.FindOrCreateValWithSimpleKey(
-                        ActualHostname,
-                        () => db.AppFindByHostname(ActualHostname, AppTypes.Portal).ExecuteSynchronously().FirstOrDefault()
-                        );
-                }
-                
-                if (z != null)
-                {
-                    TenantId_p = z.TenantId;
-                    PreferredHostname = z.PreferredHostname;
-                    DatabaseName = z.HostDatabaseName;
-                }
+                        var matchedTenant = db.AppFindByHostname(null, AppTypes.Portal, loginDomain).ExecuteSynchronously().FirstOrDefault();
+                        if (matchedTenant == null) return null;
+                        return new AppHostItem
+                        {
+                            TenantId = matchedTenant.TenantId,
+                            PreferredHostname = ActualHostname,
+                            HostDatabaseName = matchedTenant.HostDatabaseName
+                        };
+                    });
             }
+
+            if (z == null)
+            {
+                z = cacher.FindOrCreateValWithSimpleKey(
+                    Cache.CreateKey("ActualHostname", ActualHostname),
+                    () => db.AppFindByHostname(ActualHostname, AppTypes.Portal).ExecuteSynchronously().FirstOrDefault()
+                    );
+            }
+                
+            if (z != null)
+            {
+                TenantId_p = z.TenantId;
+                PreferredHostname = z.PreferredHostname;
+                DatabaseName = z.HostDatabaseName;
+            }
+
             acc.HttpContext.Items[HttpContextTenantIdKey] = TenantId_p;
         }
     }

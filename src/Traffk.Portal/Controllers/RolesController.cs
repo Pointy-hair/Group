@@ -14,6 +14,7 @@ using TraffkPortal.Models.RoleModels;
 using TraffkPortal.Permissions;
 using TraffkPortal.Services;
 using static TraffkPortal.AspHelpers;
+using Microsoft.AspNetCore.Identity;
 
 namespace TraffkPortal.Controllers
 {
@@ -118,7 +119,7 @@ namespace TraffkPortal.Controllers
                     applicationRole.NormalizedName = m.RoleName.ToLower();
                     applicationRole.ConcurrencyStamp = Guid.NewGuid().ToString();
                     
-                    var selectedRoleClaims = new List<RoleClaim>();
+                    var selectedRoleClaims = new List<IdentityRoleClaim<string>>();
 
                     foreach (var p in m.SelectedPermissions.ConvertAll(s => Parse.ParseEnum<PermissionNames>(s)))
                     {
