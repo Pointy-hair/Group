@@ -24,6 +24,16 @@ GO
 EXEC sp_addrolemember N'tenant_all_reader', N'_TraffkTenantShardsUser'
 GO
 
+CREATE USER _EtlApp
+	FOR LOGIN _EtlApp
+	WITH DEFAULT_SCHEMA = dbo
+GO
+create role _EtlAppRole
+GO
+EXEC sp_addrolemember N'_EtlAppRole', N'_EtlApp'
+EXEC sp_addrolemember N'tenant_all_writer', N'_EtlAppRole'
+EXEC sp_addrolemember N'tenant_all_reader', N'_EtlAppRole'
+GO
 
 CREATE USER _TraffkBackgroundJobServer
 	FOR LOGIN _TraffkBackgroundJobServer

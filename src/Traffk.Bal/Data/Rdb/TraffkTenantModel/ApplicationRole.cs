@@ -13,7 +13,7 @@ namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
     {
         [JsonIgnore]
         [IgnoreDataMember]
-        public List<RoleClaim> Claims { get; set; }
+        public List<IdentityRoleClaim<string>> Claims { get; set; }
 
         [Column("TenantId")]
         public int TenantId { get; set; }

@@ -6,8 +6,8 @@ namespace Traffk.Bal.Permissions
 {
     public static class PermissionHelpers
     {
-        public static RoleClaim CreateIdentityRoleClaim(PermissionNames permission)
-            => new RoleClaim
+        public static IdentityRoleClaim<string> CreateIdentityRoleClaim(PermissionNames permission)
+            => new IdentityRoleClaim<string>
             {
                 ClaimType = CreateClaimType(permission),
                 ClaimValue = new PermissionClaimValue(true).ToJson()
