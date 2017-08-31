@@ -2,6 +2,29 @@
 
 GO
 
+create table Health.InsurancePlans
+(
+	InsurancePlanId int not null identity primary key,
+	InsurancePlanRowStatus dbo.RowStatus not null default '1',
+	TenantId int not null references Tenants(TenantId),
+	CreatedAtUtc datetime not null default(GetUtcDate()),
+	InsuranceCarrierContactId int not null references Contacts(ContactId),
+	InsurancePlanCode nvarchar(100),
+	InsurancePlanDescription nvarchar(max),
+	InsurancePlanDetails dbo.JsonObject
+)
+
+GO
+
+create unique index UX_InsuracePlanKeys on Health.InsurancePlans(InsuranceCarrierContactId, InsurancePlanCode) where InsurancePlanRowStatus='1'
+exec db.TablePropertySet  'InsurancePlans', '1', @propertyName='AddToDbContext', @tableSchema='Health'
+exec db.TablePropertySet  'InsurancePlans', '1', @propertyName='GeneratePoco', @tableSchema='Health'
+exec db.ColumnPropertySet 'InsurancePlans', 'InsurancePlanRowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='Health'
+exec db.ColumnPropertySet 'InsurancePlans', 'InsurancePlanRowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='Health'
+exec db.TablePropertySet  'InsurancePlans', 'ITraffkTenanted', @propertyName='Implements', @tableSchema='Health'
+
+GO
+
 create table health.Members
 (
 	MemberId int not null identity primary key,

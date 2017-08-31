@@ -376,29 +376,7 @@ exec db.TablePropertySet  'CommunicationPieceVisits', '1', @propertyName='AddToD
 exec db.TablePropertySet  'CommunicationPieceVisits', '1', @propertyName='GeneratePoco'
 exec db.TablePropertySet  'CommunicationPieceVisits', 'ITraffkTenanted', @propertyName='Implements'
 
-GO
 /*
-create table InsurancePlans
-(
-	InsurancePlanId int not null identity primary key,
-	InsurancePlanRowStatus dbo.RowStatus not null default '1',
-	TenantId int not null references Tenants(TenantId),
-	CreatedAtUtc datetime not null default(GetUtcDate()),
-	InsuranceCarrierContactId int not null references Contacts(ContactId),
-	InsurancePlanCode nvarchar(100),
-	InsurancePlanDescription nvarchar(max)
-)
-
-GO
-
-create unique index UX_InsuracePlanKeys on dbo.InsurancePlans(InsuranceCarrierContactId, InsurancePlanCode) where InsurancePlanRowStatus='1'
-exec db.TablePropertySet  'InsurancePlans', '1', @propertyName='AddToDbContext'
-exec db.TablePropertySet  'InsurancePlans', '1', @propertyName='GeneratePoco'
-exec db.ColumnPropertySet 'InsurancePlans', 'InsurancePlanRowStatus', '1', @propertyName='ImplementsRowStatusSemantics'
-exec db.ColumnPropertySet 'InsurancePlans', 'InsurancePlanRowStatus', 'missing', @propertyName='AccessModifier'
-exec db.TablePropertySet  'InsurancePlans', 'ITraffkTenanted', @propertyName='Implements'
-
-GO
 
 create table CustomInsurancePlans
 (
