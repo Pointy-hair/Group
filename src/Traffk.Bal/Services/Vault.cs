@@ -14,6 +14,7 @@ namespace Traffk.Bal.Services
     {
         public static class CommonSecretUris
         {
+            public const string DeerwalkFtpCredentialsUri = "https://traffkkeyvault.vault.azure.net/secrets/DeerwalkFtpCredentials/db0aa586b87a4250846d585f66e8c016";
             public const string TableauAdminCredentialsUri = "https://traffkkeyvault.vault.azure.net/secrets/TableauAdminCredentials/1080b68139254ad5b212b749f412a030";
             public const string TraffkFtpTodayCredentialsUri = "https://traffkkeyvault.vault.azure.net/secrets/TraffkFtpTodayCredentials/81a39306974543b6bdb484b446970487";
             public const string TraffkPgpPublicKeyUri = "https://traffkkeyvault.vault.azure.net/secrets/TraffkPgpPublicKey/4f3bf633217140a9a5f7c894accbf54e";

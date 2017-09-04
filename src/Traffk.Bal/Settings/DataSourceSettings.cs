@@ -28,6 +28,9 @@ namespace Traffk.Bal.Settings
 
             [JsonProperty("credentialsKey")]
             public string CredentialsKeyUri { get; set; }
+
+            [JsonProperty("filePattern")]
+            public string FilePattern { get; set; }
         }
 
         public class WebSettings
