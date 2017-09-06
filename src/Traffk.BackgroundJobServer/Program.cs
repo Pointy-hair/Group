@@ -54,9 +54,29 @@ namespace Traffk.BackgroundJobRunner
 #endif
         }
 
-#if false
+#if true
 
-        private void Ftp(TraffkGlobalDbContext gdb, int tenantId, params string[] folderPaths)
+        private void TraffkFtp(TraffkGlobalDbContext gdb, int tenantId, string filePattern, params string[] folderPaths)
+            => Ftp(
+                gdb,
+                "traffk.ftptoday.com",
+                Traffk.Bal.Services.Vault.CommonSecretUris.TraffkFtpTodayCredentialsUri,
+                tenantId,
+                filePattern,
+                folderPaths
+                );
+
+        private void DeerwalkFtp(TraffkGlobalDbContext gdb, int tenantId, string filePattern, params string[] folderPaths)
+            => Ftp(
+                gdb,
+                "ftp.deerwalk.com",
+                Traffk.Bal.Services.Vault.CommonSecretUris.DeerwalkFtpCredentialsUri,
+                tenantId,
+                filePattern,
+                folderPaths
+                );
+
+        private void Ftp(TraffkGlobalDbContext gdb, string ftpHost, string credentialsUri, int tenantId, string filePattern, params string[] folderPaths)
         {
             var ds = new Traffk.Bal.Data.Rdb.TraffkGlobal.DataSource
             {
@@ -65,10 +85,11 @@ namespace Traffk.BackgroundJobRunner
                 {
                     FTP = new Traffk.Bal.Settings.DataSourceSettings.FtpSettings
                     {
-                        CredentialsKeyUri = Traffk.Bal.Services.Vault.CommonSecretUris.TraffkFtpTodayCredentialsUri,
-                        Hostname = "traffk.ftptoday.com",
+                        CredentialsKeyUri = credentialsUri,
+                        Hostname = ftpHost,
                         Port = 22,
-                        FolderPaths = folderPaths
+                        FolderPaths = folderPaths,
+                        FilePattern = filePattern,
                     },
                     DecompressItems = true,
                 }
@@ -84,13 +105,15 @@ namespace Traffk.BackgroundJobRunner
             GlobalConfiguration.Configuration.UseSqlServerStorage(Configuration.GetConnectionString("TraffkGlobal"));
             GlobalJobFilters.Filters.Add(new TraffkJobFilterAttribute(Configuration));
             var gdb = this.ServiceProvider.GetRequiredService<TraffkGlobalDbContext>();
-            Ftp(gdb, 4, "/aetnapush", "/bbroussard@goempyrean.com", "/BKJolly@express-scripts.com", "/datatransfer@questdiagnostics.com");
-            Ftp(gdb, 5, "/TopconData@blueshieldca.com");
-            Ftp(gdb, 6, "/FileTransfer@azblue.com", "/markmcc@uhaul.com", "/U-HaulCarrum", "/U-HaulWorkday", "/U-HaulMetLife", "/PrideBroadspire");
-            Ftp(gdb, 7, "/EnervestADP", "/EnervestBCBSTX", "/EnerVestHR");
-            Ftp(gdb, 8, "/FileExchangeDispatch@anthem.com", "/PRIDE", "/PRIDEKP", "/BPA");
-            Ftp(gdb, 9, "/PatriotNational");
-            Ftp(gdb, 11, "/TopconHealthComp", "/bradm@uhaul.com");
+            DeerwalkFtp(gdb, 6, "traffk_uhaul_.+\\.zip", "/ftpdir/outgoing");
+            DeerwalkFtp(gdb, 4, "(traffk_ethos)_.+\\.zip", "/ftpdir/outgoing");
+            TraffkFtp(gdb, 4,  null, "/aetnapush", "/bbroussard@goempyrean.com", "/BKJolly@express-scripts.com", "/datatransfer@questdiagnostics.com");
+            TraffkFtp(gdb, 5,  null, "/TopconData@blueshieldca.com");
+            TraffkFtp(gdb, 6,  null, "/FileTransfer@azblue.com", "/markmcc@uhaul.com", "/U-HaulCarrum", "/U-HaulWorkday", "/U-HaulMetLife", "/PrideBroadspire");
+            TraffkFtp(gdb, 7,  null, "/EnervestADP", "/EnervestBCBSTX", "/EnerVestHR");
+            TraffkFtp(gdb, 8,  null, "/FileExchangeDispatch@anthem.com", "/PRIDE", "/PRIDEKP", "/BPA");
+            TraffkFtp(gdb, 9,  null, "/PatriotNational");
+            TraffkFtp(gdb, 11, null, "/TopconHealthComp", "/bradm@uhaul.com");
         }
 
         protected override Task OnGoAsync()

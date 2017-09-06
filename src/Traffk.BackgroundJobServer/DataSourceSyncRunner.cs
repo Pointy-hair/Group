@@ -257,10 +257,12 @@ namespace Traffk.BackgroundJobServer
                 Requires.NonNull(settings, nameof(settings));
                 var cred = await Runner.Vault.GetCredentialsAsync(settings.CredentialsKeyUri);
                 var ci = new ConnectionInfo(settings.Hostname, settings.Port, cred.Username, new PasswordAuthenticationMethod(cred.Username, cred.Password));
+                var expr = new Regex(settings.FilePattern ?? ".+", RegexOptions.Compiled|RegexOptions.IgnoreCase);
+                Predicate<string> filenameMatcher = (string fn) => expr.IsMatch(fn);
                 using (var client = new SftpClient(ci))
                 {
                     client.Connect();
-                    await Task.WhenAll(settings.FolderPaths.ConvertAll(fp => FetchFtpFolderFilesAsync(client, fetch, fp)));
+                    await Task.WhenAll(settings.FolderPaths.ConvertAll(fp => FetchFtpFolderFilesAsync(client, fetch, filenameMatcher, fp)));
                 }
             }
 
@@ -466,7 +468,7 @@ namespace Traffk.BackgroundJobServer
                 }
             }
 
-            private async Task FetchFtpFolderFilesAsync(SftpClient client, DataSourceFetche fetch, string path)
+            private async Task FetchFtpFolderFilesAsync(SftpClient client, DataSourceFetche fetch, Predicate<string> filenameMatcher, string path)
             {
                 if (IsAlreadyVisited(path)) return;
                 client.ChangeDirectory(path);
@@ -476,11 +478,12 @@ namespace Traffk.BackgroundJobServer
                 {
                     if (file.IsDirectory)
                     {
-                        await FetchFtpFolderFilesAsync(client, fetch, file.FullName);
+                        await FetchFtpFolderFilesAsync(client, fetch, filenameMatcher, file.FullName);
                     }
                     else if (file.IsRegularFile)
                     {
                         if (IsAlreadyVisited(file.FullName)) return;
+                        if (!filenameMatcher(file.Name)) return;
                         await FetchTheItemAsync(
                             fetch, 
                             new FileDetails(file),
