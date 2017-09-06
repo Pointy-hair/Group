@@ -171,17 +171,13 @@ CREATE TABLE Health.Visits
 	ContactId int  null references Contacts(ContactId),
 	MemberId int not null references health.Members(MemberId),
 	ForeignId dbo.ForeignIdType,
-	VisitType varchar(50),
+	VisitTypeLid int null references Lookups(LookupId),
 	VisitStartDdim int not null references DateDimensions(DateDimensionId),
 	VisitEndDdim int not null references DateDimensions(DateDimensionId),
 	InpatientDays int not null,
-	AdmissionType varchar(55),
+	AdmissionTypeLid int null references Lookups(LookupId),
 	AdmissionFromEmergencyRoom bit not null
 )
-
-GO
-
-create unique index UX_VisitsForeignId on health.visits(ForeignId) where foreignId is not null and RowStatus='1'
 
 GO
 
