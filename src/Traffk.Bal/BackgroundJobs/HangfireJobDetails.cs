@@ -6,13 +6,29 @@ namespace Traffk.Bal.BackgroundJobs
 {
     public class HangfireJobDetails
     {
-        private string Method_p;
+        public static class JobDescriptions
+        {
+            public static string ReportDownload = "Report Download";
+            public static string ScheduledReportDownload = "Scheduled Report Download";
+        }
+
+        public string Method { get; set; }
 
         [DisplayName("Job Description")]
-        public string Method
+        public string JobDescription
         {
-            get { return Method_p.ToTitleFriendlyString(); }
-            set { Method_p = value; }
+            get
+            {
+                switch (Method)
+                {
+                    case nameof(ITenantJobs.DownloadTableauPdfContinuationJobAsync):
+                        return JobDescriptions.ReportDownload;
+                    case nameof(ITenantJobs.ScheduleTableauPdfDownload):
+                        return JobDescriptions.ScheduledReportDownload;
+                }
+
+                return Method;
+            }
         }
 
         public static HangfireJobDetails CreateFromJson(string json)
