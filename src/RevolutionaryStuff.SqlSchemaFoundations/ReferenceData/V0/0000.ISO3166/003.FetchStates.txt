@@ -1,1 +1,0 @@
-﻿getInstructionsFromSql,"select 'importWebTable,https://en.wikipedia.org/wiki/'+replace(col4,' ', '_')+' ,0,Iso3166Workspace,StatesOf'+col2+',true,true' instruction from iso3166workspace.countries"

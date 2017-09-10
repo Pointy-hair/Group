@@ -1,2 +1,0 @@
-﻿requires,RevolutionaryStuff.SqlSchemaFoundations.Foundations.V0,/0008/
-requires,RevolutionaryStuff.SqlSchemaFoundations.TenantedSystem.V0,/0002/
