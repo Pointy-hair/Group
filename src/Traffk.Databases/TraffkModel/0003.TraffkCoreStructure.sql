@@ -704,3 +704,13 @@ exec db.ViewColumnPropertySet 'DataSourceFetchItems', 'DataSourceFetchId', 'dbo.
 
 GO
 
+create schema Map
+
+GO
+
+exec db.ColumnPropertySet 'MedicalCodes', 'MedicalCodeId', 'Key', @propertyName='CustomAttribute', @tableSchema='Map'
+exec db.TablePropertySet 'MedicalCodes', '1', @propertyName='AddToDbContext', @tableSchema='Map'
+exec db.TablePropertySet 'MedicalCodes', '1', @propertyName='GeneratePoco', @tableSchema='Map'
+
+GO
+

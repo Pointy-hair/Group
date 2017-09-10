@@ -116,9 +116,10 @@ namespace Traffk.BackgroundJobRunner
             TraffkFtp(gdb, 11, null, "/TopconHealthComp", "/bradm@uhaul.com");
         }
 
+
         protected override Task OnGoAsync()
         {
-            FtpDS();
+//            FtpDS();
             return base.OnGoAsync();
         }
 

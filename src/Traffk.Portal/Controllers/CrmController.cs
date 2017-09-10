@@ -401,12 +401,12 @@ namespace TraffkPortal.Controllers
                     nameof(Eligibility.EligibilityId));
 
         [ActionName(ActionNames.Health.MedicalClaimDiagnosis)]
-        [Route("Contacts/{id}/MedicalClaimDiagnosis/{medicalClaimId}")]
-        public Task<IActionResult> ContactMedicalClaimDiagnosis(int id, int medicalClaimId)
-            => ContactHealthItemDetail(id, PageKeys.MedicalClaimDiagnosis, ViewNames.Health.MedicalClaimDiagnosis, mid => Rdb.MedicalClaimDiagnoses.Where(x => x.MedicalClaim.ContactId == mid && x.MedicalClaimId == medicalClaimId));
+        [Route("Contacts/{id}/MedicalClaims/{medicalClaimId}/MedicalClaimLines/{medicalClaimLineId}/MedicalClaimLineDiagnosis")]
+        public Task<IActionResult> ContactMedicalClaimDiagnosis(int id, int medicalClaimId, int medicalClaimLineId)
+            => ContactHealthItemDetail(id, PageKeys.MedicalClaimDiagnosis, ViewNames.Health.MedicalClaimDiagnosis, mid => Rdb.MedicalClaimLineDiagnoses.Where(x => x.MedicalClaimLine.ContactId == mid && x.MedicalClaimLineId == medicalClaimLineId));
 
         [ActionName(ActionNames.Health.MedicalClaimLines)]
-        [Route("Contacts/{id}/MedicalClaimLines/{medicalClaimId}")]
+        [Route("Contacts/{id}/MedicalClaims/{medicalClaimId}/MedicalClaimLines")]
         public Task<IActionResult> ContactMedicalClaimLines(int id, int medicalClaimId)
             => ContactHealthItemDetail(id, PageKeys.MedicalClaimLines, ViewNames.Health.MedicalClaimLines, mid => Rdb.MedicalClaimLines.Where(x => x.ContactId == mid && x.MedicalClaimId == medicalClaimId));
 
