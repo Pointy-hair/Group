@@ -237,6 +237,10 @@ namespace Traffk.Tableau
 
         async Task<DownloadPdfOptions> ITableauVisualServices.CreatePdfAsync(CreatePdfOptions options)
         {
+            Requires.NonNull(options.WorkbookName, nameof(options.WorkbookName));
+            Requires.NonNull(options.WorksheetName, nameof(options.WorksheetName));
+            Requires.NonNull(options.ViewName, nameof(options.ViewName));
+
             var token = (await TrustedTicketGetter.AuthorizeAsync()).Token;
             var handler = new HttpClientHandler
             {

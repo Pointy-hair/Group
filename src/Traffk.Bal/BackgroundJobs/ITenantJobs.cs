@@ -16,10 +16,11 @@ namespace Traffk.Bal.BackgroundJobs
         void MigrateTableauDataset(TableauDataMigrationRequest request);
 
         [Queue(BackgroundJobHelpers.QueueNames.TableauQueue)]
-        [AutomaticRetry(Attempts = 50)]
+        [AutomaticRetry(Attempts = 5)]
         void CreateTableauPdf(CreatePdfOptions options);
 
         [Queue(BackgroundJobHelpers.QueueNames.TableauQueue)]
+        [AutomaticRetry(Attempts = 5)]
         void DownloadTableauPdfContinuationJobAsync();
 
         [Queue(BackgroundJobHelpers.QueueNames.TableauQueue)]

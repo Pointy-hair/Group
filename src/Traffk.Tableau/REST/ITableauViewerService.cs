@@ -85,6 +85,9 @@ namespace Traffk.Tableau.REST
         public CreatePdfOptions(string workbookName, string viewName, string worksheetName, int pixelWidth = 1024,
             int pixelHeight = 768)
         {
+            Requires.NonNull(workbookName, nameof(workbookName));
+            Requires.NonNull(viewName, nameof(viewName));
+            Requires.NonNull(worksheetName, nameof(worksheetName));
             WorkbookName = workbookName;
             ViewName = viewName;
             WorksheetName = worksheetName;
