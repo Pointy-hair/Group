@@ -270,3 +270,40 @@ BEGIN
 END
 
 GO
+
+create schema Map
+
+GO
+
+create table Map.MedicalCodes
+(
+	MedicalCodeId int not null identity primary key,
+	Scheme dbo.DeveloperName,
+	Code nvarchar(100) not null,
+	Title dbo.Title null,
+	IsMapped bit not null default(0)
+	--over time, add references to CPT, HCPS, ICD, ...
+)
+
+GO
+
+create unique index UX_Codes on Map.MedicalCodes(Scheme, Code)
+
+GO
+
+create table Map.ZipCodes
+(
+	ZipCodeId int not null identity primary key,
+	ParentZipCodeId int null references Map.ZipCodes(ZipCodeId),
+	CountryId int not null, --refernces ReferenceData.ISO3166.Countries(CountryId),
+	ZipCodeScheme dbo.DeveloperName not null,
+	ZipCode nvarchar(20) not null,
+	IsMapped bit not null default(0)
+	--over time, add refernces to Zip5, Zip9, and any other applicable reference table
+)
+
+GO
+
+create unique index UX_Zip on ZipCodes(CountryId, ZipCodeScheme, ZipCode)
+
+GO

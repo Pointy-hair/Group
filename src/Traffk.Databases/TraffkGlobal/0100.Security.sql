@@ -45,3 +45,14 @@ grant all on Hangfire.[State] to HangfireClient
 
 
 GO
+
+CREATE USER _EtlApp
+	FOR LOGIN _EtlApp
+	WITH DEFAULT_SCHEMA = dbo
+GO
+create role _EtlAppRole
+GO
+EXEC sp_addrolemember N'_EtlAppRole', N'_EtlApp'
+EXEC sp_addrolemember N'db_datareader', N'_EtlAppRole'
+EXEC sp_addrolemember N'db_datawriter', N'_EtlAppRole'
+GO

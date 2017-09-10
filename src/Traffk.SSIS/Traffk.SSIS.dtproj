@@ -26,7 +26,7 @@
           <SSIS:Property SSIS:Name="CreatorComputerName">BACKTABLE</SSIS:Property>
           <SSIS:Property SSIS:Name="Description">
           </SSIS:Property>
-          <SSIS:Property SSIS:Name="PasswordVerifier" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAip1X0bjDP0KGVpvfQD2a+wAAAAACAAAAAAAQZgAAAAEAACAAAAD4LPFhYVu3HGKOjges4PmWcCc8rcFojHF4HzjIa+3jAQAAAAAOgAAAAAIAACAAAADe3th24hNsFabACRatQMrK5ut719BfbmYbj8LYyaioSJAAAAAG9/9wVW6gkr6+1Mc5e2o4FYIo18PAcYs5Cc843MTZGTPYRdIuu+k8A+0mhYFhslzDGZQDRe1A+K4ONAppfBIkCGRQ730qNBzjisaQyEZUFXckDNz80awBEa9neorwlBjnW+UnkZVYKWIm5SYzJpubAGQrDpZbzadsPlslaSe0VMnTnlUytAUc9VjgqlFVtpZAAAAASIaYo5u8NU4OCreC9phJlTPxmFOpcJSwkUDwcyPIPB/6/YkUaVO56XhZ+wjJaxmBVGZrCxwHgVMMU9qIdlAp3w==</SSIS:Property>
+          <SSIS:Property SSIS:Name="PasswordVerifier" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAip1X0bjDP0KGVpvfQD2a+wAAAAACAAAAAAAQZgAAAAEAACAAAACDuEE1mxeHhzQ6jNHWDJh9U3zwm182JOiROM3S3PDzgwAAAAAOgAAAAAIAACAAAABtMQeV9N9qZ+qi0QKCgHx/hTeX6KEOilMV2JsG1bRjI5AAAACpKTsBqqVfzIF/eLJaZdc/TsNsLOHw9FoLEAQ3a6oUDiUXBbCwpC94mEnTPQWhpPq0g+jmPEcOBtzL5rSWDkqbdJWXUtaiSM9kjjIrVhqhIKFGcI3t4FjDJbWIacg3nz8vXO4D8CpZfFZB7Tl1esARbpzoB7YlpOKsucnvfZRSX+UW3t2+nJ1fmAwDxpqGnplAAAAAY0jGjdcYoElxSqIbSHciH2FmBk/0nssgPM886+roIkhPENW7D2MjjL90EJksKtgC+AlUSJfWwhY9lQ/fDZiy4A==</SSIS:Property>
           <SSIS:Property SSIS:Name="FormatVersion">1</SSIS:Property>
         </SSIS:Properties>
         <SSIS:Packages>
@@ -2229,10 +2229,10 @@
                 <SSIS:Property SSIS:Name="Name">TenantModel Deerwalk</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMajor">1</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMinor">0</SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionBuild">118</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionBuild">187</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionComments">
                 </SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionGUID">{94903726-BA0C-41E2-943C-BFBA9A6BB4D2}</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionGUID">{291D2CFC-D8E5-47F3-AFBB-647EAA2BD125}</SSIS:Property>
                 <SSIS:Property SSIS:Name="PackageFormatVersion">8</SSIS:Property>
                 <SSIS:Property SSIS:Name="Description">
                 </SSIS:Property>
@@ -6013,6 +6013,95 @@
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Value">false</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">3</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.traffkrdb-prod.database.windows.net.TraffkGlobal._EtlApp.ConnectionString">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">Data Source=traffkrdb-prod.database.windows.net;User ID=_EtlApp;Initial Catalog=TraffkGlobal;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.traffkrdb-prod.database.windows.net.TraffkGlobal._EtlApp.InitialCatalog">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">TraffkGlobal</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.traffkrdb-prod.database.windows.net.TraffkGlobal._EtlApp.Password">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">1</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.traffkrdb-prod.database.windows.net.TraffkGlobal._EtlApp.RetainSameConnection">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">false</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">3</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.traffkrdb-prod.database.windows.net.TraffkGlobal._EtlApp.ServerName">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">traffkrdb-prod.database.windows.net</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
+                  </SSIS:Properties>
+                </SSIS:Parameter>
+                <SSIS:Parameter SSIS:Name="CM.traffkrdb-prod.database.windows.net.TraffkGlobal._EtlApp.UserName">
+                  <SSIS:Properties>
+                    <SSIS:Property SSIS:Name="ID">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="CreationName">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="Description">
+                    </SSIS:Property>
+                    <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">_EtlApp</SSIS:Property>
+                    <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
                 <SSIS:Parameter SSIS:Name="CM.traffkrdb-prod.database.windows.net.TraffkTenant_Sample._EtlApp.ConnectionString">

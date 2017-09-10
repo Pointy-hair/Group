@@ -2,7 +2,7 @@
 <BuildLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <ProjectInfo>
     <Name>Traffk.SSIS</Name>
-    <LastWriteTime>2017-08-31T19:08:55.7318592Z</LastWriteTime>
+    <LastWriteTime>2017-09-06T05:02:26.6714467Z</LastWriteTime>
     <LastKnownProtectionLevel>EncryptSensitiveWithUserKey</LastKnownProtectionLevel>
   </ProjectInfo>
   <LastBuildInfos>
@@ -33,7 +33,7 @@
     </ProjectBuildItemInfo>
     <ProjectBuildItemInfo>
       <Name>TenantModel.Deerwalk.dtsx</Name>
-      <LastWriteTime>2017-09-06T00:29:38.383589Z</LastWriteTime>
+      <LastWriteTime>2017-09-10T18:51:31.9210117Z</LastWriteTime>
       <LastKnownProtectionLevel>EncryptSensitiveWithUserKey</LastKnownProtectionLevel>
     </ProjectBuildItemInfo>
     <ProjectBuildItemInfo>

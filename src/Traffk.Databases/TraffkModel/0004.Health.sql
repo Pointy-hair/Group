@@ -200,7 +200,7 @@ create table health.Pharmacy
 	MemberId int not null references health.Members(MemberId),
 	PrescriberProviderContactId int not null references Contacts(ContactId),
 	TransactionNumber varchar(80) not null,
-	NationalDrugCodePackageId int null,-- references NationalDrugCode.Packages(PackageId),
+	NationalDrugCodePackageMcid int null,-- references Map.MedicalCodes(MedicalCodeId),
 	PrescriptionWrittenDdim int not null references DateDimensions(DateDimensionId),
 	PrescriptionFilledDdim int not null references DateDimensions(DateDimensionId),
 	ServiceDdim int not null references DateDimensions(DateDimensionId),
@@ -218,8 +218,6 @@ create table health.Pharmacy
 	PharmacyDetails dbo.JsonObject
 )
 
-
-
 GO
 
 create unique index UX_TransactionNumber on health.Pharmacy(TransactionNumber) where RowStatus='1'
@@ -231,7 +229,6 @@ exec db.TablePropertySet  'Pharmacy', '1', @propertyName='GeneratePoco', @tableS
 exec db.ColumnPropertySet 'Pharmacy', 'RowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='health'
 exec db.ColumnPropertySet 'Pharmacy', 'RowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='health'
 exec db.TablePropertySet  'Pharmacy', 'ITraffkTenanted, IDontCreate', @propertyName='Implements', @tableSchema='health'
-exec db.ColumnPropertySet 'Pharmacy', 'NationalDrugCodePackageId', 'NationalDrugCode.Packages(PackageId)', @propertyName='LinksTo', @tableSchema='health'
 exec db.ColumnPropertySet 'Pharmacy', 'MemberId', 'Member ID to display on the application, as sent by client', @tableSchema='health'
 exec db.ColumnPropertySet 'Pharmacy', 'PrescriptionWrittenDdim', 'date prescription was written', @tableSchema='health'
 exec db.ColumnPropertySet 'Pharmacy', 'PrescriptionFilledDdim', 'date prescription was filled', @tableSchema='health'
@@ -247,6 +244,7 @@ exec db.ColumnPropertySet 'Pharmacy', 'IngredientsCostAmt', 'Cost of ingredients
 exec db.ColumnPropertySet 'Pharmacy', 'StateTaxAmt', 'State Tax Paid', @tableSchema='health'
 exec db.ColumnPropertySet 'Pharmacy', 'UsualCustomaryFeeAmt', 'Usual and Customary Fee', @tableSchema='health'
 exec db.ColumnPropertySet 'Pharmacy', 'PaidAmt', 'Amount paid', @tableSchema='health'
+--exec db.ColumnPropertySet 'Pharmacy', 'NationalDrugCodePackageId', 'NationalDrugCode.Packages(PackageId)', @propertyName='LinksTo', @tableSchema='health'
 
 
 GO
@@ -281,27 +279,6 @@ exec db.ColumnPropertySet 'MedicalClaims', 'MemberId', 'Member ID to display on 
 
 GO
 
-create table Health.MedicalClaimDiagnoses
-(
-	MedicalClaimDiagnosisId int not null identity primary key,
-	TenantId int not null references Tenants(TenantId),
-	RowStatus dbo.RowStatus not null default '1',
-	MedicalClaimId int not null references Health.MedicalClaims(MedicalClaimId),
-	Icd10Id int null,-- references InternationalClassificationDiseases.ICD10(Icd10Id), --nullable in case we get ICD11...
-	DiagnosisNumber int not null
-)
-
-GO
-
-exec db.TablePropertySet  'MedicalClaimDiagnoses', '1', @propertyName='AddToDbContext', @tableSchema='health'
-exec db.TablePropertySet  'MedicalClaimDiagnoses', '1', @propertyName='GeneratePoco', @tableSchema='health'
-exec db.TablePropertySet  'MedicalClaimDiagnoses', 'ITraffkTenanted, IDontCreate', @propertyName='Implements', @tableSchema='health'
-exec db.ColumnPropertySet 'MedicalClaimDiagnoses', 'RowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='health'
-exec db.ColumnPropertySet 'MedicalClaimDiagnoses', 'RowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='health'
-exec db.ColumnPropertySet 'MedicalClaimDiagnoses', 'Icd10Id', 'InternationalClassificationDiseases.ICD10(Icd10Id)', @propertyName='LinksTo', @tableSchema='health'
-
-GO
-
 create table Health.MedicalClaimLines
 (
 	MedicalClaimLineId int not null identity primary key,
@@ -312,10 +289,7 @@ create table Health.MedicalClaimLines
 	MemberId int not null references health.Members(MemberId),
 	MedicalClaimLineNumber varchar(25) not null,
 	VisitId int null references health.visits(visitid),
-	ProcedureType varchar(10) null,
-	ProcedureCode varchar(10) not null,
-	ProcedureDescription nvarchar(255) null,
-	ProcedureHcpcsId int null,-- references CmsGov.HealthcareCommonProcedureCodingSystemCodes(HcpcsId),
+	ProcedureMcid int null,-- references Map.MedicalCodes(MedicalCodeId),
 	CptBetosId int null,-- references CmsGov.BerensonEggersTypeOfServices(BetosId),
 	HcpcsBetosId int null,-- references CmsGov.BerensonEggersTypeOfServices(BetosId),
 	RevBetosId int null,-- references CmsGov.BerensonEggersTypeOfServices(BetosId),
@@ -347,7 +321,6 @@ GO
 exec db.TablePropertySet  'MedicalClaimLines', '1', @propertyName='AddToDbContext', @tableSchema='health'
 exec db.TablePropertySet  'MedicalClaimLines', '1', @propertyName='GeneratePoco', @tableSchema='health'
 exec db.TablePropertySet  'MedicalClaimLines', 'ITraffkTenanted, IDontCreate', @propertyName='Implements', @tableSchema='health'
-exec db.ColumnPropertySet 'MedicalClaimLines', 'ProcedureHcpcsId', 'CmsGov.HealthcareCommonProcedureCodingSystemCodes(HcpcsId)', @propertyName='LinksTo', @tableSchema='health'
 exec db.ColumnPropertySet 'MedicalClaimLines', 'CptBetosId', 'CmsGov.BerensonEggersTypeOfServices(BetosId)', @propertyName='LinksTo', @tableSchema='health'
 exec db.ColumnPropertySet 'MedicalClaimLines', 'HcpcsBetosId', 'CmsGov.BerensonEggersTypeOfServices(BetosId)', @propertyName='LinksTo', @tableSchema='health'
 exec db.ColumnPropertySet 'MedicalClaimLines', 'RevBetosId', 'CmsGov.BerensonEggersTypeOfServices(BetosId)', @propertyName='LinksTo', @tableSchema='health'
@@ -355,6 +328,32 @@ exec db.ColumnPropertySet 'MedicalClaimLines', 'DrgBetosId', 'CmsGov.BerensonEgg
 exec db.ColumnPropertySet 'MedicalClaimLines', 'MemberId', 'Member ID to display on the application, as sent by client', @tableSchema='health'
 exec db.ColumnPropertySet 'MedicalClaimLines', 'RowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='health'
 exec db.ColumnPropertySet 'MedicalClaimLines', 'RowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='health'
+exec db.ColumnPropertySet 'MedicalClaimLines', 'ProcedureMcid', 'Map.MedicalCodes(MedicalCodeId)', @propertyName='LinksTo', @tableSchema='health'
+
+GO
+
+create table Health.MedicalClaimLineDiagnoses
+(
+	MedicalClaimLineDiagnosisId int not null identity primary key,
+	TenantId int not null references Tenants(TenantId),
+	RowStatus dbo.RowStatus not null default '1',
+	MedicalClaimLineId int not null references Health.MedicalClaimLines(MedicalClaimLineId),
+	DiagnosisMcid int null,-- Map.MedicalCodes(MedicalCodeId),
+	DiagnosisNumber int not null
+)
+
+GO
+
+create unique index UX_MedicalClaimLineDiagnoses on Health.MedicalClaimLineDiagnoses(TenantId, MedicalClaimLineId, DiagnosisNumber)
+
+GO
+
+exec db.TablePropertySet  'MedicalClaimLineDiagnoses', '1', @propertyName='AddToDbContext', @tableSchema='health'
+exec db.TablePropertySet  'MedicalClaimLineDiagnoses', '1', @propertyName='GeneratePoco', @tableSchema='health'
+exec db.TablePropertySet  'MedicalClaimLineDiagnoses', 'ITraffkTenanted, IDontCreate', @propertyName='Implements', @tableSchema='health'
+exec db.ColumnPropertySet 'MedicalClaimLineDiagnoses', 'RowStatus', '1', @propertyName='ImplementsRowStatusSemantics', @tableSchema='health'
+exec db.ColumnPropertySet 'MedicalClaimLineDiagnoses', 'RowStatus', 'missing', @propertyName='AccessModifier', @tableSchema='health'
+exec db.ColumnPropertySet 'MedicalClaimLineDiagnoses', 'DiagnosisMcid', 'Map.MedicalCodes(MedicalCodeId)', @propertyName='LinksTo', @tableSchema='health'
 
 GO
 
