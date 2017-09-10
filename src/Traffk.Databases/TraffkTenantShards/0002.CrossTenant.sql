@@ -24,7 +24,7 @@ begin
 			inner join
 		apps a
 			on a.TenantId=t.TenantId
-			cross apply
+			outer apply
 		openjson(a.appsettings, N'$.Hosts.HostInfos') with (Hostname nvarchar(1024)) as d
 	where
 		(a.AppType=@appType or @appType is null) and

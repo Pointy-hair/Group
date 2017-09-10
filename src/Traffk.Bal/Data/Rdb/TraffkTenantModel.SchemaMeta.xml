@@ -114,9 +114,6 @@
           </Properties>
         </Column>
       </Columns>
-      <Collections>
-        <Collection schema="Health" table="MedicalClaimLines" column="ProcedureHcpcsId" collectionType="virtual" />
-      </Collections>
     </Table>
     <Table schema="CmsGov" name="HealthCareProviderTaxonomyCodeCrosswalk" tableType="BASE TABLE">
       <Properties>
@@ -772,10 +769,11 @@
         <Collection schema="Health" table="MillimanScores" column="ContactId" collectionType="actual" />
         <Collection schema="Health" table="Visits" column="ContactId" collectionType="actual" />
         <Collection schema="dbo" table="CommunicationPieces" column="ContactId" collectionType="actual" />
-        <Collection schema="Health" table="Pharmacy" column="ContactId" collectionType="actual" />
-        <Collection schema="Health" table="Pharmacy" column="PrescriberProviderContactId" collectionType="actual" />
+        <Collection schema="Health" table="InsurancePlans" column="InsuranceCarrierContactId" collectionType="actual" />
         <Collection schema="dbo" table="Notes" column="CreatedByContactId" collectionType="actual" />
         <Collection schema="Health" table="MedicalClaims" column="ContactId" collectionType="actual" />
+        <Collection schema="Health" table="Pharmacy" column="ContactId" collectionType="actual" />
+        <Collection schema="Health" table="Pharmacy" column="PrescriberProviderContactId" collectionType="actual" />
         <Collection schema="Health" table="MedicalClaimLines" column="ContactId" collectionType="actual" />
         <Collection schema="Health" table="CareAlerts" column="ContactId" collectionType="actual" />
         <Collection schema="Health" table="Members" column="PersonContactId" collectionType="actual" />
@@ -935,12 +933,12 @@
         <Collection schema="Health" table="MillimanScores" column="ScorePeriodEndDdim" collectionType="actual" />
         <Collection schema="Health" table="Visits" column="VisitStartDdim" collectionType="actual" />
         <Collection schema="Health" table="Visits" column="VisitEndDdim" collectionType="actual" />
+        <Collection schema="Health" table="MedicalClaims" column="ServiceFromDdim" collectionType="actual" />
+        <Collection schema="Health" table="MedicalClaims" column="ServiceToDdim" collectionType="actual" />
         <Collection schema="Health" table="Pharmacy" column="PrescriptionWrittenDdim" collectionType="actual" />
         <Collection schema="Health" table="Pharmacy" column="PrescriptionFilledDdim" collectionType="actual" />
         <Collection schema="Health" table="Pharmacy" column="ServiceDdim" collectionType="actual" />
         <Collection schema="Health" table="Pharmacy" column="PaidDdim" collectionType="actual" />
-        <Collection schema="Health" table="MedicalClaims" column="ServiceFromDdim" collectionType="actual" />
-        <Collection schema="Health" table="MedicalClaims" column="ServiceToDdim" collectionType="actual" />
         <Collection schema="Health" table="MedicalClaimLines" column="ServiceFromDdim" collectionType="actual" />
         <Collection schema="Health" table="MedicalClaimLines" column="ServiceToDdim" collectionType="actual" />
         <Collection schema="Health" table="MedicalClaimLines" column="PaidDdim" collectionType="actual" />
@@ -980,6 +978,8 @@
         <Collection schema="Health" table="Eligibility" column="MemberRelationshipLid" collectionType="actual" />
         <Collection schema="Health" table="Eligibility" column="CoverageTypeLid" collectionType="actual" />
         <Collection schema="Health" table="Eligibility" column="CobraLid" collectionType="actual" />
+        <Collection schema="Health" table="Visits" column="VisitTypeLid" collectionType="actual" />
+        <Collection schema="Health" table="Visits" column="AdmissionTypeLid" collectionType="actual" />
         <Collection schema="Health" table="MedicalClaims" column="DischargeLid" collectionType="actual" />
         <Collection schema="Health" table="CareAlerts" column="CareAlertTypeLid" collectionType="actual" />
         <Collection schema="Health" table="QualityMetrics" column="QualityMetricTypeLid" collectionType="actual" />
@@ -1147,14 +1147,15 @@
         <Collection schema="Health" table="Visits" column="TenantId" collectionType="actual" />
         <Collection schema="dbo" table="CommunicationBlastTrackers" column="TenantId" collectionType="actual" />
         <Collection schema="dbo" table="CommunicationPieces" column="TenantId" collectionType="actual" />
+        <Collection schema="Health" table="InsurancePlans" column="TenantId" collectionType="actual" />
         <Collection schema="dbo" table="CommunicationPieceVisits" column="TenantId" collectionType="actual" />
-        <Collection schema="Health" table="Pharmacy" column="TenantId" collectionType="actual" />
         <Collection schema="dbo" table="Notes" column="TenantId" collectionType="actual" />
         <Collection schema="Health" table="MedicalClaims" column="TenantId" collectionType="actual" />
         <Collection schema="dbo" table="NoteTargets" column="TenantId" collectionType="actual" />
-        <Collection schema="Health" table="MedicalClaimDiagnoses" column="TenantId" collectionType="actual" />
-        <Collection schema="dbo" table="ReportMetaData" column="TenantId" collectionType="actual" />
+        <Collection schema="Health" table="Pharmacy" column="TenantId" collectionType="actual" />
         <Collection schema="Health" table="MedicalClaimLines" column="TenantId" collectionType="actual" />
+        <Collection schema="dbo" table="ReportMetaData" column="TenantId" collectionType="actual" />
+        <Collection schema="Health" table="MedicalClaimLineDiagnoses" column="TenantId" collectionType="actual" />
         <Collection schema="Health" table="CareAlerts" column="TenantId" collectionType="actual" />
         <Collection schema="Health" table="Members" column="TenantId" collectionType="actual" />
         <Collection schema="Health" table="QualityMetrics" column="TenantId" collectionType="actual" />
@@ -1167,6 +1168,16 @@
         <Collection schema="Health" table="Eligibility" column="TenantId" collectionType="actual" />
         <Collection schema="dbo" table="Contacts" column="TenantId" collectionType="actual" />
       </Collections>
+    </Table>
+    <Table schema="ETL" name="MemberMap" tableType="VIEW">
+      <Columns>
+        <Column name="TenantId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
+        <Column name="PersonContactId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
+        <Column name="MemberId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
+        <Column name="MemberNumber" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" isComputed="0" />
+        <Column name="CarrierNumber" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="50" isComputed="0" />
+        <Column name="ForeignId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="50" isComputed="0" />
+      </Columns>
     </Table>
     <Table schema="global" name="dbo_datasourcefetches" tableType="BASE TABLE">
       <Properties>
@@ -1422,14 +1433,35 @@
         <Column name="EligibilityDetails" position="23" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0" />
       </Columns>
     </Table>
-    <Table schema="Health" name="MedicalClaimDiagnoses" tableType="BASE TABLE">
+    <Table schema="Health" name="InsurancePlans" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+        <Property name="Implements" value="ITraffkTenanted" />
+      </Properties>
+      <Columns>
+        <Column name="InsurancePlanId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" isComputed="0" />
+        <Column name="InsurancePlanRowStatus" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')" isComputed="0">
+          <Properties>
+            <Property name="AccessModifier" value="missing" />
+            <Property name="ImplementsRowStatusSemantics" value="1" />
+          </Properties>
+        </Column>
+        <Column name="TenantId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="Tenants" />
+        <Column name="CreatedAtUtc" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())" isComputed="0" />
+        <Column name="InsuranceCarrierContactId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="Contacts" />
+        <Column name="InsurancePlanCode" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="100" isComputed="0" />
+        <Column name="InsurancePlanDescription" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0" />
+      </Columns>
+    </Table>
+    <Table schema="Health" name="MedicalClaimLineDiagnoses" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
         <Property name="GeneratePoco" value="1" />
         <Property name="Implements" value="ITraffkTenanted, IDontCreate" />
       </Properties>
       <Columns>
-        <Column name="MedicalClaimDiagnosisId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" isComputed="0" />
+        <Column name="MedicalClaimLineDiagnosisId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" isComputed="0" />
         <Column name="TenantId" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="Tenants" />
         <Column name="RowStatus" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')" isComputed="0">
           <Properties>
@@ -1437,10 +1469,10 @@
             <Property name="ImplementsRowStatusSemantics" value="1" />
           </Properties>
         </Column>
-        <Column name="MedicalClaimId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="Health" refTable="MedicalClaims" />
-        <Column name="Icd10Id" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0">
+        <Column name="MedicalClaimLineId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="Health" refTable="MedicalClaimLines" />
+        <Column name="DiagnosisMcid" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0">
           <Properties>
-            <Property name="LinksTo" value="InternationalClassificationDiseases.ICD10(Icd10Id)" />
+            <Property name="LinksTo" value="Map.MedicalCodes(MedicalCodeId)" />
           </Properties>
         </Column>
         <Column name="DiagnosisNumber" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
@@ -1470,51 +1502,51 @@
         </Column>
         <Column name="MedicalClaimLineNumber" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="25" isComputed="0" />
         <Column name="VisitId" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" refSchema="Health" refTable="Visits" />
-        <Column name="ProcedureType" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="10" isComputed="0" />
-        <Column name="ProcedureCode" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="10" isComputed="0" />
-        <Column name="ProcedureDescription" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" isComputed="0" />
-        <Column name="ProcedureHcpcsId" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0">
+        <Column name="ProcedureMcid" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0">
           <Properties>
-            <Property name="LinksTo" value="CmsGov.HealthcareCommonProcedureCodingSystemCodes(HcpcsId)" />
+            <Property name="LinksTo" value="Map.MedicalCodes(MedicalCodeId)" />
           </Properties>
         </Column>
-        <Column name="CptBetosId" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0">
+        <Column name="CptBetosId" position="10" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0">
           <Properties>
             <Property name="LinksTo" value="CmsGov.BerensonEggersTypeOfServices(BetosId)" />
           </Properties>
         </Column>
-        <Column name="HcpcsBetosId" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0">
+        <Column name="HcpcsBetosId" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0">
           <Properties>
             <Property name="LinksTo" value="CmsGov.BerensonEggersTypeOfServices(BetosId)" />
           </Properties>
         </Column>
-        <Column name="RevBetosId" position="15" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0">
+        <Column name="RevBetosId" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0">
           <Properties>
             <Property name="LinksTo" value="CmsGov.BerensonEggersTypeOfServices(BetosId)" />
           </Properties>
         </Column>
-        <Column name="DrgBetosId" position="16" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0">
+        <Column name="DrgBetosId" position="13" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0">
           <Properties>
             <Property name="LinksTo" value="CmsGov.BerensonEggersTypeOfServices(BetosId)" />
           </Properties>
         </Column>
-        <Column name="ServiceFromDdim" position="17" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" refSchema="dbo" refTable="DateDimensions" />
-        <Column name="ServiceToDdim" position="18" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" refSchema="dbo" refTable="DateDimensions" />
-        <Column name="PaidDdim" position="19" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" refSchema="dbo" refTable="DateDimensions" />
-        <Column name="AdjudicationDdim" position="20" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" refSchema="dbo" refTable="DateDimensions" />
-        <Column name="AllowedAmount" position="21" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" isComputed="0" />
-        <Column name="BilledAmount" position="22" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" isComputed="0" />
-        <Column name="CoordinationOfBenefitsAmount" position="23" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" isComputed="0" />
-        <Column name="CoinsuranceAmount" position="24" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" isComputed="0" />
-        <Column name="CopayAmount" position="25" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" isComputed="0" />
-        <Column name="CoverageChargeAmount" position="26" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" isComputed="0" />
-        <Column name="DeductibleAmount" position="27" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" isComputed="0" />
-        <Column name="NotCoveredAmount" position="28" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" isComputed="0" />
-        <Column name="PPOSavings" position="29" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" isComputed="0" />
-        <Column name="OtherSavingsGenerated" position="30" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" isComputed="0" />
-        <Column name="PaidAmount" position="31" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" isComputed="0" />
-        <Column name="MedicalClaimLineDetails" position="32" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0" />
+        <Column name="ServiceFromDdim" position="14" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" refSchema="dbo" refTable="DateDimensions" />
+        <Column name="ServiceToDdim" position="15" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" refSchema="dbo" refTable="DateDimensions" />
+        <Column name="PaidDdim" position="16" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" refSchema="dbo" refTable="DateDimensions" />
+        <Column name="AdjudicationDdim" position="17" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" refSchema="dbo" refTable="DateDimensions" />
+        <Column name="AllowedAmount" position="18" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" isComputed="0" />
+        <Column name="BilledAmount" position="19" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" isComputed="0" />
+        <Column name="CoordinationOfBenefitsAmount" position="20" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" isComputed="0" />
+        <Column name="CoinsuranceAmount" position="21" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" isComputed="0" />
+        <Column name="CopayAmount" position="22" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" isComputed="0" />
+        <Column name="CoverageChargeAmount" position="23" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" isComputed="0" />
+        <Column name="DeductibleAmount" position="24" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" isComputed="0" />
+        <Column name="NotCoveredAmount" position="25" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" isComputed="0" />
+        <Column name="PPOSavings" position="26" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" isComputed="0" />
+        <Column name="OtherSavingsGenerated" position="27" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" isComputed="0" />
+        <Column name="PaidAmount" position="28" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="money" isComputed="0" />
+        <Column name="MedicalClaimLineDetails" position="29" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0" />
       </Columns>
+      <Collections>
+        <Collection schema="Health" table="MedicalClaimLineDiagnoses" column="MedicalClaimLineId" collectionType="actual" />
+      </Collections>
     </Table>
     <Table schema="Health" name="MedicalClaims" tableType="BASE TABLE">
       <Properties>
@@ -1545,7 +1577,6 @@
         <Column name="ServiceToDdim" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" refSchema="dbo" refTable="DateDimensions" />
       </Columns>
       <Collections>
-        <Collection schema="Health" table="MedicalClaimDiagnoses" column="MedicalClaimId" collectionType="actual" />
         <Collection schema="Health" table="MedicalClaimLines" column="MedicalClaimId" collectionType="actual" />
       </Collections>
     </Table>
@@ -1584,8 +1615,8 @@
       <Collections>
         <Collection schema="Health" table="MillimanScores" column="MemberId" collectionType="actual" />
         <Collection schema="Health" table="Visits" column="MemberId" collectionType="actual" />
-        <Collection schema="Health" table="Pharmacy" column="MemberId" collectionType="actual" />
         <Collection schema="Health" table="MedicalClaims" column="MemberId" collectionType="actual" />
+        <Collection schema="Health" table="Pharmacy" column="MemberId" collectionType="actual" />
         <Collection schema="Health" table="MedicalClaimLines" column="MemberId" collectionType="actual" />
         <Collection schema="Health" table="Participation" column="MemberId" collectionType="actual" />
         <Collection schema="Health" table="Eligibility" column="MemberId" collectionType="actual" />
@@ -1683,11 +1714,7 @@
         </Column>
         <Column name="PrescriberProviderContactId" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="Contacts" />
         <Column name="TransactionNumber" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80" isComputed="0" />
-        <Column name="NationalDrugCodePackageId" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0">
-          <Properties>
-            <Property name="LinksTo" value="NationalDrugCode.Packages(PackageId)" />
-          </Properties>
-        </Column>
+        <Column name="NationalDrugCodePackageMcid" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" />
         <Column name="PrescriptionWrittenDdim" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="DateDimensions">
           <Properties>
             <Property name="MS_Description" value="date prescription was written" />
@@ -1802,13 +1829,12 @@
             <Property name="MS_Description" value="Member ID to display on the application, as sent by client" />
           </Properties>
         </Column>
-        <Column name="ForeignId" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="50" isComputed="0" />
-        <Column name="VisitType" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="50" isComputed="0" />
-        <Column name="VisitStartDdim" position="9" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="DateDimensions" />
-        <Column name="VisitEndDdim" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="DateDimensions" />
-        <Column name="InpatientDays" position="11" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
-        <Column name="AdmissionType" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="55" isComputed="0" />
-        <Column name="AdmissionFromEmergencyRoom" position="13" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" isComputed="0" />
+        <Column name="VisitStartDdim" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="DateDimensions" />
+        <Column name="VisitEndDdim" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="DateDimensions" />
+        <Column name="InpatientDays" position="9" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" />
+        <Column name="AdmissionFromEmergencyRoom" position="10" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" isComputed="0" />
+        <Column name="VisitTypeLid" position="11" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" refSchema="dbo" refTable="Lookups" />
+        <Column name="AdmissionTypeLid" position="12" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" refSchema="dbo" refTable="Lookups" />
       </Columns>
       <Collections>
         <Collection schema="Health" table="MedicalClaimLines" column="VisitId" collectionType="actual" />
@@ -1829,9 +1855,6 @@
         <Column name="DiagnosisCode" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="16" isComputed="0" />
         <Column name="DiagnosisDescription" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="255" isComputed="0" />
       </Columns>
-      <Collections>
-        <Collection schema="Health" table="MedicalClaimDiagnoses" column="Icd10Id" collectionType="virtual" />
-      </Collections>
     </Table>
     <Table schema="ISO3166" name="Countries" tableType="BASE TABLE">
       <Properties>
@@ -1889,6 +1912,27 @@
         </Column>
       </Columns>
     </Table>
+    <Table schema="Map" name="MedicalCodes" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+      </Properties>
+      <Columns>
+        <Column name="MedicalCodeId" position="1" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0">
+          <Properties>
+            <Property name="CustomAttribute" value="Key" />
+          </Properties>
+        </Column>
+        <Column name="Scheme" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="80" isComputed="0" />
+        <Column name="Code" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="nvarchar" maxLen="100" isComputed="0" />
+        <Column name="Title" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="255" isComputed="0" />
+        <Column name="IsMapped" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="bit" isComputed="0" />
+      </Columns>
+      <Collections>
+        <Collection schema="Health" table="MedicalClaimLines" column="ProcedureMcid" collectionType="virtual" />
+        <Collection schema="Health" table="MedicalClaimLineDiagnoses" column="DiagnosisMcid" collectionType="virtual" />
+      </Collections>
+    </Table>
     <Table schema="NationalDrugCode" name="Labelers" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
@@ -1939,9 +1983,6 @@
         </Column>
         <Column name="CmsCode" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="8000" isComputed="0" />
       </Columns>
-      <Collections>
-        <Collection schema="Health" table="Pharmacy" column="NationalDrugCodePackageId" collectionType="virtual" />
-      </Collections>
     </Table>
     <Table schema="NationalDrugCode" name="Products" tableType="BASE TABLE">
       <Properties>
