@@ -10,6 +10,7 @@ namespace Traffk.Bal.BackgroundJobs
         {
             public static string ReportDownload = "Report Download";
             public static string ScheduledReportDownload = "Scheduled Report Download";
+            public static string CreateTableauPdf = "Create PDF Report";
         }
 
         public string Method { get; set; }
@@ -25,6 +26,8 @@ namespace Traffk.Bal.BackgroundJobs
                         return JobDescriptions.ReportDownload;
                     case nameof(ITenantJobs.ScheduleTableauPdfDownload):
                         return JobDescriptions.ScheduledReportDownload;
+                    case nameof(ITenantJobs.CreateTableauPdf):
+                        return JobDescriptions.CreateTableauPdf;
                 }
 
                 return Method;

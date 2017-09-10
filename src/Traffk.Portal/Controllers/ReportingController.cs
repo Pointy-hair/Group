@@ -203,7 +203,7 @@ namespace Traffk.Portal.Controllers
             var currentUserContactId = Current.User.ContactId;
             var items = Rdb.Job.Where(j => j.TenantId == TenantId 
                 && j.ContactId == currentUserContactId
-                && j.HangfireJobDetails.Method.Contains("Download",true));
+                && j.HangfireJobDetails.Method == nameof(ITenantJobs.DownloadTableauPdfContinuationJobAsync));
 
             items = ApplyBrowse(items, sortCol ?? nameof(Job.CreatedAt),
                 sortDir ?? AspHelpers.SortDirDescending, page, pageSize);

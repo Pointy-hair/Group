@@ -13,6 +13,7 @@ using System.Linq;
 using System.ComponentModel;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Routing;
 
 namespace TraffkPortal
 {
@@ -210,18 +211,39 @@ namespace TraffkPortal
             var colName = columnExpression.GetFullyQualifiedName();
             var displayName = overrideDisplayName ?? hh.FriendlyNameFor(columnExpression);
 
+            var routeValues = new RouteValueDictionary();
+            foreach (string key in hh.ViewContext.HttpContext.Request.Query.Keys)
+            {
+                if (key == null) continue;
+                var val = hh.ViewContext.HttpContext.Request.Query[key];
+                if (val.Count != 0)
+                {
+                    routeValues[key] = val;
+                }
+            }
+            routeValues["sortCol"] = colName;
             if (colName == currentSortColName)
             {
-                var tb = hh.ActionLink(
+                routeValues["sortDir"] = IsSortDirAscending(currentSortDir) ? SortDirDescending : SortDirAscending;
+                var h = hh.ActionLink(
                     displayName,
                     actionName,
-                    new { sortCol = colName, sortDir = IsSortDirAscending(currentSortDir) ? SortDirDescending : SortDirAscending }) as TagBuilder;
-                tb.InnerHtml.AppendHtml(currentSortDir == SortDirAscending ? "<span class='caret-up'></span>" : "<span class='caret-down'></span>");
-                return tb;
+                    routeValues);
+
+                var htmlList = new List<object> {h};
+                var builder = new HtmlContentBuilder(htmlList);
+                if (currentSortDir != null)
+                {
+                    var html = builder.AppendHtml(currentSortDir == SortDirAscending ? " <span class='dropup'><span class='caret'></span></span>" : " <span class='caret'></span>");
+                    return html;
+                }
+
+                return builder;
             }
             else
             {
-                return hh.ActionLink(displayName, actionName, new { sortCol = colName, sortDir = SortDirAscending });
+                routeValues["sortDir"] = SortDirAscending;
+                return hh.ActionLink(displayName, actionName, routeValues);
             }
         }
 

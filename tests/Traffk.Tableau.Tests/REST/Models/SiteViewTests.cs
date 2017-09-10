@@ -14,7 +14,7 @@ namespace Traffk.Tableau.Tests.REST.Models
             [TestMethod]
             public void WhenGivenXmlNodeReturnWorkbookName()
             {
-                XDocument testXDocument = XDocument.Load("../netcoreapp1.1/REST/Models/TestViewResponse.xml");
+                XDocument testXDocument = XDocument.Load("../netcoreapp2.0/REST/Models/TestViewResponse.xml");
 
                 var nsManager = XmlHelper.CreateTableauXmlNamespaceManager("iwsOnline", "http://tableau.com/api");
                 var ns = nsManager.LookupNamespace("iwsOnline");
@@ -27,7 +27,7 @@ namespace Traffk.Tableau.Tests.REST.Models
             [TestMethod]
             public void WhenGivenXmlNodeReturnViewName()
             {
-                XDocument testXDocument = XDocument.Load("../netcoreapp1.1/REST/Models/TestViewResponse.xml");
+                XDocument testXDocument = XDocument.Load("../netcoreapp2.0/REST/Models/TestViewResponse.xml");
 
                 var nsManager = XmlHelper.CreateTableauXmlNamespaceManager("iwsOnline", "http://tableau.com/api");
                 var ns = nsManager.LookupNamespace("iwsOnline");
