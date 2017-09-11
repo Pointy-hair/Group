@@ -17,6 +17,9 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Traffk.Bal\Traffk.Bal.csproj" />
+    <ProjectReference Include="..\..\src\Traffk.Orchestra\Traffk.Orchestra.csproj" />
+    <ProjectReference Include="..\..\src\Traffk.Tableau\Traffk.Tableau.csproj" />
     <ProjectReference Include="..\..\src\Traffk.Portal\Traffk.Portal.csproj" />
   </ItemGroup>
 
