@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using RevolutionaryStuff.Core;
@@ -26,6 +27,8 @@ namespace TraffkPortal.Services.TenantServices
             public const string ConfigSectionName = "TenantServiceFinderConfig";
             public string Hostname { get; set; }
             public string DefaultTenantFinderHostPattern { get; set; }
+            public string UniversalLoginHostPath { get; set; }
+            public int UniversalLoginTenantId { get; set; }
             public Config()
             {
 
@@ -64,12 +67,27 @@ namespace TraffkPortal.Services.TenantServices
         public TenantFinderService(IOptions<Config> configOptions, ICacher cacher, TraffkTenantShardsDbContext db, IHttpContextAccessor acc)
         {
             var config = configOptions.Value;
-            PreferredHostname = ActualHostname = StringHelpers.Coalesce(config?.Hostname, acc.HttpContext?.Request?.Host.Host);
+            AppHostItem z = null;
+            PreferredHostname = ActualHostname = acc.HttpContext?.Request.Host.Host;
+            
+            var defaultUniversalLoginPattern = config.UniversalLoginHostPath;
+            if (StringHelpers.IsSameIgnoreCase(defaultUniversalLoginPattern, acc.HttpContext?.Request?.Path.Value))
+            {
+                var matchedTenant = db.TenantFindByTenantId(config.UniversalLoginTenantId).ExecuteSynchronously().FirstOrDefault();
+
+                if (matchedTenant == null) throw new TenantFinderServiceException(TenantServiceExceptionCodes.TenantNotFound, $"host=[{ActualHostname}]");
+
+                z = new AppHostItem
+                {
+                    TenantId = matchedTenant.TenantId,
+                    PreferredHostname = ActualHostname,
+                    HostDatabaseName = matchedTenant.HostDatabaseName
+                };
+            }
+            
             var defaultTenantFinderHostPattern = config.DefaultTenantFinderHostPattern;
             var defaultHostNamePattern = defaultTenantFinderHostPattern.Replace(@"{0}", @"([^\.]*)");
             var defaultHostNameRegexPattern = new Regex(defaultHostNamePattern, RegexOptions.Compiled);
-
-            AppHostItem z = null;
 
             if (defaultHostNameRegexPattern.IsMatch(ActualHostname))
             {
