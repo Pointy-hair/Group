@@ -13,6 +13,10 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='VSTS-CI|AnyCPU'" />
 
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0'">
+    <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
+  </PropertyGroup>
+  
   <ItemGroup>
     <Compile Remove="UIAlert.cs" />
   </ItemGroup>
