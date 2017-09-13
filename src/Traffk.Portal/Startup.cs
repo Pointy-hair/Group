@@ -162,15 +162,11 @@ namespace TraffkPortal
             services.AddDbContext<TraffkGlobalDbContext>(options =>
                 options.UseSqlServer(Configuration.GetSection(connectionStringKey)[TraffkGlobalDbContext.DefaultDatabaseConnectionStringName]), ServiceLifetime.Scoped);
 
-            //TODO: .NET2 cleanup
-            /*
-            services.Configure<IdentityOptions>(options => 
+            services.AddAuthentication().AddCookie("TraffkAuth", o =>
             {
-                //options.Cookies.ApplicationCookie.LoginPath = new PathString("/UniversalLogin");
-                options.Cookies.ApplicationCookie.SlidingExpiration = true;
-                options.Cookies.ApplicationCookie.ExpireTimeSpan = TimeSpan.FromSeconds(IdleLogout.TotalSeconds*2); //due to sliding expiration, things can be cut in half...
+                o.ExpireTimeSpan = TimeSpan.FromSeconds(IdleLogout.TotalSeconds * 2); //due to sliding expiration, things can be cut in half...
+                o.SlidingExpiration = true;
             });
-            */
 
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<TraffkTenantModelDbContext>()
