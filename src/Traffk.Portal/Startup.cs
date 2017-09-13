@@ -263,6 +263,33 @@ namespace TraffkPortal
                     return api.ControllerAttributes().FirstOrDefault(a => a.GetType() == typeof(ApiControllerDisplayNameAttribute)).ToString();
                 });
             });
+
+            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("TokenProviderOptions:SecretKey").Value));
+
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                RequireExpirationTime = true,
+                RequireSignedTokens = true,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = signingKey,
+                ValidateIssuer = true,
+                ValidIssuer = Configuration.GetSection("TokenProviderOptions:Issuer").Value,
+                ValidateAudience = true,
+                ValidAudience = Configuration.GetSection("TokenProviderOptions:Audience").Value,
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero
+            };
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.Audience = Configuration.GetSection("TokenProviderOptions:Audience").Value;
+                options.ClaimsIssuer = Configuration.GetSection("TokenProviderOptions:Issuer").Value;
+                options.TokenValidationParameters = tokenValidationParameters;
+                options.SaveToken = true;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -289,7 +316,10 @@ namespace TraffkPortal
 
             app.UseStaticFiles();
 
-            app.UseIdentity();
+            //Obsolete in .NET Core 2.0
+            //app.UseIdentity();
+
+            app.UseAuthentication();
 
             if (RequireHttps)
             {
@@ -300,9 +330,7 @@ namespace TraffkPortal
             
             UserEnricher.Initialize(app.ApplicationServices);
 
-            ConfigureAuth(app);
-
-            //Needs to be after app.UseIdentity()
+            //Needs to be after app.Authentication()
             app.UseMiddleware<TokenAuthenticationMiddleware>();
             app.UseCorrelationId();
 
@@ -321,37 +349,6 @@ namespace TraffkPortal
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Traffk");
             });
-        }
-
-        private void ConfigureAuth(IApplicationBuilder app)
-        {
-            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("TokenProviderOptions:SecretKey").Value));
-
-            var tokenValidationParameters = new TokenValidationParameters
-            {
-                RequireExpirationTime = true,
-                RequireSignedTokens = true,
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = signingKey,
-                ValidateIssuer = true,
-                ValidIssuer = Configuration.GetSection("TokenProviderOptions:Issuer").Value,
-                ValidateAudience = true,
-                ValidAudience = Configuration.GetSection("TokenProviderOptions:Audience").Value,
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.Zero
-            };
-
-            //TODO: .NET2 cleanup
-            /*
-            app.UseJwtBearerAuthentication(new JwtBearerOptions
-            {
-                Audience = Configuration.GetSection("TokenProviderOptions:Audience").Value,
-                ClaimsIssuer = Configuration.GetSection("TokenProviderOptions:Issuer").Value,
-                AutomaticAuthenticate = true,
-                TokenValidationParameters = tokenValidationParameters,
-                SaveToken = true
-            });
-            */
         }
     }
 }

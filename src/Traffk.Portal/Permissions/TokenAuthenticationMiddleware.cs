@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication;
 using RevolutionaryStuff.Core;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -19,9 +20,7 @@ namespace Traffk.Portal.Permissions
 
         public async Task Invoke(HttpContext context, ITraffkTenantFinder traffkTenantFinder)
         {
-            //TODO: .NET2 cleanup
-/*
-            var authenticateInfo = await context.Authentication.GetAuthenticateInfoAsync("Bearer");
+            var authenticateInfo = await context.AuthenticateAsync("Bearer");
             var bearerTokenIdentity = authenticateInfo?.Principal;
 
             if (bearerTokenIdentity != null)
@@ -32,6 +31,7 @@ namespace Traffk.Portal.Permissions
 
                 if (tenantIdInToken == currentTenantId)
                 {
+                    context.User = bearerTokenIdentity;
                     await Next(context);
                     return;
                 }
@@ -39,7 +39,7 @@ namespace Traffk.Portal.Permissions
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 return;
             }
-*/
+
             //No bearer token in use, move on
             await Next(context);
         }

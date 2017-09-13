@@ -7,7 +7,6 @@ using RevolutionaryStuff.Core;
 using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -116,7 +115,10 @@ namespace Traffk.Portal.Controllers.Api
                 var tenantIdClaim = new Claim(JwtRegisteredClaimNames.Sub, tenantId.ToString());
                 var claims = claimsPrincipal.Claims.ToList();
                 claims.Add(tenantIdClaim);
+                var claimsIdentity = new ClaimsIdentity(claims);
 
+                HttpContext.User.AddIdentity(claimsIdentity);
+                            
                 //Must sign out
                 await SignInManager.SignOutAsync();
 
