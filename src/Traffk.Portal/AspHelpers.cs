@@ -234,7 +234,7 @@ namespace TraffkPortal
                 var builder = new HtmlContentBuilder(htmlList);
                 if (currentSortDir != null)
                 {
-                    var html = builder.AppendHtml(currentSortDir == SortDirAscending ? " <span class='dropup'><span class='caret'></span></span>" : " <span class='caret'></span>");
+                    var html = builder.AppendHtml(currentSortDir == SortDirAscending ? " <span class='caret'></span>" : " <span class='dropup'><span class='caret'></span></span>" );
                     return html;
                 }
 
