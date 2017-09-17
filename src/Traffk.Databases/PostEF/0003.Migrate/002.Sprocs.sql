@@ -104,7 +104,7 @@ create view migrate.MemberMap
 AS
 select distinct m.TenantId, m.PersonContactId, m.MemberId, m.MemberNumber, cCarriers.CarrierId, cPeople.ForeignId
 from 
-	health.members m (nolock)
+	dbo.Members m (nolock)
 		inner join
 	contacts cCarriers (nolock)
 		on cCarriers.ContactId=m.CarrierContactId
