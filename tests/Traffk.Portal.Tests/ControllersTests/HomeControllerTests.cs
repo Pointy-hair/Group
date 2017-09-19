@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Net;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RevolutionaryStuff.Core;
 
 namespace Traffk.Portal.Tests.ControllersTests
 {
@@ -9,13 +11,25 @@ namespace Traffk.Portal.Tests.ControllersTests
         public class IndexMethodTests
         {
             [TestMethod]
-            public void WhenGivenIndexReturnNotNull()
+            public void WhenGoingToIndexRedirectToLogin()
             {
-                var testString = "NOT NULL";
-                Assert.IsNotNull(testString);
+                var testClient = MockEnvironment.TestClient;
+
+                var response = testClient.GetAsync("/").ExecuteSynchronously();
+
+                Assert.IsTrue(response.StatusCode == HttpStatusCode.Found);
+                Assert.IsTrue(response.Headers.Location.AbsolutePath == "/Account/Login");
             }
 
+            [TestMethod]
+            public void WhenGoingToPrivacyPolicyAndTermsAllowAnonymousUser()
+            {
+                var testClient = MockEnvironment.TestClient;
 
+                var response = testClient.GetAsync("/Terms").ExecuteSynchronously();
+
+
+            }
         }
     }
 }

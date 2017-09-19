@@ -71,7 +71,7 @@ namespace TraffkPortal.Controllers
 
         [ActionName(ActionNames.PrivacyPolicy)]
         [AllowAnonymous]
-        [Route("PrivacyPolicy")]
+        [Route(ActionNames.PrivacyPolicy)]
         public IActionResult PrivacyPolicy()
         {
             return View();

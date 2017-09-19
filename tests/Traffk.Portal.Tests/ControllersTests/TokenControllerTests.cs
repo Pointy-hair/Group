@@ -18,7 +18,7 @@ namespace Traffk.Portal.Tests.ControllersTests
 
         public TokenControllerTests()
         {
-            TestClient = MockEnvironment.TestClient;
+            TestClient = MockEnvironment.TestClientWithBearerToken;
         }
 
         [TestClass]

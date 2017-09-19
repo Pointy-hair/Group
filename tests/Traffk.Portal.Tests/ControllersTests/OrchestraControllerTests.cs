@@ -18,7 +18,7 @@ namespace Traffk.Portal.Tests.ControllersTests
 
         public OrchestraControllerTests()
         {
-            TestClient = MockEnvironment.TestClient;
+            TestClient = MockEnvironment.TestClientWithBearerToken;
         }
 
         [TestClass]
@@ -28,7 +28,7 @@ namespace Traffk.Portal.Tests.ControllersTests
             [TestMethod]
             public void WhenGivenUserWithPermissionGetPlans()
             {
-                var testClient = MockEnvironment.TestClient;
+                var testClient = MockEnvironment.TestClientWithBearerToken;
 
                 var getPlanResponse = testClient.GetAsync("/api/v1/Plans").ExecuteSynchronously();
                 var json = getPlanResponse.Content.ReadAsStringAsync().ExecuteSynchronously();
@@ -39,9 +39,8 @@ namespace Traffk.Portal.Tests.ControllersTests
                 Assert.IsTrue(plans.FirstOrDefault().Name == "Test Plan");
             }
 
-            [Ignore]
             [TestMethod]
-            public void WhenGivenUserWithNoPermissionReturn403()
+            public void WhenGivenUserWithNoApiPermissionRedirectToLogin()
             {
                 var accessToken = MockEnvironment.GetBearerToken(TestClient, @"dalfonso@outlook.com", "");
 
@@ -49,7 +48,7 @@ namespace Traffk.Portal.Tests.ControllersTests
 
                 var getPlanResponse = TestClient.GetAsync("/api/v1/Plans").ExecuteSynchronously();
 
-                Assert.IsTrue(getPlanResponse.StatusCode == HttpStatusCode.Forbidden);
+                Assert.IsTrue(getPlanResponse.Headers.Location.AbsolutePath == "/Account/Login");
 
                 var json = getPlanResponse.Content.ReadAsStringAsync().ExecuteSynchronously();
                 var plans = JsonConvert.DeserializeObject<ICollection<OrchestraController.Plan>>(json);
@@ -60,7 +59,7 @@ namespace Traffk.Portal.Tests.ControllersTests
             [TestMethod]
             public void WhenGivenDrugAlternativeQueryReturnValidResponse()
             {
-                var testClient = MockEnvironment.TestClient;
+                var testClient = MockEnvironment.TestClientWithBearerToken;
 
                 var response = testClient.GetAsync("api/v1/Drugs/59746017710/Alternative/30/30").ExecuteSynchronously();
                 var json = response.Content.ReadAsStringAsync().ExecuteSynchronously();
