@@ -25,7 +25,7 @@ exec db.TablePropertySet  'InsurancePlans', 'ITraffkTenanted', @propertyName='Im
 
 GO
 
-create table health.Members
+create table dbo.Members
 (
 	MemberId int not null identity primary key,
 	RowStatus dbo.RowStatus not null default '1',
@@ -40,7 +40,7 @@ create table health.Members
 
 GO
 
-create unique index ux_member on health.members(MemberNumber, CarrierContactId, TenantId) where RowStatus='1'
+create unique index ux_member on dbo.Members(MemberNumber, CarrierContactId, TenantId) where RowStatus='1'
 
 GO
 
@@ -56,7 +56,7 @@ create view health.MemberMap
 as
 select distinct m.TenantId, m.PersonContactId, m.MemberId, m.MemberNumber, cCarriers.CarrierNumber, cPeople.ForeignId
 from 
-	health.members m (nolock)
+	dbo.Members m (nolock)
 		inner join
 	contacts cCarriers (nolock)
 		on cCarriers.ContactId=m.CarrierContactId
@@ -73,7 +73,7 @@ create table health.Eligibility
 	CreatedAtUtc datetime not null default(GetUtcDate()), 
 	TenantId int not null references Tenants(TenantId), 
 	ContactId int  null references Contacts(ContactId),
-	MemberId int not null references health.Members(MemberId),
+	MemberId int not null references dbo.Members(MemberId),
 	MemberAddressId int references Addresses(AddressId),
 	MedicalEffDdim int null references DateDimensions(DateDimensionId),
 	MedicalTermDdim int null references DateDimensions(DateDimensionId),
@@ -128,7 +128,7 @@ CREATE TABLE health.MillimanScores
 	CreatedAtUtc datetime not null default(GetUtcDate()), 
 	TenantId int not null references Tenants(TenantId), 
 	ContactId int  null references Contacts(ContactId),
-	MemberId int not null references health.Members(MemberId),
+	MemberId int not null references dbo.Members(MemberId),
 	ScorePeriodStartDdim int NULL references DateDimensions(DateDimensionId),
 	ScorePeriodEndDdim int not null references DateDimensions(DateDimensionId),
 	ScoreType varchar(50) NULL,
@@ -169,7 +169,7 @@ CREATE TABLE Health.Visits
 	CreatedAtUtc datetime not null default(GetUtcDate()), 
 	TenantId int not null references Tenants(TenantId), 
 	ContactId int  null references Contacts(ContactId),
-	MemberId int not null references health.Members(MemberId),
+	MemberId int not null references dbo.Members(MemberId),
 	ForeignId dbo.ForeignIdType,
 	VisitTypeLid int null references Lookups(LookupId),
 	VisitStartDdim int not null references DateDimensions(DateDimensionId),
@@ -197,7 +197,7 @@ create table health.Pharmacy
 	CreatedAtUtc datetime not null default(GetUtcDate()), 
 	TenantId int not null references Tenants(TenantId), 
 	ContactId int not null references Contacts(ContactId),
-	MemberId int not null references health.Members(MemberId),
+	MemberId int not null references dbo.Members(MemberId),
 	PrescriberProviderContactId int not null references Contacts(ContactId),
 	TransactionNumber varchar(80) not null,
 	NationalDrugCodePackageMcid int null,-- references Map.MedicalCodes(MedicalCodeId),
@@ -256,7 +256,7 @@ create table Health.MedicalClaims
 	CreatedAtUtc datetime not null default(GetUtcDate()), 
 	TenantId int not null references Tenants(TenantId), 
 	ContactId int  null references Contacts(ContactId),
-	MemberId int not null references health.Members(MemberId),
+	MemberId int not null references dbo.Members(MemberId),
 	MedicalClaimNumber varchar(50) not null,
 	DischargeLid int null references Lookups(LookupId),
 	LineItemsCount int not null,
@@ -286,7 +286,7 @@ create table Health.MedicalClaimLines
 	TenantId int not null references Tenants(TenantId), 
 	RowStatus dbo.RowStatus not null default '1',
 	ContactId int  null references Contacts(ContactId),
-	MemberId int not null references health.Members(MemberId),
+	MemberId int not null references dbo.Members(MemberId),
 	MedicalClaimLineNumber varchar(25) not null,
 	VisitId int null references health.visits(visitid),
 	ProcedureMcid int null,-- references Map.MedicalCodes(MedicalCodeId),
@@ -405,7 +405,7 @@ create table Health.Participation
 	RowStatus dbo.RowStatus not null default '1',
 	TenantId int not null references Tenants(TenantId), 
 	ContactId int  null references Contacts(ContactId),
-	MemberId int not null references health.Members(MemberId),
+	MemberId int not null references dbo.Members(MemberId),
 	ProgramTypeCode varchar(50) not null,
 	ProgramStatus varchar(20) null,
 	ProgramCodeLid int null references Lookups(LookupId),
@@ -431,7 +431,7 @@ create table Health.PrimaryCareProviders
 	RowStatus dbo.RowStatus not null default '1',
 	TenantId int not null references Tenants(TenantId), 
 	ContactId int not null references Contacts(ContactId),
-	MemberId int not null references health.Members(MemberId),
+	MemberId int not null references dbo.Members(MemberId),
 	ProviderContactId int not null references Contacts(ContactId),
 	StartDdim int null references DateDimensions(DateDimensionId),
 	EndDdim int null references DateDimensions(DateDimensionId)

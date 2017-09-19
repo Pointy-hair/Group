@@ -776,9 +776,9 @@
         <Collection schema="Health" table="Pharmacy" column="PrescriberProviderContactId" collectionType="actual" />
         <Collection schema="Health" table="MedicalClaimLines" column="ContactId" collectionType="actual" />
         <Collection schema="Health" table="CareAlerts" column="ContactId" collectionType="actual" />
-        <Collection schema="Health" table="Members" column="PersonContactId" collectionType="actual" />
+        <Collection schema="dbo" table="Members" column="PersonContactId" collectionType="actual" />
         <Collection schema="Health" table="QualityMetrics" column="ContactId" collectionType="actual" />
-        <Collection schema="Health" table="Members" column="CarrierContactId" collectionType="actual" />
+        <Collection schema="dbo" table="Members" column="CarrierContactId" collectionType="actual" />
         <Collection schema="Health" table="Participation" column="ContactId" collectionType="actual" />
         <Collection schema="Health" table="Eligibility" column="ContactId" collectionType="actual" />
       </Collections>
@@ -942,8 +942,8 @@
         <Collection schema="Health" table="MedicalClaimLines" column="ServiceFromDdim" collectionType="actual" />
         <Collection schema="Health" table="MedicalClaimLines" column="ServiceToDdim" collectionType="actual" />
         <Collection schema="Health" table="MedicalClaimLines" column="PaidDdim" collectionType="actual" />
-        <Collection schema="Health" table="MedicalClaimLines" column="AdjudicationDdim" collectionType="actual" />
         <Collection schema="Health" table="CareAlerts" column="CareAlertDdim" collectionType="actual" />
+        <Collection schema="Health" table="MedicalClaimLines" column="AdjudicationDdim" collectionType="actual" />
         <Collection schema="Health" table="QualityMetrics" column="MeasureFromDdim" collectionType="actual" />
         <Collection schema="Health" table="QualityMetrics" column="MeasureToDdim" collectionType="actual" />
         <Collection schema="Health" table="Participation" column="ProgramStartDdim" collectionType="actual" />
@@ -984,6 +984,38 @@
         <Collection schema="Health" table="CareAlerts" column="CareAlertTypeLid" collectionType="actual" />
         <Collection schema="Health" table="QualityMetrics" column="QualityMetricTypeLid" collectionType="actual" />
         <Collection schema="Health" table="Participation" column="ProgramCodeLid" collectionType="actual" />
+      </Collections>
+    </Table>
+    <Table schema="dbo" name="Members" tableType="BASE TABLE">
+      <Properties>
+        <Property name="AddToDbContext" value="1" />
+        <Property name="GeneratePoco" value="1" />
+        <Property name="Implements" value="ITraffkTenanted, IDontCreate" />
+      </Properties>
+      <Columns>
+        <Column name="MemberId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" isComputed="0" />
+        <Column name="RowStatus" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')" isComputed="0">
+          <Properties>
+            <Property name="AccessModifier" value="missing" />
+            <Property name="ImplementsRowStatusSemantics" value="1" />
+          </Properties>
+        </Column>
+        <Column name="TenantId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="Tenants" />
+        <Column name="CreatedAtUtc" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())" isComputed="0" />
+        <Column name="PersonContactId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="Contacts" />
+        <Column name="CarrierContactId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="Contacts" />
+        <Column name="MemberNumber" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" isComputed="0" />
+        <Column name="MemberRelationshipFamilyNumber" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" isComputed="0" />
+        <Column name="MemberDetails" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0" />
+      </Columns>
+      <Collections>
+        <Collection schema="Health" table="MillimanScores" column="MemberId" collectionType="actual" />
+        <Collection schema="Health" table="Visits" column="MemberId" collectionType="actual" />
+        <Collection schema="Health" table="MedicalClaims" column="MemberId" collectionType="actual" />
+        <Collection schema="Health" table="Pharmacy" column="MemberId" collectionType="actual" />
+        <Collection schema="Health" table="MedicalClaimLines" column="MemberId" collectionType="actual" />
+        <Collection schema="Health" table="Participation" column="MemberId" collectionType="actual" />
+        <Collection schema="Health" table="Eligibility" column="MemberId" collectionType="actual" />
       </Collections>
     </Table>
     <Table schema="dbo" name="Notes" tableType="BASE TABLE">
@@ -1147,17 +1179,17 @@
         <Collection schema="Health" table="Visits" column="TenantId" collectionType="actual" />
         <Collection schema="dbo" table="CommunicationBlastTrackers" column="TenantId" collectionType="actual" />
         <Collection schema="dbo" table="CommunicationPieces" column="TenantId" collectionType="actual" />
-        <Collection schema="Health" table="InsurancePlans" column="TenantId" collectionType="actual" />
         <Collection schema="dbo" table="CommunicationPieceVisits" column="TenantId" collectionType="actual" />
+        <Collection schema="Health" table="InsurancePlans" column="TenantId" collectionType="actual" />
         <Collection schema="dbo" table="Notes" column="TenantId" collectionType="actual" />
         <Collection schema="Health" table="MedicalClaims" column="TenantId" collectionType="actual" />
         <Collection schema="dbo" table="NoteTargets" column="TenantId" collectionType="actual" />
         <Collection schema="Health" table="Pharmacy" column="TenantId" collectionType="actual" />
-        <Collection schema="Health" table="MedicalClaimLines" column="TenantId" collectionType="actual" />
         <Collection schema="dbo" table="ReportMetaData" column="TenantId" collectionType="actual" />
-        <Collection schema="Health" table="MedicalClaimLineDiagnoses" column="TenantId" collectionType="actual" />
+        <Collection schema="Health" table="MedicalClaimLines" column="TenantId" collectionType="actual" />
         <Collection schema="Health" table="CareAlerts" column="TenantId" collectionType="actual" />
-        <Collection schema="Health" table="Members" column="TenantId" collectionType="actual" />
+        <Collection schema="dbo" table="Members" column="TenantId" collectionType="actual" />
+        <Collection schema="Health" table="MedicalClaimLineDiagnoses" column="TenantId" collectionType="actual" />
         <Collection schema="Health" table="QualityMetrics" column="TenantId" collectionType="actual" />
         <Collection schema="Health" table="Participation" column="TenantId" collectionType="actual" />
         <Collection schema="dbo" table="Tenants" column="ParentTenantId" collectionType="actual" />
@@ -1352,7 +1384,7 @@
         <Column name="CreatedAtUtc" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())" isComputed="0" />
         <Column name="TenantId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="Tenants" />
         <Column name="ContactId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" refSchema="dbo" refTable="Contacts" />
-        <Column name="MemberId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="Health" refTable="Members">
+        <Column name="MemberId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="Members">
           <Properties>
             <Property name="MS_Description" value="Member ID to display on the application, as sent by client" />
           </Properties>
@@ -1452,6 +1484,7 @@
         <Column name="InsuranceCarrierContactId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="Contacts" />
         <Column name="InsurancePlanCode" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="100" isComputed="0" />
         <Column name="InsurancePlanDescription" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0" />
+        <Column name="InsurancePlanDetails" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0" />
       </Columns>
     </Table>
     <Table schema="Health" name="MedicalClaimLineDiagnoses" tableType="BASE TABLE">
@@ -1495,7 +1528,7 @@
           </Properties>
         </Column>
         <Column name="ContactId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" refSchema="dbo" refTable="Contacts" />
-        <Column name="MemberId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="Health" refTable="Members">
+        <Column name="MemberId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="Members">
           <Properties>
             <Property name="MS_Description" value="Member ID to display on the application, as sent by client" />
           </Properties>
@@ -1565,7 +1598,7 @@
         <Column name="CreatedAtUtc" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())" isComputed="0" />
         <Column name="TenantId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="Tenants" />
         <Column name="ContactId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" refSchema="dbo" refTable="Contacts" />
-        <Column name="MemberId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="Health" refTable="Members">
+        <Column name="MemberId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="Members">
           <Properties>
             <Property name="MS_Description" value="Member ID to display on the application, as sent by client" />
           </Properties>
@@ -1590,38 +1623,6 @@
         <Column name="ForeignId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="50" isComputed="0" />
       </Columns>
     </Table>
-    <Table schema="Health" name="Members" tableType="BASE TABLE">
-      <Properties>
-        <Property name="AddToDbContext" value="1" />
-        <Property name="GeneratePoco" value="1" />
-        <Property name="Implements" value="ITraffkTenanted, IDontCreate" />
-      </Properties>
-      <Columns>
-        <Column name="MemberId" position="1" isPrimaryKey="1" isIdentity="1" isNullable="0" sqlType="int" isComputed="0" />
-        <Column name="RowStatus" position="2" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="char" maxLen="1" default="('1')" isComputed="0">
-          <Properties>
-            <Property name="AccessModifier" value="missing" />
-            <Property name="ImplementsRowStatusSemantics" value="1" />
-          </Properties>
-        </Column>
-        <Column name="TenantId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="Tenants" />
-        <Column name="CreatedAtUtc" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())" isComputed="0" />
-        <Column name="PersonContactId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="Contacts" />
-        <Column name="CarrierContactId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="Contacts" />
-        <Column name="MemberNumber" position="7" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" isComputed="0" />
-        <Column name="MemberRelationshipFamilyNumber" position="8" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" isComputed="0" />
-        <Column name="MemberDetails" position="9" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="nvarchar" maxLen="-1" isComputed="0" />
-      </Columns>
-      <Collections>
-        <Collection schema="Health" table="MillimanScores" column="MemberId" collectionType="actual" />
-        <Collection schema="Health" table="Visits" column="MemberId" collectionType="actual" />
-        <Collection schema="Health" table="MedicalClaims" column="MemberId" collectionType="actual" />
-        <Collection schema="Health" table="Pharmacy" column="MemberId" collectionType="actual" />
-        <Collection schema="Health" table="MedicalClaimLines" column="MemberId" collectionType="actual" />
-        <Collection schema="Health" table="Participation" column="MemberId" collectionType="actual" />
-        <Collection schema="Health" table="Eligibility" column="MemberId" collectionType="actual" />
-      </Collections>
-    </Table>
     <Table schema="Health" name="MillimanScores" tableType="BASE TABLE">
       <Properties>
         <Property name="AddToDbContext" value="1" />
@@ -1639,7 +1640,7 @@
         <Column name="CreatedAtUtc" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())" isComputed="0" />
         <Column name="TenantId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="Tenants" />
         <Column name="ContactId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" refSchema="dbo" refTable="Contacts" />
-        <Column name="MemberId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="Health" refTable="Members">
+        <Column name="MemberId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="Members">
           <Properties>
             <Property name="MS_Description" value="Member ID to display on the application, as sent by client" />
           </Properties>
@@ -1682,7 +1683,7 @@
         </Column>
         <Column name="TenantId" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="Tenants" />
         <Column name="ContactId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" refSchema="dbo" refTable="Contacts" />
-        <Column name="MemberId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="Health" refTable="Members" />
+        <Column name="MemberId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="Members" />
         <Column name="ProgramTypeCode" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="varchar" maxLen="50" isComputed="0" />
         <Column name="ProgramStatus" position="7" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="varchar" maxLen="20" isComputed="0" />
         <Column name="ProgramCodeLid" position="8" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" refSchema="dbo" refTable="Lookups" />
@@ -1707,7 +1708,7 @@
         <Column name="CreatedAtUtc" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())" isComputed="0" />
         <Column name="TenantId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="Tenants" />
         <Column name="ContactId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="Contacts" />
-        <Column name="MemberId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="Health" refTable="Members">
+        <Column name="MemberId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="Members">
           <Properties>
             <Property name="MS_Description" value="Member ID to display on the application, as sent by client" />
           </Properties>
@@ -1824,7 +1825,7 @@
         <Column name="CreatedAtUtc" position="3" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="datetime" default="(getutcdate())" isComputed="0" />
         <Column name="TenantId" position="4" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="Tenants" />
         <Column name="ContactId" position="5" isPrimaryKey="0" isIdentity="0" isNullable="1" sqlType="int" isComputed="0" refSchema="dbo" refTable="Contacts" />
-        <Column name="MemberId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="Health" refTable="Members">
+        <Column name="MemberId" position="6" isPrimaryKey="0" isIdentity="0" isNullable="0" sqlType="int" isComputed="0" refSchema="dbo" refTable="Members">
           <Properties>
             <Property name="MS_Description" value="Member ID to display on the application, as sent by client" />
           </Properties>
