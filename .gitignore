@@ -35,6 +35,7 @@
 /tests/Traffk.Tableau.Tests/bin
 *.user
 *.suo
+*.userprefs
 /tests/RevolutionaryStuff.Azure.Tests/obj
 /tests/RevolutionaryStuff.Azure.Tests/bin
 /tests/RevolutionaryStuff.Core.Tests/obj
