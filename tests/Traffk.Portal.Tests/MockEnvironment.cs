@@ -14,7 +14,7 @@ namespace Traffk.Portal.Tests
         private static HttpClient HttpClient = null;
         private static string AccessToken_p = null;
 
-        public static HttpClient TestClientWithBearerToken
+        public static HttpClient TestClient
         {
             get
             {
@@ -25,22 +25,12 @@ namespace Traffk.Portal.Tests
                     var accessToken = GetBearerToken(HttpClient, @"darren@traffk.com", Guid.Parse("58f620c5-0669-44dc-a2fa-d79a3df80103"));
                     HttpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {accessToken}");
                 }
+
                 return HttpClient;
             }
+
         }
 
-        public static HttpClient TestClient
-        {
-            get
-            {
-                if (HttpClient == null)
-                {
-                    var testFixture = new TestFixture<Startup>();
-                    HttpClient = testFixture.Client;
-                }
-                return HttpClient;
-            }
-        }
 
         public static string AccessToken
         {
@@ -48,9 +38,9 @@ namespace Traffk.Portal.Tests
         }
 
 
-        public static string GetBearerToken(HttpClient client, string username, string password)
+        public static string GetBearerToken(HttpClient client, string username, string password, bool forceCreate = false)
         {
-            if (String.IsNullOrEmpty(AccessToken_p))
+            if (String.IsNullOrEmpty(AccessToken_p) || forceCreate)
             {
                 var tokenRequestFormContent = new Dictionary<string, string>
                 {
