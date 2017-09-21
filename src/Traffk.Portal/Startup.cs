@@ -162,7 +162,7 @@ namespace TraffkPortal
 
             /*
              * To change password validation, sub out the following....
-+		[49]	Lifetime = Scoped, ServiceType = {Microsoft.AspNetCore.Identity.IPasswordValidator`1[TraffkPortal.Models.ApplicationUser]}, ImplementationType = {Microsoft.AspNetCore.Identity.PasswordValidator`1[TraffkPortal.Models.ApplicationUser]}	Microsoft.Extensions.DependencyInjection.ServiceDescriptor             
++		[49]	Lifetime = Scoped, ServiceType = {Microsoft.AspNetCore.Identity.IPasswordValidator`1[TraffkPortal.Models.ApplicationUser]}, ImplementationType = {Microsoft.AspNetCore.Identity.PasswordValidator`1[TraffkPortal.Models.ApplicationUser]}	Microsoft.Extensions.DependencyInjection.ServiceDescriptor
              */
 
             services.Substitute<TraffkUserManager>();
@@ -189,7 +189,7 @@ namespace TraffkPortal
 
 
             // Add application services.
-            
+
             services.AddScoped<IVault, Vault>();
             services.AddScoped<IOptions<SmtpOptions>, SmtpSettingsAdaptor>();
             services.AddScoped<IEmailer, RawEmailer>();
@@ -236,7 +236,6 @@ namespace TraffkPortal
             services.AddScoped<ICorrelationIdFinder, CorrelationIdFinder>();
 
             services.AddScoped<ICacher, TraffkCache>();
-
 
             services.AddScoped<ILogger>(provider => Log.ForContext<Startup>());
 
@@ -285,7 +284,7 @@ namespace TraffkPortal
             loggerFactory.AddDebug();
             loggerFactory.AddSerilog(Logger);
 #endif
-            
+
             if (env.IsDevelopment())
             {
                 app.UseExceptionHandler("/E");
@@ -312,7 +311,7 @@ namespace TraffkPortal
             }
 
             app.UseSession();
-            
+
             UserEnricher.Initialize(app.ApplicationServices);
 
             //Needs to be after app.Authentication()

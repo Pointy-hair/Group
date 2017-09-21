@@ -43,7 +43,7 @@ namespace Traffk.Bal.ApplicationParts
         {
             var config = builder.Build();
 
-		    builder.AddAzureKeyVault(
+            builder.AddAzureKeyVault(
                 $"https://{config["Vault"]}.vault.azure.net/",
                 config["ClientId"],
                 config["ClientSecret"],
@@ -142,8 +142,8 @@ namespace Traffk.Bal.ApplicationParts
             services.Configure<HttpClientFactory.Config>(Configuration.GetSection(HttpClientFactory.Config.ConfigSectionName));
             services.AddScoped<IHttpClientFactory, HttpClientFactory>();
 
-			var loggerStarter = new Traffk.Bal.Logging.Startup();
-			var logger = loggerStarter.InitLogger();
+            var loggerStarter = new Traffk.Bal.Logging.Startup();
+            var logger = loggerStarter.InitLogger();
             services.AddScoped<ILogger>(provider => logger.ForContext<JobRunnerProgram>());
         }
     }
