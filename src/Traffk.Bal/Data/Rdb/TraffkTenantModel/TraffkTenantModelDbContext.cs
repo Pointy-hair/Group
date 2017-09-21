@@ -11,7 +11,9 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Traffk.Bal.Communications;
+using Traffk.Bal.Logging;
 using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
 
@@ -43,6 +45,12 @@ namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
             {
                 base.OnConfiguring(optionsBuilder);
             }
+
+#if DEBUG
+            var loggerFactory = new LoggerFactory();
+            loggerFactory.AddProvider(new EntityFrameworkLoggerProvider());
+            optionsBuilder.UseLoggerFactory(loggerFactory);
+#endif
         }
 
         private string ConnectionString;

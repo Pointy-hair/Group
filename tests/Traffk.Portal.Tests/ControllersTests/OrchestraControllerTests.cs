@@ -1,13 +1,11 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using Traffk.Bal.Data.ApiModels.Rx;
-using Traffk.Orchestra.Models;
 using Traffk.Portal.Controllers.Api;
 
 namespace Traffk.Portal.Tests.ControllersTests
