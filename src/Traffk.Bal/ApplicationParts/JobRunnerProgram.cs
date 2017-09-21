@@ -43,7 +43,7 @@ namespace Traffk.Bal.ApplicationParts
         {
             var config = builder.Build();
 
-            builder.AddAzureKeyVault(
+		    builder.AddAzureKeyVault(
                 $"https://{config["Vault"]}.vault.azure.net/",
                 config["ClientId"],
                 config["ClientSecret"],
@@ -142,21 +142,8 @@ namespace Traffk.Bal.ApplicationParts
             services.Configure<HttpClientFactory.Config>(Configuration.GetSection(HttpClientFactory.Config.ConfigSectionName));
             services.AddScoped<IHttpClientFactory, HttpClientFactory>();
 
-            var loggerConfiguration = new LoggerConfiguration()
-                .Enrich.WithProperty("ApplicationName", Configuration["RevolutionaryStuffCoreOptions:ApplicationName"])
-                .Enrich.WithProperty("MachineName", Environment.MachineName)
-                .Enrich.With<EventTimeEnricher>()
-                .MinimumLevel.Verbose()
-                .Enrich.FromLogContext()
-                .WriteTo.Trace()
-                .WriteTo.AzureTableStorageWithProperties(Configuration["BlobStorageServicesOptions:ConnectionString"],
-                    storageTableName: Configuration["Serilog:TableName"],
-                    writeInBatches: Parse.ParseBool(Configuration["Serilog:WriteInBatches"], true),
-                    period: Parse.ParseTimeSpan(Configuration["Serilog:LogInterval"], TimeSpan.FromSeconds(2)));
-       
-            var logger = loggerConfiguration.CreateLogger();
-            Log.Logger = logger;
-
+			var loggerStarter = new Traffk.Bal.Logging.Startup();
+			var logger = loggerStarter.InitLogger();
             services.AddScoped<ILogger>(provider => logger.ForContext<JobRunnerProgram>());
         }
     }
