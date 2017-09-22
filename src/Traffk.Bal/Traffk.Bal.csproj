@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net462</TargetFrameworks>
     <AssemblyName>Traffk.Bal</AssemblyName>
@@ -8,16 +7,13 @@
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
   </PropertyGroup>
-
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">15.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <TransformOnBuild>True</TransformOnBuild>
     <TransformOutOfDateOnly>false</TransformOutOfDateOnly>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='VSTS-CI|AnyCPU'" />
-
   <Choose>
     <When Condition="'$(TargetFramework)' == 'netstandard2.0'">
       <PropertyGroup>
@@ -30,7 +26,6 @@
       </PropertyGroup>
     </When>
   </Choose>
-
   <ItemGroup>
     <None Update="Data\Rdb\SchemaMeta2DbContext.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -76,7 +71,6 @@
       <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
     </Compile>
   </ItemGroup>
-
   <ItemGroup>
     <Compile Update="ApplicationParts\JobRunnerProgram.MyActivator.cs">
       <DependentUpon>JobRunnerProgram.cs</DependentUpon>
@@ -91,13 +85,11 @@
       <DependentUpon>JobRunnerProgram.cs</DependentUpon>
     </Compile>
   </ItemGroup>
-
   <ItemGroup>
     <Compile Remove="Data\DataStoreUpgrader\DDB\**" />
     <EmbeddedResource Remove="Data\DataStoreUpgrader\DDB\**" />
     <None Remove="Data\DataStoreUpgrader\DDB\**" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Remove="Data\Rdb\TraffkTenantModel\ApplicationUserRole.cs" />
   </ItemGroup>
@@ -129,13 +121,11 @@
     <EmbeddedResource Include="Data\DefaultPasswordUnallowedWordList.txt" />
     <EmbeddedResource Include="Data\DefaultProhibitedPasswordList.txt" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Traffk.Orchestra\Traffk.Orchestra.csproj" />
     <ProjectReference Include="..\Traffk.Tableau\Traffk.Tableau.csproj" />
     <ProjectReference Include="..\Traffk.Utility\Traffk.Utility.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Hangfire" Version="1.6.15" />
     <PackageReference Include="HtmlAgilityPack" Version="1.5.1" />
@@ -157,9 +147,7 @@
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.0.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.0" />
   </ItemGroup>
-
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
-
 </Project>
