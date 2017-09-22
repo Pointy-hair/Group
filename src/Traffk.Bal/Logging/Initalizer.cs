@@ -11,8 +11,7 @@ namespace Traffk.Bal.Logging
 {
     public class Initalizer
     {
-
-		private static bool InitLoggerCalled;
+        private static bool InitLoggerCalled;
 
         public static LoggerConfiguration InitLoggerConfiguration()
         {
