@@ -142,8 +142,7 @@ namespace Traffk.Bal.ApplicationParts
             services.Configure<HttpClientFactory.Config>(Configuration.GetSection(HttpClientFactory.Config.ConfigSectionName));
             services.AddScoped<IHttpClientFactory, HttpClientFactory>();
 
-            var loggerStarter = new Traffk.Bal.Logging.Startup();
-            var logger = loggerStarter.InitLogger();
+            var logger = Traffk.Bal.Logging.Initalizer.InitLogger();
             services.AddScoped<ILogger>(provider => logger.ForContext<JobRunnerProgram>());
         }
     }

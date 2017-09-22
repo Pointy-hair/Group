@@ -95,10 +95,9 @@ namespace TraffkPortal
             IdleLogout = Parse.ParseTimeSpan(Configuration["IdleLogout"], TimeSpan.FromMinutes(15));
             TraffkHttpHeadersFilter.IdleLogout = IdleLogout;
 
-            var loggerStarter = new Traffk.Bal.Logging.Startup();
-            var loggerConfiguration = loggerStarter.InitLoggerConfiguration();
+            var loggerConfiguration = Traffk.Bal.Logging.Initalizer.InitLoggerConfiguration();
             loggerConfiguration = loggerConfiguration.Enrich.With<UserEnricher>();
-            loggerStarter.InitLogger(loggerConfiguration);
+            Traffk.Bal.Logging.Initalizer.InitLogger(loggerConfiguration);
 
             GlobalConfiguration.Configuration.UseSqlServerStorage(Configuration.GetConnectionString("TraffkGlobal"));
             GlobalJobFilters.Filters.Add(new TraffkJobFilterAttribute(Configuration));
