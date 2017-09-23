@@ -29,6 +29,7 @@ using Traffk.Bal.Email;
 using Traffk.Bal.ExternalApis;
 using Traffk.Bal.Identity;
 using Traffk.Bal.Logging;
+using ILogger = Serilog.ILogger;
 using Traffk.Bal.Permissions;
 using Traffk.Bal.ReportVisuals;
 using Traffk.Bal.Services;
@@ -46,7 +47,7 @@ using TraffkPortal.Services;
 using TraffkPortal.Services.Logging;
 using TraffkPortal.Services.Sms;
 using TraffkPortal.Services.TenantServices;
-using ILogger = Serilog.ILogger;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace TraffkPortal
@@ -56,8 +57,6 @@ namespace TraffkPortal
         public static bool IsSigninPersistent = true;
         private readonly bool RequireHttps;
         private readonly TimeSpan IdleLogout;
-
-        private readonly ILogger Logger;
 
         public Startup(IHostingEnvironment env)
         {
@@ -96,21 +95,9 @@ namespace TraffkPortal
             IdleLogout = Parse.ParseTimeSpan(Configuration["IdleLogout"], TimeSpan.FromMinutes(15));
             TraffkHttpHeadersFilter.IdleLogout = IdleLogout;
 
-            var loggerConfiguration = new LoggerConfiguration()
-                    .Enrich.WithProperty("ApplicationName", Configuration["RevolutionaryStuffCoreOptions:ApplicationName"])
-                    .Enrich.WithProperty("MachineName", Environment.MachineName)
-                    .Enrich.With<EventTimeEnricher>()
-                    .Enrich.With<UserEnricher>()
-                    .MinimumLevel.Verbose()
-                    .Enrich.FromLogContext()
-                    .WriteTo.Trace()
-                    .WriteTo.AzureTableStorageWithProperties(Configuration.GetSection("BlobStorageServicesOptions")["ConnectionString"], 
-                        storageTableName: Configuration["Serilog:TableName"], 
-                        writeInBatches: Parse.ParseBool(Configuration["Serilog:WriteInBatches"], true), 
-                        period: Parse.ParseTimeSpan(Configuration["Serilog:LogInterval"], TimeSpan.FromSeconds(2)));
-
-            Logger = loggerConfiguration.CreateLogger();
-            Log.Logger = Logger;
+            var loggerConfiguration = Traffk.Bal.Logging.Initalizer.InitLoggerConfiguration();
+            loggerConfiguration = loggerConfiguration.Enrich.With<UserEnricher>();
+            Traffk.Bal.Logging.Initalizer.InitLogger(loggerConfiguration);
 
             GlobalConfiguration.Configuration.UseSqlServerStorage(Configuration.GetConnectionString("TraffkGlobal"));
             GlobalJobFilters.Filters.Add(new TraffkJobFilterAttribute(Configuration));
@@ -174,7 +161,7 @@ namespace TraffkPortal
 
             /*
              * To change password validation, sub out the following....
-+		[49]	Lifetime = Scoped, ServiceType = {Microsoft.AspNetCore.Identity.IPasswordValidator`1[TraffkPortal.Models.ApplicationUser]}, ImplementationType = {Microsoft.AspNetCore.Identity.PasswordValidator`1[TraffkPortal.Models.ApplicationUser]}	Microsoft.Extensions.DependencyInjection.ServiceDescriptor             
++		[49]	Lifetime = Scoped, ServiceType = {Microsoft.AspNetCore.Identity.IPasswordValidator`1[TraffkPortal.Models.ApplicationUser]}, ImplementationType = {Microsoft.AspNetCore.Identity.PasswordValidator`1[TraffkPortal.Models.ApplicationUser]}	Microsoft.Extensions.DependencyInjection.ServiceDescriptor
              */
 
             services.Substitute<TraffkUserManager>();
@@ -201,7 +188,7 @@ namespace TraffkPortal
 
 
             // Add application services.
-            
+
             services.AddScoped<IVault, Vault>();
             services.AddScoped<IOptions<SmtpOptions>, SmtpSettingsAdaptor>();
             services.AddScoped<IEmailer, RawEmailer>();
@@ -249,7 +236,7 @@ namespace TraffkPortal
 
             services.AddScoped<ICacher, TraffkCache>();
 
-            services.AddScoped<ILogger>(provider => Logger.ForContext<Startup>());
+            services.AddScoped<ILogger>(provider => Log.ForContext<Startup>());
 
             services.AddSwaggerGen(c =>
             {
@@ -296,7 +283,7 @@ namespace TraffkPortal
             loggerFactory.AddDebug();
             loggerFactory.AddSerilog(Logger);
 #endif
-            
+
             if (env.IsDevelopment())
             {
                 app.UseExceptionHandler("/E");
@@ -323,7 +310,7 @@ namespace TraffkPortal
             }
 
             app.UseSession();
-            
+
             UserEnricher.Initialize(app.ApplicationServices);
 
             //Needs to be after app.Authentication()
