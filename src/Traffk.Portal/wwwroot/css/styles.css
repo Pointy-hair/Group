@@ -1013,6 +1013,11 @@ h3 {
 
 .dl-horizontal dd {
     color: #666;
+    margin-left: 35%
+}
+
+.dl-horizontal dt {
+    width: auto;
 }
 
 .error-msg {

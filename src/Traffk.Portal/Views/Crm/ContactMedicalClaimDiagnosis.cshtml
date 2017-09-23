@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Traffk.Bal.Data.Rdb.TraffkTenantModel.MedicalClaimDiagnose>
+﻿@model IEnumerable<Traffk.Bal.Data.Rdb.TraffkTenantModel.MedicalClaimLineDiagnose>
 
 @{
     Layout = "~/Views/Crm/_LayoutContact.cshtml";
@@ -9,10 +9,15 @@
     var pageKey = (CrmController.PageKeys)ViewData[AspHelpers.ViewDataKeys.PageKey];
 }
 
+@section breadcrumbItems {
+    <li><a asp-controller="@CrmController.Name" asp-action="ContactMedicalClaimsList" asp-route-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]">Medical Claims</a> <span>></span> </li>
+    <li><a asp-controller="@CrmController.Name" asp-action="ContactMedicalClaimDetail" asp-route-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]">Medical Claim Number @ViewData[AspHelpers.ViewDataKeys.MedicalClaimNumber]</a> <span>></span> </li>
+    <li><a asp-controller="@CrmController.Name" asp-action="ContactMedicalClaimLines" asp-route-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]">Medical Claim Line @ViewData[AspHelpers.ViewDataKeys.MedicalClaimLineNumber]</a> <span>></span> </li>
+}
+
 @section pageNavItems {
     <li><a asp-controller="@CrmController.Name" asp-action="ContactMedicalClaimDetail" asp-route-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == CrmController.PageKeys.Background ? "active" : "")">Main</a></li>
     <li><a asp-controller="@CrmController.Name" asp-action="ContactMedicalClaimLines" asp-route-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == CrmController.PageKeys.MedicalClaimLines ? "active" : "")">Lines</a></li>
-    <li><a asp-controller="@CrmController.Name" asp-action="ContactMedicalClaimDiagnosis" asp-route-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == CrmController.PageKeys.MedicalClaimDiagnosis ? "active" : "")">Diagnoses</a></li>
 }
 
 @section listingTable
@@ -21,16 +26,13 @@
         <thead>
             <tr>
                 <th>
-                    @Html.SortableHeaderFor(z => z.MedicalClaimDiagnosisId)
-                </th>
-                <th>
                     @Html.SortableHeaderFor(z => z.DiagnosisNumber)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(z => z.Icd10.DiagnosisCode)
+                    @Html.DisplayNameFor(z => z.DiagnosisMc.Code)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(z => z.Icd10.DiagnosisDescription)
+                    @Html.DisplayNameFor(z => z.DiagnosisMc.Title)
                 </th>
             </tr>
         </thead>
@@ -39,16 +41,13 @@
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.MedicalClaimDiagnosisId)
-                    </td>
-                    <td>
                         @Html.DisplayFor(modelItem => item.DiagnosisNumber)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Icd10.DiagnosisCode)
+                        @Html.DisplayFor(modelItem => item.DiagnosisMc.Code)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Icd10.DiagnosisDescription)
+                        @Html.DisplayFor(modelItem => item.DiagnosisMc.Title)
                     </td>
                 </tr>
             }

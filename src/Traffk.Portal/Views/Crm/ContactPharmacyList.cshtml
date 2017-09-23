@@ -19,7 +19,7 @@
             @Html.SortableHeaderFor(z => z.PrescriptionFilledDd, null, null, null, "Fill Date")
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.NationalDrugCodePackage.PackageDescription, null, null, null, "Package Description")
+            @Html.SortableHeaderFor(z => z.NationalDrugCodePackageMcid, null, null, null, "Package ID")
         </th>
         <th>
             @Html.SortableHeaderFor(z => z.CoinsuranceAmt, null, null, null, "Coinsurance Amt")
@@ -43,10 +43,10 @@
                     <a asp-action="@ActionNames.Health.Pharmacy" asp-route-id="@ViewContext.GetRouteValue()" asp-route-pharmacyItemId="@item.PharmacyId">@item.PharmacyId</a>
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.PrescriptionFilledDd)
+                    @Html.DisplayFor(modelItem => item.PrescriptionFilledDd.CalendarDate)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.NationalDrugCodePackage.PackageDescription)
+                    @Html.DisplayFor(modelItem => item.NationalDrugCodePackageMcid)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.CoinsuranceAmt)

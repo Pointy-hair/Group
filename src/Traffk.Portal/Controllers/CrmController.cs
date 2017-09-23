@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Traffk.Bal;
 using Traffk.Bal.Communications;
 using Traffk.Bal.Data.Rdb;
@@ -360,6 +361,20 @@ namespace TraffkPortal.Controllers
             var items = createModel(contact);
             items = items.Where(i => i.TenantId == this.TenantId);
             items = ApplyBrowse(items, sortCol ?? defaultSortCol, sortDir, page, pageSize);
+
+            if (typeof(THealthItem) == typeof(MedicalClaimLine))
+            {
+                var firstItem = items.FirstOrDefault() as MedicalClaimLine;
+                ViewData[AspHelpers.ViewDataKeys.MedicalClaimNumber] = firstItem?.MedicalClaim.MedicalClaimNumber;
+            }
+
+            if (typeof(THealthItem) == typeof(MedicalClaimLineDiagnose))
+            {
+                var firstItem = items.FirstOrDefault() as MedicalClaimLineDiagnose;
+                ViewData[AspHelpers.ViewDataKeys.MedicalClaimNumber] = firstItem?.MedicalClaimLine.MedicalClaim.MedicalClaimNumber;
+                ViewData[AspHelpers.ViewDataKeys.MedicalClaimLineNumber] = firstItem?.MedicalClaimLine.MedicalClaimLineNumber;
+            }
+
             return View(viewName, items);
         }
 
@@ -379,7 +394,10 @@ namespace TraffkPortal.Controllers
         [ActionName(ActionNames.Health.MillimanScore)]
         [Route("Contacts/{id}/MillimanScores/{recordId}")]
         public Task<IActionResult> ContactMillimanScore(int id, int recordId)
-            => ContactHealthItemDetail(id, PageKeys.MillimanScoreList, ViewNames.Health.MillimanScore, mid => Rdb.MillimanScores.Where(z => z.ContactId == mid && z.MillimanScoreId==recordId));
+            => ContactHealthItemDetail(id, PageKeys.MillimanScoreList, ViewNames.Health.MillimanScore, mid => Rdb.MillimanScores.
+            Include(z=>z.ScorePeriodStartDd).
+            Include(z=>z.ScorePeriodEndDd).
+            Where(z => z.ContactId == mid && z.MillimanScoreId==recordId));
 
         [ActionName(ActionNames.Health.MillimanScoreList)]
         [Route("Contacts/{id}/MillimanScores")]
@@ -395,20 +413,32 @@ namespace TraffkPortal.Controllers
         [Route("Contacts/{id}/EligibilityList")]
         public Task<IActionResult> ContactEligibilityList(int id, string sortCol, string sortDir, int? page,
             int? pageSize)
-            =>
-                ContactHealthItemList(id, sortCol, sortDir, page, pageSize, PageKeys.Eligibility,
+            => ContactHealthItemList(id, sortCol, sortDir, page, pageSize, PageKeys.Eligibility,
                     ViewNames.Health.EligibilityList, mid => Rdb.Eligibility.Where(z => z.ContactId == mid),
                     nameof(Eligibility.EligibilityId));
 
         [ActionName(ActionNames.Health.MedicalClaimDiagnosis)]
         [Route("Contacts/{id}/MedicalClaims/{medicalClaimId}/MedicalClaimLines/{medicalClaimLineId}/MedicalClaimLineDiagnosis")]
-        public Task<IActionResult> ContactMedicalClaimDiagnosis(int id, int medicalClaimId, int medicalClaimLineId)
-            => ContactHealthItemDetail(id, PageKeys.MedicalClaimDiagnosis, ViewNames.Health.MedicalClaimDiagnosis, mid => Rdb.MedicalClaimLineDiagnoses.Where(x => x.MedicalClaimLine.ContactId == mid && x.MedicalClaimLineId == medicalClaimLineId));
+        public Task<IActionResult> ContactMedicalClaimDiagnosis(int id, int medicalClaimId, int medicalClaimLineId, string sortCol, string sortDir, int? page,
+            int? pageSize)
+            => ContactHealthItemList(id, sortCol, sortDir, page, pageSize, PageKeys.MedicalClaimDiagnosis, ViewNames.Health.MedicalClaimDiagnosis, 
+                mid => Rdb.MedicalClaimLineDiagnoses.
+                Include(z => z.MedicalClaimLine).
+                Include(z => z.MedicalClaimLine.MedicalClaim).
+                Include(z => z.DiagnosisMc).
+                Where(x => x.MedicalClaimLine.ContactId == mid && x.MedicalClaimLineId == medicalClaimLineId));
 
         [ActionName(ActionNames.Health.MedicalClaimLines)]
         [Route("Contacts/{id}/MedicalClaims/{medicalClaimId}/MedicalClaimLines")]
-        public Task<IActionResult> ContactMedicalClaimLines(int id, int medicalClaimId)
-            => ContactHealthItemDetail(id, PageKeys.MedicalClaimLines, ViewNames.Health.MedicalClaimLines, mid => Rdb.MedicalClaimLines.Where(x => x.ContactId == mid && x.MedicalClaimId == medicalClaimId));
+        public Task<IActionResult> ContactMedicalClaimLines(int id, int medicalClaimId, string sortCol, string sortDir, int? page,
+            int? pageSize)
+            => ContactHealthItemList(id, sortCol, sortDir, page, pageSize, PageKeys.MedicalClaimLines, ViewNames.Health.MedicalClaimLines, 
+                mid => Rdb.MedicalClaimLines.
+                Include(z => z.MedicalClaim).
+                Include(z => z.ProcedureMc).
+                Include(z => z.ServiceToDd).
+                Include(z => z.ServiceFromDd)
+                .Where(x => x.ContactId == mid && x.MedicalClaimId == medicalClaimId));
 
         [ActionName(ActionNames.Health.Participation)]
         [Route("Contacts/{id}/Participation/{recordId}")]
@@ -453,7 +483,7 @@ namespace TraffkPortal.Controllers
         [ActionName(ActionNames.Health.MedicalClaim)]
         [Route("Contacts/{id}/MedicalClaims/{medicalClaimId}")]
         public Task<IActionResult> ContactMedicalClaimDetail(int id, int medicalClaimId)
-            => ContactHealthItemDetail(id, PageKeys.MedicalClaims, ViewNames.Health.MedicalClaim, mid => Rdb.MedicalClaims.Where(z => z.ContactId == mid && z.MedicalClaimId == medicalClaimId));
+            => ContactHealthItemDetail(id, PageKeys.MedicalClaims, ViewNames.Health.MedicalClaim, mid => Rdb.MedicalClaims.Include(z => z.ServiceFromDd).Where(z => z.ContactId == mid && z.MedicalClaimId == medicalClaimId));
 
         [ActionName(ActionNames.Health.PharmacyList)]
         [Route("Contacts/{id}/Pharmacy")]

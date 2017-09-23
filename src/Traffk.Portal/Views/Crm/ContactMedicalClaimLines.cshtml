@@ -2,11 +2,16 @@
 
 @{
     Layout = "~/Views/Crm/_LayoutContact.cshtml";
-    ViewData.SetTitleAndHeading(CrmController.ViewNames.Health.MedicalClaimDiagnosis.ToCrmHeading());
+    ViewData.SetTitleAndHeading(CrmController.ViewNames.Health.MedicalClaimLines.ToCrmHeading());
     ViewData.IsListingPage(true);
     ViewData.HasPageMenuItems(true);
     ViewData.HasCustomPageMenuItems(true);
     var pageKey = (CrmController.PageKeys)ViewData[AspHelpers.ViewDataKeys.PageKey];
+}
+
+@section breadcrumbItems {
+    <li><a asp-controller="@CrmController.Name" asp-action="ContactMedicalClaimsList" asp-route-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]">Medical Claims</a> <span>></span> </li>
+    <li><a asp-controller="@CrmController.Name" asp-action="ContactMedicalClaimDetail" asp-route-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]">Medical Claim Number @ViewData[AspHelpers.ViewDataKeys.MedicalClaimNumber]</a> <span>></span> </li>
 }
 
 @section pageNavItems {
@@ -21,64 +26,49 @@
     <thead>
         <tr>
             <th>
-                @Html.SortableHeaderFor(z => z.MedicalClaimLineId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(z => z.MedicalClaimId)
-            </th>
-            <th>
                 @Html.SortableHeaderFor(z => z.MedicalClaimLineNumber)
             </th>
             <th>
-                @Html.DisplayNameFor(z => z.VisitId)
+                @Html.SortableHeaderFor(z => z.ProcedureMc.Code, null, null, null, "Procedure Code")
             </th>
             <th>
-                @Html.DisplayNameFor(z => z.ProcedureType)
+                @Html.SortableHeaderFor(z => z.ProcedureMc.Title, null, null, null, "Procedure Description")
             </th>
             <th>
-                @Html.DisplayNameFor(z => z.ProcedureCode)
+                @Html.SortableHeaderFor(z => z.ServiceToDd, null, null, null, "Service To")
             </th>
             <th>
-                @Html.DisplayNameFor(z => z.ProcedureDescription)
+                @Html.SortableHeaderFor(z => z.AllowedAmount)
             </th>
             <th>
-                @Html.SortableHeaderFor(z => z.ServiceFromDd)
+                @Html.SortableHeaderFor(z => z.BilledAmount)
             </th>
             <th>
-                @Html.SortableHeaderFor(z => z.ServiceToDd)
+                @Html.SortableHeaderFor(z => z.CoordinationOfBenefitsAmount)
             </th>
             <th>
-                @Html.DisplayNameFor(z => z.AllowedAmount)
+                @Html.SortableHeaderFor(z => z.CoinsuranceAmount)
             </th>
             <th>
-                @Html.DisplayNameFor(z => z.BilledAmount)
+                @Html.SortableHeaderFor(z => z.CopayAmount)
             </th>
             <th>
-                @Html.DisplayNameFor(z => z.CoordinationOfBenefitsAmount)
+                @Html.SortableHeaderFor(z => z.CoverageChargeAmount)
             </th>
             <th>
-                @Html.DisplayNameFor(z => z.CoinsuranceAmount)
+                @Html.SortableHeaderFor(z => z.DeductibleAmount)
             </th>
             <th>
-                @Html.DisplayNameFor(z => z.CopayAmount)
+                @Html.SortableHeaderFor(z => z.NotCoveredAmount)
             </th>
             <th>
-                @Html.DisplayNameFor(z => z.CoverageChargeAmount)
+                @Html.SortableHeaderFor(z => z.PPOSavings, null, null, null, "PPO Savings")
             </th>
             <th>
-                @Html.DisplayNameFor(z => z.DeductibleAmount)
+                @Html.SortableHeaderFor(z => z.OtherSavingsGenerated)
             </th>
             <th>
-                @Html.DisplayNameFor(z => z.NotCoveredAmount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(z => z.PPOSavings)
-            </th>
-            <th>
-                @Html.DisplayNameFor(z => z.OtherSavingsGenerated)
-            </th>
-            <th>
-                @Html.DisplayNameFor(z => z.PaidAmount)
+                @Html.SortableHeaderFor(z => z.PaidAmount)
             </th>
         </tr>
     </thead>
@@ -87,64 +77,49 @@
             {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.MedicalClaimLineId)
+                    <a asp-action="@CrmController.ActionNames.Health.MedicalClaimDiagnosis" asp-route-id="@ViewContext.GetRouteValue()" asp-route-medicalClaimId="@item.MedicalClaimId" asp-route-medicalClaimLineId="@item.MedicalClaimLineId">@item.MedicalClaimLineNumber</a>
                 </td>
                 <td>
-                    @Html.DisplayNameFor(modelItem => item.MedicalClaimId)
+                    @Html.DisplayFor(modelItem => item.ProcedureMc.Code)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.MedicalClaimLineNumber)
+                    @Html.DisplayFor(modelItem => item.ProcedureMc.Title)
                 </td>
                 <td>
-                    @Html.DisplayNameFor(modelItem => item.VisitId)
+                    @Html.DisplayFor(modelItem => item.ServiceToDd.CalendarDate)
                 </td>
                 <td>
-                    @Html.DisplayNameFor(modelItem => item.ProcedureType)
+                    @Html.DisplayFor(modelItem => item.AllowedAmount)
                 </td>
                 <td>
-                    @Html.DisplayNameFor(modelItem => item.ProcedureCode)
+                    @Html.DisplayFor(modelItem => item.BilledAmount)
                 </td>
                 <td>
-                    @Html.DisplayNameFor(modelItem => item.ProcedureDescription)
+                    @Html.DisplayFor(modelItem => item.CoordinationOfBenefitsAmount)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ServiceFromDd)
+                    @Html.DisplayFor(modelItem => item.CoinsuranceAmount)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ServiceToDd)
+                    @Html.DisplayFor(modelItem => item.CopayAmount)
                 </td>
                 <td>
-                    @Html.DisplayNameFor(modelItem => item.AllowedAmount)
+                    @Html.DisplayFor(modelItem => item.CoverageChargeAmount)
                 </td>
                 <td>
-                    @Html.DisplayNameFor(modelItem => item.BilledAmount)
+                    @Html.DisplayFor(modelItem => item.DeductibleAmount)
                 </td>
                 <td>
-                    @Html.DisplayNameFor(modelItem => item.CoordinationOfBenefitsAmount)
+                    @Html.DisplayFor(modelItem => item.NotCoveredAmount)
                 </td>
                 <td>
-                    @Html.DisplayNameFor(modelItem => item.CoinsuranceAmount)
+                    @Html.DisplayFor(modelItem => item.PPOSavings)
                 </td>
                 <td>
-                    @Html.DisplayNameFor(modelItem => item.CopayAmount)
+                    @Html.DisplayFor(modelItem => item.OtherSavingsGenerated)
                 </td>
                 <td>
-                    @Html.DisplayNameFor(modelItem => item.CoverageChargeAmount)
-                </td>
-                <td>
-                    @Html.DisplayNameFor(modelItem => item.DeductibleAmount)
-                </td>
-                <td>
-                    @Html.DisplayNameFor(modelItem => item.NotCoveredAmount)
-                </td>
-                <td>
-                    @Html.DisplayNameFor(modelItem => item.PPOSavings)
-                </td>
-                <td>
-                    @Html.DisplayNameFor(modelItem => item.OtherSavingsGenerated)
-                </td>
-                <td>
-                    @Html.DisplayNameFor(modelItem => item.PaidAmount)
+                    @Html.DisplayFor(modelItem => item.PaidAmount)
                 </td>
             </tr>
         }

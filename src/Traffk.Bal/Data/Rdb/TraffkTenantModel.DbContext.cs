@@ -4129,7 +4129,7 @@ namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
 		[DisplayName("Fiscal Year")]
 		[Display(Name = "Fiscal Year")]
 		[Column("FiscalYear")]
-		public int FiscalYear { get; set; }
+		public Int16 FiscalYear { get; set; }
 
 		[DisplayName("Fiscal Period")]
 		[Display(Name = "Fiscal Period")]
@@ -4144,7 +4144,7 @@ namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
 		[DisplayName("Fiscal Day")]
 		[Display(Name = "Fiscal Day")]
 		[Column("FiscalDay")]
-		public int FiscalDay { get; set; }
+		public Int16 FiscalDay { get; set; }
 
 		[DisplayName("Fiscal Year Name")]
 		[Display(Name = "Fiscal Year Name")]

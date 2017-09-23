@@ -58,6 +58,9 @@ namespace TraffkPortal
             public const string IsContentPage = "IsContentPage";
             public const string ToastMessage = "ToastMessage";
 
+            public const string MedicalClaimNumber = "MedicalClaimNumber";
+            public const string MedicalClaimLineNumber = "MedicalClaimLinenumber";
+
             public const string ExceptionStatusCode = "ExceptionStatusCode";
             public const string ExceptionType = "ExceptionType";
             public const string ExceptionMessage = "ExceptionMessage";
@@ -163,11 +166,11 @@ namespace TraffkPortal
             return atag.Attributes["href"];
         }
 
-        public static IHtmlContent DescriptionListElement<TModelItem, TResult>(this IHtmlHelper<TModelItem> hh, Expression<Func<TModelItem, TResult>> columnExpression)
+        public static IHtmlContent DescriptionListElement<TModelItem, TResult>(this IHtmlHelper<TModelItem> hh, Expression<Func<TModelItem, TResult>> columnExpression, string nameOverride = null)
         {
             var name = hh.FriendlyNameFor(columnExpression);
             var dt = new TagBuilder("dt");
-            dt.InnerHtml.Append(name);
+            dt.InnerHtml.Append(nameOverride ?? name);
 
             var val = hh.DisplayFor(columnExpression);
             var dd = new TagBuilder("dd");
