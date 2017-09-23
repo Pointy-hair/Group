@@ -6,8 +6,8 @@
 <dl class="dl-horizontal">
     @Html.DescriptionListElement(model => model.ParticipationId)
     @Html.DescriptionListElement(model => model.ProgramTypeCode)
-    @Html.DescriptionListElement(model => model.ProgramCodeL)
+    @Html.DescriptionListElement(model => model.ProgramCodeL.LookupValue)
     @Html.DescriptionListElement(model => model.ProgramStatus)
-    @Html.DescriptionListElement(model => model.ProgramStartDd)
-    @Html.DescriptionListElement(model => model.ProgramEndDd)
+    @Html.DescriptionListElement(model => model.ProgramStartDd.CalendarDate, "Program Start Date")
+    @Html.DescriptionListElement(model => model.ProgramEndDd.CalendarDate, "Program End Date")
 </dl>

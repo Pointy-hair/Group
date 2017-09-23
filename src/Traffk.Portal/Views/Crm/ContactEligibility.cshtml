@@ -9,7 +9,7 @@
     @Html.DescriptionListElement(model => model.Contact.AsPerson.FirstName)
     @Html.DescriptionListElement(model => model.Contact.AsPerson.MiddleName)
     @Html.DescriptionListElement(model => model.Contact.AsPerson.LastName)
-    @Html.DescriptionListElement(model => model.CobraL)
+    @Html.DescriptionListElement(model => model.CobraL.LookupValue)
     @Html.DescriptionListElement(model => model.Contact.AsPerson.Gender)
     @Html.DescriptionListElement(model => model.Contact.AsPerson.DateOfBirth)
     @Html.DescriptionListElement(model => model.MemberAddress.AddressLine1)
@@ -22,9 +22,8 @@
         <p>@String.Format("{0:(###) ###-####}", phoneNumber)</p>
     }
 
-    @Html.DescriptionListElement(model => model.MemberRelationshipLid)
-    @Html.DescriptionListElement(model => model.MemberRelationshipL)
-    @Html.DescriptionListElement(model => model.CoverageTypeL)
+    @Html.DescriptionListElement(model => model.MemberRelationshipL.LookupValue)
+    @Html.DescriptionListElement(model => model.CoverageTypeL.LookupValue)
     @Html.DescriptionListElement(model => model.MedicalEffDd.CalendarDate)
     @Html.DescriptionListElement(model => model.MedicalTermDd.CalendarDate)
     @Html.DescriptionListElement(model => model.PrescriptionEffDd.CalendarDate)

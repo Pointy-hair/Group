@@ -5,11 +5,10 @@
 }
 <dl class="dl-horizontal">
     @Html.DescriptionListElement(model => model.VisitId)
-    @Html.DescriptionListElement(model => model.VisitType)
-    @Html.DescriptionListElement(model => model.VisitStartDd)
-    @Html.DescriptionListElement(model => model.VisitEndDd)
-    @Html.DescriptionListElement(model => model.ForeignId)
-    @Html.DescriptionListElement(model => model.AdmissionType)
+    @Html.DescriptionListElement(model => model.VisitTypeL.LookupValue)
+    @Html.DescriptionListElement(model => model.VisitStartDd.CalendarDate)
+    @Html.DescriptionListElement(model => model.VisitEndDd.CalendarDate)
+    @Html.DescriptionListElement(model => model.AdmissionTypeL.LookupValue)
     @Html.DescriptionListElement(model => model.InpatientDays)
     @Html.DescriptionListElement(model => model.AdmissionFromEmergencyRoom)
     @Html.DescriptionListElement(model => model.VisitMedicalClaimLines)

@@ -385,6 +385,7 @@ namespace TraffkPortal.Controllers
             => ContactHealthItemDetail(id, PageKeys.CareAlerts, ViewNames.Health.CareAlert, mid => 
             Rdb.CareAlerts.
             Include(z => z.CareAlertDd).
+            Include(z => z.CareAlertTypeL).
             Where(z => z.ContactId == mid && z.CareAlertId == recordId));
 
         [ActionName(ActionNames.Health.CareAlertsList)]
@@ -419,6 +420,9 @@ namespace TraffkPortal.Controllers
             => ContactHealthItemDetail(id, PageKeys.Eligibility, ViewNames.Health.Eligibility, mid => 
             Rdb.Eligibility.
             Include(z => z.Contact).
+            Include(z => z.MemberRelationshipL).
+            Include(z => z.CobraL).
+            Include(z => z.CoverageTypeL).
             Include(z => z.MemberAddress).
             Include(z => z.MedicalEffDd).
             Include(z => z.MedicalTermDd).
@@ -442,6 +446,7 @@ namespace TraffkPortal.Controllers
                     ViewNames.Health.EligibilityList, mid => 
                     Rdb.Eligibility.
                     Include(z => z.Contact).
+                    Include(z => z.MemberRelationshipL).
                     Where(z => z.ContactId == mid),
                     nameof(Eligibility.EligibilityId));
 
@@ -471,27 +476,54 @@ namespace TraffkPortal.Controllers
         [ActionName(ActionNames.Health.Participation)]
         [Route("Contacts/{id}/Participation/{recordId}")]
         public Task<IActionResult> ContactParticipation(int id, int recordId)
-            => ContactHealthItemDetail(id, PageKeys.Participation, ViewNames.Health.Participation, mid => Rdb.Participation.Where(z => z.ContactId == mid && z.ParticipationId == recordId));
+            => ContactHealthItemDetail(id, PageKeys.Participation, ViewNames.Health.Participation, mid => 
+            Rdb.Participation.
+            Include(z => z.ProgramStartDd).
+            Include(z => z.ProgramEndDd).
+            Include(z => z.ProgramCodeL).
+            Where(z => z.ContactId == mid && z.ParticipationId == recordId));
 
         [ActionName(ActionNames.Health.ParticipationList)]
         [Route("Contacts/{id}/Participation")]
         public Task<IActionResult> ContactParticipationList(int id, string sortCol, string sortDir, int? page, int? pageSize)
-            => ContactHealthItemList(id, sortCol, sortDir, page, pageSize, PageKeys.Participation, ViewNames.Health.ParticipationList, mid => Rdb.Participation.Where(z => z.ContactId == mid), nameof(Participation.ProgramEndDd));
+            => ContactHealthItemList(id, sortCol, sortDir, page, pageSize, PageKeys.Participation, ViewNames.Health.ParticipationList, 
+                mid => Rdb.Participation.
+                Include(z => z.ProgramStartDd).
+                Include(z => z.ProgramEndDd).
+                Include(z => z.ProgramCodeL).
+                Where(z => z.ContactId == mid), nameof(Participation.ProgramEndDd));
 
         [ActionName(ActionNames.Health.Visit)]
         [Route("Contacts/{id}/Visits/{recordId}")]
         public Task<IActionResult> ContactVisit(int id, int recordId)
-            => ContactHealthItemDetail(id, PageKeys.Visit, ViewNames.Health.Visit, mid => Rdb.Visits.Where(z => z.ContactId == mid && z.VisitId == recordId));
+            => ContactHealthItemDetail(id, PageKeys.Visit, ViewNames.Health.Visit, mid => 
+            Rdb.Visits.
+            Include(z => z.VisitTypeL).
+            Include(z => z.AdmissionTypeL).
+            Include(z => z.VisitStartDd).
+            Include(z => z.VisitEndDd).
+            Where(z => z.ContactId == mid && z.VisitId == recordId));
 
         [ActionName(ActionNames.Health.VisitList)]
         [Route("Contacts/{id}/Visits")]
         public Task<IActionResult> ContactVisitsList(int id, string sortCol, string sortDir, int? page, int? pageSize)
-            => ContactHealthItemList(id, sortCol, sortDir, page, pageSize, PageKeys.Visit, ViewNames.Health.VisitList, mid => Rdb.Visits.Where(z => z.ContactId == mid), nameof(Visit.VisitEndDd));
+            => ContactHealthItemList(id, sortCol, sortDir, page, pageSize, PageKeys.Visit, ViewNames.Health.VisitList, mid => 
+            Rdb.Visits.
+            Include(z => z.VisitTypeL).
+            Include(z => z.AdmissionTypeL).
+            Include(z => z.VisitStartDd).
+            Include(z => z.VisitEndDd).
+            Where(z => z.ContactId == mid), nameof(Visit.VisitEndDd));
 
         [ActionName(ActionNames.Health.QualityMetric)]
         [Route("Contacts/{id}/QualityMetrics/{recordId}")]
         public Task<IActionResult> ContactQualityMetric(int id, int recordId)
-            => ContactHealthItemDetail(id, PageKeys.QualityMetrics, ViewNames.Health.QualityMetric, mid => Rdb.QualityMetrics.Where(z => z.ContactId==mid));
+            => ContactHealthItemDetail(id, PageKeys.QualityMetrics, ViewNames.Health.QualityMetric, mid => 
+            Rdb.QualityMetrics.
+            Include(z => z.MeasureFromDd).
+            Include(z => z.MeasureToDd).
+            Include(z => z.QualityMetricTypeL).
+            Where(z => z.ContactId==mid));
 
         [ActionName(ActionNames.Health.QualityMetricsList)]
         [Route("Contacts/{id}/QualityMetrics")]
@@ -499,7 +531,11 @@ namespace TraffkPortal.Controllers
         {
             return ContactHealthItemList(id, sortCol, sortDir, page, pageSize, PageKeys.QualityMetrics, ViewNames.Health.QualityMetricsList, delegate (long mid)
             {
-                return Rdb.QualityMetrics.Where(z => z.ContactId == id);
+                return Rdb.QualityMetrics.
+                Include(z => z.MeasureFromDd).
+                Include(z => z.MeasureToDd).
+                Include(z => z.QualityMetricTypeL).
+                Where(z => z.ContactId == id);
             }, nameof(QualityMetric.MeasureToDd));
         }
 

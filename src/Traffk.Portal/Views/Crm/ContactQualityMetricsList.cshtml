@@ -19,10 +19,10 @@
             @Html.SortableHeaderFor(z => z.QualityMetricTypeL, null, null, null, "Quality Metric Type")
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.MeasureFromDd, null, null, null, "Measure Start Date")
+            @Html.SortableHeaderFor(z => z.MeasureFromDd.CalendarDate, null, null, null, "Measure Start Date")
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.MeasureToDd, null, null, null, "Measure End Date")
+            @Html.SortableHeaderFor(z => z.MeasureToDd.CalendarDate, null, null, null, "Measure End Date")
         </th>
         <th>
             @Html.SortableHeaderFor(z => z.Positive, null, null, null, "Pos/Neg")
@@ -43,13 +43,13 @@
                     <a asp-action="@ActionNames.Health.QualityMetric" asp-route-id="@ViewContext.GetRouteValue()" asp-route-recordId="@item.QualityMetricId">@item.QualityMetricId</a>
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.QualityMetricTypeL)
+                    @Html.DisplayFor(modelItem => item.QualityMetricTypeL.LookupValue)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.MeasureFromDd)
+                    @Html.DisplayFor(modelItem => item.MeasureFromDd.CalendarDate)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.MeasureToDd)
+                    @Html.DisplayFor(modelItem => item.MeasureToDd.CalendarDate)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Positive)
