@@ -3,21 +3,20 @@
     Layout = "~/Views/Crm/_LayoutContact.cshtml";
     ViewData.SetTitleAndHeading(CrmController.ViewNames.Health.Pharmacy.ToCrmHeading());
 }
+
+@section breadcrumbItems {
+    <li><a asp-controller="@CrmController.Name" asp-action="ContactPharmacyList" asp-route-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]">Pharmacy</a> <span>></span> </li>
+}
+
 <dl class="dl-horizontal">
     @Html.DescriptionListElement(model => model.PharmacyId)
     @Html.DescriptionListElement(model => model.TransactionNumber)
-    @Html.DescriptionListElement(model => model.PrescriptionWrittenDd)
-    @Html.DescriptionListElement(model => model.PrescriptionFilledDd)
-    @Html.DescriptionListElement(model => model.ServiceDd)
-    @Html.DescriptionListElement(model => model.NationalDrugCodePackage.NDCPackageCode)
-    @Html.DescriptionListElement(model => model.NationalDrugCodePackage.PackageDescription)
-    @Html.DescriptionListElement(model => model.NationalDrugCodePackage.CmsCode)
-    @Html.DescriptionListElement(model => model.NationalDrugCodePackage.PackageId)
-    @Html.DescriptionListElement(model => model.NationalDrugCodePackage.ProductNDC)
-    @Html.DescriptionListElement(model => model.NationalDrugCodePackage.Productid)
+    @Html.DescriptionListElement(model => model.PrescriptionWrittenDd.CalendarDate)
+    @Html.DescriptionListElement(model => model.PrescriptionFilledDd.CalendarDate)
+    @Html.DescriptionListElement(model => model.ServiceDd.CalendarDate)
+    @Html.DescriptionListElement(model => model.PaidDd.CalendarDate)
     @Html.DescriptionListElement(model => model.AllowedAmt)
     @Html.DescriptionListElement(model => model.BilledAmt)
-    @Html.DescriptionListElement(model => model.PaidDd)
     @Html.DescriptionListElement(model => model.CoinsuranceAmt)
     @Html.DescriptionListElement(model => model.CopayAmt)
     @Html.DescriptionListElement(model => model.DeductibleAmt)

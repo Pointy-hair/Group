@@ -16,10 +16,10 @@
             @Html.SortableHeaderFor(z => z.MillimanScoreId, null, null, null, "Score ID")
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.ScorePeriodStartDd, null, null, null, "Score Start Date")
+            @Html.SortableHeaderFor(z => z.ScorePeriodStartDd.CalendarDate, null, null, null, "Score Start Date")
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.ScorePeriodEndDd, null, null, null, "Score End Date")
+            @Html.SortableHeaderFor(z => z.ScorePeriodEndDd.CalendarDate, null, null, null, "Score End Date")
         </th>
         <th>
             @Html.SortableHeaderFor(z => z.TotalScore, null, null, null, "Total Score")
@@ -34,10 +34,10 @@
                     <a asp-action="@CrmController.ActionNames.Health.MillimanScore" asp-route-id="@ViewContext.GetRouteValue()" asp-route-recordId="@item.MillimanScoreId">@item.MillimanScoreId</a>
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ScorePeriodStartDd)
+                    @Html.DisplayFor(modelItem => item.ScorePeriodStartDd.CalendarDate)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ScorePeriodEndDd)
+                    @Html.DisplayFor(modelItem => item.ScorePeriodEndDd.CalendarDate)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.TotalScore)
