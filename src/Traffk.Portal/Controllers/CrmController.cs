@@ -255,6 +255,11 @@ namespace TraffkPortal.Controllers
         {
             var contact = await FindContactByIdAsync(id);
             if (contact == null) return NotFound();
+            var address = await FindAddressByIdAsync(contact.ContactDetails.AddressId);
+            if (address != null)
+            {
+                contact.Address = address;
+            }
             SetHeroLayoutViewData(contact, pageKey);
             var model = new ContactModel(contact);
             if (contact.ContactId == 0)

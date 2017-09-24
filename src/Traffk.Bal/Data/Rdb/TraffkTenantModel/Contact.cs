@@ -59,7 +59,11 @@ namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
         [IgnoreDataMember]
         public List<ApplicationUser> Users { get; set; } = new List<ApplicationUser>();
 
-
+        [NotMapped]
+        [JsonProperty("address")]
+        [DisplayName("Address")]
+        public Address Address { get; set; }
+        
         public class ContactDetails_
         {
             public static ContactDetails_ CreateFromJson(string json) 
@@ -79,6 +83,9 @@ namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
             [JsonProperty("phoneNumbers")]
             [DisplayName("Phone Numbers")]
             public List<ContactPhone> PhoneNumbers { get; set; }
+
+            [JsonProperty("addressId")]
+            public int AddressId { get; set; } = 1;
         }
     }
 

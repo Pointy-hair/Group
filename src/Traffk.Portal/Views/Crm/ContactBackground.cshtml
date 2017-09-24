@@ -32,30 +32,39 @@
                 <label asp-for="Contact.ContactDetails.Tags" ></label>
                 @await Html.PartialAsync("_TagEditorPartial", Model.Contact.ContactDetails.Tags, z => z.Contact)
             </div>
-            @*<div class="form-row">
-                <label asp-for="Contact.ContactDetails.Addresses"></label>
-                @if (Model.Contact.ContactDetails.Addresses != null)
-                {
-                    foreach (var a in Model.Contact.ContactDetails.Addresses)
-                    {
-                        <p>
-                            @a.Address1<br/>
-                            @if (String.IsNullOrEmpty(@a.Address2) == false)
-                            {
-                                @a.Address2
-                            }
-                            @a.City, @a.State @a.PostalCode<br/>
-                        </p>
-                    }
-                }
-            </div>*@
             <div class="form-row">
-                <label asp-for="Contact.ContactDetails.PhoneNumbers"></label>
+                @{
+                    var a = Model.Contact.Address;
+                    <div class="form-row">
+                        <label asp-for="@a.AddressLine1">Address</label>
+                        <input asp-for="@a.AddressLine1" class="form-control" />
+                    </div>
+                    <div class="form-row">
+                        <label asp-for="@a.AddressLine2">Address Line 2</label>
+                        <input asp-for="@a.AddressLine2" class="form-control" />
+                    </div>
+                    <div class="form-row">
+                        <label asp-for="@a.City"></label>
+                        <input asp-for="@a.City" class="form-control" />
+                    </div>
+                    <div class="form-row">
+                        <label asp-for="@a.State"></label>
+                        <input asp-for="@a.State" class="form-control" />
+                    </div>
+                    <div class="form-row">
+                        <label asp-for="@a.PostalCode"></label>
+                        <input asp-for="@a.PostalCode" class="form-control" />
+                    </div>
+                        
+                        }
+            </div>
+            <div class="form-row">
+                <label asp-for="@Model.Contact.ContactDetails.PhoneNumbers"></label>
                 @if (Model.Contact.ContactDetails.PhoneNumbers != null)
                 {
-                    foreach (var a in Model.Contact.ContactDetails.PhoneNumbers)
+                    foreach (var p in Model.Contact.ContactDetails.PhoneNumbers)
                     {
-                        <p>@String.Format("{0:(###) ###-####}", long.Parse(a.PhoneNumber))</p>
+                        <p>@String.Format("{0:(###) ###-####}", long.Parse(p.PhoneNumber))</p>
                     }
                 }
             </div>
