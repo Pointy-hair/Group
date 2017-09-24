@@ -223,6 +223,16 @@ namespace TraffkPortal.Controllers
             return null;
         }
 
+        protected async Task<Address> FindAddressByIdAsync(int id)
+        {
+            var a = await Rdb.Addresses.FindAsync(id);
+            if (a != null)
+            {
+                return a;
+            }
+            return null;
+        }
+
         protected IQueryable<Note> GetNotes(IRdbDataEntity entityWithAttachedNotes)
         {
             var notes = Rdb.GetAttachedNotes(entityWithAttachedNotes);

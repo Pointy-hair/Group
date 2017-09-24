@@ -16,16 +16,16 @@
             @Html.SortableHeaderFor(z => z.VisitId, null, null, null, "Visit ID")
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.VisitType, null, null, null, "Visit Type")
+            @Html.SortableHeaderFor(z => z.VisitTypeL, null, null, null, "Visit Type")
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.VisitStartDd, null, null, null, "Visit Start Date")
+            @Html.SortableHeaderFor(z => z.VisitStartDd.CalendarDate, null, null, null, "Visit Start Date")
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.VisitEndDd, null, null, null, "Visit End Date")
+            @Html.SortableHeaderFor(z => z.VisitEndDd.CalendarDate, null, null, null, "Visit End Date")
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.AdmissionType, null, null, null, "Admission Type")
+            @Html.SortableHeaderFor(z => z.AdmissionTypeL, null, null, null, "Admission Type")
         </th>
         <th>
             @Html.SortableHeaderFor(z => z.InpatientDays, null, null, null, "Inpatient Days")
@@ -40,16 +40,16 @@
                     <a asp-action="@ActionNames.Health.Visit" asp-route-id="@ViewContext.GetRouteValue()" asp-route-recordId="@item.VisitId">@item.VisitId</a>
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.VisitType)
+                    @Html.DisplayFor(modelItem => item.VisitTypeL.LookupValue)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.VisitStartDd)
+                    @Html.DisplayFor(modelItem => item.VisitStartDd.CalendarDate)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.VisitEndDd)
+                    @Html.DisplayFor(modelItem => item.VisitEndDd.CalendarDate)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.AdmissionType)
+                    @Html.DisplayFor(modelItem => item.AdmissionTypeL.LookupValue)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.InpatientDays)

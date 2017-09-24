@@ -22,7 +22,7 @@
                 @Html.SortableHeaderFor(z => z.Contact.AsPerson.LastName, null, null, null, "Last Name")
             </th>
             <th>
-                @Html.SortableHeaderFor(z => z.MemberRelationshipL, null, null, null, "Relationship")
+                @Html.SortableHeaderFor(z => z.MemberRelationshipL.LookupValue, null, null, null, "Relationship")
             </th>
             <th>
                 @Html.SortableHeaderFor(z => z.Contact.ContactDetails.PhoneNumbers, null, null, null, "Phone Numbers")
@@ -43,7 +43,7 @@
                     @Html.DisplayFor(modelItem => item.Contact.AsPerson.LastName)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.MemberRelationshipL)
+                    @Html.DisplayFor(modelItem => item.MemberRelationshipL.LookupValue)
                 </td>
                 <td>
                     @if (item.Contact.ContactDetails.PhoneNumbers != null)

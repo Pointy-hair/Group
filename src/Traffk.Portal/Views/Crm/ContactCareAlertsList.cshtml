@@ -15,7 +15,7 @@
                 @Html.SortableHeaderFor(z => z.CareAlertId, null, null, null, "Care Alert ID")
             </th>
             <th>
-                @Html.SortableHeaderFor(z => z.CareAlertDd, null, null, null, "Care Alert Date")
+                @Html.SortableHeaderFor(z => z.CareAlertDd.CalendarDate, null, null, null, "Care Alert Date")
             </th>
             <th>
                 @Html.SortableHeaderFor(z => z.MetricName, null, null, null, "Metric")
@@ -30,7 +30,7 @@
                         <a asp-action="@ActionNames.Health.CareAlert" asp-route-id="@ViewContext.GetRouteValue()" asp-route-recordId="@item.CareAlertId">@item.CareAlertId</a>
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.CareAlertDd)
+                        @Html.DisplayFor(modelItem => item.CareAlertDd.CalendarDate)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.MetricName)

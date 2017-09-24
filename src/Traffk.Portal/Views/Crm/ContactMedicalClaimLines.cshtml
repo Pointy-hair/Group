@@ -17,7 +17,6 @@
 @section pageNavItems {
     <li><a asp-controller="@CrmController.Name" asp-action="ContactMedicalClaimDetail" asp-route-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == CrmController.PageKeys.Background ? "active" : "")">Main</a></li>
     <li><a asp-controller="@CrmController.Name" asp-action="ContactMedicalClaimLines" asp-route-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == CrmController.PageKeys.MedicalClaimLines ? "active" : "")">Lines</a></li>
-    <li><a asp-controller="@CrmController.Name" asp-action="ContactMedicalClaimDiagnosis" asp-route-id="@ViewData[AspHelpers.ViewDataKeys.EntityId]" class="@(pageKey == CrmController.PageKeys.MedicalClaimDiagnosis ? "active" : "")">Diagnoses</a></li>
 }
 
 @section listingTable

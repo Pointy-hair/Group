@@ -5,8 +5,8 @@
 }
 <dl class="dl-horizontal">
     @Html.DescriptionListElement(model => model.CareAlertId)
-    @Html.DescriptionListElement(model => model.CareAlertDd)
-    @Html.DescriptionListElement(model => model.CareAlertTypeL)
+    @Html.DescriptionListElement(model => model.CareAlertDd.CalendarDate)
+    @Html.DescriptionListElement(model => model.CareAlertTypeL.LookupValue)
     @Html.DescriptionListElement(model => model.MetricType)
     @Html.DescriptionListElement(model => model.MetricName)
 </dl>

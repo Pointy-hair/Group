@@ -16,16 +16,16 @@
             @Html.SortableHeaderFor(z => z.ParticipationId, null, null, null, "Participation ID")
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.ProgramCodeL, null, null, null, "Program Code")
+            @Html.SortableHeaderFor(z => z.ProgramCodeL.LookupValue, null, null, null, "Program Code")
         </th>
         <th>
             @Html.SortableHeaderFor(z => z.ProgramStatus, null, null, null, "Program Status")
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.ProgramStartDd, null, null, null, "Program Start Date")
+            @Html.SortableHeaderFor(z => z.ProgramStartDd.CalendarDate, null, null, null, "Program Start Date")
         </th>
         <th>
-            @Html.SortableHeaderFor(z => z.ProgramEndDd, null, null, null, "Program End Date")
+            @Html.SortableHeaderFor(z => z.ProgramEndDd.CalendarDate, null, null, null, "Program End Date")
         </th>
     </tr>
     </thead>
@@ -37,16 +37,16 @@
                     <a asp-action="@ActionNames.Health.Participation" asp-route-id="@ViewContext.GetRouteValue()" asp-route-recordId="@item.ParticipationId">@item.ParticipationId</a>
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ProgramCodeL)
+                    @Html.DisplayFor(modelItem => item.ProgramCodeL.LookupValue)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.ProgramStatus)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ProgramStartDd)
+                    @Html.DisplayFor(modelItem => item.ProgramStartDd.CalendarDate)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ProgramEndDd)
+                    @Html.DisplayFor(modelItem => item.ProgramEndDd.CalendarDate)
                 </td>
             </tr>
         }

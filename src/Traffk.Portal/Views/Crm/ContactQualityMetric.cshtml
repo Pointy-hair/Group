@@ -5,9 +5,9 @@
 }
 <dl class="dl-horizontal">
     @Html.DescriptionListElement(model => model.QualityMetricId)
-    @Html.DescriptionListElement(model => model.QualityMetricTypeLid)
-    @Html.DescriptionListElement(model => model.MeasureFromDdim)
-    @Html.DescriptionListElement(model => model.MeasureToDd)
+    @Html.DescriptionListElement(model => model.QualityMetricTypeL.LookupValue)
+    @Html.DescriptionListElement(model => model.MeasureFromDd.CalendarDate)
+    @Html.DescriptionListElement(model => model.MeasureToDd.CalendarDate)
     @Html.DescriptionListElement(model => model.Positive)
     @Html.DescriptionListElement(model => model.Numerator)
     @Html.DescriptionListElement(model => model.Denominator)
