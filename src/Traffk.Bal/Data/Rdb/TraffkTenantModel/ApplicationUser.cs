@@ -1,78 +1,18 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
-using RevolutionaryStuff.Core.ApplicationParts;
-using System;
-using System.ComponentModel.DataAnnotations;
+using Serilog;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
-using Serilog;
 using Traffk.Bal.Settings;
-using System.Collections.Generic;
 
 namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
 {
     // Add profile data for application users by adding properties to the ApplicationUser class
-    public partial class ApplicationUser : IdentityUser, ITraffkTenanted
+    public partial class ApplicationUser
     {
-        public List<IdentityUserRole<string>> Roles { get; set; } = new List<IdentityUserRole<string>>();
-
-        public override string ToString() => $"{base.ToString()} name=[{this.UserName}], tenantId={this.TenantId}";
-
-        [Column("TenantId")]
-        public int TenantId { get; set; }
-
-        [ForeignKey("TenantId")]
-        [JsonIgnore]
-        [IgnoreDataMember]
-        public Tenant Tenant { get; set; }
-
-        [Column("ContactId")]
-        public int ContactId { get; set; }
-
-        [ForeignKey("ContactId")]
-        [JsonIgnore]
-        [IgnoreDataMember]
-        public Contact Contact { get; set; }
-
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        [Column("CreatedAtUtc")]
-        public DateTime CreatedAtUtc { get; set; }
-
-        [NotMapped]
-        public DateTime CreatedAt => CreatedAtUtc.ToLocalTime();
-
-        [DataType("json")]
-        [Column("UserSettings")]
-        public string UserSettingsJson { get; set; }
-    }
-
-    public partial class ApplicationUser : IPreSave
-    {
-        [NotMapped]
-        public UserSettings Settings
+        partial void PartialPreSave()
         {
-            get
-            {
-                if (Settings_p == null)
-                {
-                    Settings_p = UserSettings.CreateFromJson(UserSettingsJson) ?? new UserSettings();
-                }
-                return Settings_p;
-            }
-            set { Settings_p = value; }
-        }
-        private UserSettings Settings_p;
-
-        void IPreSave.PreSave()
-        {
-            if (Settings_p != null)
-            {
-                var json = Settings_p.ToJson();
-                if (UserSettingsJson != json)
-                {
-                    UserSettingsJson = json;
-                };
-            }
             if (this.ContactId < 1)
             {
                 this.Contact = new UserContact
@@ -84,8 +24,7 @@ namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
         }
 
         public void LogSignInAttempt(SignInResult res)
-            =>
-            LogActivity("SignInAttempt", res.Succeeded);
+            => LogActivity("SignInAttempt", res.Succeeded);
 
         private void LogActivity(string activityType, bool result)
         {

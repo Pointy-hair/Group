@@ -265,7 +265,7 @@ namespace Traffk.BackgroundJobServer
                         rdb.Users.Add(u);
                         await rdb.SaveChangesAsync();
                         u.PasswordHash = PasswordHasher.HashPassword(u, details.AdminPassword);
-                        rdb.UserRoles.Add(new IdentityUserRole<string>
+                        rdb.UserRoles.Add(new ApplicationUserRole
                         {
                             UserId = u.Id,
                             RoleId = r.Id,
@@ -280,7 +280,7 @@ namespace Traffk.BackgroundJobServer
                         PermissionNames.ReleaseLog,
                     })
                         {
-                            rdb.RoleClaims.Add(new IdentityRoleClaim<string>
+                            rdb.RoleClaims.Add(new RoleClaim
                             {
                                 RoleId = r.Id,
                                 ClaimType = PermissionHelpers.CreateClaimType(p),

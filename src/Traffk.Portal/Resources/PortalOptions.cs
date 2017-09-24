@@ -24,9 +24,9 @@ namespace TraffkPortal.Resources
                     builder.AddObject(PortalConfigOptions.Value, nameof(PortalConfig), true);
                     builder.AddObject(CurrentContextServices.Application.AppSettings.PortalOptions, nameof(PortalConfig), true);
                     var u = CurrentContextServices.User;
-                    if (u != null && u.Settings != null)
+                    if (u != null && u.UserSettings != null)
                     {
-                        builder.AddObject(u.Settings.PortalOptions, nameof(PortalConfig), true);
+                        builder.AddObject(u.UserSettings.PortalOptions, nameof(PortalConfig), true);
                     }
                     var root = builder.Build();
 //                    Value_p = root.GetValue<PortalResourceServiceOptions>("");

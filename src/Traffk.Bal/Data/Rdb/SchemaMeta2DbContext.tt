@@ -40,6 +40,7 @@ TT File: Rdb.Schema.tt
 XML File: <#=schemaMetaFullPath#>
 Generation Time: <#=DateTime.Now#>
 */
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
@@ -275,11 +276,18 @@ foreach (var z in doc.XPathSelectElements("/SchemaMeta/Tables/Table[Properties/P
 	var copyConstructorFieldNames = new List<string>();
 	string primaryKeyPropertyName = null;
 	string primaryKeyTypeName = null;
+	int keyParts  = 0;
 	foreach (var pkc in z.XPathSelectElements("Columns/Column[@isPrimaryKey=\"1\" or Properties/Property[@name=\"CustomAttribute\" and @value=\"Key\"]]"))
 	{
 		primaryKeyTypeName = SqlTypeToClrType(GetAttrVal(pkc, "sqlType"));
+		++keyParts;
+	}
+	if (keyParts>1)
+	{
+		primaryKeyTypeName  = null;
 	}
 	var keyPropertyNames = new List<string>();
+	var baseClass = GetPropertyValue(z, "BaseClass");
 	var implements = GetPropertyValue(z, "Implements");
 	var validators = new List<string>();
 #>
@@ -293,7 +301,7 @@ foreach (var z in doc.XPathSelectElements("/SchemaMeta/Tables/Table[Properties/P
 	if (superclass==null)
 	{
 #>
-	public <#=isAbstract?"abstract ":""#>partial class <#=className#> : IRdbDataEntity, IValidate, IPreSave<#=implements==null?"":", "+implements#><#=primaryKeyTypeName==null?"":", IPrimaryKey<"+primaryKeyTypeName+">"#>
+	public <#=isAbstract?"abstract ":""#>partial class <#=className#> : <#=baseClass==null?"":baseClass+", "#>IRdbDataEntity, IValidate, IPreSave<#=implements==null?"":", "+implements#><#=primaryKeyTypeName==null?"":", IPrimaryKey<"+primaryKeyTypeName+">"#>
 	{
         public static readonly <#=className#>[] None = new <#=className#>[0];
 <#	
@@ -346,8 +354,9 @@ if (superclass==null) foreach (var ip in z.XPathSelectElements("Collections/Coll
 }
 foreach (var f in z.XPathSelectElements("Columns/Column"))
 {
-	var accessModifier = GetPropertyValue(f, "AccessModifier") ?? "public";
+	var accessModifier = GetPropertyValue(f, "AccessModifier") ?? GetPropertyValue(f, "accessModifier") ?? "public";
 	if (accessModifier=="missing") continue;
+	var inheritanceModifier  = GetPropertyValue(f, "InheritanceModifier");
 	if (inheritance)
 	{
 		if (GetPropertyValue(f, "IsInheritanceDiscriminatorField")=="1")
@@ -389,7 +398,7 @@ foreach (var f in z.XPathSelectElements("Columns/Column"))
 	string maxLen;
 	string jsonSettingsClass;
 	string dataType = GetClrTypeFromColumn(f, out isNullable, out maxLen, out jsonSettingsClass);
-	if (isPrimaryKey)
+	if (isPrimaryKey && keyParts==1)
 	{
 #>
 		object IPrimaryKey.Key { get { return <#=propertyName#>; }}
@@ -526,7 +535,7 @@ foreach (var f in z.XPathSelectElements("Columns/Column"))
 	}
 #>
 		[Column("<#=GetAttrVal(f, "name")#>")]
-		<#=accessModifier#> <#=dataType#> <#=propertyName#> { get; set; }
+		<#=accessModifier#> <#=inheritanceModifier==null?"":inheritanceModifier+" "#><#=dataType#> <#=propertyName#> { get; set; }
 
 <#
 	if (GetAttrVal(f, "refTable")!=null || GetPropertyValue(f, "LinksTo")!=null)
@@ -675,9 +684,13 @@ foreach (var v in validators)
 
     public partial class <#=databaseContextClassName#>
     {
-		private void AddFluentRelationships(ModelBuilder modelBuilder)
+        partial void OnAddFluentRelationships(ModelBuilder modelBuilder);
+
+        private void AddFluentRelationships(ModelBuilder modelBuilder)
 		{
+            OnAddFluentRelationships(modelBuilder);
 <#
+            fluentRelationships.Sort();
 foreach (var r in fluentRelationships)
 {
 #>

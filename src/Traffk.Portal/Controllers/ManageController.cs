@@ -400,7 +400,7 @@ namespace TraffkPortal.Controllers
                 return ErrorResult();
             }
 
-            var model = new GenerateApiKeyViewModel {ApiKey = user.Settings.ApiKey};
+            var model = new GenerateApiKeyViewModel {ApiKey = user.UserSettings.ApiKey};
 
             return View(model);
         }
@@ -418,10 +418,10 @@ namespace TraffkPortal.Controllers
             }
 
             var apiKey = Guid.NewGuid();
-            user.Settings.ApiKey = apiKey.ToString();
+            user.UserSettings.ApiKey = apiKey.ToString();
             await UserManager.UpdateAsync(user);
 
-            model.ApiKey = user.Settings.ApiKey;
+            model.ApiKey = user.UserSettings.ApiKey;
             return View("GetApiKey", model);
         }
 

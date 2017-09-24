@@ -54,13 +54,15 @@ namespace Traffk.Bal.ApplicationParts
 
         protected override Task OnGoAsync()
         {
-            if (int.TryParse(Configuration["HardcodedJobId"], out var jobId))
+            var ids = CSV.ParseIntegerRow(Configuration["HardcodedJobIds"]);
+            if (ids == null || ids.Length == 0)
             {
-                GoHardcoded(jobId);
+                GoHangfireServer();
             }
             else
             {
-                GoHangfireServer();
+                Log.Information("Executing {IDCount} hardcoded jobs IDs instead of running the server.", ids.Length);
+                Parallel.ForEach(ids, jobId=>GoHardcoded(jobId));
             }
             return Task.CompletedTask;
         }

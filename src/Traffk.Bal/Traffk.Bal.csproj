@@ -36,13 +36,7 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>SchemaMeta2DbContext.cs</LastGenOutput>
     </None>
-    <None Update="Data\Rdb\MultipleOutputHelper.ttinclude">
-      <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
-    </None>
     <None Update="Data\Rdb\TraffkTenantModel.SchemaMeta.xml">
-      <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
-    </None>
-    <None Update="Data\Rdb\TraffkGlobal.SchemaMeta.xml">
       <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
     </None>
     <None Update="Data\Rdb\TraffkTenantShards.SchemaMeta.xml">
@@ -51,10 +45,12 @@
     <None Update="Data\Rdb\TraffkTenantShardManager.SchemaMeta.xml">
       <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
     </None>
-    <None Update="Data\Rdb\ReferenceData.SchemaMeta.xml">
-      <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
-    </None>
     <Compile Update="Data\Rdb\ReferenceData.DbContext.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Data\Rdb\SchemaMeta2DbContext.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>SchemaMeta2DbContext.tt</DependentUpon>
@@ -100,6 +96,10 @@
     <Compile Remove="Data\DataStoreUpgrader\DDB\**" />
     <EmbeddedResource Remove="Data\DataStoreUpgrader\DDB\**" />
     <None Remove="Data\DataStoreUpgrader\DDB\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Data\Rdb\TraffkTenantModel\ApplicationUserRole.cs" />
   </ItemGroup>
 
   <ItemGroup>

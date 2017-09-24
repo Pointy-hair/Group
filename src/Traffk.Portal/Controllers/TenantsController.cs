@@ -157,7 +157,7 @@ namespace TraffkPortal.Controllers
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email, TenantId = t.TenantId, EmailConfirmed = true };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 await Rdb.SaveChangesAsync();
-                Rdb.UserRoles.Add(new IdentityUserRole<string>
+                Rdb.UserRoles.Add(new ApplicationUserRole
                 {
                      RoleId = role.Id,
                      UserId = user.Id

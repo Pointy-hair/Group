@@ -11,21 +11,22 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Traffk.Bal.Communications;
-using Traffk.Bal.Logging;
 using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
 
 namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
 {
-    public partial class TraffkTenantModelDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>, ICreativeSettingsFinder
+    public partial class TraffkTenantModelDbContext : 
+        IdentityDbContext<ApplicationUser, ApplicationRole, string, UserClaim, ApplicationUserRole, UserLogin, RoleClaim, UserToken>,
+        ICreativeSettingsFinder
     {
         public const string DefaultDatabaseConnectionStringName = "TraffkTenantPortal";
 
         protected readonly ITraffkTenantFinder TenantFinder;
 
-        public override int SaveChanges(bool acceptAllChangesOnSuccess) => SaveChangesAsync().ExecuteSynchronously();
+        public override int SaveChanges(bool acceptAllChangesOnSuccess) 
+            => SaveChangesAsync().ExecuteSynchronously();
 
         public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default(CancellationToken))
         {
@@ -45,12 +46,6 @@ namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
             {
                 base.OnConfiguring(optionsBuilder);
             }
-
-#if DEBUG
-            var loggerFactory = new LoggerFactory();
-            loggerFactory.AddProvider(new EntityFrameworkLoggerProvider());
-            optionsBuilder.UseLoggerFactory(loggerFactory);
-#endif
         }
 
         private string ConnectionString;

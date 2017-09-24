@@ -9,7 +9,9 @@ using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 
 namespace Traffk.Bal.Identity
 {
-    public class TraffkUserStore : UserStore<ApplicationUser, ApplicationRole, TraffkTenantModelDbContext, string>, IUserStore<ApplicationUser>
+    public class TraffkUserStore : 
+        UserStore<ApplicationUser, ApplicationRole, TraffkTenantModelDbContext, string, UserClaim, ApplicationUserRole, UserLogin, UserToken, RoleClaim>, 
+        IUserStore<ApplicationUser>
     {
         protected readonly ITraffkTenantFinder TenantFinder;
 

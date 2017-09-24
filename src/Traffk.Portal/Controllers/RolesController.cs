@@ -119,7 +119,7 @@ namespace TraffkPortal.Controllers
                     applicationRole.NormalizedName = m.RoleName.ToLower();
                     applicationRole.ConcurrencyStamp = Guid.NewGuid().ToString();
                     
-                    var selectedRoleClaims = new List<IdentityRoleClaim<string>>();
+                    var selectedRoleClaims = new List<RoleClaim>();
 
                     foreach (var p in m.SelectedPermissions.ConvertAll(s => Parse.ParseEnum<PermissionNames>(s)))
                     {

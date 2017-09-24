@@ -29,16 +29,14 @@ namespace TraffkPortal.Controllers
         protected readonly MainNavigationPageKeys MainNavPageKey;
         protected int TenantId { get { return Current.TenantId;  } }
 
-        protected ActionResult RedirectToIndex()
+        protected virtual ActionResult RedirectToIndex()
             => RedirectToAction("Index");
 
         protected ActionResult RedirectToHome(object routeValues=null)
-            => RedirectToAction(nameof(HomeController.Index), "Home", routeValues);
+            => RedirectToAction(nameof(HomeController.Index), HomeController.Name, routeValues);
 
         protected ActionResult ErrorResult()
-        {
-            return RedirectToAction(ErrorController.ActionNames.Index, ErrorController.Name);
-        }
+            => RedirectToAction(ErrorController.ActionNames.Index, ErrorController.Name);
 
         public static class BaseActionNames
         {

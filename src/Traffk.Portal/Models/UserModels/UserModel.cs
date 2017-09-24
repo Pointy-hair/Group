@@ -1,4 +1,5 @@
 ﻿using RevolutionaryStuff.Core;
+using RevolutionaryStuff.Core.Collections;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -49,7 +50,7 @@ namespace TraffkPortal.Models.UserModels
         public UserModel()
         { }
 
-        public UserModel(ApplicationUser user, IDictionary<string, ApplicationRole> rolesById, bool? canAccessProtectedHealthInformation=null)
+        public UserModel(ApplicationUser user, IDictionary<string, ApplicationRole> rolesById, MultipleValueDictionary<string, ApplicationUserRole> userRolesByUserId, bool? canAccessProtectedHealthInformation=null)
             : this()
         {
             Id = user.Id;
@@ -63,8 +64,8 @@ namespace TraffkPortal.Models.UserModels
             LockoutEnabled = user.LockoutEnabled;
             AccessFailedCount = user.AccessFailedCount;
             LockoutEnd = user.LockoutEnd;
-            AssignedRoleIds = user.Roles.ConvertAll(r => r.RoleId);
-            AssignedRoleNames = user.Roles.Map(rolesById, r => r.RoleId).ConvertAll(r=>r.Name);
+            AssignedRoleIds = userRolesByUserId[user.Id].ConvertAll(r => r.RoleId);
+            AssignedRoleNames = userRolesByUserId[user.Id].Map(rolesById, r => r.RoleId).ConvertAll(r=>r.Name);
             CanAccessProtectedHealthInformation = canAccessProtectedHealthInformation;
         }
     }

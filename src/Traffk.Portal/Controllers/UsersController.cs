@@ -105,12 +105,14 @@ namespace TraffkPortal.Controllers
         public async Task<IActionResult> Users(string sortCol, string sortDir, int? page, int? pageSize)
         {
             var rolesById = await GetRolesById();
-            var users = Rdb.Users.Include(z => z.Roles).Where(z => z.TenantId == this.TenantId);
+            var users = Rdb.Users.Where(z => z.TenantId == this.TenantId);
             users = ApplyBrowse(
                 users, sortCol??nameof(ApplicationUser.UserName), sortDir, 
                 page, pageSize,
                 new Dictionary<string, string> { { nameof(ApplicationUser.CreatedAt), nameof(ApplicationUser.CreatedAtUtc) } });
-            var model = (await users.ToListAsync()).ConvertAll(z => new UserModel(z, rolesById));
+            var userIds = users.ToSet(u => u.Id);
+            var userRolesByUserId = Rdb.UserRoles.Where(ur => userIds.Contains(ur.UserId)).ToMultipleValueDictionary(ur => ur.UserId);
+            var model = (await users.ToListAsync()).ConvertAll(z => new UserModel(z, rolesById, userRolesByUserId));
             return View(model);
         }
 
@@ -179,7 +181,7 @@ namespace TraffkPortal.Controllers
                     {
                         foreach (var user in users)
                         {
-                            Rdb.UserRoles.Add(new IdentityUserRole<string> { RoleId = rid, UserId = user.Id });
+                            Rdb.UserRoles.Add(new ApplicationUserRole { RoleId = rid, UserId = user.Id });
                         }
                     }
                     await Rdb.SaveChangesAsync();
@@ -217,7 +219,8 @@ namespace TraffkPortal.Controllers
 
             var rolesById = await GetRolesById();
             var p = await UserClaimsPrincipalFactory.CreateAsync(user);
-            var model = new UserModel(user, rolesById, await p.GetCanAccessProtectedHealthInformationAsync(AuthorizationService));
+            var userRolesByUserId = Rdb.UserRoles.Where(ur => ur.UserId==id).ToMultipleValueDictionary(ur => ur.UserId);
+            var model = new UserModel(user, rolesById, userRolesByUserId, await p.GetCanAccessProtectedHealthInformationAsync(AuthorizationService));
             SetHeroLayoutViewData(user, PageKeys.UserBackground);
             return View(model);
         }
@@ -266,12 +269,12 @@ namespace TraffkPortal.Controllers
                     user.PhoneNumberConfirmed = model.PhoneNumberConfirmed;
                     user.TwoFactorEnabled = model.TwoFactorEnabled;
                     user.UserName = model.UserName;
-                    var existingRolesById = user.Roles.ToDictionary(ur => ur.RoleId);
+                    var existingRolesById = Rdb.UserRoles.Where(ur=>ur.UserId==user.Id).ToDictionary(ur => ur.RoleId);
                     foreach (var rid in model.AssignedRoleIds)
                     {
                         if (!existingRolesById.ContainsKey(rid))
                         {
-                            user.Roles.Add(new IdentityUserRole<string> { RoleId = rid, UserId = user.Id });
+                            Rdb.UserRoles.Add(new ApplicationUserRole { RoleId = rid, UserId = user.Id });
                         }
                     }
                     foreach (var ur in existingRolesById.Values)
@@ -321,10 +324,11 @@ namespace TraffkPortal.Controllers
             return Rdb.Users.Any(z => z.Id == id && z.TenantId == this.TenantId);
         }
 
-        private async Task<ApplicationUser> GetUserByIdAsync(string id)
+        private async Task<ApplicationUser> GetUserByIdAsync(string userId)
         {
-            if (string.IsNullOrEmpty(id)) return null;
-            return await Rdb.Users.Include(z=>z.Roles).FirstOrDefaultAsync(z => z.Id == id && z.TenantId==this.TenantId);
+            if (string.IsNullOrEmpty(userId)) return null;
+            Rdb.UserRoles.Where(ur => ur.UserId == userId);
+            return await Rdb.Users.FirstOrDefaultAsync(z => z.Id == userId && z.TenantId==this.TenantId);
         }
 
         private async Task SendInvitation(ApplicationUser user, string invitationText, string email)

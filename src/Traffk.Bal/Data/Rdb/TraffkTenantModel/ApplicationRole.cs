@@ -1,27 +1,15 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Runtime.Serialization;
 using Traffk.Bal.Permissions;
 
 namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
 {
     public partial class ApplicationRole : IdentityRole, ITraffkTenanted
     {
-        [JsonIgnore]
-        [IgnoreDataMember]
-        public List<IdentityRoleClaim<string>> Claims { get; set; }
 
-        [Column("TenantId")]
-        public int TenantId { get; set; }
-
-        [ForeignKey("TenantId")]
-        public Tenant Tenant { get; set; }
-
-        public override string ToString() => $"{base.ToString()} name=[{this.Name}], tenantId={this.TenantId}";
+        public List<RoleClaim> Claims { get; set; }
 
         public bool HasPermission(PermissionNames permission)
         {

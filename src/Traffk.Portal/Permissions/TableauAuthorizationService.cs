@@ -30,14 +30,14 @@ namespace Traffk.Portal.Permissions
 
         public ITableauUserCredentials GetTableauUserCredentials(ApplicationUser user, string tableauTenantId)
         {
-            if (user.Settings.TableauUserName != null && user.Settings.TableauPassword != null)
+            if (user.UserSettings.TableauUserName != null && user.UserSettings.TableauPassword != null)
             {
-                return new TableauUserCredentials(user.Settings.TableauUserName, user.Settings.TableauPassword);
+                return new TableauUserCredentials(user.UserSettings.TableauUserName, user.UserSettings.TableauPassword);
             }
             else
             {
-                user.Settings.TableauUserName = TableauAdminCredentials.UserName;
-                user.Settings.TableauPassword = TableauAdminCredentials.Password;
+                user.UserSettings.TableauUserName = TableauAdminCredentials.UserName;
+                user.UserSettings.TableauPassword = TableauAdminCredentials.Password;
                 Rdb.Update(user);
                 Rdb.SaveChangesAsync();
                 return TableauAdminCredentials;

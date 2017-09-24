@@ -107,7 +107,7 @@ namespace Traffk.Portal.Controllers.Api
         {
             var user = await UserManager.FindByNameAsync(username);
 
-            if (!String.IsNullOrEmpty(user.Settings.ApiKey) && !String.IsNullOrEmpty(apiKey) && user.Settings.ApiKey.Equals(apiKey))
+            if (!String.IsNullOrEmpty(user.UserSettings.ApiKey) && !String.IsNullOrEmpty(apiKey) && user.UserSettings.ApiKey.Equals(apiKey))
             {
                 await SignInManager.SignInAsync(user, false);
                 var claimsPrincipal = await UserClaimsPrincipalFactory.CreateAsync(user);

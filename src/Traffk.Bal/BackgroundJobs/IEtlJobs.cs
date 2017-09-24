@@ -10,6 +10,7 @@ namespace Traffk.Bal.BackgroundJobs
         InternationalClassificationDiseases = 2,
         NationalDrugCodes = 4,
         ZipCodes = 3,
+        Deerwalk = 5,
     }
 
     [Queue(BackgroundJobHelpers.QueueNames.SsisQueue)]
