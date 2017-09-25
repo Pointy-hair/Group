@@ -33,13 +33,15 @@ namespace Traffk.Bal.Caches
                 {
                     return RedisCache.FindOrCreate<TVal>(key, creator, forceCreate, timeout);
                 }
-
-                return InnerDataCacher.FindOrCreate<TVal>(key, creator, forceCreate, timeout);
+                else
+                {
+                    return InnerDataCacher.FindOrCreate<TVal>(key, creator, forceCreate, timeout);
+                }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
                 //Catching this exception because deserialization fails on inaccessible libraries.
-                Trace.WriteLine(e);
+                Trace.WriteLine(ex);
                 return InnerDataCacher.FindOrCreate<TVal>(key, creator, forceCreate, timeout);
             }
         }

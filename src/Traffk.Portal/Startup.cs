@@ -108,6 +108,8 @@ namespace TraffkPortal
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
+
             services.Add(new ServiceDescriptor(typeof(IConfiguration), Configuration));
 
             /*
@@ -140,14 +142,29 @@ namespace TraffkPortal
 
             const string connectionStringKey = "ConnectionStrings";
 
-            services.AddDbContext<TraffkTenantShardsDbContext>(options =>
-                options.UseSqlServer(Configuration.GetSection(connectionStringKey)[TraffkTenantShardsDbContext.DefaultDatabaseConnectionStringName]), ServiceLifetime.Singleton);
+            services.AddDbContext<TraffkTenantShardsDbContext>(
+                (sp, options) =>
+                {
+                    options.UseLoggerFactory(sp.GetRequiredService<ILoggerFactory>());
+                    options.UseSqlServer(Configuration.GetSection(connectionStringKey)[TraffkTenantShardsDbContext.DefaultDatabaseConnectionStringName]);
+                },
+                ServiceLifetime.Singleton);
 
-            services.AddDbContext<TraffkTenantModelDbContext>((sp, options) =>
-                options.UseSqlServer(Configuration.GetSection(connectionStringKey)[TraffkTenantModelDbContext.DefaultDatabaseConnectionStringName]), ServiceLifetime.Scoped);
+            services.AddDbContext<TraffkTenantModelDbContext>(
+                (sp, options) =>
+                {
+                    options.UseLoggerFactory(sp.GetRequiredService<ILoggerFactory>());
+                    options.UseSqlServer(Configuration.GetSection(connectionStringKey)[TraffkTenantModelDbContext.DefaultDatabaseConnectionStringName]);
+                },
+                ServiceLifetime.Scoped);
 
-            services.AddDbContext<TraffkGlobalDbContext>(options =>
-                options.UseSqlServer(Configuration.GetSection(connectionStringKey)[TraffkGlobalDbContext.DefaultDatabaseConnectionStringName]), ServiceLifetime.Scoped);
+            services.AddDbContext<TraffkGlobalDbContext>(
+                (sp, options) =>
+                {
+                    options.UseLoggerFactory(sp.GetRequiredService<ILoggerFactory>());
+                    options.UseSqlServer(Configuration.GetSection(connectionStringKey)[TraffkGlobalDbContext.DefaultDatabaseConnectionStringName]);
+                },
+                ServiceLifetime.Scoped);
 
             services.AddAuthentication().AddCookie("TraffkAuth", o =>
             {
@@ -278,12 +295,6 @@ namespace TraffkPortal
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-
-#if(!DEBUG)
-            loggerFactory.AddDebug();
-            loggerFactory.AddSerilog(Logger);
-#endif
-
             if (env.IsDevelopment())
             {
                 app.UseExceptionHandler("/E");

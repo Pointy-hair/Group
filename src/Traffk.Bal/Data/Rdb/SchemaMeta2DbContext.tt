@@ -790,7 +790,7 @@ public string GetClrTypeFromColumn(XElement f, out bool isNullable, out string m
 			dataType = "Guid";
 			break;
 		case "smallint":
-			dataType = "int" + (isNullable ? "?" : "");//should be a ushort, but EF doesn't like that type with SQL Server
+			dataType = "short" + (isNullable ? "?" : "");
 			break;
 		case "tinyint":
 			dataType = "byte" + (isNullable ? "?" : "");
@@ -851,7 +851,7 @@ public string SqlTypeToClrType(string sqlType)
 		case "uniqueidentifier":
 			return "Guid";
 		case "smallint":
-			return "int";//should be a ushort, but EF doesn't like that type with SQL Server
+			return "short";
 		case "tinyint":
 			return "byte";
 		case "money":
