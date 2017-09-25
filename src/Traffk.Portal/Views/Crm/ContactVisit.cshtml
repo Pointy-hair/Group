@@ -4,16 +4,14 @@
     ViewData.SetTitleAndHeading(CrmController.ViewNames.Health.Visit.ToCrmHeading());
 }
 <dl class="dl-horizontal">
-    @Html.DescriptionListElement(model => model.VisitId)
-    @Html.DescriptionListElement(model => model.VisitTypeL.LookupValue)
-    @Html.DescriptionListElement(model => model.VisitStartDd.CalendarDate)
-    @Html.DescriptionListElement(model => model.VisitEndDd.CalendarDate)
-    @Html.DescriptionListElement(model => model.AdmissionTypeL.LookupValue)
+    @Html.DescriptionListElement(model => model.VisitId, "Visit ID")
+    @{
+        var formattedVisitType = Model.VisitTypeL.LookupValue.ToTitleFriendlyString();
+    }
+    @Html.DescriptionListElement(model => formattedVisitType, "Visit Type")
+    @Html.DescriptionListElement(model => model.VisitStartDd.CalendarDate, "Visit Start Date")
+    @Html.DescriptionListElement(model => model.VisitEndDd.CalendarDate, "Visit End Date")
+    @Html.DescriptionListElement(model => model.AdmissionTypeL.LookupValue, "Admission Type")
     @Html.DescriptionListElement(model => model.InpatientDays)
     @Html.DescriptionListElement(model => model.AdmissionFromEmergencyRoom)
-    @Html.DescriptionListElement(model => model.VisitMedicalClaimLines)
-    @foreach (var line in Model.VisitMedicalClaimLines)
-    {
-        @Html.DescriptionListElement(model => line)
-    }
 </dl>

@@ -40,7 +40,10 @@
                     <a asp-action="@ActionNames.Health.Visit" asp-route-id="@ViewContext.GetRouteValue()" asp-route-recordId="@item.VisitId">@item.VisitId</a>
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.VisitTypeL.LookupValue)
+                    @{
+                        var formattedVisitType = item.VisitTypeL.LookupValue.ToTitleFriendlyString();
+                    }
+                    @Html.DisplayFor(modelItem => formattedVisitType)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.VisitStartDd.CalendarDate)
@@ -49,7 +52,10 @@
                     @Html.DisplayFor(modelItem => item.VisitEndDd.CalendarDate)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.AdmissionTypeL.LookupValue)
+                    @{
+                        var formattedAdmissionType = item.VisitTypeL.LookupValue.ToTitleFriendlyString();
+                    }
+                    @Html.DisplayFor(modelItem => formattedAdmissionType)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.InpatientDays)

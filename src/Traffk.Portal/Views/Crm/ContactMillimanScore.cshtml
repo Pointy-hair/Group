@@ -4,8 +4,8 @@
     ViewData.SetTitleAndHeading(CrmController.ViewNames.Health.MillimanScore.ToCrmHeading());
 }
 <dl class="dl-horizontal">
-    @Html.DescriptionListElement(model => model.MillimanScoreId)
-    @Html.DescriptionListElement(model => model.Member.MemberId)
+    @Html.DescriptionListElement(model => model.MillimanScoreId, "Milliman Score ID")
+    @Html.DescriptionListElement(model => model.Member.MemberId, "Member ID")
     @Html.DescriptionListElement(model => model.ScoreType)
     @Html.DescriptionListElement(model => model.ScorePeriodStartDd.CalendarDate, "Score Period Start Date")
     @Html.DescriptionListElement(model => model.ScorePeriodEndDd.CalendarDate, "Score Period End Date")
