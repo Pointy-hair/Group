@@ -1,4 +1,5 @@
 ﻿using System;
+using RevolutionaryStuff.Core;
 
 namespace Traffk.Tableau.REST.RestRequests
 {
@@ -14,6 +15,7 @@ namespace Traffk.Tableau.REST.RestRequests
         public TableauSignInOptions(string url)
         {
             Url = url;
+            Requires.True(url.Contains("https"), nameof(url));
             Host = url.Replace("https://", "");
         }
 

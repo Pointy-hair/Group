@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using RevolutionaryStuff.Core;
 using Traffk.Portal.Tests.Helpers;
 using TraffkPortal;
+using Serilog;
 
 namespace Traffk.Portal.Tests
 {
@@ -80,6 +81,16 @@ namespace Traffk.Portal.Tests
             }
 
             return AccessToken_p;
+        }
+                
+        public static ILogger CreateTestLogger()
+        {
+            return new LoggerConfiguration()
+                    .MinimumLevel.Verbose()
+                    .Enrich.FromLogContext()
+                    .WriteTo.AzureTableStorageWithProperties("DefaultEndpointsProtocol=https;AccountName=devhiptraffk;AccountKey=3AJ7i+qzBaq+WkkUNcAyTlhx1pRrfGg6ZiqZGLZj3Ga7j2cyzwjCpfe7dr2mtIQwn/jDrCf0xxVWrJEGh9l9Yg==;",
+                        storageTableName: "AppLogsDev")
+                    .CreateLogger();
         }
     }
 
