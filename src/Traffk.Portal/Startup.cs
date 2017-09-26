@@ -28,7 +28,6 @@ using Traffk.Bal.Data.Rdb.TraffkTenantShards;
 using Traffk.Bal.Email;
 using Traffk.Bal.ExternalApis;
 using Traffk.Bal.Identity;
-using Traffk.Bal.Logging;
 using ILogger = Serilog.ILogger;
 using Traffk.Bal.Permissions;
 using Traffk.Bal.ReportVisuals;
@@ -172,7 +171,10 @@ namespace TraffkPortal
                 o.SlidingExpiration = true;
             });
 
-            services.AddIdentity<ApplicationUser, ApplicationRole>()
+            services.AddIdentity<ApplicationUser, ApplicationRole>(o =>
+                {
+                    o.Tokens.ChangePhoneNumberTokenProvider = "Phone";
+                })
                 .AddEntityFrameworkStores<TraffkTenantModelDbContext>()
                 .AddDefaultTokenProviders();
 
