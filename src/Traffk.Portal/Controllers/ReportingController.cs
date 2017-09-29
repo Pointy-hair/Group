@@ -162,20 +162,21 @@ namespace Traffk.Portal.Controllers
             }
             Response.Headers.Add(WebHelpers.HeaderStrings.LastModified, StartedAtUtc.ToRfc7231());
             Response.Headers.Add(WebHelpers.HeaderStrings.CacheControl, "public");
-            return Cacher.FindOrCreate(Cache.CreateKey(workbookId, viewId), key =>
-            {                
-                try
+            var imageBytes = Cacher.FindOrCreate(Cache.CreateKey(workbookId, viewId), key =>
+            {
+                byte[] previewImagesBytes = ReportVisualService.DownloadPreviewImageForTableauVisual(workbookId, viewId);
+                if (previewImagesBytes != null)
                 {
-                    byte[] previewImagesBytes = ReportVisualService.DownloadPreviewImageForTableauVisual(workbookId, viewId);
-                    if (previewImagesBytes != null)
-                    {
-                        var fileResult = new FileContentResult(previewImagesBytes, "image/png");
-                        return new CacheEntry<FileContentResult>(fileResult);
-                    }
+
+                    //var fileResult = new FileContentResult(previewImagesBytes, "image/png");
+                    return new CacheEntry<byte[]>(previewImagesBytes);
                 }
-                catch (Exception) { }
-                return new CacheEntry<FileContentResult>(null);
-            }).Value;
+                else
+                {
+                    return null;
+                }
+            });
+            return new FileContentResult(imageBytes.Value, "image/png");
         }
 
         [ActionName(ActionNames.Download)]

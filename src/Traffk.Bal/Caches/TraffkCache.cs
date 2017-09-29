@@ -40,9 +40,8 @@ namespace Traffk.Bal.Caches
             }
             catch (Exception ex)
             {
-                //Catching this exception because deserialization fails on inaccessible libraries.
                 Trace.WriteLine(ex);
-                return InnerDataCacher.FindOrCreate<TVal>(key, creator, forceCreate, timeout);
+                throw;
             }
         }
     }

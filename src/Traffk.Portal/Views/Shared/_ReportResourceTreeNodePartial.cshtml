@@ -1,85 +1,86 @@
-﻿@model IEnumerable<TreeNode<Traffk.Bal.ReportVisuals.IReportResource>>
-@using RevolutionaryStuff.Core.Collections
+﻿@model IEnumerable<ReportTreeNode<ReportVisualFolder>>
+@using Traffk.Utility
 @using Traffk.Bal.ReportVisuals
 @using Traffk.Portal.Controllers
-@using static Traffk.Portal.Controllers.ReportingController
-@using static TraffkPortal.Controllers.CrmController
 @foreach (var tn in Model)
 {
     var reportResource = tn.Data;
-    if (reportResource is ReportVisualFolder && tn.HasChildren)
-    {
-        var folder = reportResource as ReportVisualFolder;
-        <h2 data-toggle="@folder.Title.ToUpperCamelCase()" class="section-toggle"><i class="fa fa-minus primary-color" aria-hidden="true"></i> @folder.Title</h2>
-        <div class="row @folder.Title.ToUpperCamelCase()">
-            @if (tn.HasChildren)
-            {
-                await Html.RenderPartialAsync("~/Views/Shared/_ReportResourceTreeNodePartial.cshtml", tn.Children);
-            }
-        </div>
-    }
-    else if (reportResource is IReportVisual)
-    {
-        var view = reportResource as IReportVisual;
-        var urlName = BasePageController.CreateAnchorName(view);
-        <div class="col-md-3 col-sm-4">
-            <div class="mini-panel">
-                <div class="mini-panel-top">
-                    <input type="checkbox" name="radios" class="" id="radio1" />
-                    @if (@view.VisualContext == VisualContext.ContactPerson)
-                    {
-                        <a style="cursor:pointer" asp-controller="@CrmController.Name" asp-route-contactId="@ViewData["ContactId"]" asp-action="@CrmController.ActionNames.Report" asp-route-id="@view.Id" asp-route-anchorName="@urlName">
-                            <div class="report-preview-image-container" style="background-image: url('@view.PreviewImageUrl')">
-                                &nbsp;
-                            </div>
-                        </a>
-                    }
-                    else
-                    {
-                        <a style="cursor:pointer" asp-route-id="@view.Id" asp-route-anchorName="@urlName" asp-action="@ReportingController.ActionNames.Report">
-                            <div class="report-preview-image-container" style="background-image: url('@view.PreviewImageUrl')">
-                                &nbsp;
-                            </div>
-                        </a>
-                    }
-                </div>
-                <div class="mini-panel-bottom">
-                    @if (@view.VisualContext == VisualContext.ContactPerson)
-                    {
-                        <p class="mini-title">
-                            <a  asp-controller="@CrmController.Name" asp-route-contactId="@ViewData["ContactId"]" asp-action="@CrmController.ActionNames.Report" asp-route-id="@view.Id" asp-route-anchorName="@urlName">@view.Title</a>
-                        </p>
-                    }
-                    else
-                    {
-                        <p class="mini-title">
-                            <a style="cursor: pointer" asp-route-id="@view.Id" asp-route-anchorName="@urlName" asp-action="@ReportingController.ActionNames.Report">@view.Title</a>
-                        </p>
-                    }
-                        
-                    <p>@view.Description</p>
-                    <ul class="report-tags" id="">
-                        @foreach (var tag in @view.Tags)
-                        {
-                            <li class="report-tag">
-                                <span>
-                                    @tag
-                                </span>
-                            </li>
-                        }
-                        @if (view.ContainsPhi)
-                        {
-                            <li class="report-tag">
-                                <span>
-                                    PHI
-                                </span>
-                            </li>
-                        }
-                    </ul>
 
-                    <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+    var folder = reportResource;
+    var folderAnchorName = BasePageController.CreateAnchorName(folder);
+    <h2 data-toggle="@folder.Title.ToUpperCamelCase()" class="section-toggle" id="@folderAnchorName"><i class="fa fa-minus primary-color" aria-hidden="true"></i> @folder.Title</h2>
+    <div class="row @folder.Title.ToUpperCamelCase()">
+        @if (tn.HasChildren)
+        {
+            await Html.RenderPartialAsync("~/Views/Shared/_ReportResourceTreeNodePartial.cshtml", tn.Children);
+        }
+         
+        @if (reportResource.Reports.Any())
+        {
+            foreach (var report in reportResource.Reports)
+            {
+                var view = (IReportVisual) report;
+                var urlName = BasePageController.CreateAnchorName(report);
+                <div class="col-md-3 col-sm-4">
+                    <div class="mini-panel">
+                        <div class="mini-panel-top">
+                            <input type="checkbox" name="radios" class="" id="radio1" />
+                            @if (@view.VisualContext == VisualContext.ContactPerson)
+                            {
+                                <a style="cursor: pointer" asp-controller="@CrmController.Name" asp-route-contactId="@ViewData["ContactId"]" asp-action="@CrmController.ActionNames.Report" asp-route-id="@view.Id" asp-route-anchorName="@urlName">
+                                    <div class="report-preview-image-container" style="background-image: url('@view.PreviewImageUrl')">
+                                        &nbsp;
+                                    </div>
+                                </a>
+                            }
+                            else
+                            {
+                                <a style="cursor: pointer" asp-route-id="@view.Id" asp-route-anchorName="@urlName" asp-action="@ReportingController.ActionNames.Report">
+                                    <div class="report-preview-image-container" style="background-image: url('@view.PreviewImageUrl')">
+                                        &nbsp;
+                                    </div>
+                                </a>
+                            }
+                        </div>
+                        <div class="mini-panel-bottom">
+                            @if (@view.VisualContext == VisualContext.ContactPerson)
+                            {
+                                <p class="mini-title">
+                                    <a asp-controller="@CrmController.Name" asp-route-contactId="@ViewData["ContactId"]" asp-action="@CrmController.ActionNames.Report" asp-route-id="@view.Id" asp-route-anchorName="@urlName">@view.Title</a>
+                                </p>
+                            }
+                            else
+                            {
+                                <p class="mini-title">
+                                    <a style="cursor: pointer" asp-route-id="@view.Id" asp-route-anchorName="@urlName" asp-action="@ReportingController.ActionNames.Report">@view.Title</a>
+                                </p>
+                            }
+
+                            <p>@view.Description</p>
+                            <ul class="report-tags" id="">
+                                @foreach (var tag in @view.Tags)
+                                {
+                                    <li class="report-tag">
+                                        <span>
+                                            @tag
+                                        </span>
+                                    </li>
+                                }
+                                @if (view.ContainsPhi)
+                                {
+                                    <li class="report-tag">
+                                        <span>
+                                            PHI
+                                        </span>
+                                    </li>
+                                }
+                            </ul>
+
+                            <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    }
+            }
+        }
+    </div>
 }

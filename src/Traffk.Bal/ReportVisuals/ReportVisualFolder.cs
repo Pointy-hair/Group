@@ -1,27 +1,33 @@
-﻿namespace Traffk.Bal.ReportVisuals
+﻿using System.Collections.Generic;
+
+namespace Traffk.Bal.ReportVisuals
 {
     public interface IReportVisualFolder
     {
         string Title { get; set; }
+        List<ReportVisual> Reports { get; set; }
     }
 
-    public class ReportVisualFolder : IReportVisualFolder, IReportResource
+    public class ReportVisualFolder : ReportResource, IReportVisualFolder
     {
         public ReportVisualFolder(string title)
         {
             Title = title;
         }
-        public string Title { get; set; }
-        string IReportResource.Title
-        {
-            get { return Title; }
-            set { Title = value; }
-        }
+
+
         string IReportVisualFolder.Title
         {
-            get { return Title; }
-            set { Title = value; }
+            get => Title;
+            set => Title = value;
         }
-        public string Description { get; set; }
+
+        public List<ReportVisual> Reports { get; set; } = new List<ReportVisual>();
+
+        List<ReportVisual> IReportVisualFolder.Reports
+        {
+            get => Reports;
+            set => Reports = value;
+        }
     }
 }

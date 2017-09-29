@@ -239,10 +239,10 @@ namespace TraffkPortal.Controllers
             return notes;
         }
 
-        public static string CreateAnchorName(IReportResource reportResource) =>
+        public static string CreateAnchorName(ReportResource reportResource) =>
             ReportVisualService.CreateAnchorName(reportResource);
 
-        public static string CreateAnchorName(IReportVisual reportVisual) =>
-            ReportVisualService.CreateAnchorName(reportVisual);
+        public static string CreateAnchorName(string reportResourcetitle) =>
+            ReportVisualService.CreateAnchorName(reportResourcetitle);
     }
 }

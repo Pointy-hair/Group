@@ -2,7 +2,8 @@
 @using Traffk.Bal.ReportVisuals
 @using Traffk.Portal.Controllers
 @using Traffk.Portal.Models.NoteModels
-@model Traffk.Portal.Models.ReportingModels.IReportViewModel
+@using Traffk.Portal.Models.ReportingModels
+@model IReportViewModel
 @{
     Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
     ViewData.SetTitleAndHeading(@Model.Title, @Model.Description);
@@ -18,7 +19,7 @@
 
 @section breadCrumbItems {
     <li><a asp-controller="@ReportingController.Name" asp-action="Index">Reports</a> <span>></span> </li>
-    <li><a asp-controller="@ReportingController.Name" asp-action="Index" asp-fragment="@Model.FolderName.ToUpperCamelCase()">@Model.FolderName.ToTitleFriendlyString()</a> <span>></span> </li>
+    <li><a asp-controller="@ReportingController.Name" asp-action="Index" asp-fragment="@BasePageController.CreateAnchorName(@Model.FolderName)">@Model.FolderName.ToTitleFriendlyString()</a> <span>></span> </li>
 }
 
 @section pageActionItems {
