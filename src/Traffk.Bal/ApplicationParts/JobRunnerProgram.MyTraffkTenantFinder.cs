@@ -14,7 +14,12 @@ namespace Traffk.Bal.ApplicationParts
         public class MyTraffkTenantFinder : ITraffkTenantFinder, IEnumerable<KeyValuePair<string, object>>
         {
             private readonly TraffkTenantShardsDbContext DB;
-            internal int? TenantId;
+            internal int? TenantId
+            {
+                set { TenantId_p = value; }
+                get => TenantId_p.GetValueOrDefault(TraffkHelpers.TraffkGlobalsTenantId);
+            }
+            private int? TenantId_p;
 
             public MyTraffkTenantFinder(TraffkTenantShardsDbContext db)
             {

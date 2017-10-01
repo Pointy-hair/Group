@@ -37,7 +37,8 @@ namespace Traffk.BackgroundJobServer
         public class Config
         {
             public const string ConfigSectionName = "TenantManagementJobsRunnerConfig";
-            public string ShardMapName { get; set; }
+            public string TraffkDirectoryShardMap { get; set; }
+            public string TraffkTenantShardMapName { get; set; }
             public string SubscriptionId { get; set; }
             public string ResourceGroupName { get; set; }
             public string ServerName { get; set; }
@@ -102,6 +103,7 @@ namespace Traffk.BackgroundJobServer
                     }
                 }
             }
+            throw new Exception($"Could not find Model database [{sqlAzureManagementConfiguration.TenantModelDatabaseName}] on server [{sqlAzureManagementConfiguration.ServerName}]");
         }
 
         /// <remarks>https://docs.microsoft.com/en-us/rest/api/</remarks>
@@ -171,7 +173,12 @@ namespace Traffk.BackgroundJobServer
 
         async Task ITenantManagementJobs.AddTenantToShardManagerAsync(TenantInitializeDetails details)
         {
-            var shardMapName = ConfigOptions.Value.ShardMapName;
+            await AddTenantToShardManagerAsync(details, ConfigOptions.Value.TraffkDirectoryShardMap);
+            await AddTenantToShardManagerAsync(details, ConfigOptions.Value.TraffkTenantShardMapName);
+        }
+
+        private async Task AddTenantToShardManagerAsync(TenantInitializeDetails details, string shardMapName)
+        {
             var shardMapId = (await Smdb.ShardMapsGlobal.Where(z => z.Name == shardMapName).FirstAsync()).ShardMapId;
 
             var shardId = Guid.NewGuid();

@@ -11,6 +11,7 @@
             public const string DataSyncQueue = "sync";
             public const string SsisQueue = "ssis";
             public const string TableauQueue = "tableau";
+            public const string TenantManagement = "tenant_management";
         }
     }
 }

@@ -91,6 +91,8 @@ namespace Traffk.Bal.ApplicationParts
             bo.Queues.Where(q => q.StartsWith("-")).ForEach(q => queues.Remove(q.Substring(1)));
             bo.Queues = queues.ToArray();
 
+            OnHangfireServerInitialized();
+
             using (var s = new BackgroundJobServer(bo))
             {
                 var timeout = Parse.ParseTimeSpan(Configuration["JobRunner:TimeOut"], TimeSpan.FromSeconds(60));
@@ -101,6 +103,9 @@ namespace Traffk.Bal.ApplicationParts
                 while (!ShutdownRequested.WaitOne(timeout));
             }
         }
+
+        protected virtual void OnHangfireServerInitialized()
+        { }
 
         protected override void OnConfigureServices(IServiceCollection services)
         {

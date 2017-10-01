@@ -116,6 +116,23 @@ namespace Traffk.BackgroundJobRunner
             TraffkFtp(gdb, 11, null, "/TopconHealthComp", "/bradm@uhaul.com");
         }
 
+        public void CreateTenant(string tenantName)
+        {
+            var backgrounder = this.ServiceProvider.GetRequiredService<IBackgroundJobClient>();
+            var d = new TenantCreationDetails
+            {
+                AdminPassword = "1adminPassword",
+                AdminUsername = "admin",
+                TenantName = tenantName
+            };
+            backgrounder.Enqueue<ITenantManagementJobs>(z => z.CreateTenant(d));
+        }
+
+        protected override void OnHangfireServerInitialized()
+        {
+            base.OnHangfireServerInitialized();
+//            CreateTenant("PlanetFitness");
+        }
 
         protected override Task OnGoAsync()
         {
