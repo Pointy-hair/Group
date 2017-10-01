@@ -1,7 +1,6 @@
 ﻿using System;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
-using RevolutionaryStuff.Core.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -11,6 +10,7 @@ using Traffk.Tableau;
 using Traffk.Tableau.REST;
 using Traffk.Tableau.REST.Models;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
+using Traffk.Utility;
 
 namespace Traffk.Bal.ReportVisuals
 {
@@ -21,8 +21,8 @@ namespace Traffk.Bal.ReportVisuals
 
     public interface IReportVisualService
     {
-        TreeNode<IReportResource> GetReportFolderTreeRoot(ReportSearchCriteria reportSearchCriteria);
-        IReportVisual GetReportVisual(ReportSearchCriteria reportSearchCriteria);
+        ReportTreeNode<ReportVisualFolder> GetReportFolderTreeRoot(ReportSearchCriteria reportSearchCriteria);
+        ReportVisual GetReportVisual(ReportSearchCriteria reportSearchCriteria);
         byte[] DownloadPreviewImageForTableauVisual(string workbookId, string viewId);
         bool IsOnline { get; set; }
     }
@@ -38,7 +38,6 @@ namespace Traffk.Bal.ReportVisuals
         private ICacher Cacher;
         private TimeSpan ReportIndexCacheTimeout;
 
-        //Do we make these private?
         public string TableauTenantId { get; private set; }
         bool IReportVisualService.IsOnline { get; set; }
 
@@ -64,7 +63,7 @@ namespace Traffk.Bal.ReportVisuals
             ((IReportVisualService) this).IsOnline = TableauViewerService.IsOnline;
         }
 
-        IReportVisual IReportVisualService.GetReportVisual(ReportSearchCriteria reportSearchCriteria)
+        ReportVisual IReportVisualService.GetReportVisual(ReportSearchCriteria reportSearchCriteria)
         {
             var iReportVisualService = this as IReportVisualService;
             var root = iReportVisualService.GetReportFolderTreeRoot(reportSearchCriteria);
@@ -72,19 +71,23 @@ namespace Traffk.Bal.ReportVisuals
             var id = reportSearchCriteria.ReportId;
             root.Walk((node, depth) =>
             {
-                var currentReportVisual = node.Data as ReportVisual;
-                if (currentReportVisual == null) return;
-                var urlFriendlyReportName = CreateAnchorName(currentReportVisual as IReportVisual);
-                if (id == ((IReportVisual)currentReportVisual).Id || id == ((IReportVisual)currentReportVisual).ParentId)
+                var currentFolderReports = node.Data.Reports;
+                if (!currentFolderReports.Any()) return;
+                foreach (var report in currentFolderReports)
                 {
-                    matchingReportVisual = currentReportVisual;
+                    if (id == report.Id ||
+                        id == report.ParentId)
+                    {
+                        matchingReportVisual = report;
+                        return;
+                    }
                 }
             });
 
             return matchingReportVisual;
         }
 
-        TreeNode<IReportResource> IReportVisualService.GetReportFolderTreeRoot(ReportSearchCriteria reportSearchCriteria)
+        ReportTreeNode<ReportVisualFolder> IReportVisualService.GetReportFolderTreeRoot(ReportSearchCriteria reportSearchCriteria)
         {
             var visualContext = reportSearchCriteria.VisualContext;
             var reportTagFilter = reportSearchCriteria.TagFilter;
@@ -119,15 +122,14 @@ namespace Traffk.Bal.ReportVisuals
             return visuals;
         }
 
-        private TreeNode<IReportResource> GetTreeCacheEntry(ReportSearchCriteria reportSearchCriteria)
+        private ReportTreeNode<ReportVisualFolder> GetTreeCacheEntry(ReportSearchCriteria reportSearchCriteria)
         {
-            var root = new TreeNode<IReportResource>(new ReportVisualFolder("Root"));
-            var reportVisuals = (ICollection<IReportVisual>)(GetReportVisuals(reportSearchCriteria) as ICollection<IReportVisual> ??
-                                                             GetReportVisuals(reportSearchCriteria).ToList());
+            var root = new ReportTreeNode<ReportVisualFolder>(new ReportVisualFolder("Root"));
+            var reportVisuals = GetReportVisuals(reportSearchCriteria) as ICollection<IReportVisual> ?? GetReportVisuals(reportSearchCriteria).ToList();
 
             if (reportVisuals.Any())
             {
-                var workbookFolders = new HashSet<TreeNode<IReportResource>>();
+                var workbookFolders = new HashSet<ReportTreeNode<ReportVisualFolder>>();
                 foreach (var rv in reportVisuals)
                 {
                     var visual = rv as ReportVisual;
@@ -137,16 +139,16 @@ namespace Traffk.Bal.ReportVisuals
 
                     if (existingFolder != null)
                     {
-                        existingFolder.Add(visual);
+                        existingFolder.Data.Reports.Add(visual);
                     }
                     else if (folderName == "")
                     {
-                        root.Add(visual);
+                        root.Data.Reports.Add(visual);
                     }
                     else
                     {
-                        var newWorkbookFolder = new TreeNode<IReportResource>(new ReportVisualFolder(folderName));
-                        newWorkbookFolder.Add(visual);
+                        var newWorkbookFolder = new ReportTreeNode<ReportVisualFolder>(new ReportVisualFolder(folderName));
+                        newWorkbookFolder.Data.Reports.Add(visual);
                         workbookFolders.Add(newWorkbookFolder);
                     }
                 }
@@ -156,7 +158,7 @@ namespace Traffk.Bal.ReportVisuals
                     root.Add(folder);
                 }
             }
-            return new CacheEntry<TreeNode<IReportResource>>(root).Value;
+            return new CacheEntry<ReportTreeNode<ReportVisualFolder>>(root).Value;
         }
 
         private static IReportVisual Merge(ITableauReportVisual tableauReportVisual, ReportMetaData reportMetaData)
@@ -290,8 +292,7 @@ namespace Traffk.Bal.ReportVisuals
         #endregion
 
         #region Static Methods
-        public static string CreateAnchorName(IReportResource resource) => CreateAnchorName(resource.Title);
-        public static string CreateAnchorName(IReportVisual visual) => CreateAnchorName(visual.Title);
+        public static string CreateAnchorName(ReportResource resource) => CreateAnchorName(resource.Title);
         public static string CreateAnchorName(string name) => name.Trim()?.ToLower()?.RemoveSpecialCharacters() ?? "";
         #endregion
 

@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RevolutionaryStuff.Core;
-using Traffk.Portal.Tests.Helpers;
-using TraffkPortal;
+using System;
+using TraffkPortal.Controllers;
 
 namespace Traffk.Portal.Tests.ControllersTests
 {
@@ -9,14 +9,24 @@ namespace Traffk.Portal.Tests.ControllersTests
     public class HomeControllerTests
     {
         [TestClass]
+        public class ConstructorTests
+        {
+            [TestMethod]
+            public void WhenGivenNullDbContextThrowException()
+            {
+                Assert.ThrowsException<ArgumentNullException>(() => new HomeController(null, null, MockEnvironment.CreateTestLogger()));
+            }
+
+        }
+
+        [TestClass]
         public class IndexMethodTests
         {
             [Ignore]
             [TestMethod]
             public void WhenGoingToIndexRedirectToLogin()
             {
-                var testFixture = new TestFixture<Startup>();
-                var testClient = testFixture.Client;
+                var testClient = MockEnvironment.TestClient;
                 testClient.DefaultRequestHeaders.Remove("Authorization");
 
                 var response = testClient.GetAsync("/").ExecuteSynchronously();

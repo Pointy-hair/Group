@@ -1,55 +1,99 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
+using Traffk.Utility;
 
 namespace Traffk.Bal.ReportVisuals
 {
-    internal class ReportVisual : IReportVisual, IReportResource
+    public class ReportVisual : ReportResource, IReportVisual
     {
-        public string Title { get; set; }
-        public string Description { get; set; }
-        long IReportVisual.Id { get; set; }
-        string IReportResource.Title
+        [JsonProperty("Id")]
+        public long Id { get; set; }
+
+        [JsonIgnore]
+        long IReportVisual.Id
         {
-            get { return Title; }
-            set { Title = value; }
-        }
-        string IReportResource.Description
-        {
-            get { return Description; }
-            set { Description = value; }
+            get => Id;
+            set => Id = value;
         }
 
+        [JsonProperty("Title")]
         string IReportVisual.Title
         {
-            get { return Title; }
-            set { Title = value; }
+            get => Title;
+            set => Title = value;
         }
+
+        [JsonProperty("Description")]
         string IReportVisual.Description
         {
-            get { return Description; }
-            set { Description = value; }
+            get => Description;
+            set => Description = value;
         }
+
+        [JsonProperty("ExternalReportKey")]
         string IReportVisual.ExternalReportKey { get; set; }
+
+        [JsonProperty("FolderPath")]
         public string FolderPath { get; set; }
+
+        [JsonIgnore]
         string IReportVisual.FolderPath
         {
-            get { return FolderPath; }
-            set { FolderPath = value; }
+            get => FolderPath;
+            set => FolderPath = value;
         }
+
+        [JsonProperty("PreviewImageUrl")]
         string IReportVisual.PreviewImageUrl { get; set; }
-        ICollection<string> IReportVisual.Tags { get; set; }
+
+        [JsonProperty("Tags")]
+        [JsonConverter(typeof(ConcreteTypeConverter<List<string>>))]
+        ICollection<string> IReportVisual.Tags { get; set; } = new List<string>();
+        
+        [JsonProperty("ContainsPhi")]
         bool IReportVisual.ContainsPhi { get; set; }
-        int? IReportVisual.ParentId { get; set; }
+
+        [JsonProperty("ParentId")]
+        public int? ParentId { get; set; }
+
+        [JsonIgnore]
+        int? IReportVisual.ParentId
+        {
+            get => ParentId;
+            set => ParentId = value;
+        }
+
+        [JsonProperty("OwnerContactId")]
         long? IReportVisual.OwnerContactId { get; set; }
+
+        [JsonProperty("Shared")]
         bool IReportVisual.Shared { get; set; }
+
+        [JsonProperty("Favorite")]
         bool IReportVisual.Favorite { get; set; }
-        ICollection<KeyValuePair<string, string>> IReportVisual.Parameters { get; set; }
+
+        [JsonProperty("Parameters")]
+        ICollection<KeyValuePair<string, string>> IReportVisual.Parameters { get; set; } =
+            new List<KeyValuePair<string, string>>();
+
+        [JsonProperty("CanExport")]
         bool IReportVisual.CanExport { get; set; }
+
+        [JsonProperty("LastEdit")]
         DateTime IReportVisual.LastEdit { get; set; }
+
+        [JsonProperty("LastEditedField")]
         string IReportVisual.LastEditedField { get; set; }
+
+        [JsonProperty("VisualContext")]
         VisualContext IReportVisual.VisualContext { get; set; }
+
+        [JsonProperty("RenderingAttributes")]
         ReportDetails.RenderingAttributeFlags? IReportVisual.RenderingAttributes { get; set; }
+
+        [JsonProperty("FolderName")]
         public string FolderName
         {
             get
