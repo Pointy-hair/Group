@@ -27,7 +27,12 @@ namespace Traffk.Bal.Logging
                         writeInBatches: Parse.ParseBool(configuration["Serilog:WriteInBatches"], true),
                         period: Parse.ParseTimeSpan(configuration["Serilog:LogInterval"], TimeSpan.FromSeconds(2)));
 
-            return loggerConfiguration;
+		    var sumoLogicUrl = configuration["Serilog:SumoLogicUrl"];
+		    if (sumoLogicUrl != null)
+		    {
+		    	loggerConfiguration = loggerConfiguration.WriteTo.SumoLogic(sumoLogicUrl);
+		    }
+			return loggerConfiguration;
         }
 
         public static ILogger InitLogger(IConfigurationRoot configuration, LoggerConfiguration loggerConfiguration = null)
