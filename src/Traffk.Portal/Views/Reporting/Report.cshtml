@@ -3,6 +3,7 @@
 @using Traffk.Portal.Controllers
 @using Traffk.Portal.Models.NoteModels
 @using Traffk.Portal.Models.ReportingModels
+@using Traffk.Utility
 @model IReportViewModel
 @{
     Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
@@ -35,6 +36,18 @@
 }
 
 @{     await Html.RenderPartialAsync("~/Views/Shared/_ReportFramePartial.cshtml", Model); }
+
+@if (Model.RelatedReports != null && Model.RelatedReports.HasChildren)
+{
+        <h2>Related Reports</h2>
+        <div id="reports-container">
+            @{
+                var relatedReports = new List<ReportTreeNode<ReportVisualFolder>>();
+                relatedReports.AddRange(Model.RelatedReports.Children);
+                await Html.RenderPartialAsync("~/Views/Shared/_ReportResourceTreeNodePartial.cshtml", relatedReports);
+            }
+        </div>
+}
 
 @section pageDialogs
 {

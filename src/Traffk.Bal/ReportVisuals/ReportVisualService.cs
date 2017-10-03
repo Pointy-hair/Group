@@ -23,12 +23,16 @@ namespace Traffk.Bal.ReportVisuals
     {
         ReportTreeNode<ReportVisualFolder> GetReportFolderTreeRoot(ReportSearchCriteria reportSearchCriteria);
         ReportVisual GetReportVisual(ReportSearchCriteria reportSearchCriteria);
+        ReportTreeNode<ReportVisualFolder> GetReportFolder(ReportSearchCriteria reportSearchCriteria,
+            string topLevelFolderName);
         byte[] DownloadPreviewImageForTableauVisual(string workbookId, string viewId);
         bool IsOnline { get; set; }
     }
 
     public class ReportVisualService : IReportVisualService
     {
+        private const string Root = "Root";
+
         private ITableauViewerService TableauViewerService;
         private TraffkTenantModelDbContext Rdb;
         private ITableauTenantFinder TableauTenantFinder;
@@ -89,12 +93,30 @@ namespace Traffk.Bal.ReportVisuals
 
         ReportTreeNode<ReportVisualFolder> IReportVisualService.GetReportFolderTreeRoot(ReportSearchCriteria reportSearchCriteria)
         {
+            return GetReportFolder(reportSearchCriteria, Root);
+        }
+
+        ReportTreeNode<ReportVisualFolder> IReportVisualService.GetReportFolder(
+            ReportSearchCriteria reportSearchCriteria,
+            string topLevelFolderName) => GetReportFolder(reportSearchCriteria, topLevelFolderName);
+
+        private ReportTreeNode<ReportVisualFolder> GetReportFolder(
+            ReportSearchCriteria reportSearchCriteria, string topLevelFolderName)
+        {
             var visualContext = reportSearchCriteria.VisualContext;
             var reportTagFilter = reportSearchCriteria.TagFilter;
 
-            var rootKey = visualContext.ToString() + reportTagFilter;
+            var rootKey = visualContext.ToString() + topLevelFolderName + reportSearchCriteria.BaseReportVisual?.Id;
 
-            return Cacher.FindOrCreate(rootKey, key => GetTreeCacheEntry(reportSearchCriteria), ReportIndexCacheTimeout).Value;
+            if (reportTagFilter != null)
+            {
+                foreach (var tag in reportTagFilter)
+                {
+                    rootKey += tag;
+                }
+            }
+
+            return Cacher.FindOrCreate(rootKey, key => GetTreeCacheEntry(reportSearchCriteria, topLevelFolderName), ReportIndexCacheTimeout).Value;
         }
 
         byte[] IReportVisualService.DownloadPreviewImageForTableauVisual(string workbookId, string viewId)
@@ -122,9 +144,9 @@ namespace Traffk.Bal.ReportVisuals
             return visuals;
         }
 
-        private ReportTreeNode<ReportVisualFolder> GetTreeCacheEntry(ReportSearchCriteria reportSearchCriteria)
+        private ReportTreeNode<ReportVisualFolder> GetTreeCacheEntry(ReportSearchCriteria reportSearchCriteria, string topLevelFolderName)
         {
-            var root = new ReportTreeNode<ReportVisualFolder>(new ReportVisualFolder("Root"));
+            var root = new ReportTreeNode<ReportVisualFolder>(new ReportVisualFolder(topLevelFolderName));
             var reportVisuals = GetReportVisuals(reportSearchCriteria) as ICollection<IReportVisual> ?? GetReportVisuals(reportSearchCriteria).ToList();
 
             if (reportVisuals.Any())
@@ -275,7 +297,9 @@ namespace Traffk.Bal.ReportVisuals
                         &&
                         x.ReportDetails.VisualContext == reportSearchCriteria.VisualContext
                         &&
-                        (reportSearchCriteria.TagFilter == null || x.ReportDetails.Tags.Contains(reportSearchCriteria.TagFilter))
+                        (reportSearchCriteria.TagFilter == null || x.ReportDetails.Tags.Any(tag => reportSearchCriteria.TagFilter.Contains(tag)))
+                        &&
+                        (reportSearchCriteria.BaseReportVisual == null || x.ReportMetaDataId != reportSearchCriteria.BaseReportVisual.Id) //when fetching related reports, don't include the current report
                         &&
                         ((x.ParentReportMetaDataId == null //Traffk supplied metadata
                           || ((long)x.OwnerContactId == CurrentUser.ContactId) //User's metadata

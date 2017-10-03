@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.ReportVisuals;
+using Traffk.Utility;
 
 namespace Traffk.Portal.Models.ReportingModels
 {
@@ -15,6 +16,7 @@ namespace Traffk.Portal.Models.ReportingModels
         string Description { get; set; }
         ReportDetails.RenderingAttributeFlags RenderingAttributes { get; }
         IQueryable<Note> Notes { get; set; }
+        ReportTreeNode<ReportVisualFolder> RelatedReports { get; set; }
     }
 
     public class TableauReportViewModel : IReportViewModel
@@ -22,7 +24,7 @@ namespace Traffk.Portal.Models.ReportingModels
         public TableauReportViewModel()
         { }
 
-        public TableauReportViewModel(IReportVisual reportVisual)
+        public TableauReportViewModel(IReportVisual reportVisual, ReportTreeNode<ReportVisualFolder> relatedReports = null)
         {
             Id = reportVisual.Id;
             WorkbookName = reportVisual.Parameters.SingleOrDefault(p => p.Key == nameof(WorkbookName)).Value;
@@ -35,6 +37,7 @@ namespace Traffk.Portal.Models.ReportingModels
             {
                 RenderingAttributes = reportVisual.RenderingAttributes.Value;
             }
+            RelatedReports = relatedReports;
         }
 
         public long Id { get; set; }
@@ -46,5 +49,54 @@ namespace Traffk.Portal.Models.ReportingModels
         public string Description { get; set; }
         public ReportDetails.RenderingAttributeFlags RenderingAttributes { get; private set; }
         public IQueryable<Note> Notes { get; set; }
+        public ReportTreeNode<ReportVisualFolder> RelatedReports { get; set; }
+        long IReportViewModel.Id
+        {
+            get => Id;
+            set => Id = value;
+        }
+        string IReportViewModel.Title
+        {
+            get => Title;
+            set => Title = value;
+        }
+        string IReportViewModel.FolderName
+        {
+            get => FolderName;
+            set => FolderName = value;
+        }
+        string IReportViewModel.WorkbookName
+        {
+            get => WorkbookName;
+            set => WorkbookName = value;
+        }
+        string IReportViewModel.ViewName
+        {
+            get => ViewName;
+            set => ViewName = value;
+        }
+        string IReportViewModel.WorksheetName
+        {
+            get => WorksheetName;
+            set => WorksheetName = value;
+        }
+        string IReportViewModel.Description
+        {
+            get => Description;
+            set => Description = value;
+        }
+
+        ReportDetails.RenderingAttributeFlags IReportViewModel.RenderingAttributes => RenderingAttributes;
+
+        IQueryable<Note> IReportViewModel.Notes
+        {
+            get => Notes;
+            set => Notes = value;
+        }
+        ReportTreeNode<ReportVisualFolder> IReportViewModel.RelatedReports
+        {
+            get => RelatedReports;
+            set => RelatedReports = value;
+        }
     }
 }

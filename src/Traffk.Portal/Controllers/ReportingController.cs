@@ -18,6 +18,7 @@ using Traffk.Bal.Settings;
 using Traffk.Portal.Models.ReportingModels;
 using Traffk.Tableau;
 using Traffk.Tableau.REST;
+using Traffk.Utility;
 using TraffkPortal;
 using TraffkPortal.Controllers;
 using TraffkPortal.Permissions;
@@ -32,6 +33,9 @@ namespace Traffk.Portal.Controllers
     {
         public const string Name = "Reporting";
         public const VisualContext ReportVisualContext = VisualContext.Tenant;
+        private const string RelatedReports = "Related Reports";
+
+        private static readonly List<string> DefaultTags = new List<string>{"Traffk Report"};
 
         protected readonly IReportVisualService ReportVisualService;
         protected readonly IBackgroundJobClient Backgrounder;
@@ -115,7 +119,10 @@ namespace Traffk.Portal.Controllers
                 return RedirectToAction(ActionNames.Offline);
             }
 
-            var tableauReportViewModel = GetReportViewModel(id);
+            var reportVisual = GetReportVisual(id);
+            var relatedReports = GetRelatedReports(reportVisual);
+
+            var tableauReportViewModel = new TableauReportViewModel(reportVisual, relatedReports);
 
             SetHeroLayoutViewData(tableauReportViewModel.Id, tableauReportViewModel.Title.ToTitleFriendlyString(), PageKeys.Report);
             return View(tableauReportViewModel);
@@ -362,12 +369,8 @@ namespace Traffk.Portal.Controllers
 
         private IReportViewModel GetReportViewModel(string id)
         {
-            var reportSearchCriteria = new ReportSearchCriteria
-            {
-                VisualContext = ReportVisualContext,
-                ReportId = Parse.ParseInt32(id)
-            };
-            var reportVisual = ReportVisualService.GetReportVisual(reportSearchCriteria);
+            var reportVisual = GetReportVisual(id);
+
             if (reportVisual == null)
             {
                 return null;
@@ -376,6 +379,32 @@ namespace Traffk.Portal.Controllers
             var tableauReportViewModel = new TableauReportViewModel(reportVisual);
 
             return tableauReportViewModel;
+        }
+
+        private IReportVisual GetReportVisual(string id)
+        {
+            var reportSearchCriteria = new ReportSearchCriteria
+            {
+                VisualContext = ReportVisualContext,
+                ReportId = Parse.ParseInt32(id)
+            };
+            var reportVisual = ReportVisualService.GetReportVisual(reportSearchCriteria);
+            return reportVisual;
+        }
+
+        private ReportTreeNode<ReportVisualFolder> GetRelatedReports(IReportVisual baseReport)
+        {
+            baseReport.Tags.Remove(DefaultTags);
+
+            var searchCriteria = new ReportSearchCriteria
+            {
+
+                VisualContext = VisualContext.Tenant,
+                TagFilter = baseReport.Tags,
+                BaseReportVisual = baseReport
+            };
+            var relatedReports = ReportVisualService.GetReportFolder(searchCriteria, RelatedReports);
+            return relatedReports;
         }
     }
 }

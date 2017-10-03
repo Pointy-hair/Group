@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RevolutionaryStuff.Core;
@@ -55,7 +56,7 @@ namespace TraffkPortal.Controllers
             var reportSearchCriteria = new ReportSearchCriteria
             {
                 VisualContext = ReportVisualContext,
-                TagFilter = ReportTagFilters.RiskIndex
+                TagFilter = new List<string>{ReportTagFilters.RiskIndex}
             };
             var root = ReportVisualService.GetReportFolderTreeRoot(reportSearchCriteria);
             return View(root);
