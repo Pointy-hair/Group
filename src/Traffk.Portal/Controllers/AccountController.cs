@@ -1,5 +1,4 @@
-﻿using Microsoft.ApplicationInsights.AspNetCore.Extensions;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +10,6 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Traffk.Bal.Communications;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
-using Traffk.Portal.Controllers;
 using TraffkPortal.Models.AccountViewModels;
 using TraffkPortal.Services;
 using TraffkPortal.Services.Sms;
@@ -32,7 +30,19 @@ namespace TraffkPortal.Controllers
 
         private static class SignInResultStrings
         {
-            public static string Failed = "Failed";
+            public static readonly string Failed = "Failed";
+        }
+
+        private static class MessageStrings
+        {
+            public const string EmailConfirmed = "Your email address has been verified.";
+            public const string ConfirmedEmailRequired = "You must have a verified email to log in.";
+            public const string UserLockedOut = "Your account is locked.";
+            public const string IncorrectUsernameOrPassword = "You've entered an incorrect username or password.";
+            public const string UserSelfRegistrationDisabled = "User self registration is currently disabled.";
+            public const string CheckEmailForVerification =
+                AccountCreated + " " + "Please check your email to verify your account.";
+            public const string AccountCreated = "Your new account has been created.";
         }
 
         public AccountController(
@@ -90,7 +100,7 @@ namespace TraffkPortal.Controllers
                             {
                                 if (!await UserManager.IsEmailConfirmedAsync(user))
                                 {
-                                    ModelState.AddModelError(string.Empty, "You must have a confirmed email to log in.");
+                                    ModelState.AddModelError(string.Empty, MessageStrings.ConfirmedEmailRequired);
                                     return View(model);
                                 }
                             }
@@ -111,7 +121,7 @@ namespace TraffkPortal.Controllers
 
                     if (result.ToString() == SignInResultStrings.Failed)
                     {
-                        ModelState.AddModelError(string.Empty, "You've entered an incorrect username or password.");
+                        ModelState.AddModelError(string.Empty, MessageStrings.IncorrectUsernameOrPassword);
                         return View(model);
                     }
 
@@ -122,11 +132,11 @@ namespace TraffkPortal.Controllers
 
                     if (result.IsLockedOut)
                     {
-                        Logger.Information("User account locked out.");
+                        Logger.Information(MessageStrings.UserLockedOut);
                         return View("Lockout");
                     }
 
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, MessageStrings.IncorrectUsernameOrPassword);
                     return View(model);
                 }
                 finally
@@ -162,7 +172,7 @@ namespace TraffkPortal.Controllers
         {
             if (!Current.Application.AppSettings.Registration.UsersCanSelfRegister)
             {
-                throw new NotNowException("User self registration currently disabled");
+                throw new NotNowException(MessageStrings.UserSelfRegistrationDisabled);
             }
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
@@ -181,11 +191,14 @@ namespace TraffkPortal.Controllers
                             SystemCommunicationPurposes.UserAccountVerification,
                             CommunicationModelFactory.CreateCallbackUrlModel(callbackUrl),
                             model.Email);
+                        SetToast(MessageStrings.CheckEmailForVerification);
                     }
                     else
                     {
                         await SignInManager.SignInAsync(user, isPersistent: IsSigninPersistent);
+                        SetToast(MessageStrings.AccountCreated);
                     }
+
                     Logger.Information("User created a new account with password.");
                     return RedirectToLocal(returnUrl);
                 }
@@ -318,6 +331,11 @@ namespace TraffkPortal.Controllers
             Requires.NonNull(user, nameof(user));
 
             var result = await UserManager.ConfirmEmailAsync(user, code);
+            if (result.Succeeded)
+            {
+                SetToast(MessageStrings.EmailConfirmed);
+            }
+
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
 
