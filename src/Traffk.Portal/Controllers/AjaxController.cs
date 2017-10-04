@@ -1,6 +1,8 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using Serilog;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
@@ -38,16 +40,18 @@ namespace Traffk.Portal.Controllers
             string content,
             string objectType)
         {
+            var parentNoteIdInt = Parse.ParseNullableInt32(parentNoteId);
+
             switch (objectType)
             {
                 case ObjectTypes.Report:
                     var reportMetaData = Rdb.ReportMetaData.SingleOrDefault(x => x.ReportMetaDataId == id);
                     if (reportMetaData == null) return NotFound();
-                    return await base.CreateNote(parentNoteId, content, reportMetaData);
+                    return await base.CreateNote(parentNoteIdInt, content, reportMetaData);
                 case ObjectTypes.Contact:
                     var contact = await FindContactByIdAsync(id);
                     if (contact == null) return NotFound();
-                    return await base.CreateNote(parentNoteId, content, contact);
+                    return await base.CreateNote(parentNoteIdInt, content, contact);
                 default:
                     return NoContent();
             }

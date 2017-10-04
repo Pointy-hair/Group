@@ -1,16 +1,30 @@
-﻿@model Traffk.Portal.Models.NoteModels.NoteModel
+﻿@using Traffk.Portal.Models.NoteModels
+@model Traffk.Portal.Models.NoteModels.NoteModel
+@{
+    var popupId = "popup-create-note";
+    if (Model.ParentNoteId != null)
+    {
+        popupId += ("-" + Model.ParentNoteId);
+    }
 
-<div id="popup-create-note" class="popup">
+    var newNoteContentId = "NewNoteContent";
+    if (Model.ParentNoteId != null)
+    {
+        newNoteContentId += ("-" + Model.ParentNoteId);
+    }
+
+}    
+<div id="@popupId" class="popup">
     <div class="popup-content-container">
-        <a class="popup-create-note_close"><i class="fa fa-2x fa-times popup-close-btn"></i></a>
+        <a class="@(popupId)_close"><i class="fa fa-2x fa-times popup-close-btn"></i></a>
         <h3>Create Note</h3>
         <form role="form" id="personal-edit-form" class="inline-form">
             <div class="form-row">
-                <textarea class="form-control" id="NewNoteContent"></textarea>
+                <textarea class="form-control" id="@newNoteContentId"></textarea>
             </div>
             <ul class="step-buttons">
-                <li><a href="#" class="btn btn-primary btn-large popup-create-note_close" onclick="createNote('@Model.NoteObjectType', '@Model.EntityId')">Save</a></li>
-                <li><a href="#" class="btn btn-large btn-grey popup-create-note_close">Cancel</a></li>
+                <li><a href="#" class="btn btn-primary btn-large @(popupId)_close" onclick="createNote('@Model.NoteObjectType', '@Model.EntityId', '@Model.ParentNoteId')">Save</a></li>
+                <li><a href="#" class="btn btn-large btn-grey @(popupId)_close">Cancel</a></li>
             </ul>
         </form>
     </div>

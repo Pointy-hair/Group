@@ -201,18 +201,18 @@ namespace TraffkPortal.Controllers
 
         [Route("Base/CreateNote")]
         public async Task<IActionResult> CreateNote(
-            string parentNoteId,
+            int? parentNoteId,
             string content,
             IRdbDataEntity attachmentSite) => await CreateNote(parentNoteId, content, new[]{attachmentSite});
 
         [Route("Base/CreateNotes")]
         public async Task<IActionResult> CreateNote(
-            string parentNoteId,
+            int? parentNoteId,
             string content,
             IRdbDataEntity[] attachmentSites)
         {
             if (attachmentSites.Length < 1) return NotFound();
-            Rdb.AttachNote(Current.User.Contact, null, content, attachmentSites);
+            Rdb.AttachNote(Current.User.Contact, null, content, parentNoteId, attachmentSites);
             await Rdb.SaveChangesAsync();
             return Ok();
         }
@@ -243,7 +243,7 @@ namespace TraffkPortal.Controllers
 
         protected IQueryable<Note> GetNotes(IRdbDataEntity entityWithAttachedNotes)
         {
-            var notes = Rdb.GetAttachedNotes(entityWithAttachedNotes);
+            var notes = Rdb.GetAttachedNotes(entityWithAttachedNotes).Include(z => z.CreatedByContact);
             return notes;
         }
 

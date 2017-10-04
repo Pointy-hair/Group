@@ -13,13 +13,15 @@ namespace Traffk.Portal.Models.NoteModels
 
     public class NoteModel
     {
-        public NoteModel(NoteObjectType noteObjectType, string entityId)
+        public NoteModel(NoteObjectType noteObjectType, string entityId, string parentNoteId = null)
         {
             NoteObjectType = noteObjectType;
             EntityId = entityId;
+            ParentNoteId = parentNoteId;
         }
 
         public NoteObjectType NoteObjectType {get; set;}
         public string EntityId { get; set; }
+        public string ParentNoteId { get; set; }
     }
 }

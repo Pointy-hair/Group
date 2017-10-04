@@ -62,7 +62,7 @@ namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
                         ))
                 ).Value;
 
-        public void AttachNote(Contact creator, string subject, string body, params IRdbDataEntity[] attachmentSites)
+        public void AttachNote(Contact creator, string subject, string body, int? parentNoteId = null, params IRdbDataEntity[] attachmentSites)
         {
             Requires.NonNull(creator, nameof(creator));
             Requires.Between(attachmentSites.Length, nameof(attachmentSites), 1);
@@ -72,6 +72,7 @@ namespace Traffk.Bal.Data.Rdb.TraffkTenantModel
                 CreatedByContact = creator,
                 Body = body,
                 Subject = subject,
+                ParentNoteId = parentNoteId
             };
             Notes.Add(n);
             foreach (var site in attachmentSites)
