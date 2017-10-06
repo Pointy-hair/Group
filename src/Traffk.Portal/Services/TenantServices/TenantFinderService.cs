@@ -68,8 +68,11 @@ namespace TraffkPortal.Services.TenantServices
         {
             var config = configOptions.Value;
             AppHostItem z = null;
+#if DEBUG
+            PreferredHostname = ActualHostname = StringHelpers.Coalesce(config?.Hostname, acc.HttpContext?.Request?.Host.Host);
+#endif
             PreferredHostname = ActualHostname = acc.HttpContext?.Request.Host.Host;
-            
+
             var defaultUniversalLoginPattern = config.UniversalLoginHostPath;
             if (StringHelpers.IsSameIgnoreCase(defaultUniversalLoginPattern, acc.HttpContext?.Request?.Path.Value))
             {
