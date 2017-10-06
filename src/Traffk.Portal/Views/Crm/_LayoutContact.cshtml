@@ -6,6 +6,7 @@
     ViewData.HasPageMenuItems(true);
     ViewData.HasPageActions(true);
     var pageKey = (CrmController.PageKeys)ViewData[AspHelpers.ViewDataKeys.PageKey];
+    var entityType = ViewData[AspHelpers.ViewDataKeys.EntityType]?.ToString();
     var entityName = ViewData[AspHelpers.ViewDataKeys.EntityTitle].ToString();
     var entityId = ViewData[AspHelpers.ViewDataKeys.EntityId].ToString();
     var isNewEntity = string.IsNullOrEmpty(entityId);
@@ -157,7 +158,7 @@ else if (ViewData.HasCustomPageMenuItems())
         </div>
     </div>
     
-    @Html.Partial("_CreateNotePartial", new NoteModel(NoteObjectType.Contact, @entityId))
+    @Html.Partial("_CreateNotePartial", new NoteViewModel(@entityType, @entityId))
 }
 @section Scripts {
     <script type="text/javascript">
@@ -185,7 +186,7 @@ else if (ViewData.HasCustomPageMenuItems())
                  src="@profileUrl"
                  id="personal-page-img"
                  alt="" />
-            <div col-sm-8>
+            <div class="col-sm-8">
                 @RenderBody()
             </div>
         </div>

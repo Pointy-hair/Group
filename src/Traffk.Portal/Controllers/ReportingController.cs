@@ -82,7 +82,7 @@ namespace Traffk.Portal.Controllers
             IBackgroundJobClient backgrounder,
             ITraffkRecurringJobManager recurringJobManager,
             BlobStorageServices blobStorageService
-        )
+            )
             : base(AspHelpers.MainNavigationPageKeys.Reporting, db, current, logger, cacher)
         {
             ReportVisualService = reportVisualService;
@@ -124,7 +124,7 @@ namespace Traffk.Portal.Controllers
 
             var tableauReportViewModel = new TableauReportViewModel(reportVisual, relatedReports);
 
-            SetHeroLayoutViewData(tableauReportViewModel.Id, tableauReportViewModel.Title.ToTitleFriendlyString(), PageKeys.Report);
+            SetHeroLayoutViewData(tableauReportViewModel.Id, tableauReportViewModel.Title.ToTitleFriendlyString(), PageKeys.Report, typeof(ReportMetaData).Name);
             return View(tableauReportViewModel);
         }
 
@@ -344,7 +344,7 @@ namespace Traffk.Portal.Controllers
 
         [ActionName(ActionNames.ReportNotes)]
         [Route("/Reporting/Report/{id}/Notes")]
-        public async Task<IActionResult> GetReportNotesAsync(int id, string sortCol, string sortDir, int? page, int? pageSize)
+        public async Task<IActionResult> GetReportNotesAsync([FromServices]INoteService noteService, int id, string sortCol, string sortDir, int? page, int? pageSize)
         {
             var tableauReportViewModel = GetReportViewModel(id.ToString());
             if (tableauReportViewModel == null)
@@ -353,11 +353,12 @@ namespace Traffk.Portal.Controllers
             }
 
             var reportMetadata = await Rdb.ReportMetaData.FindAsync(id);
-            var notes = GetNotes(reportMetadata);
+            var notes = noteService.GetNoteNodes(reportMetadata);
 
             tableauReportViewModel.Notes = notes;
 
-            SetHeroLayoutViewData(tableauReportViewModel.Id, tableauReportViewModel.Title.ToTitleFriendlyString(), PageKeys.ReportNotes);
+            SetHeroLayoutViewData(tableauReportViewModel.Id, tableauReportViewModel.Title.ToTitleFriendlyString(), PageKeys.ReportNotes, typeof(ReportMetaData).Name);
+
             return View(tableauReportViewModel);
         }
 
@@ -392,7 +393,7 @@ namespace Traffk.Portal.Controllers
             return reportVisual;
         }
 
-        private ReportTreeNode<ReportVisualFolder> GetRelatedReports(IReportVisual baseReport)
+        private SerializableTreeNode<ReportVisualFolder> GetRelatedReports(IReportVisual baseReport)
         {
             baseReport.Tags.Remove(DefaultTags);
 

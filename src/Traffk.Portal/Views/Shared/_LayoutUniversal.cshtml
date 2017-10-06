@@ -178,14 +178,19 @@ else
 @RenderSection("pageDialogs", false)
 @section Scripts {
     <script>
-        function createNote(objectType, entityId, parentNoteId = null) {
+        function createNote(objectType, entityId, parentNoteId = null, noteContentId = null) {
             var newNoteContentId = "#NewNoteContent";
+            if (noteContentId) {
+                newNoteContentId = "#" + noteContentId;
+            }
             if (parentNoteId) {
                 newNoteContentId = newNoteContentId + ("-" + parentNoteId);
             }
 
+            var noteContent = $(newNoteContentId).val();
+
             var postData = {
-                content: $(newNoteContentId).val(),
+                content: noteContent,
                 parentNoteId: parentNoteId
             };
             $.post(

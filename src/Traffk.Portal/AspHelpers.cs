@@ -403,5 +403,10 @@ namespace TraffkPortal
             var json = req.Body.ReadToEnd();
             return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json);
         }
+
+        public static string ToShortDateTime(this DateTime dateTime)
+        {
+            return dateTime.ToString("g");
+        }
     }
 }

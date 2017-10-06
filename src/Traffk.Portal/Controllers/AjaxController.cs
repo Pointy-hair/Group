@@ -27,7 +27,12 @@ namespace Traffk.Portal.Controllers
         public static class ObjectTypes
         {
             public const string Report = "Report";
+            public const string ReportMetaData = "ReportMetaData";
+            public const string IReportVisual = "IReportVisual";
             public const string Contact = "Contact";
+            public const string Person = "Person";
+            public const string Provider = "Provider";
+            public const string User = "User";
         }
 
         [HttpPost]
@@ -45,10 +50,15 @@ namespace Traffk.Portal.Controllers
             switch (objectType)
             {
                 case ObjectTypes.Report:
+                case ObjectTypes.ReportMetaData:
+                case ObjectTypes.IReportVisual:
                     var reportMetaData = Rdb.ReportMetaData.SingleOrDefault(x => x.ReportMetaDataId == id);
                     if (reportMetaData == null) return NotFound();
                     return await base.CreateNote(parentNoteIdInt, content, reportMetaData);
                 case ObjectTypes.Contact:
+                case ObjectTypes.Person:
+                case ObjectTypes.Provider:
+                case ObjectTypes.User:
                     var contact = await FindContactByIdAsync(id);
                     if (contact == null) return NotFound();
                     return await base.CreateNote(parentNoteIdInt, content, contact);

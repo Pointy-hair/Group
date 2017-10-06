@@ -235,8 +235,8 @@ namespace TraffkPortal
             services.AddScoped<ITableauTenantFinder, TableauTenantFinder>();
             services.AddScoped<ITableauUserCredentials, CurrentContextServices>();
             services.AddScoped<ITableauAuthorizationService, TableauAuthorizationService>();
-
             services.AddScoped<IReportVisualService, ReportVisualService>();
+            services.AddScoped<INoteService, NoteService>();
 
             services.AddScoped<IBackgroundJobClient, TenantedBackgroundJobClient>();
             services.AddScoped<ITraffkRecurringJobManager, TenantedBackgroundJobClient>();

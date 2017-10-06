@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
+using Traffk.Utility;
 
 namespace TraffkPortal.Models.CrmModels
 {
@@ -10,7 +11,7 @@ namespace TraffkPortal.Models.CrmModels
 
         public CommunicationPiece[] CommunicationPieces { get; set; } = CommunicationPiece.None;
 
-        public IList<Note> Notes { get; set; } = new List<Note>();
+        public SerializableTreeNode<Note> Notes { get; set; } = new SerializableTreeNode<Note>(null);
 
 //        public CommunicationOpting[] Optings { get; set; }
 

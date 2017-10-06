@@ -1,12 +1,14 @@
+@using Traffk.Portal.Models.NoteModels
 @using TraffkPortal.Models.CrmModels
 @model ContactModel
 @{
     Layout = "~/Views/Crm/_LayoutContact.cshtml";
     ViewData.SetTitleAndHeading("Notes");
-    ViewData.IsListingPage(true);
-    ViewData.HasPageMenuItems(false);
+    var entityId = ViewData[AspHelpers.ViewDataKeys.EntityId].ToString();
+    var entityType = ViewData[AspHelpers.ViewDataKeys.EntityType].ToString();
 }
-@section listingTable
-{
-    @await Html.PartialAsync("_NotesPartial", Model.Notes, z => z.Notes)
-}
+
+    <div class="note-container">
+        @await Html.PartialAsync("_InlineNoteFormPartial", new NoteViewModel(@entityType, @entityId))
+        @await Html.PartialAsync("_NotesPartial", Model.Notes, z => z.Notes)
+    </div>

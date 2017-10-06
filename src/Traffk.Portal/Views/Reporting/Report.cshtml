@@ -14,6 +14,7 @@
     ViewData.IsContentPage(true);
     var entityId = @Model.Id.ToString();
     var pageKey = (ReportingController.PageKeys)ViewData[AspHelpers.ViewDataKeys.PageKey];
+    var entityType = ViewData[AspHelpers.ViewDataKeys.EntityType];
 
 }
 
@@ -42,7 +43,7 @@
         <h2>Related Reports</h2>
         <div id="reports-container">
             @{
-                var relatedReports = new List<ReportTreeNode<ReportVisualFolder>>();
+                var relatedReports = new List<SerializableTreeNode<ReportVisualFolder>>();
                 relatedReports.AddRange(Model.RelatedReports.Children);
                 await Html.RenderPartialAsync("~/Views/Shared/_ReportResourceTreeNodePartial.cshtml", relatedReports);
             }
@@ -51,7 +52,7 @@
 
 @section pageDialogs
 {
-    @Html.Partial("_CreateNotePartial", new NoteModel(NoteObjectType.Report, @entityId))
+    @Html.Partial("_CreateNotePartial", new NoteViewModel(@entityType.ToString(), @entityId))
 }
 <!--
 <button class="btn" id="getData" onclick="getUnderlyingData()">Get Data</button>

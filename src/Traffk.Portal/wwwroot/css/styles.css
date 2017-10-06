@@ -1211,6 +1211,41 @@ ul.navbar-left {
     display: none;
 }
 
+.note-container {
+    width: 95%;
+    margin: 0px auto;
+}
+
+.note-node {
+    float: left;
+    width: 95%;
+    margin-left: 2%;
+    margin-right: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.note-creator-name {
+    font-weight: bold;
+}
+
+.note-date {
+    font-size: 12px;
+}
+
+.note-inline-form {
+    float: left;
+    width: 95%;
+    margin-left: 2%;
+    margin-right: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+    margin-bottom: 20px;
+}
+
+.note-inline-form .form-row {
+    margin-bottom: 20px;
+}
 /*
     Screen size specific CSS
 */

@@ -1,0 +1,13 @@
+﻿@model Traffk.Portal.Models.NoteModels.NoteViewModel
+@{
+    const string noteContentId = "NewNoteContentInline";
+}
+<div class="note-inline-form">
+    <form role="form" class="inline-form">
+        <div class="form-row">
+            <textarea class="form-control" id="@noteContentId"></textarea>
+        </div>
+
+        <a href="#" class="btn btn-primary btn-sm" onclick="createNote('@Model.EntityType', '@Model.EntityId', null, '@noteContentId')">Save New Note</a>
+    </form>
+</div>

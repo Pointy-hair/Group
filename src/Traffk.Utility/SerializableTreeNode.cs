@@ -5,43 +5,43 @@ using Newtonsoft.Json;
 
 namespace Traffk.Utility
 {
-    public class ReportTreeNode<TData>
+    public class SerializableTreeNode<TData>
     {
         public TData Data { get; private set; }
 
-        public ReportTreeNode<TData> Parent { get; set; }
+        public SerializableTreeNode<TData> Parent { get; set; }
 
-        public ReportTreeNode<TData>[] ChildrenArray
+        public SerializableTreeNode<TData>[] ChildrenArray
         {
             get => Children.ToArray();
             set => Children = value.ToList();
         }
 
         [JsonIgnore]
-        public IList<ReportTreeNode<TData>> Children { get; set; } = new List<ReportTreeNode<TData>>();
+        public IList<SerializableTreeNode<TData>> Children { get; set; } = new List<SerializableTreeNode<TData>>();
 
         public bool HasChildren => Children.Count > 0;
 
-        public ReportTreeNode<TData> this[int index] => Children[index];
+        public SerializableTreeNode<TData> this[int index] => Children[index];
 
-        public void Add(ReportTreeNode<TData> child)
+        public void Add(SerializableTreeNode<TData> child)
         {
             child.Parent = this;
             Children.Add(child);
         }
 
-        public ReportTreeNode<TData> Add(TData child) => AddChildren(child)[0];
+        public SerializableTreeNode<TData> Add(TData child) => AddChildren(child)[0];
 
-        public IList<ReportTreeNode<TData>> AddChildren(params TData[] children) => AddChildren((IEnumerable<TData>)children);
+        public IList<SerializableTreeNode<TData>> AddChildren(params TData[] children) => AddChildren((IEnumerable<TData>)children);
 
-        public IList<ReportTreeNode<TData>> AddChildren(IEnumerable<TData> children)
+        public IList<SerializableTreeNode<TData>> AddChildren(IEnumerable<TData> children)
         {
-            var added = new List<ReportTreeNode<TData>>();
+            var added = new List<SerializableTreeNode<TData>>();
             if (children != null)
             {
                 foreach (var kid in children)
                 {
-                    var tn = new ReportTreeNode<TData>(kid, this);
+                    var tn = new SerializableTreeNode<TData>(kid, this);
                     added.Add(tn);
                 }
             }
@@ -50,7 +50,7 @@ namespace Traffk.Utility
 
         public override string ToString() => $"TreeNode: Children={this.Children.Count} Data={Data?.ToString()}";
 
-        public ReportTreeNode(TData data, ReportTreeNode<TData> parent = null, IEnumerable<TData> children = null)
+        public SerializableTreeNode(TData data, SerializableTreeNode<TData> parent = null, IEnumerable<TData> children = null)
         {
             Data = data;
             if (parent != null)
@@ -63,18 +63,18 @@ namespace Traffk.Utility
 
         public enum WalkOrder { Breadth, Depth }
 
-        public void Walk(Action<ReportTreeNode<TData>, int> visit, WalkOrder order = WalkOrder.Depth) => Walk((tn, d) => { visit(tn, d); return true; }, order);
+        public void Walk(Action<SerializableTreeNode<TData>, int> visit, WalkOrder order = WalkOrder.Depth) => Walk((tn, d) => { visit(tn, d); return true; }, order);
 
-        public void Walk(Func<ReportTreeNode<TData>, int, bool> visit, WalkOrder order = WalkOrder.Depth) => Walk(visit, order, 0);
+        public void Walk(Func<SerializableTreeNode<TData>, int, bool> visit, WalkOrder order = WalkOrder.Depth) => Walk(visit, order, 0);
 
-        private void Walk(Func<ReportTreeNode<TData>, int, bool> visit, WalkOrder order, int depth)
+        private void Walk(Func<SerializableTreeNode<TData>, int, bool> visit, WalkOrder order, int depth)
         {
             if (visit(this, depth))
             {
                 switch (order)
                 {
                     case WalkOrder.Breadth:
-                        var entrances = new List<ReportTreeNode<TData>>(Children.Count);
+                        var entrances = new List<SerializableTreeNode<TData>>(Children.Count);
                         foreach (var kid in Children)
                         {
                             if (visit(kid, depth + 1))
@@ -96,13 +96,13 @@ namespace Traffk.Utility
             }
         }
 
-        public static IDictionary<K, ReportTreeNode<TData>> Flatten<K>(IEnumerable<ReportTreeNode<TData>> level, Func<ReportTreeNode<TData>, K> getKey)
+        public static IDictionary<K, SerializableTreeNode<TData>> Flatten<K>(IEnumerable<SerializableTreeNode<TData>> level, Func<SerializableTreeNode<TData>, K> getKey)
         {
-            var d = new Dictionary<K, ReportTreeNode<TData>>();
+            var d = new Dictionary<K, SerializableTreeNode<TData>>();
             foreach (var z in level)
             {
                 d[getKey(z)] = z;
-                z.Walk(delegate (ReportTreeNode<TData> parent, ReportTreeNode<TData> item, int depth)
+                z.Walk(delegate (SerializableTreeNode<TData> parent, SerializableTreeNode<TData> item, int depth)
                 {
                     d[getKey(item)] = item;
                     return true;
@@ -111,12 +111,12 @@ namespace Traffk.Utility
             return d;
         }
 
-        public void Walk(Func<ReportTreeNode<TData>, ReportTreeNode<TData>, int, bool> pre, Action<ReportTreeNode<TData>, ReportTreeNode<TData>, int> post = null, Comparison<TData> walkOrder = null)
+        public void Walk(Func<SerializableTreeNode<TData>, SerializableTreeNode<TData>, int, bool> pre, Action<SerializableTreeNode<TData>, SerializableTreeNode<TData>, int> post = null, Comparison<TData> walkOrder = null)
         {
             Walk(pre, null, 0, post, walkOrder);
         }
 
-        private void Walk(Func<ReportTreeNode<TData>, ReportTreeNode<TData>, int, bool> pre, ReportTreeNode<TData> parent, int depth, Action<ReportTreeNode<TData>, ReportTreeNode<TData>, int> post = null, Comparison<TData> walkOrder = null)
+        private void Walk(Func<SerializableTreeNode<TData>, SerializableTreeNode<TData>, int, bool> pre, SerializableTreeNode<TData> parent, int depth, Action<SerializableTreeNode<TData>, SerializableTreeNode<TData>, int> post = null, Comparison<TData> walkOrder = null)
         {
             if (pre == null || pre(parent, this, depth))
             {

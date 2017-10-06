@@ -21,9 +21,9 @@ namespace Traffk.Bal.ReportVisuals
 
     public interface IReportVisualService
     {
-        ReportTreeNode<ReportVisualFolder> GetReportFolderTreeRoot(ReportSearchCriteria reportSearchCriteria);
+        SerializableTreeNode<ReportVisualFolder> GetReportFolderTreeRoot(ReportSearchCriteria reportSearchCriteria);
         ReportVisual GetReportVisual(ReportSearchCriteria reportSearchCriteria);
-        ReportTreeNode<ReportVisualFolder> GetReportFolder(ReportSearchCriteria reportSearchCriteria,
+        SerializableTreeNode<ReportVisualFolder> GetReportFolder(ReportSearchCriteria reportSearchCriteria,
             string topLevelFolderName);
         byte[] DownloadPreviewImageForTableauVisual(string workbookId, string viewId);
         bool IsOnline { get; set; }
@@ -91,16 +91,16 @@ namespace Traffk.Bal.ReportVisuals
             return matchingReportVisual;
         }
 
-        ReportTreeNode<ReportVisualFolder> IReportVisualService.GetReportFolderTreeRoot(ReportSearchCriteria reportSearchCriteria)
+        SerializableTreeNode<ReportVisualFolder> IReportVisualService.GetReportFolderTreeRoot(ReportSearchCriteria reportSearchCriteria)
         {
             return GetReportFolder(reportSearchCriteria, Root);
         }
 
-        ReportTreeNode<ReportVisualFolder> IReportVisualService.GetReportFolder(
+        SerializableTreeNode<ReportVisualFolder> IReportVisualService.GetReportFolder(
             ReportSearchCriteria reportSearchCriteria,
             string topLevelFolderName) => GetReportFolder(reportSearchCriteria, topLevelFolderName);
 
-        private ReportTreeNode<ReportVisualFolder> GetReportFolder(
+        private SerializableTreeNode<ReportVisualFolder> GetReportFolder(
             ReportSearchCriteria reportSearchCriteria, string topLevelFolderName)
         {
             var visualContext = reportSearchCriteria.VisualContext;
@@ -144,14 +144,14 @@ namespace Traffk.Bal.ReportVisuals
             return visuals;
         }
 
-        private ReportTreeNode<ReportVisualFolder> GetTreeCacheEntry(ReportSearchCriteria reportSearchCriteria, string topLevelFolderName)
+        private SerializableTreeNode<ReportVisualFolder> GetTreeCacheEntry(ReportSearchCriteria reportSearchCriteria, string topLevelFolderName)
         {
-            var root = new ReportTreeNode<ReportVisualFolder>(new ReportVisualFolder(topLevelFolderName));
+            var root = new SerializableTreeNode<ReportVisualFolder>(new ReportVisualFolder(topLevelFolderName));
             var reportVisuals = GetReportVisuals(reportSearchCriteria) as ICollection<IReportVisual> ?? GetReportVisuals(reportSearchCriteria).ToList();
 
             if (reportVisuals.Any())
             {
-                var workbookFolders = new HashSet<ReportTreeNode<ReportVisualFolder>>();
+                var workbookFolders = new HashSet<SerializableTreeNode<ReportVisualFolder>>();
                 foreach (var rv in reportVisuals)
                 {
                     var visual = rv as ReportVisual;
@@ -169,7 +169,7 @@ namespace Traffk.Bal.ReportVisuals
                     }
                     else
                     {
-                        var newWorkbookFolder = new ReportTreeNode<ReportVisualFolder>(new ReportVisualFolder(folderName));
+                        var newWorkbookFolder = new SerializableTreeNode<ReportVisualFolder>(new ReportVisualFolder(folderName));
                         newWorkbookFolder.Data.Reports.Add(visual);
                         workbookFolders.Add(newWorkbookFolder);
                     }
@@ -180,7 +180,7 @@ namespace Traffk.Bal.ReportVisuals
                     root.Add(folder);
                 }
             }
-            return new CacheEntry<ReportTreeNode<ReportVisualFolder>>(root).Value;
+            return new CacheEntry<SerializableTreeNode<ReportVisualFolder>>(root).Value;
         }
 
         private static IReportVisual Merge(ITableauReportVisual tableauReportVisual, ReportMetaData reportMetaData)

@@ -4,17 +4,21 @@ using Microsoft.EntityFrameworkCore;
 using RevolutionaryStuff.Core;
 using RevolutionaryStuff.Core.Caching;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Traffk.Bal;
 using Traffk.Bal.Communications;
+using Traffk.Bal.Data.Rdb;
 using Traffk.Bal.Data.Rdb.TraffkTenantModel;
 using Traffk.Bal.Permissions;
 using Traffk.Bal.ReportVisuals;
+using Traffk.Bal.Services;
 using Traffk.Bal.Settings;
 using Traffk.Portal.Controllers;
 using Traffk.Portal.Models.ReportingModels;
 using Traffk.Tableau;
+using Traffk.Utility;
 using TraffkPortal.Models;
 using TraffkPortal.Models.CrmModels;
 using TraffkPortal.Permissions;
@@ -144,7 +148,6 @@ namespace TraffkPortal.Controllers
         {
             ReportVisualService = reportVisualService;
             EmailSender = emailSender;
-
             IsReportingOnline = ReportVisualService.IsOnline;
         }
 
@@ -210,12 +213,12 @@ namespace TraffkPortal.Controllers
 
         [ActionName(ActionNames.ContactNotes)]
         [Route("Contacts/{id}/Notes")]
-        public Task<IActionResult> ContactNotes(int id, string sortCol, string sortDir, int? page, int? pageSize)
+        public Task<IActionResult> ContactNotes([FromServices]INoteService noteService, int id, string sortCol, string sortDir, int? page, int? pageSize)
         {
             return RawContactRecordInfo(id, PageKeys.Notes, nameof(ContactNotes), m =>
             {
-                var notes = GetNotes(m.Contact);
-                m.Notes = ApplyBrowse<Note>(notes, sortCol ?? nameof(Note.CreatedAtUtc), sortDir, page, pageSize).ToList();
+                var notes = noteService.GetNoteNodes(m.Contact);
+                m.Notes = notes;
             });
         }
 

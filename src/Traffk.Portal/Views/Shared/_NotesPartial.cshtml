@@ -1,43 +1,25 @@
-﻿@using Traffk.Bal.Data
-@using Traffk.Portal.Models.NoteModels
-@model IEnumerable<Traffk.Bal.Data.Rdb.TraffkTenantModel.Note>
+﻿@using Traffk.Portal.Models.NoteModels
+@using Traffk.Utility
+@model SerializableTreeNode<Traffk.Bal.Data.Rdb.TraffkTenantModel.Note>
 @{
     var entityId = ViewData[AspHelpers.ViewDataKeys.EntityId].ToString();
+    var entityType = ViewData[AspHelpers.ViewDataKeys.EntityType].ToString();
 }
 
-<table class="table table-bordered table-hover table-striped">
-    <thead>
-    <tr>
-        <th>
-            @Html.SortableHeaderFor(z => z.CreatedAt)
-        </th>
-        <th>
-            @Html.SortableHeaderFor(z => z.CreatedByContact, null, null, null, "Created By")
-        </th>
-        <th>
-            @Html.SortableHeaderFor(z => z.Body, null, null, null, "Note")
-        </th>
-        <th></th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var item in Model)
+    @foreach (var item in Model.Children)
     {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedByContact.Users.FirstOrDefault().Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Body)
-            </td>
-            <td>
-                <a id="create-note-button-@item.NoteId" class="popup-create-note-@(item.NoteId)_open" data-section="create-note-container">Reply</a>
-                @Html.Partial("_CreateNotePartial", new NoteModel(NoteObjectType.Contact, @entityId, @item.NoteId.ToString()))
-            </td>
-        </tr>
+        <div class="note-node">
+            <p>
+
+                <span class="note-creator-name">@item.Data.CreatedByContact.Users.FirstOrDefault().Email</span> <span class="note-date">@item.Data.CreatedAtUtc.ToShortDateTime()</span>
+            </p>
+            <p>
+                @item.Data.Body
+            </p>
+            <p>
+                <a id="create-note-button-@item.Data.NoteId" class="popup-create-note-@(item.Data.NoteId)_open" data-section="create-note-container">Reply</a>
+                @Html.Partial("_CreateNotePartial", new NoteViewModel(@entityType, @entityId, @item.Data.NoteId.ToString()))
+            </p>
+            @Html.Partial("_NotesPartial", item)
+        </div>
     }
-    </tbody>
-</table>

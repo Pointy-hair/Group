@@ -1,5 +1,4 @@
-﻿@using Traffk.Portal.Models.NoteModels
-@model Traffk.Portal.Models.NoteModels.NoteModel
+﻿@model Traffk.Portal.Models.NoteModels.NoteViewModel
 @{
     var popupId = "popup-create-note";
     if (Model.ParentNoteId != null)
@@ -23,7 +22,7 @@
                 <textarea class="form-control" id="@newNoteContentId"></textarea>
             </div>
             <ul class="step-buttons">
-                <li><a href="#" class="btn btn-primary btn-large @(popupId)_close" onclick="createNote('@Model.NoteObjectType', '@Model.EntityId', '@Model.ParentNoteId')">Save</a></li>
+                <li><a href="#" class="btn btn-primary btn-large @(popupId)_close" onclick="createNote('@Model.EntityType', '@Model.EntityId', '@Model.ParentNoteId')">Save</a></li>
                 <li><a href="#" class="btn btn-large btn-grey @(popupId)_close">Cancel</a></li>
             </ul>
         </form>

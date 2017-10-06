@@ -15,8 +15,8 @@ namespace Traffk.Portal.Models.ReportingModels
         string WorksheetName { get; set; }
         string Description { get; set; }
         ReportDetails.RenderingAttributeFlags RenderingAttributes { get; }
-        IQueryable<Note> Notes { get; set; }
-        ReportTreeNode<ReportVisualFolder> RelatedReports { get; set; }
+        SerializableTreeNode<Note> Notes { get; set; }
+        SerializableTreeNode<ReportVisualFolder> RelatedReports { get; set; }
     }
 
     public class TableauReportViewModel : IReportViewModel
@@ -24,7 +24,7 @@ namespace Traffk.Portal.Models.ReportingModels
         public TableauReportViewModel()
         { }
 
-        public TableauReportViewModel(IReportVisual reportVisual, ReportTreeNode<ReportVisualFolder> relatedReports = null)
+        public TableauReportViewModel(IReportVisual reportVisual, SerializableTreeNode<ReportVisualFolder> relatedReports = null)
         {
             Id = reportVisual.Id;
             WorkbookName = reportVisual.Parameters.SingleOrDefault(p => p.Key == nameof(WorkbookName)).Value;
@@ -48,8 +48,8 @@ namespace Traffk.Portal.Models.ReportingModels
         public string WorksheetName { get; set; }
         public string Description { get; set; }
         public ReportDetails.RenderingAttributeFlags RenderingAttributes { get; private set; }
-        public IQueryable<Note> Notes { get; set; }
-        public ReportTreeNode<ReportVisualFolder> RelatedReports { get; set; }
+        public SerializableTreeNode<Note> Notes { get; set; }
+        public SerializableTreeNode<ReportVisualFolder> RelatedReports { get; set; }
         long IReportViewModel.Id
         {
             get => Id;
@@ -88,12 +88,12 @@ namespace Traffk.Portal.Models.ReportingModels
 
         ReportDetails.RenderingAttributeFlags IReportViewModel.RenderingAttributes => RenderingAttributes;
 
-        IQueryable<Note> IReportViewModel.Notes
+        SerializableTreeNode<Note> IReportViewModel.Notes
         {
             get => Notes;
             set => Notes = value;
         }
-        ReportTreeNode<ReportVisualFolder> IReportViewModel.RelatedReports
+        SerializableTreeNode<ReportVisualFolder> IReportViewModel.RelatedReports
         {
             get => RelatedReports;
             set => RelatedReports = value;
