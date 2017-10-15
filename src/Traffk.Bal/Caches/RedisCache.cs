@@ -3,7 +3,6 @@ using Newtonsoft.Json;
 using RevolutionaryStuff.Core.Caching;
 using StackExchange.Redis;
 using System;
-using System.Collections.Generic;
 
 namespace Traffk.Bal.Caches
 {
@@ -62,7 +61,7 @@ namespace Traffk.Bal.Caches
             {
                 expiration = DefaultExpiration;
             }
-            
+
             CacheDatabase.StringSet(key, JsonConvert.SerializeObject(value, Formatting.Indented, new JsonSerializerSettings
             {
                 PreserveReferencesHandling = PreserveReferencesHandling.Objects,

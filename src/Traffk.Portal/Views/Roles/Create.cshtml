@@ -1,5 +1,7 @@
-@model ApplicationRole
+@using Traffk.Bal.Data.Rdb.TraffkTenantModel
+@model Traffk.Bal.Data.Rdb.TraffkTenantModel.ApplicationRole
 @using static TraffkPortal.Controllers.RolesController
+
 @{
     Layout = "~/Views/Shared/_LayoutUniversal.cshtml";
     ViewData.SetTitleAndHeading("Create New Role");
@@ -8,7 +10,7 @@
 }
 @section breadcrumbItems
 {
-    <li><a asp-controller="@Name" asp-action="@ActionNames.Index">Roles</a> <span>></span> </li>
+    <li><a asp-controller="@RolesController.Name" asp-action="@RolesController.ActionNames.Index">Roles</a> <span>></span> </li>
 }
 <form asp-action="Create" class="inline-form">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
